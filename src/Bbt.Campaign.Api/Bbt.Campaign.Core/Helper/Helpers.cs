@@ -443,6 +443,28 @@ namespace Bbt.Campaign.Core.Helper
             }
             return returnvalue;
         }
+
+        public static Boolean FirmaVergiKontrol(string input)
+        {
+            if (input == null || input.Length != 10) return false;
+            var vkn = input.ToArray();
+            if (!vkn.All(n => char.IsNumber(n))) return false;
+
+            var lastDigit = Convert.ToInt32(vkn[9].ToString());
+            int total = 0;
+            for (int i = 9; i >= 1; i--)
+            {
+                int digit = Convert.ToInt32(vkn[9 - i].ToString());
+                var v1 = ((digit + i) % 10);
+                int v11 = (int)(v1 * Math.Pow(2, i)) % 9;
+                if (v1 != 0 && v11 == 0) v11 = 9;
+                total += v11;
+            }
+
+            total = (total % 10 == 0) ? 0 : (10 - (total % 10));
+            return (total == lastDigit);
+        }
+
         public static List<SelectListItemDTO> EnumToList<T>() where T : System.Enum
         {
             return Enum.GetValues(typeof(T)).Cast<T>().ToList().Select(x =>

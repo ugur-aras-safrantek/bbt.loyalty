@@ -188,6 +188,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.SectorId = campaign.SectorId;
                 entity.ViewOptionId = campaign.ViewOptionId;
                 entity.IsBundle = campaign.IsBundle;
+                entity.IsActive = campaign.IsActive;
                 entity.IsContract = campaign.IsContract;
                 entity.DescriptionTr = campaign.DescriptionTr;
                 entity.DescriptionEn = campaign.DescriptionEn;
@@ -372,9 +373,9 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order)
                     .FirstOrDefault();
                 if (orderCampaignEntity != null) 
-                { 
-                    //if(campaignId == 0 || campaignId != orderCampaignEntity.Id) 
-                    //    throw new Exception("Aynı Sıralama Girilemez.");
+                {
+                    if (campaignId == 0 || campaignId != orderCampaignEntity.Id)
+                        throw new Exception("Aynı Sıralama Girilemez.");
                 }
             }
 

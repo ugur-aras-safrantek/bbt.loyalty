@@ -655,6 +655,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             }
             else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
+                campaignRuleEntity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
                 foreach (var ruleIdentity in campaignRuleDraftEntity.RuleIdentities)
                 {
                     campaignRuleEntity.RuleIdentities.Add(new CampaignRuleIdentityEntity()

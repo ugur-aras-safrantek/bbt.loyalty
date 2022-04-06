@@ -46,7 +46,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     entity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
                     entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                     {
-                        Identities = campaignRule.Identity,
+                        Identities = campaignRule.Identity.Trim(),
                     });
                 }
                 else if (campaignRule.File != null)
@@ -201,7 +201,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 {
                     var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity()
                     {
-                        Identities = campaignRule.Identity,
+                        Identities = campaignRule.Identity.Trim(),
                         CampaignRule = entity,
                     };
 
@@ -382,7 +382,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 return null;
             }
 
-            string identityNumber = string.Empty;
+            string identityNumber = null;
             bool isSingleIdentity = false;
             if (campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
@@ -488,19 +488,28 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         static void CheckSingleIdentiy(string identity)
         {
             if (string.IsNullOrWhiteSpace(identity) || string.IsNullOrEmpty(identity))
-            { throw new Exception("TCKN girilmelidir."); }
+            { throw new Exception("TCKN/VKN boş olamaz."); }
 
             if (!Core.Helper.Helpers.IsNumeric(identity)) 
-            { throw new Exception("TCKN bilgisi hatalı."); }
+            { throw new Exception("TCKN/VKN bilgisi hatalı."); }
 
-            if (identity?.Trim().Length > 11)
-            { throw new Exception("TCKN 11 haneli olmalıdır."); }
+            identity = identity.Trim();
 
-            if(identity?.Trim().Length == 11) 
+            if (identity.Trim().Length > 11 || identity.Trim().Length < 10)
+            { throw new Exception("TCKN/VKN bilgisinin uzunluğu hatalı."); }
+
+            if(identity.Trim().Length == 11) 
             {
                 if (!Core.Helper.Helpers.TcAuthentication(identity))
-                { throw new Exception("TCKN bilgisi hatalıdır."); }
+                { throw new Exception("TCKN bilgisi doğrulanamadı."); }
             }
+            else if (identity.Trim().Length == 10) 
+            {
+                if (!Core.Helper.Helpers.FirmaVergiKontrol(identity))
+                { throw new Exception("VKN bilgisi doğrulanamadı."); }
+            }
+
+
         }
     }
 }

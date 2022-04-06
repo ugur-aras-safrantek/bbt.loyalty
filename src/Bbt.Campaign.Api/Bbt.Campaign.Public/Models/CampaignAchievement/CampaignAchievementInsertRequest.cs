@@ -14,10 +14,10 @@ namespace Bbt.Campaign.Public.Models.CampaignAchievement
         public int Type { get; set; }
         public int AchievementTypeId { get; set; }
         public int ActionOptionId { get; set; }
-        public string DescriptionTr { get; set; }
-        public string DescriptionEn { get; set; }
-        public string TitleTr { get; set; }
-        public string TitleEn { get; set; }
+        public string? DescriptionTr { get; set; }
+        public string? DescriptionEn { get; set; }
+        public string? TitleTr { get; set; }
+        public string? TitleEn { get; set; }
 
         
     }

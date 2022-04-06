@@ -203,7 +203,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
                         TownCode= "0602",
                         TownName= "ÇANKAYA"}};
 
-                    var value = JsonConvert.SerializeObject(result);
+                    var value = JsonConvert.SerializeObject(serviceResult);
 
                     await _redisDatabaseProvider.SetAsync(CacheKeys.BranchList, value);
 
