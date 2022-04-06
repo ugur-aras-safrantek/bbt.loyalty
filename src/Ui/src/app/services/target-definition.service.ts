@@ -84,7 +84,7 @@ export class TargetDefinitionService {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}`);
+            this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}/definition`);
             this.toastrService.success("İşlem başarılı");
           } else
             this.toastrService.error(res.errorMessage);

@@ -84,7 +84,7 @@ export class CampaignLimitsService {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.utilityService.redirectTo(`${GlobalVariable.limitUpdate}/${res.data.id}`);
+            this.utilityService.redirectTo(`${GlobalVariable.limitUpdate}/${res.data.id}/limit`);
             this.toastrService.success("İşlem başarılı");
           } else
             this.toastrService.error(res.errorMessage);
