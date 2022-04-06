@@ -1,0 +1,422 @@
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
+      <form [formGroup]="formGroup">
+        <div class="row p-4">
+          <div class="col-10 m-auto">
+            <div class="row align-items-end">
+              <div class="col">
+                <div class="row contract-row"
+                     [ngClass]="{ 'mb-3': submitted && f.contractId.invalid }">
+                  <div class="col pl-20px">
+                    <div class="form-group">
+                      <div class="form-check">
+                        <input class="form-check-input scale-2x" type="checkbox" id="isActive"
+                               name="isActive"
+                               formControlName="isActive">
+                        <label class="form-check-label ms-2" for="isActive">Aktif</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <div class="form-check">
+                        <input class="form-check-input scale-2x" type="checkbox" id="isBundle" name="isBundle"
+                               formControlName="isBundle" (change)="isBundleChanged()">
+                        <label class="form-check-label ms-2" for="isBundle">
+                          Birleştirilebilir
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <div class="form-check">
+                        <input class="form-check-input scale-2x" type="checkbox" id="isContract" name="isContract"
+                               formControlName="isContract" (change)="isContractChanged()">
+                        <label class="form-check-label ms-2" for="isContract">
+                          Sözleşme
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="row align-items-end" *ngIf="formGroup.get('isContract')?.value">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="contractId">Sözleşme ID</label>
+                      <input type="text" class="form-control" name="contractId" id="contractId"
+                             formControlName="contractId" onlyNumber
+                             [ngClass]="{ 'is-invalid': submitted && f.contractId.invalid }">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-secondary px-5">Göster</button>
+                  </div>
+                </div>
+                <div *ngIf="submitted && f.contractId.errors" class="d-block invalid-feedback">
+                  <div *ngIf="f.contractId.errors.required">Sözleşme ID girilmelidir.</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="programTypeId">Program Tipi</label>
+                  <select name="programTypeId" id="programTypeId" class="form-select"
+                          formControlName="programTypeId" (change)="programTypeChanged()"
+                          [ngClass]="{ 'is-invalid': submitted && f.programTypeId.invalid }">
+                    <option [ngValue]="null">Seçiniz</option>
+                    <option *ngFor="let i of programTypeList"
+                            [value]="i.id">{{i.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.programTypeId.errors" class="invalid-feedback">
+                    <div *ngIf="f.programTypeId.errors.required">Program Tipi seçilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3" *ngIf="f.programTypeId.value != 1">
+                  <label for="viewOptionId">Görüntüleme</label>
+                  <select name="viewOptionId" id="viewOptionId" class="form-select"
+                          formControlName="viewOptionId" (change)="viewOptionChanged()"
+                          [ngClass]="{ 'is-invalid': submitted && f.viewOptionId.invalid }">
+                    <option [ngValue]="null">Seçiniz</option>
+                    <option *ngFor="let i of viewOptionList"
+                            [value]="i.id">{{i.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.viewOptionId.errors" class="invalid-feedback">
+                    <div *ngIf="f.viewOptionId.errors.required">Görüntüleme seçilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="name">Kampanya Adı</label>
+                  <input type="text" class="form-control" name="name" id="name"
+                         formControlName="name"
+                         [ngClass]="{ 'is-invalid': submitted && f.name.invalid }">
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Kampanya Adı girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="code">Kampanya Kodu</label>
+                  <input type="text" class="form-control" name="code" id="code" readonly
+                         formControlName="code">
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="f.viewOptionId.value != 4">
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="titleTr">Başlık (Türkçe)</label>
+                  <input type="text" class="form-control" name="titleTr" id="titleTr"
+                         formControlName="titleTr"
+                         [ngClass]="{ 'is-invalid': submitted && f.titleTr.invalid }">
+                  <div *ngIf="submitted && f.titleTr.errors" class="invalid-feedback">
+                    <div *ngIf="f.titleTr.errors.required">Başlık (Türkçe) girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="titleEn">Başlık (İngilizce)</label>
+                  <input type="text" class="form-control" name="titleEn" id="titleEn"
+                         formControlName="titleEn"
+                         [ngClass]="{ 'is-invalid': submitted && f.titleEn.invalid }">
+                  <div *ngIf="submitted && f.titleEn.errors" class="invalid-feedback">
+                    <div *ngIf="f.titleEn.errors.required">Başlık (İngilizce) girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="descriptionTr">Açıklama (Türkçe)</label>
+                  <input type="text" class="form-control" name="descriptionTr" id="descriptionTr"
+                         formControlName="descriptionTr"
+                         [ngClass]="{ 'is-invalid': submitted && f.descriptionTr.invalid }">
+                  <div *ngIf="submitted && f.descriptionTr.errors" class="invalid-feedback">
+                    <div *ngIf="f.descriptionTr.errors.required">Açıklama (Türkçe) girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="descriptionEn">Açıklama (İngilizce)</label>
+                  <input type="text" class="form-control" name="descriptionEn" id="descriptionEn"
+                         formControlName="descriptionEn"
+                         [ngClass]="{ 'is-invalid': submitted && f.descriptionEn.invalid }">
+                  <div *ngIf="submitted && f.descriptionEn.errors" class="invalid-feedback">
+                    <div *ngIf="f.descriptionEn.errors.required">Açıklama (İngilizce) girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion mt-3" id="accordionSummary">
+              <div class="accordion-item accordion-invalid"
+                   [ngClass]="{ 'accordion-invalid': submitted && (f.summaryTr.invalid || f.summaryEn.invalid) }">
+                <h2 class="accordion-header" id="headingSummary">
+                  <button class="accordion-button collapsed accordion-custom" type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseSummary"
+                          aria-expanded="true"
+                          aria-controls="collapseSummary">
+                    Özet
+                  </button>
+                </h2>
+                <div id="collapseSummary" class="accordion-collapse collapse" aria-labelledby="headingSummary"
+                     data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="row mt-3">
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="summaryTr">Türkçe</label>
+                          <angular-editor [config]="editorConfig" formControlName="summaryTr" id="summaryTr"
+                                          placeholder="Özet (Türkçe)"
+                                          [ngClass]="{ 'is-invalid': submitted && f.summaryTr.invalid }"></angular-editor>
+                          <div *ngIf="submitted && f.summaryTr.errors" class="invalid-feedback">
+                            <div *ngIf="f.summaryTr.errors.required">Özet (Türkçe) girilmelidir.</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <label for="summaryEn">İngilizce</label>
+                          <angular-editor [config]="editorConfig" formControlName="summaryEn" id="summaryEn"
+                                          placeholder="Özet (İngilizce)"
+                                          [ngClass]="{ 'is-invalid': submitted && f.summaryEn.invalid }"></angular-editor>
+                          <div *ngIf="submitted && f.summaryEn.errors" class="invalid-feedback">
+                            <div *ngIf="f.summaryEn.errors.required">Özet (İngilizce) girilmelidir.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="submitted && (f.summaryTr.errors || f.summaryEn.errors)" class="d-block invalid-feedback">
+              <div *ngIf="f.summaryTr.errors?.required || f.summaryEn.errors?.required">Özet girilmelidir.</div>
+            </div>
+            <div *ngIf="f.viewOptionId.value != 4">
+              <div class="accordion mt-3" id="accordionContent">
+                <div class="accordion-item accordion-invalid"
+                     [ngClass]="{ 'accordion-invalid': submitted && (f.contentTr.invalid || f.contentEn.invalid) }">
+                  <h2 class="accordion-header" id="headingContent">
+                    <button class="accordion-button collapsed accordion-custom" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseContent"
+                            aria-expanded="true"
+                            aria-controls="collapseContent">
+                      İçerik
+                    </button>
+                  </h2>
+                  <div id="collapseContent" class="accordion-collapse collapse" aria-labelledby="headingContent"
+                       data-bs-parent="#accordionContent">
+                    <div class="accordion-body">
+                      <div class="row mt-3">
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="contentTr">Türkçe</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="contentTrChanged($event)"
+                                            formControlName="contentTr" id="contentTr"
+                                            placeholder="İçerik (Türkçe)"></angular-editor>
+                            <div *ngIf="submitted && f.contentTr.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.contentTr.errors.required">İçerik (Türkçe) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="contentEn">İngilizce</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="contentEnChanged($event)"
+                                            formControlName="contentEn" id="contentEn"
+                                            placeholder="İçerik (İngilizce)"></angular-editor>
+                            <div *ngIf="submitted && f.contentEn.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.contentEn.errors.required">İçerik (İngilizce) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="submitted && (f.contentTr.errors || f.contentEn.errors)" class="d-block invalid-feedback">
+                <div *ngIf="f.contentTr.errors?.required || f.contentEn.errors?.required">İçerik girilmelidir.</div>
+              </div>
+              <div class="accordion mt-3" id="accordionDetail">
+                <div class="accordion-item accordion-invalid"
+                     [ngClass]="{ 'accordion-invalid': submitted && (f.detailTr.invalid || f.detailEn.invalid) }">
+                  <h2 class="accordion-header" id="headingDetail">
+                    <button class="accordion-button collapsed accordion-custom" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseDetail"
+                            aria-expanded="true"
+                            aria-controls="collapseDetail">
+                      Detay
+                    </button>
+                  </h2>
+                  <div id="collapseDetail" class="accordion-collapse collapse" aria-labelledby="headingDetail"
+                       data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <div class="row mt-3">
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="detailTr">Türkçe</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="detailTrChanged($event)"
+                                            formControlName="detailTr" id="detailTr"
+                                            placeholder="Detay (Türkçe)"></angular-editor>
+                            <div *ngIf="submitted && f.detailTr.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.detailTr.errors.required">Detay (Türkçe) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="detailEn">İngilizce</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="detailEnChanged($event)"
+                                            formControlName="detailEn" id="detailEn"
+                                            placeholder="Detay (İngilizce)"></angular-editor>
+                            <div *ngIf="submitted && f.detailEn.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.detailEn.errors.required">Detay (İngilizce) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="submitted && (f.detailTr.errors || f.detailEn.errors)" class="d-block invalid-feedback">
+                <div *ngIf="f.detailTr.errors?.required || f.detailEn.errors?.required">Detay girilmelidir.</div>
+              </div>
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="campaignListImageUrl" class="form-label">Kampanya Liste Görseli</label>
+                    <input class="form-control" type="url"
+                           name="campaignListImageUrl"
+                           id="campaignListImageUrl"
+                           formControlName="campaignListImageUrl"
+                           [ngClass]="{ 'is-invalid': submitted && f.campaignListImageUrl.invalid }">
+                    <div *ngIf="submitted && f.campaignListImageUrl.errors" class="invalid-feedback">
+                      <div *ngIf="f.campaignListImageUrl.errors.pattern">Hatalı URL formatı.</div>
+                    </div>
+                  </div>
+                  <a target="_blank"
+                     *ngIf="f.campaignListImageDownloadUrl.value && f.campaignListImageDownloadUrl.value != ''"
+                     [href]="f.campaignListImageDownloadUrl.value">
+                    Görüntüle
+                  </a>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="campaignDetailImageUrl" class="form-label">Kampanya Detay Görseli</label>
+                    <input class="form-control" type="url"
+                           name="campaignDetailImageUrl"
+                           id="campaignDetailImageUrl"
+                           formControlName="campaignDetailImageUrl"
+                           [ngClass]="{ 'is-invalid': submitted && f.campaignDetailImageUrl.invalid }">
+                    <div *ngIf="submitted && f.campaignDetailImageUrl.errors" class="invalid-feedback">
+                      <div *ngIf="f.campaignDetailImageUrl.errors.pattern">Hatalı URL formatı.</div>
+                    </div>
+                  </div>
+                  <a target="_blank"
+                     *ngIf="f.campaignDetailImageDownloadUrl.value && f.campaignDetailImageDownloadUrl.value != ''"
+                     [href]="f.campaignDetailImageDownloadUrl.value">
+                    Görüntüle
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group mt-3 new-camp-calendar">
+                  <label for="startDate">Başlama Tarihi</label>
+                  <input class="form-control pl-32px" angular-mydatepicker
+                         name="startDate" id="startDate" formControlName="startDate" (click)="sDp.toggleCalendar()"
+                         [options]="dpOptions" #sDp="angular-mydatepicker" [locale]="locale"
+                         [ngClass]="{ 'is-invalid': submitted && f.startDate.invalid }"/>
+                  <div *ngIf="submitted && f.startDate.errors" class="invalid-feedback">
+                    <div *ngIf="f.startDate.errors.required">Başlama Tarihi seçilmelidir.</div>
+                    <div *ngIf="!f.startDate.errors.required && f.startDate.errors.invalidDateFormat">
+                      Başlama Tarihi bugünün tarihinden küçük olamaz.
+                    </div>
+                    <div
+                      *ngIf="!f.startDate.errors.required && f.startDate.errors.endDateGreaterThanStartDateValidator">
+                      Başlama Tarihi, Bitiş Tarihinden büyük olamaz.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3 new-camp-calendar">
+                  <label for="endDate">Bitiş Tarihi</label>
+                  <input class="form-control pl-32px" angular-mydatepicker
+                         name="endDate" id="endDate" formControlName="endDate" (click)="eDp.toggleCalendar()"
+                         [options]="dpOptions" #eDp="angular-mydatepicker" [locale]="locale"
+                         [ngClass]="{ 'is-invalid': submitted && f.endDate.invalid }"/>
+                  <div *ngIf="submitted && f.endDate.errors" class="invalid-feedback">
+                    <div *ngIf="f.endDate.errors.required">Bitiş Tarihi seçilmelidir.</div>
+                    <div *ngIf="!f.endDate.errors.required && f.endDate.errors.invalidDateFormat">
+                      Bitiş Tarihi bugünün tarihinden küçük olamaz.
+                    </div>
+                    <div *ngIf="!f.endDate.errors.required && f.endDate.errors.endDateGreaterThanStartDateValidator">
+                      Başlama Tarihi, Bitiş Tarihinden büyük olamaz.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="maxNumberOfUser">Max Kullanıcı</label>
+                  <input type="text" class="form-control" name="maxNumberOfUser" pattern="[0-9]*"
+                         id="maxNumberOfUser" formControlName="maxNumberOfUser" onlyNumber>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3" *ngIf="!f.isBundle.value">
+                  <label for="order">Sıralama</label>
+                  <input type="text" class="form-control" name="order" id="order"
+                         formControlName="order" onlyNumber
+                         [ngClass]="{ 'is-invalid': submitted && f.order.invalid }">
+                  <div *ngIf="submitted && f.order.errors" class="invalid-feedback">
+                    <div *ngIf="f.order.errors.required">Sıralama girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="f.programTypeId.value != 1">
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="sectorId">Sektör</label>
+                  <select name="sectorId" id="sectorId" class="form-select"
+                          formControlName="sectorId">
+                    <option [ngValue]="null">Seçiniz</option>
+                    <option *ngFor="let i of sectorList"
+                            [value]="i.id">{{i.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="!disabled && nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="continue()">{{nextButtonText}}</button>
+    </div>
+  </div>
+</app-main-content>

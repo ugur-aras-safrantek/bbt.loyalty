@@ -1,0 +1,105 @@
+name: CI-CD-CampaignAPI
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/Bbt.Campaign.Api/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/Bbt.Campaign.Api/**'
+  workflow_dispatch:
+
+env:
+  APP_NAME: bbt-loyalty-campaign-api
+  NAMESPACE: bbt-loyalty
+  CLUSTER_NAME: Endorsement
+  CLUSTER_RESOURCE_GROUP: Endorsement_group
+  SECRET: docker-hub
+
+jobs:
+  ci-cd-CampaignApi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/dotnet@master
+        continue-on-error: false
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high  --all-projects --detection-level=2
+          
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./src/Bbt.Campaign.Api/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+          
+      - name: Replace DB Secret
+        run: |
+          sed -i -e "s/DEFAULT_CONNECTION/${{ secrets.DEFAULT_CONNECTION }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
+      - name: Replace Redis Secret
+        run: |
+          sed -i -e "s/REDIS_CONNECTION/${{ secrets.REDIS_CONNECTION }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
+      - name: Replace Redis Ttl Secret
+        run: |
+          sed -i -e "s/REDIS_TTL/${{ secrets.REDIS_TTL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
+      - name: Replace Elastic Secret
+        run: |
+          sed -i -e "s/ELASTIC_SEARCH/${{ secrets.ELASTIC_SEARCH }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+      
+      - name: Replace Elastic Password Secret
+        run: |
+          sed -i -e "s/ELASTIC_PASSWORD/${{ secrets.ELASTIC_PASSWORD }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+
+      # Set the target Azure Kubernetes Service (AKS) cluster. 
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+    
+      # Create namespace if doesn't exist
+      - run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o json | kubectl apply -f -
+    
+      # Create image pull secret for Docker
+      - uses: azure/k8s-create-secret@v1
+        with:
+          container-registry-url: docker.io
+          container-registry-username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          container-registry-password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          secret-name: ${{ env.SECRET }}
+          namespace: ${{ env.NAMESPACE }}
+          arguments: --force true
+
+      # Deploy app to AKS
+      - uses: azure/k8s-deploy@v1
+        with:
+          manifests: |
+            ${{ github.workspace }}/manifests/Campaign-Api/deployment.yaml
+            ${{ github.workspace }}/manifests/Campaign-Api/service.yaml
+          # ${{ github.workspace }}/manifests/Campaign-Api/ingress.yaml
+          images: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+          imagepullsecrets: |
+            ${{ env.SECRET }}
+          namespace: ${{ env.NAMESPACE }}

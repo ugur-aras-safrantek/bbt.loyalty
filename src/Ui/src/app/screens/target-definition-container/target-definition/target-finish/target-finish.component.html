@@ -1,0 +1,16 @@
+<app-main-content>
+  <app-step [data]="stepData"></app-step>
+  <div class="container">
+    <div class="box">
+      <div class="p-5">
+        <app-finish
+          cardTitle="TEBRİKLER"
+          subTitle="Hedef Tanımı başarılı bir şekilde kaydedildi."
+        >
+          <a [routerLink]="[newTarget]" class="btn btn-primary px-5 mt-3 w-100">Yeni Hedef Tanımı</a>
+          <a [routerLink]="[targetList]" class="btn btn-outline-primary px-5 mt-3 w-100">Listeye Geri Dön</a>
+        </app-finish>
+      </div>
+    </div>
+  </div>
+</app-main-content>

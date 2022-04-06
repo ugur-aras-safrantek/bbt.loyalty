@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loyalty-campaign-api
+  namespace: bbt-loyalty
+  labels:
+    app: loyalty-campaign-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: loyalty-campaign-api
+  template:
+    metadata:
+      labels:
+        app: loyalty-campaign-api
+    spec:
+      containers:
+      - name: loyalty-campaign-api
+        image: burganbank/bbt-loyalty-campaign-api:latest
+        ports:
+        - containerPort: 5070

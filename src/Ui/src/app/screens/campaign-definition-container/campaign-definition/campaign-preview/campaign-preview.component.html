@@ -1,0 +1,137 @@
+<app-main-content blockTitle="{{campaign.name}}">
+  <ngx-smart-modal #contractApprovalModal identifier="contractApprovalModal" customClass="contract-modal">
+    <h1 class="text-purple-dark">Sözleşme Metni</h1>
+    <hr class="purple">
+    <div class="modal-scrollable">
+      <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus nulla quis similique ut. Amet
+        aperiam architecto esse impedit iste nesciunt placeat quibusdam quod reiciendis repellat reprehenderit,
+        sapiente, sequi vel voluptate.
+      </div>
+      <div>Aliquid dicta dolorum eos est eum facere, id impedit ipsa laboriosam, magnam minus natus omnis optio porro
+        reprehenderit ut voluptatibus. Aliquid commodi corporis earum eos et illo incidunt necessitatibus sequi.
+      </div>
+      <div>A ad, alias amet atque aut commodi consequuntur dolor eaque eius impedit in, ipsum iste libero mollitia
+        officiis omnis porro quas qui quidem saepe suscipit temporibus tenetur vero vitae voluptatem.
+      </div>
+      <div>A ad animi aut consequuntur dignissimos dolor dolorum expedita fuga harum, ipsum iste iure magnam maxime
+        molestiae neque non quam quidem recusandae repellat rerum similique sint tempora temporibus ut veritatis.
+      </div>
+      <div>Culpa dolore error perferendis quis. Aspernatur atque consequuntur culpa dignissimos dolores ducimus, est
+        incidunt ipsam iure laboriosam modi odio officia omnis optio quas quos ratione recusandae, reiciendis sed
+        tenetur veritatis.
+      </div>
+    </div>
+    <div class="button-container col-6 m-auto mt-3">
+      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">Okudum, onaylıyorum
+      </button>
+      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">Okudum, onaylamıyorum
+      </button>
+    </div>
+  </ngx-smart-modal>
+  <div class="container d-flex">
+    <div class="preview-container mt-5">
+      <div class="row">
+        <div class="mx-auto col-8">
+          <div class="campaign-image" *ngIf="campaign.campaignDetail?.campaignListImageUrl">
+            <img src="{{campaign.campaignDetail?.campaignListImageUrl}}" alt="">
+          </div>
+          <h3 class="campaign-title text-center"
+              [ngClass]="{'my-4':campaign.campaignDetail?.campaignListImageUrl}">{{campaign.titleTr}}</h3>
+          <div class="row">
+            <div class="mx-auto col-8">
+              <div class="row mt-3">
+                <div class="col-auto">
+                  <i class="bi bi-circle-fill text-purple"></i>
+                </div>
+                <div class="col">
+                  <label class="mb-3">Özet Bilgileri</label>
+                  <angular-editor [config]="editorConfig"
+                                  [ngModel]="campaign.campaignDetail?.summaryTr"></angular-editor>
+                </div>
+              </div>
+              <div class="accordion mt-5 mb-3" id="accordionCampaignDetail">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingCampaignDetail">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseCampaignDetail"
+                            aria-expanded="true"
+                            aria-controls="collapseCampaignDetail">
+                      Detaylar için tıklayın
+                    </button>
+                  </h2>
+                  <div id="collapseCampaignDetail"
+                       class="accordion-collapse collapse"
+                       aria-labelledby="headingCampaignDetail"
+                       data-bs-parent="#accordionCampaignDetail">
+                    <div class="accordion-body">
+                      <angular-editor [config]="editorConfig"
+                                      [ngModel]="campaign.campaignDetail?.detailTr"></angular-editor>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="campaignContractCheckDefault">
+                <label class="form-check-label" for="campaignContractCheckDefault">
+                  <u><b (click)="contractApprovalModal.open()" class="cursor-pointer">{{campaign.name}}
+                    Sözleşmesi'ni</b></u>
+                  okudum ve onaylıyorum.
+                </label>
+              </div>
+              <div class="row mt-4">
+                <div class="mx-auto col-6">
+                  <div class="button-container">
+                    <button class="btn btn-purple w-100" disabled>Katıl</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="my-5">
+      <h3 class="title text-purple-dark">Dönem İçi İşlemleriniz</h3>
+      <b>Kampanyadan yararlanmak için {{campaign.endDate}} tarihine kadar aşağıdaki koşulu tamamlamalısınız.</b>
+      <div class="box my-5 pt-4">
+        <div class="px-4">
+          <div class="row">
+            <div class="col-auto d-flex justify-content-center align-items-center">
+              <i class="bi bi-square-fill text-purple"></i>
+            </div>
+            <div class="col">
+              <p class="mb-0">Debit kart ile geçtiğimiz ayda tek seferde 3500 TL harcama</p>
+              <p class="mb-0">-</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-purple px-4 py-1">
+          <div class="row">
+            <div class="col"><b>Harcama hedef: 3500 TL</b></div>
+            <div class="col d-flex justify-content-end"><b>Kalan harcama tutarı: - TL</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="box p-3">
+            <b>Harcamalara İade</b>
+            <p class="mb-0">Kart harcamaları, fatura/kurum ödemeleri ve dijital ödemelerinizin %2si kadar iade.</p>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="box p-3 position-relative">
+            <b>Harcamalara aidatı geri ödemesi</b>
+            <p class="mb-0">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            </p>
+            <div class="ok">
+              <i class="bi bi-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-main-content>

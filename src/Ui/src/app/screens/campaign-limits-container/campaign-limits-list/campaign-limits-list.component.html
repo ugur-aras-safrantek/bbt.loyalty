@@ -1,0 +1,88 @@
+<app-main-content blockTitle="Kampanya Çatı Limitleri" route="../create/limit" newButtonText="Yeni Çatı Limiti">
+  <app-list (getListEvent)="campaignLimitsListGetByFilter()"
+            (downloadExcelFileEvent)="campaignLimitsListGetByFilterExcelFile()">
+    <div filterForm class="p-4">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Çatı Limiti Adı</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.name">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="achievementFrequencyId">Kazanım Sıklığı</label>
+            <select name="achievementFrequencyId" id="achievementFrequencyId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.achievementFrequencyId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of achievementFrequencyList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="currencyId">Para Birimi</label>
+            <select name="currencyId" id="currencyId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.currencyId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of currencyTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Çatı Max Tutar</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.maxTopLimitAmount"
+                   onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Çatı Max Yararlanma</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.maxTopLimitUtilization"
+                   onlyNumber>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <div class="form-group">
+            <label>Çatı Oranı</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.maxTopLimitRate"
+                   onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="type">Tutar/Oran</label>
+            <select name="type" id="type" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.type">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of typeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="isActive">Aktif</label>
+            <select name="isActive" id="isActive" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.isActive">
+              <option [ngValue]="null">Tümü</option>
+              <option [ngValue]="true">Evet</option>
+              <option [ngValue]="false">Hayır</option>
+            </select>
+          </div>
+        </div>
+        <div class="col pt-4">
+          <button class="btn btn-sm btn-outline-primary w-100" (click)="clear()">Temizle</button>
+        </div>
+        <div class="col pt-4">
+          <button class="btn btn-sm btn-primary w-100" (click)="campaignLimitsListGetByFilter()">Filtrele</button>
+        </div>
+      </div>
+    </div>
+  </app-list>
+</app-main-content>

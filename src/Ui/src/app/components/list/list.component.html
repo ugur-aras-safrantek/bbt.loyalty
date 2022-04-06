@@ -1,0 +1,71 @@
+<div id="listContent">
+  <div class="container">
+    <div class="box">
+      <ng-content select="[filterForm]">
+
+      </ng-content>
+    </div>
+  </div>
+  <div class="container mt-4"
+       *ngIf="listService.hasError">
+    <div class="box">
+      <div class="ps-4 pe-4 pt-2 pb-2 d-flex alert-warning">{{listService.errorMessage}}</div>
+    </div>
+  </div>
+  <div class="container mt-4"
+       *ngIf="listService.rows && listService.rows.length > 0">
+    <div class="box">
+      <div class="ps-4 pe-4 pt-2 d-flex">
+        <div class="col">Uygun {{listService.paging.totalItems}} kayıt bulundu</div>
+        <div class="col d-flex justify-content-end">
+          <i>
+            <img src="/assets/img/excel-icon.png" (click)="downloadExcelFile()">
+          </i>
+        </div>
+      </div>
+      <div class="mt-2">
+        <table class="table table-hover table-custom">
+          <thead>
+          <tr class="table-primary">
+            <th [ngClass]="column.isBoolean ? 'no-wrap' : ''"
+                *ngFor="let column of listService.columns">{{column.columnName}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="cursor-pointer"
+              [routerLink]="row.routerLink"
+              *ngFor="let row of listService.rows">
+            <td [ngClass]="column.isBoolean ? 'text-center' : ''"
+                *ngFor="let column of listService.columns">
+              <ng-container *ngIf="column.isBoolean;then img else text"></ng-container>
+              <ng-template #text>
+                {{row[column.propertyName]}}
+              </ng-template>
+              <ng-template #img>
+                <img src="/assets/img/check.png" *ngIf="row[column.propertyName]">
+              </ng-template>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="container d-flex align-items-center justify-content-end"
+       *ngIf="listService.rows && listService.rows.length > 0">
+    <span>Page:</span>
+    <select class="form-control-sm ms-2 me-2" [(ngModel)]="listService.paging.currentPage" (change)="getList()">
+      <option *ngFor='let i of counter(listService.paging.totalPages); let val = index'
+              [value]="val+1">{{val + 1}}</option>
+    </select>
+    <span class="me-3">of {{listService.paging.totalPages}}</span>
+    <button class="bi-chevron-left paging-button-left me-2"
+            (click)="changePage(-1)"
+            [disabled]="listService.paging.currentPage <= 1"
+            [ngClass]="{ 'disable-paging-button' : listService.paging.currentPage == 1 }"></button>
+    <button class="bi-chevron-right paging-button-right"
+            (click)="changePage(+1)"
+            [disabled]="listService.paging.currentPage == listService.paging.totalPages"
+            [ngClass]="{ 'disable-paging-button' : listService.paging.currentPage >= listService.paging.totalPages }"></button>
+  </div>
+</div>

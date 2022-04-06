@@ -1,0 +1,10 @@
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm show values bitnami/redis > redis-values.yaml
+## custom setings namespace,storageclass,standalone type, redis password
+vi redis-values.yaml
+:wq
+## Install Redis
+helm install -f redis-values.yaml bbt-loyalty-redis bitnami/redis -n bbt-loyalty
+## change service type to LoadBalancer
+kubectl edit svc bbt-loyalty-redis-master -n bbt-loyalty

@@ -1,0 +1,13 @@
+<div id="mainContent">
+  <div class="container" *ngIf="blockTitle">
+    <div class="row">
+      <div class="col-md col-sm-12">
+        <div class="title text-white">{{blockTitle}}</div>
+      </div>
+      <div class="col-md col-sm-12" *ngIf="newButtonText">
+        <a [routerLink]="[route]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
+      </div>
+    </div>
+  </div>
+  <ng-content></ng-content>
+</div>

@@ -1,0 +1,247 @@
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyTarget($event)"></app-repost>
+      <form [formGroup]="formGroup">
+        <div class="row p-4">
+          <div class="col-12 col-md-8 m-md-auto">
+            <div class="form-group">
+              <label for="targetSourceId">Hedef Kaynağı</label>
+              <select name="targetSourceId" id="targetSourceId" class="form-select" formControlName="targetSourceId"
+                      [ngClass]="{ 'is-invalid': submitted && f.targetSourceId.invalid }"
+                      (change)="targetSourceChanged()">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of targetSourceList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.targetSourceId.errors" class="invalid-feedback">
+                <div *ngIf="f.targetSourceId.errors.required">Hedef Kaynağı seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="row mt-3" *ngIf="formGroup.get('targetSourceId')?.value">
+              <div class="col">
+                <div class="form-group">
+                  <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
+                  <select name="targetViewTypeId" id="targetViewTypeId" class="form-select"
+                          formControlName="targetViewTypeId"
+                          [ngClass]="{ 'is-invalid': submitted && f.targetViewTypeId.invalid }">
+                    <option [ngValue]="null">Seçiniz</option>
+                    <option *ngFor="let i of targetViewTypeList"
+                            [value]="i.id">{{i.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.targetViewTypeId.errors" class="invalid-feedback">
+                    <div *ngIf="f.targetViewTypeId.errors.required">Hedef Gösterim Tipi seçilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col" *ngIf="formGroup.get('targetSourceId')?.value==1">
+                <div class="form-group">
+                  <label for="flowName">Akış İsmi</label>
+                  <input type="text" class="form-control" name="flowName" id="flowName" formControlName="flowName"
+                         [ngClass]="{ 'is-invalid': submitted && f.flowName.invalid }">
+                  <div *ngIf="submitted && f.flowName.errors" class="invalid-feedback">
+                    <div *ngIf="f.flowName.errors.required">Akış İsmi girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col" *ngIf="formGroup.get('targetSourceId')?.value==2">
+                <div class="form-group">
+                  <label for="condition">Koşul</label>
+                  <input type="text" class="form-control" name="condition" id="condition" formControlName="condition"
+                         [ngClass]="{ 'is-invalid': submitted && f.condition.invalid }">
+                  <div *ngIf="submitted && f.condition.errors" class="invalid-feedback">
+                    <div *ngIf="f.condition.errors.required">Koşul girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="formGroup.get('targetSourceId')?.value==1">
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="totalAmount">Toplam Tutar</label>
+                        <input type="text" class="form-control" name="totalAmount" id="totalAmount"
+                               formControlName="totalAmount" turkishLira
+                               [ngClass]="{ 'is-invalid': submitted && f.totalAmount.invalid }">
+                        <div *ngIf="submitted && f.totalAmount.errors" class="invalid-feedback">
+                          <div *ngIf="f.totalAmount.errors.required">Toplam Tutar girilmelidir.</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="numberOfTransaction">İşlem Adedi</label>
+                        <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
+                               formControlName="numberOfTransaction"
+                               [ngClass]="{ 'is-invalid': submitted && f.numberOfTransaction.invalid }">
+                        <div *ngIf="submitted && f.numberOfTransaction.errors" class="invalid-feedback">
+                          <div *ngIf="f.numberOfTransaction.errors.required">İşlem Adedi girilmelidir.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="flowFrequency">Akış Frekansı</label>
+                    <input type="text" class="form-control" name="flowFrequency" id="flowFrequency"
+                           formControlName="flowFrequency"
+                           [ngClass]="{ 'is-invalid': submitted && f.flowFrequency.invalid }">
+                    <div *ngIf="submitted && f.flowFrequency.errors" class="invalid-feedback">
+                      <div *ngIf="f.flowFrequency.errors.required">Akış Frekansı girilmelidir.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="additionalFlowTime">Akış Ek Süresi</label>
+                    <input type="text" class="form-control" name="additionalFlowTime" id="additionalFlowTime"
+                           formControlName="additionalFlowTime">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="triggerTimeId">Tetiklenme Zamanı</label>
+                    <select name="triggerTimeId" id="triggerTimeId" class="form-select" formControlName="triggerTimeId"
+                            [ngClass]="{ 'is-invalid': submitted && f.triggerTimeId.invalid }">
+                      <option [ngValue]="null">Seçiniz</option>
+                      <option *ngFor="let i of triggerTimeList"
+                              [value]="i.id">{{i.name}}</option>
+                    </select>
+                    <div *ngIf="submitted && f.triggerTimeId.errors" class="invalid-feedback">
+                      <div *ngIf="f.triggerTimeId.errors.required">Tetiklenme Zamanı seçilmelidir.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="formGroup.get('targetSourceId')?.value==2">
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="query">Sorgu</label>
+                    <input type="text" name="query" id="query" class="form-control" formControlName="query"
+                           [ngClass]="{ 'is-invalid': submitted && f.query.invalid }"/>
+                    <div *ngIf="submitted && f.query.errors" class="invalid-feedback">
+                      <div *ngIf="f.query.errors.required">Sorgu girilmelidir.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="verificationTimeId">Kampanya Doğrulama Zamanı</label>
+                    <select name="verificationTimeId" id="verificationTimeId" class="form-select"
+                            formControlName="verificationTimeId"
+                            [ngClass]="{ 'is-invalid': submitted && f.verificationTimeId.invalid }">
+                      <option [ngValue]="null">Seçiniz</option>
+                      <option *ngFor="let i of verificationTimeList"
+                              [value]="i.id">{{i.name}}</option>
+                    </select>
+                    <div *ngIf="submitted && f.verificationTimeId.errors" class="invalid-feedback">
+                      <div *ngIf="f.verificationTimeId.errors.required">Kampanya Doğrulama Zamanı seçilmelidir.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="formGroup.get('targetSourceId')?.value && formGroup.get('targetViewTypeId')?.value!=3">
+              <div class="accordion mt-3" id="accordionTargetDetail">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingTargetDetail">
+                    <button class="accordion-button collapsed accordion-custom" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseTargetDetail"
+                            aria-expanded="true"
+                            aria-controls="collapseTargetDetail">
+                      Hedef Detay
+                    </button>
+                  </h2>
+                  <div id="collapseTargetDetail" class="accordion-collapse collapse"
+                       aria-labelledby="headingTargetDetail"
+                       data-bs-parent="#accordionTargetDetail">
+                    <div class="accordion-body">
+                      <div class="row mt-3">
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="targetDetailTr">Türkçe</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="targetDetailTrChanged($event)"
+                                            formControlName="targetDetailTr" id="targetDetailTr"
+                                            placeholder="Hedef Detay (Türkçe)"></angular-editor>
+                            <div *ngIf="submitted && f.targetDetailTr.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.targetDetailTr.errors.required">Hedef Detay (Türkçe) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="targetDetailEn">İngilizce</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="targetDetailEnChanged($event)"
+                                            formControlName="targetDetailEn" id="targetDetailEn"
+                                            placeholder="Hedef Detay (İngilizce)"></angular-editor>
+                            <div *ngIf="submitted && f.targetDetailEn.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.targetDetailEn.errors.required">Hedef Detay (İngilizce) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion mt-3" id="accordionDescription">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingDescription">
+                    <button class="accordion-button collapsed accordion-custom" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseDescription"
+                            aria-expanded="true"
+                            aria-controls="collapseDescription">
+                      Açıklama
+                    </button>
+                  </h2>
+                  <div id="collapseDescription" class="accordion-collapse collapse" aria-labelledby="headingDescription"
+                       data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <div class="row mt-3">
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="descriptionTr">Türkçe</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="descriptionTrChanged($event)"
+                                            formControlName="descriptionTr" id="descriptionTr"
+                                            placeholder="Detay (Türkçe)"></angular-editor>
+                            <div *ngIf="submitted && f.descriptionTr.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.descriptionTr.errors.required">Açıklama (Türkçe) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label for="descriptionEn">İngilizce</label>
+                            <angular-editor [config]="editorConfig" (ngModelChange)="descriptionEnChanged($event)"
+                                            formControlName="descriptionEn" id="descriptionEn"
+                                            placeholder="Detay (İngilizce)"></angular-editor>
+                            <div *ngIf="submitted && f.descriptionEn.errors" class="d-block invalid-feedback">
+                              <div *ngIf="f.descriptionEn.errors.required">Açıklama (İngilizce) girilmelidir.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+    </div>
+  </div>
+</app-main-content>

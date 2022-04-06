@@ -1,0 +1,126 @@
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
+      <form [formGroup]="formGroup">
+        <div class="row p-4">
+          <div class="col-6 m-auto">
+            <div class="form-group mt-3">
+              <label for="joinTypeId">Dahil Olma Şekli</label>
+              <select name="joinTypeId" id="joinTypeId" class="form-select"
+                      formControlName="joinTypeId"
+                      (change)="joinTypeChange()"
+                      [ngClass]="{ 'is-invalid': submitted && f.joinTypeId.invalid }">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of joinTypeList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.joinTypeId.errors" class="invalid-feedback">
+                <div *ngIf="f.joinTypeId.errors.required">Dahil Olma Şekli seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="row mt-3" *ngIf="showForCustomer">
+              <div class="col">
+                <div class="form-group">
+                  <label for="identity">TCKN / VKN</label>
+                  <input type="text" class="form-control" name="identity" id="identity"
+                         formControlName="identity"
+                         maxlength="11" onlyNumber [readonly]="disableIdentity"
+                         [ngClass]="{ 'is-invalid': submitted && f.identity.invalid }">
+                </div>
+              </div>
+              <div class="col-auto d-flex align-items-end">
+                <input #file type="file" (change)="fileSelected($event)" hidden
+                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                <button type="button" class="btn btn-secondary px-5"
+                        (click)="file.click()"
+                        [disabled]="disabled">
+                  Dosya Yükle
+                </button>
+              </div>
+              <div *ngIf="submitted && f.identity.errors" class="d-block invalid-feedback">
+                <div *ngIf="f.identity.errors.required">TCKN girilmelidir.</div>
+                <div *ngIf="f.identity.errors.minlength">TCKN 11, VKN 10 haneli olmalıdır.</div>
+                <div *ngIf="f.identity.errors.fileTypeValidator">
+                  Sadece .xls ya da .xlsx formatında dosya yüklenebilir.
+                </div>
+                <div *ngIf="f.identity.errors.tcknValidator">
+                  Geçersiz TCKN.
+                </div>
+                <div *ngIf="f.identity.errors.vknValidator">
+                  Geçersiz VKN.
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="showBusinessLines">
+              <label for="businessLines">İş Kolu</label>
+              <select name="businessLines" id="businessLines" class="form-select"
+                      formControlName="businessLines" multiple
+                      [ngClass]="{ 'is-invalid': submitted && f.businessLines.invalid }">
+                <option *ngFor="let i of businessLineList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.businessLines.errors" class="invalid-feedback">
+                <div *ngIf="f.businessLines.errors.required">İş Kolu seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="showBranches">
+              <label for="branches">Şube</label>
+              <select name="branches" id="branches" class="form-select"
+                      formControlName="branches" multiple
+                      [ngClass]="{ 'is-invalid': submitted && f.branches.invalid }">
+                <option *ngFor="let i of branchList"
+                        [value]="i.code">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.branches.errors" class="invalid-feedback">
+                <div *ngIf="f.branches.errors.required">Şube seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="showCustomerTypes">
+              <label for="customerTypes">Müşteri Tipi</label>
+              <select name="customerTypes" id="customerTypes" class="form-select"
+                      formControlName="customerTypes" multiple
+                      [ngClass]="{ 'is-invalid': submitted && f.customerTypes.invalid }">
+                <option *ngFor="let i of customerTypeList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.customerTypes.errors" class="invalid-feedback">
+                <div *ngIf="f.customerTypes.errors.required">Müşteri Tipi seçilmelidir.</div>
+              </div>
+            </div>
+            <!--              <div class="form-group mt-3" *ngIf="showCustomerTypes">-->
+            <!--                <label>Müşteri Tipi</label>-->
+            <!--                <ng-multiselect-dropdown-->
+            <!--                  [placeholder]="'Seçiniz...'"-->
+            <!--                  [settings]="dropdownSettings"-->
+            <!--                  [data]="customerTypeList"-->
+            <!--                  formControlName="customerTypes"-->
+            <!--                >-->
+            <!--                </ng-multiselect-dropdown>-->
+            <!--                <div *ngIf="submitted && f.customerTypes.errors" class="d-block invalid-feedback">-->
+            <!--                  <div *ngIf="f.customerTypes.errors.required">Müşteri Tipi seçilmelidir.</div>-->
+            <!--                </div>-->
+            <!--              </div>-->
+            <div class="form-group mt-3">
+              <label for="startTermId">Kampanya Başlama Dönemi</label>
+              <select name="startTermId" id="startTermId" class="form-select"
+                      formControlName="startTermId"
+                      [ngClass]="{ 'is-invalid': submitted && f.startTermId.invalid }">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of campaignStartTermList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.startTermId.errors" class="invalid-feedback">
+                <div *ngIf="f.startTermId.errors.required">Kampanya Başlama Dönemi seçilmelidir.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="!disabled && nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="continue()">{{nextButtonText}}</button>
+    </div>
+  </div>
+</app-main-content>

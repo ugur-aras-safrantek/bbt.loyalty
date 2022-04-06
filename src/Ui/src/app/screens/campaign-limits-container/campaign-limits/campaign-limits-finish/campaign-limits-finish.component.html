@@ -1,0 +1,16 @@
+<app-main-content>
+  <app-step [data]="stepData"></app-step>
+  <div class="container">
+    <div class="box">
+      <div class="p-5">
+        <app-finish
+          cardTitle="TEBRİKLER"
+          subTitle="Kampanya çatı limiti başarılı bir şekilde onaya gönderilmiştir."
+        >
+          <a [routerLink]="[newLimit]" class="btn btn-primary px-5 mt-3 w-100">Yeni Kampanya Çatı Limiti</a>
+          <a [routerLink]="[limitList]" class="btn btn-outline-primary px-5 mt-3 w-100">Listeye Geri Dön</a>
+        </app-finish>
+      </div>
+    </div>
+  </div>
+</app-main-content>

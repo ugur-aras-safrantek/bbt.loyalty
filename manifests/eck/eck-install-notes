@@ -1,0 +1,13 @@
+kubectl create -f https://download.elastic.co/downloads/eck/2.0.0/crds.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/2.0.0/operator.yaml 
+## custom PVC section added 
+kubectl apply -f elastic-cluster.yaml
+PASSWORD=$(kubectl get secret bbt-loyalty-elasticsearch-es-elastic-user -n bbt-loyalty -o go-template='{{.data.elastic | base64decode}}')
+echo $PASSWORD
+## Change service type to LoadBalancer
+kubectl edit svc bbt-loyalty-elasticsearch-es-http  -n bbt-loyalty
+
+# INSTALL KIBANA
+kubectl apply -f kibana.yaml
+## service type change to LoadBalancer
+kubectl edit svc bbt-loyalty-kibana-kb-http  -n bbt-loyalty

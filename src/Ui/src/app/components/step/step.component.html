@@ -1,0 +1,9 @@
+<div id="stepContent" [ngClass]="{'finished':isFinished}">
+  <div class="container">
+    <ul>
+      <li [ngClass]="{'active':i.isActive,'passed':i.passed,'cursor-pointer':id}"
+          [routerLink]="id ? ['../'+i.route] : []"
+          *ngFor="let i of data">{{i.title}}</li>
+    </ul>
+  </div>
+</div>

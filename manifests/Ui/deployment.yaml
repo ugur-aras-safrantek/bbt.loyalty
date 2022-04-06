@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loyalty-ui
+  namespace: bbt-loyalty
+  labels:
+    app: loyalty-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loyalty-ui
+  template:
+    metadata:
+      labels:
+        app: loyalty-ui
+    spec:
+      containers:
+      - name: loyalty-ui
+        image: burganbank/bbt-loyalty-ui:latest
+        ports:
+        - containerPort: 80

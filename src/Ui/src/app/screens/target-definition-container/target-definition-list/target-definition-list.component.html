@@ -1,0 +1,65 @@
+<app-main-content blockTitle="Hedef Tanımı" route="../create/definition" newButtonText="Yeni Hedef Tanımı">
+  <app-list (getListEvent)="targetDefinitionListGetByFilter()"
+            (downloadExcelFileEvent)="targetDefinitionListGetByFilterExcelFile()">
+    <div filterForm class="p-4">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Hedef Tanımı Adı</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.name">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Hedef ID</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.id" onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
+            <select name="targetViewTypeId" id="targetViewTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.targetViewTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of targetViewTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="targetSourceId">Akış/Sorgu</label>
+            <select name="targetSourceId" id="targetSourceId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.targetSourceId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of targetSourceList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="isActive">Aktif</label>
+            <select name="isActive" id="isActive" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.isActive">
+              <option [ngValue]="null">Tümü</option>
+              <option [ngValue]="true">Evet</option>
+              <option [ngValue]="false">Hayır</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col pt-4">
+          <button class="btn btn-sm btn-outline-primary w-100" (click)="clear()">Temizle</button>
+        </div>
+        <div class="col pt-4">
+          <button class="btn btn-sm btn-primary w-100" (click)="targetDefinitionListGetByFilter()">Filtrele</button>
+        </div>
+      </div>
+    </div>
+  </app-list>
+</app-main-content>

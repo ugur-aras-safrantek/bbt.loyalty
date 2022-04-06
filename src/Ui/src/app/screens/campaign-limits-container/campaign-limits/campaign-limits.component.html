@@ -1,0 +1,120 @@
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyLimit($event)"></app-repost>
+      <form [formGroup]="formGroup">
+        <div class="box p-4">
+          <div class="col-12 col-md-6 m-md-auto">
+            <div class="row">
+              <div class="col-8">
+                <div class="form-group">
+                  <label for="name">Çatı Limiti Adı</label>
+                  <input type="text" class="form-control"
+                         name="name" id="name" formControlName="name"
+                         [ngClass]="{ 'is-invalid': submitted && f.name.invalid }">
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Çatı Limiti Adı girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 checkbox-mt d-flex justify-content-center">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input scale-2x" type="checkbox"
+                           name="isActive" id="isActive" formControlName="isActive">
+                    <label class="form-check-label ms-2" for="isActive">Aktif</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="campaignIds">Kampanyalar</label>
+              <select name="campaignIds" id="campaignIds" class="form-select"
+                      formControlName="campaignIds" multiple
+                      [ngClass]="{ 'is-invalid': submitted && f.campaignIds.invalid }">
+                <option *ngFor="let i of campaignList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.campaignIds.errors" class="invalid-feedback">
+                <div *ngIf="f.campaignIds.errors.required">Kampanya seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="achievementFrequencyId">Kazanım Sıklığı</label>
+              <select name="achievementFrequencyId" id="achievementFrequencyId" class="form-select"
+                      formControlName="achievementFrequencyId"
+                      [ngClass]="{ 'is-invalid': submitted && f.achievementFrequencyId.invalid }">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of achievementFrequencyList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.achievementFrequencyId.errors" class="invalid-feedback">
+                <div *ngIf="f.achievementFrequencyId.errors.required">Kazanım Sıklığı seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="row my-4">
+              <div class="col pl-20px">
+                <div class="form-group">
+                  <div class="form-check form-check-inline me-5">
+                    <input class="form-check-input scale-2x" type="radio"
+                           name="type" formControlName="type" id="type1" [value]="1"
+                           (change)="typeChanged()">
+                    <label class="form-check-label ms-2" for="type1">Tutar</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input scale-2x" type="radio"
+                           name="type" formControlName="type" id="type2" [value]="2"
+                           (change)="typeChanged()">
+                    <label class="form-check-label ms-2" for="type2">Oran</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="formGroup.get('type')?.value==1">
+              <label for="currencyId">Para Birimi</label>
+              <select name="currencyId" id="currencyId" class="form-select" formControlName="currencyId"
+                      [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of currencyList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+              <div *ngIf="submitted && f.currencyId.errors" class="invalid-feedback">
+                <div *ngIf="f.currencyId.errors.required">Para Birimi seçilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="formGroup.get('type')?.value==1">
+              <label for="maxTopLimitAmount">Çatı Max Tutar</label>
+              <input type="text" class="form-control"
+                     [ngClass]="{ 'is-invalid': submitted && f.maxTopLimitAmount.invalid }"
+                     name="maxTopLimitAmount" id="maxTopLimitAmount" formControlName="maxTopLimitAmount"
+                     turkishLira>
+              <div *ngIf="submitted && f.maxTopLimitAmount.errors" class="invalid-feedback">
+                <div *ngIf="f.maxTopLimitAmount.errors.required">Çatı Max Tutar girilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3" *ngIf="formGroup.get('type')?.value==2">
+              <label for="maxTopLimitRate">Çatı Oranı</label>
+              <input type="text" class="form-control"
+                     [ngClass]="{ 'is-invalid': submitted && f.maxTopLimitRate.invalid }"
+                     name="maxTopLimitRate" id="maxTopLimitRate" formControlName="maxTopLimitRate"
+                     onlyNumber>
+              <div *ngIf="submitted && f.maxTopLimitRate.errors" class="invalid-feedback">
+                <div *ngIf="f.maxTopLimitRate.errors.required">Çatı Oranı girilmelidir.</div>
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label for="maxTopLimitUtilization">Çatı Max Yararlanma</label>
+              <input type="text" class="form-control"
+                     name="maxTopLimitUtilization" id="maxTopLimitUtilization" formControlName="maxTopLimitUtilization"
+                     onlyNumber>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
+          <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-main-content>

@@ -1,0 +1,52 @@
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyTarget($event)"></app-repost>
+      <form [formGroup]="formGroup">
+        <div class="row p-4">
+          <div class="col-12 col-md-6 m-md-auto">
+            <div class="row">
+              <div class="col-2 checkbox-mt d-flex justify-content-center">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input scale-2x" type="checkbox"
+                           name="isActive" id="isActive" formControlName="isActive">
+                    <label class="form-check-label ms-2" for="isActive">Aktif</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col form-group">
+                <label for="name">Hedef Tanım İsmi</label>
+                <input type="text" class="form-control" name="name" id="name" formControlName="name"
+                       [ngClass]="{ 'is-invalid': submitted && f.name.invalid }">
+                <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                  <div *ngIf="f.name.errors.required">Hedef Tanım İsmi girilmelidir.</div>
+                </div>
+              </div>
+              <div class="col form-group">
+                <label for="title">Görüntülenecek Hedef Başlığı</label>
+                <input type="text" class="form-control" name="title" id="title" formControlName="title"
+                       [ngClass]="{ 'is-invalid': submitted && f.title.invalid }">
+                <div *ngIf="submitted && f.title.errors" class="invalid-feedback">
+                  <div *ngIf="f.title.errors.required">Görüntülenecek Hedef Başlığı girilmelidir.</div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3" *ngIf="id">
+              <div class="col-6 form-group">
+                <label for="id">Hedef ID</label>
+                <input type="text" class="form-control" name="id" id="id" formControlName="id" readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="continue()">{{nextButtonText}}</button>
+    </div>
+  </div>
+</app-main-content>
