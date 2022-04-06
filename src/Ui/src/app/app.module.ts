@@ -25,7 +25,10 @@ registerLocaleData(localeTR);
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    ToastrModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
   ],
   providers: [{provide: LOCALE_ID, useValue: 'tr-TR'}],
   exports: [],

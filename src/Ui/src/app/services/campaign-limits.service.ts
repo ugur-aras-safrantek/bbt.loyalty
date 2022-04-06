@@ -12,6 +12,7 @@ import {
   CampaignLimitAddRequestModel,
   CampaignLimitUpdateRequestModel
 } from '../models/campaign-limits';
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class CampaignLimitsService {
   repostData = {
     id: null,
     listLink: GlobalVariable.limitList,
+    previewButtonVisible: false,
     previewLink: GlobalVariable.limitPreview,
     copyModalMessage: 'Mevcut çatı limitinin aynısı olacak şekilde yeni bir çatı limiti tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false
@@ -36,6 +38,7 @@ export class CampaignLimitsService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient,
+              private toastrService: ToastrService,
               private utilityService: UtilityService) {
   }
 
@@ -82,13 +85,14 @@ export class CampaignLimitsService {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.utilityService.redirectTo(`${GlobalVariable.limitUpdate}/${res.data.id}`);
+            this.utilityService.redirectTo(`${GlobalVariable.limitUpdate}/${res.data.id}/limit`);
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

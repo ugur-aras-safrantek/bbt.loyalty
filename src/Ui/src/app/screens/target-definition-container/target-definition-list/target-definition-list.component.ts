@@ -6,6 +6,7 @@ import {ListService} from "../../../services/list.service";
 import {saveAs} from 'file-saver';
 import {TargetDefinitionService} from "../../../services/target-definition.service";
 import {TargetDefinitionListRequestModel} from "../../../models/target-definition";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-target-definition-list',
@@ -37,6 +38,7 @@ export class TargetDefinitionListComponent implements OnInit {
   };
 
   constructor(private targetDefinitionService: TargetDefinitionService,
+              private toastrService: ToastrService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -80,11 +82,11 @@ export class TargetDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.targetViewTypeList = res.data;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -97,11 +99,11 @@ export class TargetDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.targetSourceList = res.data;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -152,13 +154,14 @@ export class TargetDefinitionListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
+            this.toastrService.success("İşlem başarılı");
           } else {
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
           }
         },
         error: err => {
           if (err.error.hasError) {
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
           }
         }
       });

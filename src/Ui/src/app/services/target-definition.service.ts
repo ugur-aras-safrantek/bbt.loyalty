@@ -13,6 +13,7 @@ import {
   TargetDefinitionUpdateRequestModel,
   TargetSourceAddUpdateRequestModel
 } from "../models/target-definition";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,7 @@ export class TargetDefinitionService {
   repostData = {
     id: null,
     listLink: GlobalVariable.targetList,
+    previewButtonVisible: true,
     previewLink: GlobalVariable.targetPreview,
     copyModalMessage: 'Mevcut hedef tanımının aynısı olacak şekilde yeni bir hedef tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false
@@ -39,6 +41,7 @@ export class TargetDefinitionService {
   isTargetValuesChanged: boolean = false;
 
   constructor(private httpClient: HttpClient,
+              private toastrService: ToastrService,
               private utilityService: UtilityService) {
   }
 
@@ -82,13 +85,14 @@ export class TargetDefinitionService {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}`);
+            this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}/definition`);
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

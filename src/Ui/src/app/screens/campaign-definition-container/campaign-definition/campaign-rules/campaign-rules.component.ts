@@ -9,6 +9,7 @@ import {CampaignRulesAddRequestModel} from "../../../../models/campaign-definiti
 import {Subject, take, takeUntil} from 'rxjs';
 import * as _ from 'lodash';
 import {UtilityService} from "../../../../services/utility.service";
+import {ToastrService} from "ngx-toastr";
 
 // import {IDropdownSettings} from "ng-multiselect-dropdown";
 
@@ -63,6 +64,7 @@ export class CampaignRulesComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private toastrService: ToastrService,
               private campaignDefinitionService: CampaignDefinitionService,
               private utilityService: UtilityService,
               private router: Router,
@@ -236,11 +238,11 @@ export class CampaignRulesComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -275,11 +277,11 @@ export class CampaignRulesComponent implements OnInit {
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -312,12 +314,13 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.target, this.detailId], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -351,12 +354,13 @@ export class CampaignRulesComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/target-selection`], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

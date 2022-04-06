@@ -14,6 +14,7 @@ import {
   CampaignRulesAddRequestModel,
   CampaignTargetsAddRequestModel
 } from "../models/campaign-definition";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,7 @@ export class CampaignDefinitionService {
   repostData = {
     id: null,
     listLink: GlobalVariable.list,
+    previewButtonVisible: true,
     previewLink: GlobalVariable.preview,
     copyModalMessage: 'Mevcut kampanyanın aynısı olacak şekilde yeni bir kampanya tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false
@@ -42,6 +44,7 @@ export class CampaignDefinitionService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient,
+              private toastrService: ToastrService,
               private utilityService: UtilityService) {
   }
 
@@ -94,12 +97,13 @@ export class CampaignDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`/campaign-definition/create/${res.data.id}/true/definition`);
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

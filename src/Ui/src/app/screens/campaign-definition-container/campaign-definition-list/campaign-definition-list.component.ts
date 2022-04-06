@@ -7,6 +7,7 @@ import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
 import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../services/utility.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-definition-list',
@@ -48,6 +49,7 @@ export class CampaignDefinitionListComponent implements OnInit {
   endDate: any;
 
   constructor(private campaignDefinitionService: CampaignDefinitionService,
+              private toastrService: ToastrService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -133,13 +135,14 @@ export class CampaignDefinitionListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
+            this.toastrService.success("İşlem başarılı");
           } else {
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
           }
         },
         error: err => {
           if (err.error.hasError) {
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
           }
         }
       });
@@ -153,11 +156,11 @@ export class CampaignDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.programTypeList = res.data;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
