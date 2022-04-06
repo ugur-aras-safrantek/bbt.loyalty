@@ -264,13 +264,10 @@ export class CampaignTargetsAddRequestModel implements ICampaignTargetsAddReques
   targetList?: any[];
 }
 
-interface ICampaignGainModel {
-  id?: any;
+interface ICampaignDefinitionGainsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignChannelCodeList?: []
   type?: any;
-  achievementType?: any;
-  action?: any;
-  maxUtilization?: any;
-  typeId?: any;
   achievementTypeId?: any;
   actionOptionId?: any;
   titleTr?: any;
@@ -281,15 +278,13 @@ interface ICampaignGainModel {
   maxAmount?: any;
   amount?: any;
   rate?: any;
+  maxUtilization?: any;
 }
 
-export class CampaignGainModel implements ICampaignGainModel {
-  id?: any;
+export class CampaignDefinitionGainsAddUpdateRequestModel implements ICampaignDefinitionGainsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignChannelCodeList?: []
   type?: any;
-  achievementType?: any;
-  action?: any;
-  maxUtilization?: any;
-  typeId?: any;
   achievementTypeId?: any;
   actionOptionId?: any;
   titleTr?: any;
@@ -300,37 +295,6 @@ export class CampaignGainModel implements ICampaignGainModel {
   maxAmount?: any;
   amount?: any;
   rate?: any;
-}
-
-interface ICampaignGainChannelModel {
-  campaignChannelCode?: any;
-  campaignChannelName?: any;
-  hasAchievement?: any;
-  achievementList: ICampaignGainModel[];
-}
-
-export class CampaignGainChannelModel implements ICampaignGainChannelModel {
-  campaignChannelCode?: any;
-  campaignChannelName?: any;
-  hasAchievement?: any;
-  achievementList: CampaignGainModel[];
-
-  constructor() {
-    this.achievementList = new Array<CampaignGainModel>()
-  }
-}
-
-interface ICampaignDefinitionGainsAddRequestModel {
-  campaignId?: any;
-  channelsAndAchievements: ICampaignGainChannelModel[];
-}
-
-export class CampaignDefinitionGainsAddRequestModel implements ICampaignDefinitionGainsAddRequestModel {
-  campaignId?: any;
-  channelsAndAchievements: CampaignGainChannelModel[];
-
-  constructor() {
-    this.channelsAndAchievements = new Array<CampaignGainChannelModel>()
-  }
+  maxUtilization?: any;
 }
 

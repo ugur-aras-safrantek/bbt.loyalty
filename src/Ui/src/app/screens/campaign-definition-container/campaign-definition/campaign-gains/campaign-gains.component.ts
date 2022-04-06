@@ -2,16 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {CampaignDefinitionService} from "../../../../services/campaign-definition.service";
 import {StepService} from "../../../../services/step.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NgxSmartModalService} from "ngx-smart-modal";
 import {ActivatedRoute, Router} from "@angular/router";
 import {GlobalVariable} from "../../../../global";
-import {
-  CampaignDefinitionGainsAddRequestModel,
-  CampaignGainChannelModel,
-  CampaignGainModel,
-} from "../../../../models/campaign-definition";
+import {CampaignDefinitionGainsAddUpdateRequestModel} from "../../../../models/campaign-definition";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
-import {Subject, takeUntil} from "rxjs";
+import {Subject, take, takeUntil} from "rxjs";
 import {ToastrService} from "ngx-toastr";
 
 @Component({
@@ -23,13 +18,10 @@ import {ToastrService} from "ngx-toastr";
 export class CampaignGainsComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  campaignGainChannelList: CampaignGainChannelModel[];
-  selectedChannel: CampaignGainChannelModel = new CampaignGainChannelModel();
-
   formGroup: FormGroup;
   submitted = false;
-  idEdited = false;
 
+  channelCodeList: DropdownListModel[];
   achievementTypeList: DropdownListModel[];
   actionOptionList: DropdownListModel[];
   currencyList: DropdownListModel[];
@@ -43,16 +35,15 @@ export class CampaignGainsComponent implements OnInit {
 
   preview = GlobalVariable.preview;
 
-  addUpdateButtonText = 'Ekle';
-  nextButtonText = 'Kaydet';
   nextButtonVisible = true;
+  isInvisibleCampaign = false;
 
-  constructor(private modalService: NgxSmartModalService,
-              private fb: FormBuilder,
+  constructor(private fb: FormBuilder,
               private stepService: StepService,
               private toastrService: ToastrService,
               private campaignDefinitionService: CampaignDefinitionService,
-              private router: Router, private route: ActivatedRoute) {
+              private router: Router,
+              private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.detailId = paramMap.get('detailId');
@@ -65,37 +56,40 @@ export class CampaignGainsComponent implements OnInit {
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
     this.stepService.updateStep(4);
     this.stepData = this.stepService.stepData;
+
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
 
+      this.getCampaignDefinitionGain();
+
       this.stepService.finish();
-      this.nextButtonText = "Kaydet ve bitir";
+
       this.nextButtonVisible = false;
-      if (this.campaignDefinitionService.isCampaignValuesChanged){
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
         this.nextButtonVisible = true;
       }
+    } else {
+      this.getCampaignDefinitionGainsGetInsertForm();
     }
 
     this.formGroup = this.fb.group({
-      id: 0,
-      typeId: 1,
+      campaignChannelCodeList: [{value: [], disabled: this.disabled}, Validators.required],
+      type: 1,
       achievementTypeId: [{value: null, disabled: this.disabled}, Validators.required],
-      actionOptionId: [{value: null, disabled: this.disabled}, Validators.required],
-      titleTr: [{value: '', disabled: this.disabled}, Validators.required],
-      titleEn: [{value: '', disabled: this.disabled}, Validators.required],
-      descriptionTr: [{value: '', disabled: this.disabled}, Validators.required],
-      descriptionEn: [{value: '', disabled: this.disabled}, Validators.required],
-      currencyId: [{value: null, disabled: this.disabled}, Validators.required],
-      maxAmount: [{value: '', disabled: this.disabled}, Validators.required],
-      amount: [{value: '', disabled: this.disabled}, Validators.required],
+      actionOptionId: [{value: null, disabled: this.disabled}],
+      titleTr: [{value: '', disabled: this.disabled}],
+      titleEn: [{value: '', disabled: this.disabled}],
+      descriptionTr: [{value: '', disabled: this.disabled}],
+      descriptionEn: [{value: '', disabled: this.disabled}],
+      currencyId: [{value: 1, disabled: this.disabled}],
+      maxAmount: [{value: '', disabled: this.disabled}],
+      amount: [{value: '', disabled: this.disabled}],
       rate: [{value: '', disabled: this.disabled}],
-      maxUtilization: [{value: '', disabled: this.disabled}, Validators.required],
+      maxUtilization: [{value: '', disabled: this.disabled}],
     });
   }
 
   ngOnInit(): void {
-    this.getCampaignDefinitionGainChannels();
-    this.getCampaignDefinitionGainsGetInsertForm();
   }
 
   ngOnDestroy() {
@@ -109,34 +103,55 @@ export class CampaignGainsComponent implements OnInit {
     return this.formGroup.controls;
   }
 
-  typeIdChanged() {
-    if (this.formGroup.get('typeId')?.value == 1) {
-      this.f.currencyId.setValidators(Validators.required);
-      this.f.currencyId.updateValueAndValidity();
-      this.f.maxAmount.setValidators(Validators.required);
-      this.f.maxAmount.updateValueAndValidity();
+  typeChanged() {
+    if (this.formGroup.get('type')?.value == 1) {
       this.f.amount.setValidators(Validators.required);
-      this.f.amount.updateValueAndValidity();
 
+      this.formGroup.patchValue({rate: null});
       this.f.rate.clearValidators();
-      this.f.rate.updateValueAndValidity();
     } else {
       this.f.rate.setValidators(Validators.required);
-      this.f.rate.updateValueAndValidity();
 
-      this.f.currencyId.clearValidators();
-      this.f.currencyId.updateValueAndValidity();
-      this.f.maxAmount.clearValidators();
-      this.f.maxAmount.updateValueAndValidity();
+      this.formGroup.patchValue({
+        currencyId: 1,
+        amount: null,
+        maxAmount: null,
+      });
       this.f.amount.clearValidators();
-      this.f.amount.updateValueAndValidity();
     }
+    Object.keys(this.f).forEach(key => {
+      this.formGroup.controls[key].updateValueAndValidity();
+    });
+  }
+
+  private campaignViewingStateActions(state: boolean) {
+    this.isInvisibleCampaign = state;
+    if (state) {
+      this.formGroup.patchValue({
+        titleTr: null,
+        titleEn: null,
+        descriptionTr: null,
+        descriptionEn: null,
+      });
+      this.f.titleTr.clearValidators();
+      this.f.titleEn.clearValidators();
+      this.f.descriptionTr.clearValidators();
+      this.f.descriptionEn.clearValidators();
+    } else {
+      this.f.titleTr.setValidators(Validators.required);
+      this.f.titleEn.setValidators(Validators.required);
+      this.f.descriptionTr.setValidators(Validators.required);
+      this.f.descriptionEn.setValidators(Validators.required);
+    }
+    Object.keys(this.f).forEach(key => {
+      this.formGroup.controls[key].updateValueAndValidity();
+    });
   }
 
   private populateForm(data) {
     this.formGroup.patchValue({
-      id: data.id,
-      typeId: data.typeId,
+      campaignChannelCodeList: data.channelCodeList,
+      type: data.type,
       achievementTypeId: data.achievementTypeId,
       actionOptionId: data.actionOptionId,
       titleTr: data.titleTr,
@@ -151,144 +166,136 @@ export class CampaignGainsComponent implements OnInit {
     })
   }
 
-  private clearForm() {
-    this.formGroup.patchValue({
-      id: 0,
-      typeId: 1,
-      achievementTypeId: null,
-      actionOptionId: null,
-      titleTr: '',
-      titleEn: '',
-      descriptionTr: '',
-      descriptionEn: '',
-      currencyId: null,
-      maxAmount: '',
-      amount: '',
-      rate: '',
-      maxUtilization: '',
-    })
+  private populateLists(data: any) {
+    this.channelCodeList = data.channelCodeList;
+    this.achievementTypeList = data.achievementTypes;
+    this.actionOptionList = data.actionOptions;
+    this.currencyList = data.currencyList;
   }
 
-  private populateTableColumn(achievement: CampaignGainModel) {
-    achievement.type = achievement.typeId == 1 ? 'Tutar' : 'Oran';
-    achievement.achievementType = this.achievementTypeList.find(x => x.id == achievement.achievementTypeId)?.name;
-    achievement.action = this.actionOptionList.find(x => x.id == achievement.actionOptionId)?.name;
+  private createRequestModel() {
+    let formGroup = this.formGroup.getRawValue();
+    let requestModel = new CampaignDefinitionGainsAddUpdateRequestModel();
 
-    return achievement;
-  }
-
-  showAddModal(channel: CampaignGainChannelModel) {
-    this.clearForm();
-    this.submitted = false;
-    this.idEdited = false;
-    this.selectedChannel = channel;
-    this.addUpdateButtonText = "Ekle";
-    this.modalService.open('addUpdateModal');
-  }
-
-  showUpdateModal(channel: CampaignGainChannelModel, achievement: CampaignGainModel) {
-    this.populateForm(achievement);
-    this.submitted = false;
-    this.idEdited = true;
-    this.selectedChannel = channel;
-    this.addUpdateButtonText = "Güncelle";
-    this.modalService.open('addUpdateModal');
-  }
-
-  addAchievement(achievement: CampaignGainModel) {
-    this.selectedChannel.achievementList.push(achievement);
-  }
-
-  updateAchievement(achievement: CampaignGainModel) {
-    this.selectedChannel.achievementList.splice(
-      this.selectedChannel.achievementList.findIndex(x => x.id == achievement.id),
-      1,
-      achievement
-    );
-  }
-
-  deleteAchievement(channel: CampaignGainChannelModel, achievement: CampaignGainModel) {
-    channel.achievementList.splice(channel.achievementList.findIndex(x => x == achievement), 1);
-    this.nextButtonVisible = true;
-    this.campaignDefinitionService.campaignFormChanged(true);
-  }
-
-  save() {
-    this.submitted = true;
-    if (this.formGroup.valid) {
-      let formGroup = this.formGroup.getRawValue();
-      formGroup = this.populateTableColumn(formGroup);
-      this.idEdited ? this.updateAchievement(formGroup) : this.addAchievement(formGroup);
-      this.modalService.close('addUpdateModal');
-      this.nextButtonVisible = true;
-      this.campaignDefinitionService.campaignFormChanged(true);
+    requestModel.campaignId = this.id ?? this.detailId;
+    requestModel.campaignChannelCodeList = formGroup.campaignChannelCodeList;
+    requestModel.type = formGroup.type;
+    requestModel.achievementTypeId = formGroup.achievementTypeId;
+    requestModel.actionOptionId = formGroup.actionOptionId;
+    requestModel.titleTr = formGroup.titleTr;
+    requestModel.titleEn = formGroup.titleEn;
+    requestModel.descriptionTr = formGroup.descriptionTr;
+    requestModel.descriptionEn = formGroup.descriptionEn;
+    requestModel.maxUtilization = parseInt(formGroup.maxUtilization);
+    switch (formGroup.type) {
+      case 1:
+      case "1":
+        requestModel.currencyId = formGroup.currencyId;
+        requestModel.amount = formGroup.amount;
+        requestModel.maxAmount = formGroup.maxAmount;
+        break;
+      case 2:
+      case "2":
+        requestModel.rate = formGroup.rate;
+        break;
     }
+    return requestModel;
   }
 
   continue() {
-    this.campaignDefinitionGainsAdd();
+    this.submitted = true;
+    if (this.formGroup.valid) {
+      this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
+    }
   }
 
-  copyCampaign(event){
+  copyCampaign(event) {
     this.campaignDefinitionService.copyCampaign(event.id);
   }
 
-  private getCampaignDefinitionGainChannels() {
-    let campaignId = this.id ?? this.detailId;
-    this.campaignDefinitionService.getCampaignDefinitionGainChannels(campaignId)
+  private getCampaignDefinitionGainsGetInsertForm() {
+    let campaignId = parseInt(this.id ?? this.detailId);
+    this.campaignDefinitionService.getCampaignDefinitionGainsGetInsertForm(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.campaignGainChannelList = res.data.channelsAndAchievements;
+            this.populateLists(res.data);
+            this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+            this.typeChanged();
           } else
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
 
-  private getCampaignDefinitionGainsGetInsertForm() {
-    this.campaignDefinitionService.getCampaignDefinitionGainsGetInsertForm()
+  private getCampaignDefinitionGain() {
+    let campaignId = parseInt(this.id ?? this.detailId);
+    this.campaignDefinitionService.getCampaignDefinitionGain(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.achievementTypeList = res.data.achievementTypes;
-            this.actionOptionList = res.data.actionOptions;
-            this.currencyList = res.data.currencyList;
+            this.populateLists(res.data);
+            if (res.data.campaignAchievement) {
+              this.populateForm(res.data.campaignAchievement);
+              this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+              this.typeChanged();
+            }
+            this.formGroup.valueChanges
+              .pipe(take(1))
+              .subscribe(x => {
+                this.nextButtonVisible = true;
+                this.campaignDefinitionService.campaignFormChanged(true);
+              });
           } else
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
 
   private campaignDefinitionGainsAdd() {
-    let campaignId = this.id ?? this.detailId;
-    let requestModel: CampaignDefinitionGainsAddRequestModel = {
-      campaignId: campaignId,
-      channelsAndAchievements: this.campaignGainChannelList
-    };
+    let requestModel = this.createRequestModel();
     this.campaignDefinitionService.campaignDefinitionGainsAdd(requestModel)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate([GlobalVariable.finish, campaignId], {relativeTo: this.route});
+            this.router.navigate(['./finish'], {relativeTo: this.route});
             this.toastrService.success("İşlem başarılı");
           } else
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
+        }
+      });
+  }
+
+  private campaignDefinitionGainsUpdate() {
+    let requestModel = this.createRequestModel();
+    this.campaignDefinitionService.campaignDefinitionGainsUpdate(requestModel)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data) {
+            this.router.navigate([`/campaign-definition/create/${res.data.campaignId}/true/finish`], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
+          } else
+            this.toastrService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }

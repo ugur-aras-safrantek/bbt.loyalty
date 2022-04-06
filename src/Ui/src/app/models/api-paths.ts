@@ -16,9 +16,10 @@ export enum ApiPaths {
   CampaignTargetsUpdate = 'CampaignTarget/update',
   CampaignTargetsGetUpdateForm = 'CampaignTarget/get-update-form',
   CampaignTargetsGetInsertForm = 'CampaignTarget/get-insert-form',
-  CampaignGainChannelsGetListByCampaign = 'CampainAchievement/get-list-by-campaign',
   CampaignGainsGetInsertForm = 'CampainAchievement/get-insert-form',
-  CampaignGainsAdd = 'CampainAchievement/update',
+  CampaignGainsGetUpdateForm = 'CampainAchievement/get-update-form',
+  CampaignGainsAdd = 'CampainAchievement/add',
+  CampaignGainsUpdate = 'CampainAchievement/update',
 
   CampaignLimitsGetParameterList = 'CampaignTopLimit/get-parameter-list',
   CampaignLimitsGetByFilter = 'CampaignTopLimit/get-by-filter',
