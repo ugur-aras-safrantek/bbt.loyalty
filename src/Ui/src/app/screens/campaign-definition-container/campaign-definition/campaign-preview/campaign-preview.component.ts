@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CampaignPreviewModel} from "../../../../models/campaign-definition";
 import {Subject, takeUntil} from "rxjs";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-preview',
@@ -24,6 +25,7 @@ export class CampaignPreviewComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
+              private toastrService: ToastrService,
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
@@ -49,11 +51,11 @@ export class CampaignPreviewComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaign = res.data.campaign;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

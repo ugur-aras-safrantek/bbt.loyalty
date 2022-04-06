@@ -12,6 +12,7 @@ import {
 } from "../../../../models/campaign-definition";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-gains',
@@ -49,6 +50,7 @@ export class CampaignGainsComponent implements OnInit {
   constructor(private modalService: NgxSmartModalService,
               private fb: FormBuilder,
               private stepService: StepService,
+              private toastrService: ToastrService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router, private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
@@ -240,11 +242,11 @@ export class CampaignGainsComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignGainChannelList = res.data.channelsAndAchievements;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -259,11 +261,11 @@ export class CampaignGainsComponent implements OnInit {
             this.actionOptionList = res.data.actionOptions;
             this.currencyList = res.data.currencyList;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -280,12 +282,13 @@ export class CampaignGainsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.finish, campaignId], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

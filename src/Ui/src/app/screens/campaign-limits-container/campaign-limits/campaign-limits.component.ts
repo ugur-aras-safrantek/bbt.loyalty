@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {CampaignLimitAddRequestModel, CampaignLimitUpdateRequestModel} from "../../../models/campaign-limits";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-limits',
@@ -31,6 +32,7 @@ export class CampaignLimitsComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private toastrService: ToastrService,
               private campaignLimitsService: CampaignLimitsService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -174,11 +176,11 @@ export class CampaignLimitsComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -207,11 +209,11 @@ export class CampaignLimitsComponent implements OnInit {
                 this.campaignLimitsService.limitFormChanged(true);
               });
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -224,12 +226,13 @@ export class CampaignLimitsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['../finish'], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -242,12 +245,13 @@ export class CampaignLimitsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['./finish'], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

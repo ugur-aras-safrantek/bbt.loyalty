@@ -6,6 +6,7 @@ import {ListService} from "../../../services/list.service";
 import {CampaignLimitsService} from "../../../services/campaign-limits.service";
 import { CampaignLimitsListRequestModel } from 'src/app/models/campaign-limits';
 import {saveAs} from 'file-saver';
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-limits-list',
@@ -44,6 +45,7 @@ export class CampaignLimitsListComponent implements OnInit {
   };
 
   constructor(private campaignLimitsService: CampaignLimitsService,
+              private toastrService: ToastrService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -85,11 +87,11 @@ export class CampaignLimitsListComponent implements OnInit {
             this.currencyTypeList = res.data.currencyList;
             this.typeList = res.data.typeList;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -146,13 +148,14 @@ export class CampaignLimitsListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
+            this.toastrService.success("İşlem başarılı");
           } else {
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
           }
         },
         error: err => {
           if (err.error.hasError) {
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
           }
         }
       });

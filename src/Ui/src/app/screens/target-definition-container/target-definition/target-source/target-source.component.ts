@@ -7,6 +7,7 @@ import {Subject, take, takeUntil} from "rxjs";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {TargetSourceAddUpdateRequestModel} from "../../../../models/target-definition";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-target-source',
@@ -38,6 +39,7 @@ export class TargetSourceComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private toastrService: ToastrService,
               private targetDefinitionService: TargetDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -245,11 +247,11 @@ export class TargetSourceComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -272,11 +274,11 @@ export class TargetSourceComponent implements OnInit {
                 this.targetDefinitionService.targetFormChanged(true);
               });
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -289,12 +291,13 @@ export class TargetSourceComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([`/target-definition/create/finish`], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -307,12 +310,13 @@ export class TargetSourceComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['../finish'], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

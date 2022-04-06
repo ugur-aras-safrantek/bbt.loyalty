@@ -12,6 +12,7 @@ import {
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-campaign-target-selection',
@@ -42,6 +43,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
   selectedTargetId: any;
 
   constructor(private stepService: StepService,
+              private toastrService: ToastrService,
               private modalService: NgxSmartModalService,
               private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
@@ -134,11 +136,11 @@ export class CampaignTargetSelectionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.addTargetList = res.data.targetList;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -154,12 +156,13 @@ export class CampaignTargetSelectionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.gains, this.detailId], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -177,12 +180,13 @@ export class CampaignTargetSelectionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/gains`], {relativeTo: this.route});
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
@@ -246,11 +250,11 @@ export class CampaignTargetSelectionComponent implements OnInit {
             this.nextButtonText = "Kaydet ve ilerle";
             this.nextButtonVisible = false;
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }

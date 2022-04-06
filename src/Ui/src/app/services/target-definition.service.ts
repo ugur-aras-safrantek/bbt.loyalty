@@ -13,6 +13,7 @@ import {
   TargetDefinitionUpdateRequestModel,
   TargetSourceAddUpdateRequestModel
 } from "../models/target-definition";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,7 @@ export class TargetDefinitionService {
   isTargetValuesChanged: boolean = false;
 
   constructor(private httpClient: HttpClient,
+              private toastrService: ToastrService,
               private utilityService: UtilityService) {
   }
 
@@ -83,12 +85,13 @@ export class TargetDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}`);
+            this.toastrService.success("İşlem başarılı");
           } else
-            console.error("Hata oluştu");
+            this.toastrService.error(res.errorMessage);
         },
         error: err => {
           if (err.error.hasError)
-            console.error(err.error.errorMessage);
+            this.toastrService.error(err.error.errorMessage);
         }
       });
   }
