@@ -33,6 +33,7 @@ export class CampaignDefinitionService {
   repostData = {
     id: null,
     listLink: GlobalVariable.list,
+    previewButtonVisible: true,
     previewLink: GlobalVariable.preview,
     copyModalMessage: 'Mevcut kampanyanın aynısı olacak şekilde yeni bir kampanya tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false

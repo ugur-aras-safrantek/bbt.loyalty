@@ -29,6 +29,7 @@ export class CampaignLimitsService {
   repostData = {
     id: null,
     listLink: GlobalVariable.limitList,
+    previewButtonVisible: false,
     previewLink: GlobalVariable.limitPreview,
     copyModalMessage: 'Mevcut çatı limitinin aynısı olacak şekilde yeni bir çatı limiti tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false

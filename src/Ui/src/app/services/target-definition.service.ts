@@ -30,6 +30,7 @@ export class TargetDefinitionService {
   repostData = {
     id: null,
     listLink: GlobalVariable.targetList,
+    previewButtonVisible: true,
     previewLink: GlobalVariable.targetPreview,
     copyModalMessage: 'Mevcut hedef tanımının aynısı olacak şekilde yeni bir hedef tanımı yapılacaktır. Onaylıyor musunuz?',
     isFormChanged: false
