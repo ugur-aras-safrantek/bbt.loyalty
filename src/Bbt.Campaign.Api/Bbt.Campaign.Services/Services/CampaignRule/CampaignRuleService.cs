@@ -6,6 +6,7 @@ using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignRule;
+using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -484,7 +485,43 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 }
             }
         }
-        
+
+        public async Task<BaseResponse<GetFileResponse>> GetRuleIdentityFileAsync(int campaignId)
+        {
+            var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
+                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
+                .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
+                .FirstOrDefaultAsync();
+            if(campaignRuleEntity == null)
+                throw new Exception("Kampanya kuralı bulunamadı.");
+
+            if (campaignRuleEntity.JoinTypeId != (int)JoinTypeEnum.Customer)
+                throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
+
+            if (campaignRuleEntity.RuleIdentities.Count < 2)
+                throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
+
+            var ruleDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
+                       .GetAll(x => x.CampaignId == campaignId
+                           && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
+                           && !x.IsDeleted)
+                       .FirstOrDefaultAsync();
+            if(ruleDocument == null)
+                throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
+
+            var getFileResponse = new GetFileResponse()
+            {
+                Document = new Public.Models.CampaignDocument.DocumentModel()
+                {
+                    Data = Convert.ToBase64String(ruleDocument.Content, 0, ruleDocument.Content.Length),
+                    DocumentName = campaignId.ToString() + "-KampanyaKuralıTCKN.xlsx",
+                    DocumentType = DocumentTypePublicEnum.CampaignRuleTCKN,
+                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                }
+            };
+            return await BaseResponse<GetFileResponse>.SuccessAsync(getFileResponse);
+        }
+
         static void CheckSingleIdentiy(string identity)
         {
             if (string.IsNullOrWhiteSpace(identity) || string.IsNullOrEmpty(identity))

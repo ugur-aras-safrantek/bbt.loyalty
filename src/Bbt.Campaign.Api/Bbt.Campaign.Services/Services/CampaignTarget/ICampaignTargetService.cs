@@ -7,7 +7,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
     public interface ICampaignTargetService
     {
         public Task<BaseResponse<CampaignTargetDto>> GetCampaignTargetAsync(int id);
-        //public Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request);
         public Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request);
         public Task<BaseResponse<List<CampaignTargetDto>>> GetListAsync(); 
         public Task<BaseResponse<CampaignTargetDto>> GetListByCampaignAsync(int campaignId);
@@ -15,6 +14,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm();
         public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int id);
         public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId);
+        public Task<CampaignTargetDto> GetCampaignVisibleTargetDto(int campaignId);
 
     }
 }

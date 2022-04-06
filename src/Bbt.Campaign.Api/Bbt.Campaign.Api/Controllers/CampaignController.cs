@@ -127,9 +127,9 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the form data for update page
+        /// Returns the contract data for 
         /// </summary>
-        /// <param name="id">Campaign Id</param>
+        /// <param name="id">Contract Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-contract-file")]

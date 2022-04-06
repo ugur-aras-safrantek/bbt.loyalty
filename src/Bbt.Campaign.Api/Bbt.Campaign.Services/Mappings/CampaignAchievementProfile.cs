@@ -10,12 +10,12 @@ namespace Bbt.Campaign.Services.Mappings
         public CampaignAchievementProfile()
         {
             CreateMap<CampaignAchievementDto, CampaignAchievementEntity>().ReverseMap();
+            CreateMap<CampaignAchievementEntity, CampaignAchievementDto>().ReverseMap();
             CreateMap<CampaignAchievementInsertRequest, CampaignAchievementEntity>().ReverseMap();
             CreateMap<CampaignAchievementUpdateRequest, CampaignAchievementEntity>().ReverseMap();
             CreateMap<CampaignAchievementInsertFormDto, CampaignAchievementEntity>().ReverseMap();
             CreateMap<CampaignAchievementListDto, CampaignAchievementEntity>().ReverseMap();
             CreateMap<CampaignAchievementUpdateFormDto, CampaignAchievementEntity>().ReverseMap();
-            CreateMap<ChannelsAndAchievementsByCampaignDto, CampaignAchievementEntity>().ReverseMap();
         }
     }
 }

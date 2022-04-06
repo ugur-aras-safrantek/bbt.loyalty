@@ -721,7 +721,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 campaignAchievementEntity.Id = 0;
                 campaignAchievementEntity.Campaign = campaignEntity;
 
-                if (achievementDraftEntity.ChannelCodes.Any())
+                if (achievementDraftEntity.ChannelCodes.Where(x => !x.IsDeleted).Any())
                 {
                     campaignAchievementEntity.ChannelCodes = new List<CampaignAchievementChannelCodeEntity>();
                     foreach(var x in achievementDraftEntity.ChannelCodes) 

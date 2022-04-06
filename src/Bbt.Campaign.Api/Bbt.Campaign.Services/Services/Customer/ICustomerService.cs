@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Bbt.Campaign.Public.BaseResultModels;
+using Bbt.Campaign.Public.Dtos.Customer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 {
     public interface ICustomerService
     {
+        public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId);
     }
 }

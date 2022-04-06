@@ -192,6 +192,51 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto;
         }
 
+        public async Task<CampaignTargetDto> GetCampaignVisibleTargetDto(int campaignId)
+        {
+            var campaignTargetList =
+                await _unitOfWork.GetRepository<CampaignTargetEntity>()
+                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
+                .Include(x => x.Target)
+                .ToListAsync();
+            if (!campaignTargetList.Any())
+            {
+                return null;
+            }
+
+            foreach (var campaignTarget in campaignTargetList) 
+            { 
+                var targetDetail = await _unitOfWork.GetRepository<TargetDetailEntity>()
+                    .GetAll(x => x.TargetId == campaignTarget.TargetId && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
+                if(targetDetail != null) 
+                {
+                    if (targetDetail.TargetViewTypeId == (int)TargetViewTypeEnum.Invisible) 
+                    {
+                        campaignTarget.IsDeleted = true;
+                    }
+                }
+            }
+
+            var grouplist = campaignTargetList.Where(x => !x.IsDeleted).Select(x => x.TargetGroupId).Distinct().ToList();
+
+            var campaignTargetDto = new CampaignTargetDto();
+            campaignTargetDto.CampaignId = campaignId;
+            foreach (var targetGroupId in grouplist)
+            {
+                var targetGroupDto = new TargetGroupDto();
+                targetGroupDto.Id = targetGroupId;
+                foreach (var campaignTarget in campaignTargetList.Where(x => !x.IsDeleted && x.TargetGroupId == targetGroupId))
+                {
+                    targetGroupDto.TargetList.Add(new ParameterDto { Id = campaignTarget.Target.Id, Name = campaignTarget.Target.Name, Code = "" });
+                }
+
+                campaignTargetDto.TargetGroupList.Add(targetGroupDto);
+            }
+
+            return campaignTargetDto;
+        }
+
         public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId)
         {
             CampaignTargetUpdateFormDto response = new CampaignTargetUpdateFormDto();

@@ -14,5 +14,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         public Task<BaseResponse<CampaignAchievementDto>> DeleteAsync(int id);
         public Task<BaseResponse<CampaignAchievementInsertFormDto>> GetInsertFormAsync(int campaignId);
         public Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId);
+        public Task<CampaignAchievementDto> GetCampaignAchievementDto(int campaignId);
     }
 }

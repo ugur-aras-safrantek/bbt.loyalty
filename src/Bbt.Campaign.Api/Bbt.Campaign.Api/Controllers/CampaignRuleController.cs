@@ -99,5 +99,18 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _campaignRuleService.GetUpdateForm(campaignId);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns the campaign rule identity file data  
+        /// </summary>
+        /// <param name="campaignId">Campaign Id</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-identity-file")]
+        public async Task<IActionResult> GetRuleIdentityFileAsync(int campaignId)
+        {
+            var result = await _campaignRuleService.GetRuleIdentityFileAsync(campaignId);
+            return Ok(result);
+        }
     }
 }

@@ -163,10 +163,10 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             if (entity != null)
             {
                 CampaignAchievementDto mappedCampaignAchievement = _mapper.Map<CampaignAchievementDto>(entity);
-                mappedCampaignAchievement.ChannelCodes = new List<string>();
+                mappedCampaignAchievement.ChannelCodeList = new List<string>();
                 foreach (var x in entity.ChannelCodes.Where(t => !t.IsDeleted))
                 {
-                    mappedCampaignAchievement.ChannelCodes.Add(x.ChannelCode);
+                    mappedCampaignAchievement.ChannelCodeList.Add(x.ChannelCode);
                 }
                 return await BaseResponse<CampaignAchievementDto>.SuccessAsync(mappedCampaignAchievement);
             }
@@ -190,10 +190,10 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             }
 
             CampaignAchievementDto mappedCampaignAchievement = _mapper.Map<CampaignAchievementDto>(entity);
-            mappedCampaignAchievement.ChannelCodes = new List<string>();
+            mappedCampaignAchievement.ChannelCodeList = new List<string>();
             foreach (var x in entity.ChannelCodes) 
             {
-                mappedCampaignAchievement.ChannelCodes.Add(x.ChannelCode);           
+                mappedCampaignAchievement.ChannelCodeList.Add(x.ChannelCode);           
             }
             mappedCampaignAchievement.Campaign = new ParameterDto { Id = entity.Campaign.Id, Code = "", Name = entity.Campaign.Name };
             mappedCampaignAchievement.Rule = new ParameterDto { Id = mappedCampaignAchievement.Type, Code = "", 
@@ -225,12 +225,12 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             response.ActionOptions = (await _parameterService.GetActionOptionListAsync())?.Data;
             response.ChannelCodeList = (await _parameterService.GetCampaignChannelListAsync())?.Data;
 
-            response.IsCampaignInvisible = false;
+            response.IsInvisibleCampaign = false;
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
             if (campaignEntity != null)
             {
                 int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                response.IsCampaignInvisible = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
             }
         }
 

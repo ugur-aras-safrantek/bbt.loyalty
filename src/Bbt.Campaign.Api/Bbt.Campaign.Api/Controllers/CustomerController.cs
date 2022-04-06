@@ -13,16 +13,16 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the form data for customer view page
+        /// Returns the form data for customer view min page
         /// </summary>
         /// <param name="campaignId">Record Id of the campaign</param>
         /// <returns></returns>
-        //[HttpGet]
-        //[Route("view-campaign-min")]
-        //public async Task<IActionResult> GetCampaignViewFormMinAsync(int campaignId)
-        //{
-        //    var result = await _customerService.GetCampaignViewFormMinAsync(campaignId);
-        //    return Ok(result);
-        //}
+        [HttpGet]
+        [Route("view-customer-min")]
+        public async Task<IActionResult> GetCustomerViewMinFormAsync(int campaignId)
+        {
+            var result = await _customerService.GetCustomerViewMinFormAsync(campaignId);
+            return Ok(result);
+        }
     }
 }
