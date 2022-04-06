@@ -148,11 +148,14 @@ namespace Bbt.Campaign.Services.Services.Parameter
 
             if (cacheBranchDate != null)
             {
-                isExists = true;
+                if (cacheBranchDate.ToString() != "null")
+                {
+                    isExists = true;
 
-                var valueDateResult = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDate);
+                    var valueDateResult = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDate);
 
-                isUpToDate = valueDateResult[0].Name == todayStr;
+                    isUpToDate = valueDateResult[0].Name == todayStr;
+                }
             }
 
             // cache te varsa ve bugun güncellenmiş ise direk getir
@@ -219,7 +222,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
                         var response = await httpClient.GetAsync(StaticValues.BranchServiceUrl);
                         if (response.IsSuccessStatusCode)
                         {
-                            if(response.Content != null) 
+                            if (response.Content != null)
                             {
                                 string apiResponse = await response.Content.ReadAsStringAsync();
                                 await _redisDatabaseProvider.SetAsync(CacheKeys.BranchList, apiResponse);
@@ -230,7 +233,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
                                     Name = x.Code + "-" + x.Name
                                 }).ToList();
                             }
-                            else 
+                            else
                             {
                                 throw new Exception("Şube listesi servisinden veri çekilemedi.");
                             }
@@ -257,26 +260,29 @@ namespace Bbt.Campaign.Services.Services.Parameter
 
             if (cacheChannelCodeDate != null)
             {
-                isExists = true;
+                if (cacheChannelCodeDate.ToString() != "null")
+                {
+                    isExists = true;
 
-                var valueDateResult = JsonConvert.DeserializeObject<List<string>>(cacheChannelCodeDate);
+                    var valueDateResult = JsonConvert.DeserializeObject<List<string>>(cacheChannelCodeDate);
 
-                isUpToDate = valueDateResult[0] == todayStr;
+                    isUpToDate = valueDateResult[0] == todayStr;
+                }
             }
 
             // cache te varsa ve bugun güncellenmiş ise direk getir
             if (cache != null && cache.ToString() != "null" && isExists && isUpToDate)
             {
-                result= JsonConvert.DeserializeObject<List<string>>(cache);
+                result = JsonConvert.DeserializeObject<List<string>>(cache);
             }
-            else 
+            else
             {
                 List<string> valueDateList = new List<string>();
                 valueDateList.Add(todayStr);
                 var valueDate = JsonConvert.SerializeObject(valueDateList);
                 await _redisDatabaseProvider.SetAsync(CacheKeys.ChannelCodeSelectDate, valueDate);
 
-                if (StaticValues.IsDevelopment) 
+                if (StaticValues.IsDevelopment)
                 {
                     result = new List<string>()
                     {"BATCH","BAYI","DIGER","INTERNET","PTT","REMOTE","SMS","TABLET","WEB","WEBBAYI","WEBMEVDUAT" };
@@ -285,22 +291,22 @@ namespace Bbt.Campaign.Services.Services.Parameter
 
                     await _redisDatabaseProvider.SetAsync(CacheKeys.CampaignChannelList, value);
                 }
-                else 
+                else
                 {
                     result = new List<string>();
-                    using (var httpClient = new HttpClient()) 
+                    using (var httpClient = new HttpClient())
                     {
                         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var response = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
                         if (response.IsSuccessStatusCode)
                         {
-                            if(response.Content != null) 
+                            if (response.Content != null)
                             {
                                 string apiResponse = await response.Content.ReadAsStringAsync();
                                 await _redisDatabaseProvider.SetAsync(CacheKeys.CampaignChannelList, apiResponse);
                                 result = JsonConvert.DeserializeObject<List<string>>(apiResponse);
                             }
-                            else 
+                            else
                             {
                                 throw new Exception("Kazanım kanalı servisinden veri çekilemedi.");
                             }
