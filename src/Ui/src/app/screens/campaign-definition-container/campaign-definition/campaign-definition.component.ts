@@ -358,10 +358,10 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.populateForm(res.data.campaign);
-            this.contractDocument = res.data.contractFile.document;
+            this.contractDocument = res.data.contractFile?.document;
             this.contractIdDisable = true;
             this.contractDocumentId = res.data.campaign.contractId;
-            this.formGroup.patchValue({contractId: res.data.contractFile.document.documentName});
+            this.formGroup.patchValue({contractId: res.data.contractFile?.document.documentName});
             this.changedMethodsTrigger();
             this.nextButtonText = "Kaydet ve ilerle";
             this.formGroup.valueChanges
