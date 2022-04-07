@@ -37,6 +37,8 @@ export class CampaignGainsComponent implements OnInit {
 
   nextButtonVisible = true;
   isInvisibleCampaign = false;
+  previewButtonVisibleState = false;
+  buttonTypeIsContinue = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
@@ -202,11 +204,24 @@ export class CampaignGainsComponent implements OnInit {
     return requestModel;
   }
 
-  continue() {
+  save() {
     this.submitted = true;
     if (this.formGroup.valid) {
       this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
+
     }
+  }
+
+  continue() {
+    this.id
+      ? this.router.navigate([`/campaign-definition/create/${this.id}/true/finish`], {relativeTo: this.route})
+      : this.router.navigate(['./finish'], {relativeTo: this.route});
+  }
+
+  finish(id) {
+    this.preview = `${this.preview}/${id}`;
+    this.previewButtonVisibleState = true;
+    this.buttonTypeIsContinue = true;
   }
 
   copyCampaign(event) {
@@ -269,7 +284,7 @@ export class CampaignGainsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate(['./finish'], {relativeTo: this.route});
+            this.finish(res.data.campaignId);
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -288,7 +303,7 @@ export class CampaignGainsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate([`/campaign-definition/create/${res.data.campaignId}/true/finish`], {relativeTo: this.route});
+            this.finish(res.data.campaignId);
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
