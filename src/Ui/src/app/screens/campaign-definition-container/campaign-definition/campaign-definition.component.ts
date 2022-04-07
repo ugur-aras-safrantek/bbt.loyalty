@@ -326,8 +326,8 @@ export class CampaignDefinitionComponent implements OnInit {
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
@@ -352,8 +352,8 @@ export class CampaignDefinitionComponent implements OnInit {
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
@@ -400,8 +400,8 @@ export class CampaignDefinitionComponent implements OnInit {
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
@@ -449,8 +449,8 @@ export class CampaignDefinitionComponent implements OnInit {
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }

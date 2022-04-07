@@ -90,8 +90,8 @@ export class CampaignLimitsListComponent implements OnInit {
             this.toastrService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrService.error(err.error.title);
         }
       });
   }
@@ -120,8 +120,8 @@ export class CampaignLimitsListComponent implements OnInit {
           }
         },
         error: err => {
-          if (err.error.hasError) {
-            this.listService.setError(err.error.errorMessage);
+          if (err.error) {
+            this.toastrService.error(err.error.title);
           }
         }
       });
@@ -154,8 +154,8 @@ export class CampaignLimitsListComponent implements OnInit {
           }
         },
         error: err => {
-          if (err.error.hasError) {
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error) {
+            this.toastrService.error(err.error.title);
           }
         }
       });
