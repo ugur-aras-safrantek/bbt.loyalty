@@ -270,7 +270,7 @@ export class CampaignGainsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['./finish'], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -289,7 +289,7 @@ export class CampaignGainsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([`/campaign-definition/create/${res.data.campaignId}/true/finish`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

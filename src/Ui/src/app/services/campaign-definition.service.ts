@@ -97,7 +97,7 @@ export class CampaignDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`/campaign-definition/create/${res.data.id}/true/definition`);
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

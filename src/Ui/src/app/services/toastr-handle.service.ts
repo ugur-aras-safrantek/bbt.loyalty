@@ -11,7 +11,7 @@ export class ToastrHandleService {
   }
 
   success(message?: string) {
-    this.toastrService.success(message);
+    this.toastrService.success(message || "İşlem Başarılı");
   }
 
   error(error?: any) {

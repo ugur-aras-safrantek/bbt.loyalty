@@ -314,7 +314,7 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.target, this.detailId], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -354,7 +354,7 @@ export class CampaignRulesComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/target-selection`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

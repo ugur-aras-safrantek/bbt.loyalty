@@ -395,7 +395,7 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.detailId = res.data.id;
             this.router.navigate([GlobalVariable.rules, this.detailId], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -444,7 +444,7 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/rules`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

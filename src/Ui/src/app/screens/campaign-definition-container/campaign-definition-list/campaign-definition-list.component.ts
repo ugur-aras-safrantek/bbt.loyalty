@@ -135,7 +135,7 @@ export class CampaignDefinitionListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else {
             this.toastrHandleService.error(res.errorMessage);
           }

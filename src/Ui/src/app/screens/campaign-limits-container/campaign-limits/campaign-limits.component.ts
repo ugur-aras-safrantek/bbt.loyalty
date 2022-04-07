@@ -226,7 +226,7 @@ export class CampaignLimitsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['../finish'], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -245,7 +245,7 @@ export class CampaignLimitsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['./finish'], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

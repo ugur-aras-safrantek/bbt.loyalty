@@ -156,7 +156,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.gains, this.detailId], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -180,7 +180,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/gains`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

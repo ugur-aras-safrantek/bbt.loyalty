@@ -131,7 +131,7 @@ export class TargetDefinitionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([`/target-definition/create/source/${res.data.id}`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -157,7 +157,7 @@ export class TargetDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.targetDefinitionService.isTargetValuesChanged = true;
             this.router.navigate([`/target-definition/update/${res.data.id}/source`], {relativeTo: this.route});
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

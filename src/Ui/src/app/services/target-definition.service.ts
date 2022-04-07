@@ -86,7 +86,7 @@ export class TargetDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`${GlobalVariable.targetUpdate}/${res.data.id}/definition`);
-            this.toastrHandleService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
