@@ -1,4 +1,4 @@
-.contract-row{
+.contract-row {
   padding-bottom: 20px;
   padding-top: 24px;
 }
@@ -10,7 +10,25 @@
   padding-left: 10px;
 }
 
-.accordion-invalid{
+.accordion-invalid {
   border-color: red !important;
+}
 
+.contract-id-input {
+  border-right: 0 !important;
+}
+
+.search-icon {
+  border-radius: 0;
+  border-top: 1px solid #ced4da !important;
+  border-right: 1px solid #ced4da !important;
+  border-bottom: 1px solid #ced4da !important;
+}
+
+.search-icon-invalid {
+  color: #dc3545;
+  border-radius: 0;
+  border-top: 1px solid #dc3545 !important;
+  border-right: 1px solid #dc3545 !important;
+  border-bottom: 1px solid #dc3545 !important;
 }

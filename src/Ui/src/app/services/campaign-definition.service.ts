@@ -123,6 +123,14 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
+  campaignDefinitionGetContractFile(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionGetContractFile}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
   campaignRulesGetInsertForm() {
     const url = `${this.baseUrl}/${ApiPaths.CampaignRulesGetInsertForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);

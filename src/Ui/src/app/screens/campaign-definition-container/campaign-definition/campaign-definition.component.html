@@ -49,13 +49,22 @@
                   <div class="col">
                     <div class="form-group">
                       <label for="contractId">Sözleşme ID</label>
-                      <input type="text" class="form-control" name="contractId" id="contractId"
-                             formControlName="contractId" onlyNumber
-                             [ngClass]="{ 'is-invalid': submitted && f.contractId.invalid }">
+                      <div class="input-group">
+                        <input type="text" class="form-control contract-id-input" name="contractId" id="contractId"
+                               formControlName="contractId" onlyNumber
+                               [ngClass]="{ 'is-invalid': submitted && f.contractId.invalid }">
+                        <div class="input-group-append">
+                          <button class="btn search-icon" type="button"
+                                  (click)="getContractFile()"
+                                  [ngClass]="{ 'search-icon-invalid': submitted && f.contractId.invalid }">
+                            <i class="bi-search"></i>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="col-auto">
-                    <button class="btn btn-secondary px-5">Göster</button>
+                    <button class="btn btn-secondary px-5" (click)="showDocumentFile()">Göster</button>
                   </div>
                 </div>
                 <div *ngIf="submitted && f.contractId.errors" class="d-block invalid-feedback">

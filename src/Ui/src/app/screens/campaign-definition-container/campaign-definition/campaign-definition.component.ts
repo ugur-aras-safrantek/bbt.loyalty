@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {IAngularMyDpOptions} from 'angular-mydatepicker';
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {GlobalVariable} from "../../../global";
+import {saveAs} from 'file-saver';
 import {
   CampaignDefinitionAddRequestModel,
   CampaignDefinitionUpdateRequestModel
@@ -26,6 +27,7 @@ export class CampaignDefinitionComponent implements OnInit {
 
   regex = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
+  contractDocument: any = null;
   formGroup: FormGroup;
   programTypeList: DropdownListModel[];
   viewOptionList: DropdownListModel[];
@@ -453,5 +455,36 @@ export class CampaignDefinitionComponent implements OnInit {
             this.toastrHandleService.error(err.error);
         }
       });
+  }
+
+  getContractFile() {
+    let contractId = this.formGroup.getRawValue().contractId;
+    if (contractId != "") {
+      this.campaignDefinitionService.campaignDefinitionGetContractFile(contractId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: res => {
+            if (!res.hasError && res.data?.document) {
+              this.contractDocument = res.data.document;
+              this.toastrHandleService.success(`Sözleşme ID'si ${contractId} olan ${res.data.document.documentName} getirildi.`);
+            } else {
+              this.toastrHandleService.error(res.errorMessage);
+            }
+          },
+          error: err => {
+            if (err.error) {
+              this.toastrHandleService.error(err.error);
+            }
+          }
+        });
+    }
+  }
+
+  showDocumentFile() {
+    let document = this.contractDocument;
+    if (document) {
+      let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+      saveAs(file, document.documentName);
+    }
   }
 }
