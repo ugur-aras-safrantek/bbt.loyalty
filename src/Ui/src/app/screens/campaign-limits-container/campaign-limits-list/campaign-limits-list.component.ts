@@ -4,9 +4,9 @@ import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {UtilityService} from "../../../services/utility.service";
 import {ListService} from "../../../services/list.service";
 import {CampaignLimitsService} from "../../../services/campaign-limits.service";
-import { CampaignLimitsListRequestModel } from 'src/app/models/campaign-limits';
+import {CampaignLimitsListRequestModel} from 'src/app/models/campaign-limits';
 import {saveAs} from 'file-saver';
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-limits-list',
@@ -45,7 +45,7 @@ export class CampaignLimitsListComponent implements OnInit {
   };
 
   constructor(private campaignLimitsService: CampaignLimitsService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -87,11 +87,11 @@ export class CampaignLimitsListComponent implements OnInit {
             this.currencyTypeList = res.data.currencyList;
             this.typeList = res.data.typeList;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -121,7 +121,7 @@ export class CampaignLimitsListComponent implements OnInit {
         },
         error: err => {
           if (err.error) {
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
           }
         }
       });
@@ -148,14 +148,14 @@ export class CampaignLimitsListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else {
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
           }
         },
         error: err => {
           if (err.error) {
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
           }
         }
       });

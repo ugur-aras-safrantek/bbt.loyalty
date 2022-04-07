@@ -7,7 +7,7 @@ import {GlobalVariable} from "../../../../global";
 import {CampaignDefinitionGainsAddUpdateRequestModel} from "../../../../models/campaign-definition";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-gains',
@@ -40,7 +40,7 @@ export class CampaignGainsComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -224,11 +224,11 @@ export class CampaignGainsComponent implements OnInit {
             this.campaignViewingStateActions(res.data.isInvisibleCampaign);
             this.typeChanged();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -253,11 +253,11 @@ export class CampaignGainsComponent implements OnInit {
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -270,13 +270,13 @@ export class CampaignGainsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate(['./finish'], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -289,13 +289,13 @@ export class CampaignGainsComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([`/campaign-definition/create/${res.data.campaignId}/true/finish`], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }

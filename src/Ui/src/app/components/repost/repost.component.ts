@@ -42,6 +42,7 @@ export class RepostComponent implements OnInit {
 
   alertModalOk() {
     this.router.navigate([this.repostData.listLink], {relativeTo: this.route});
+    this.modalService.close('alertModal');
   }
 
   openCopyModal() {
@@ -54,6 +55,7 @@ export class RepostComponent implements OnInit {
 
   copyModalOk() {
     this.copy();
+    this.modalService.close('copyModal');
   }
 
   private copy() {

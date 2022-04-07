@@ -7,7 +7,7 @@ import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
 import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../services/utility.service";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-definition-list',
@@ -49,7 +49,7 @@ export class CampaignDefinitionListComponent implements OnInit {
   endDate: any;
 
   constructor(private campaignDefinitionService: CampaignDefinitionService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -108,7 +108,7 @@ export class CampaignDefinitionListComponent implements OnInit {
         },
         error: err => {
           if (err.error) {
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
           }
         }
       });
@@ -135,14 +135,14 @@ export class CampaignDefinitionListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else {
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
           }
         },
         error: err => {
           if (err.error) {
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
           }
         }
       });
@@ -156,11 +156,11 @@ export class CampaignDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.programTypeList = res.data;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }

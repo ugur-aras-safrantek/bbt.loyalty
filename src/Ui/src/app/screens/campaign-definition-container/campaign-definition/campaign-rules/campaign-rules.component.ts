@@ -9,7 +9,7 @@ import {CampaignRulesAddRequestModel} from "../../../../models/campaign-definiti
 import {Subject, take, takeUntil} from 'rxjs';
 import * as _ from 'lodash';
 import {UtilityService} from "../../../../services/utility.service";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 // import {IDropdownSettings} from "ng-multiselect-dropdown";
 
@@ -64,7 +64,7 @@ export class CampaignRulesComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private utilityService: UtilityService,
               private router: Router,
@@ -238,11 +238,11 @@ export class CampaignRulesComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -277,11 +277,11 @@ export class CampaignRulesComponent implements OnInit {
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -314,13 +314,13 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.target, this.detailId], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -354,13 +354,13 @@ export class CampaignRulesComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/target-selection`], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }

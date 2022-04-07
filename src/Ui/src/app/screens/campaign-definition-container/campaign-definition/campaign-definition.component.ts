@@ -13,7 +13,7 @@ import {
 import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {UtilityService} from "../../../services/utility.service";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-definition',
@@ -60,7 +60,7 @@ export class CampaignDefinitionComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
@@ -295,7 +295,7 @@ export class CampaignDefinitionComponent implements OnInit {
     this.f.detailTr.updateValueAndValidity();
   }
 
-  private changedMethodsTrigger(){
+  private changedMethodsTrigger() {
     this.isBundleChanged();
     this.isContractChanged();
     this.programTypeChanged();
@@ -323,11 +323,11 @@ export class CampaignDefinitionComponent implements OnInit {
             this.viewOptionList = res.data.viewOptionList;
             this.sectorList = res.data.sectorList;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -349,11 +349,11 @@ export class CampaignDefinitionComponent implements OnInit {
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -395,13 +395,13 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.detailId = res.data.id;
             this.router.navigate([GlobalVariable.rules, this.detailId], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -444,13 +444,13 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/rules`], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }

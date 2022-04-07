@@ -14,7 +14,7 @@ import {
   CampaignRulesAddRequestModel,
   CampaignTargetsAddRequestModel
 } from "../models/campaign-definition";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class CampaignDefinitionService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService) {
   }
 
@@ -97,13 +97,13 @@ export class CampaignDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`/campaign-definition/create/${res.data.id}/true/definition`);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success("İşlem başarılı");
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
           if (err.error)
-            this.toastrService.error(err.error.title);
+            this.toastrHandleService.error(err.error);
         }
       });
   }
