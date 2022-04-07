@@ -48,7 +48,7 @@ export class CampaignLimitsComponent implements OnInit {
       name: ['', Validators.required],
       isActive: false,
       campaignIds: [[], Validators.required],
-      achievementFrequencyId: [null, Validators.required],
+      achievementFrequencyId: [1, Validators.required],
       type: 1,
       currencyId: [1, Validators.required],
       maxTopLimitAmount: ['', Validators.required],
