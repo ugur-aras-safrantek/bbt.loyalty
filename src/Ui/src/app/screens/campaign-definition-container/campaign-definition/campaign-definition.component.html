@@ -52,11 +52,14 @@
                       <div class="input-group">
                         <input type="text" class="form-control contract-id-input" name="contractId" id="contractId"
                                formControlName="contractId" onlyNumber
-                               [ngClass]="{ 'is-invalid': submitted && f.contractId.invalid }">
+                               [ngClass]="{ 'is-invalid': submitted && f.contractId.invalid }"
+                               (click)="contractIdClicked()"
+                               [readonly]="contractIdDisable">
                         <div class="input-group-append">
                           <button class="btn search-icon" type="button"
+                                  [ngClass]="{ 'search-icon-invalid': submitted && f.contractId.invalid }"
                                   (click)="getContractFile()"
-                                  [ngClass]="{ 'search-icon-invalid': submitted && f.contractId.invalid }">
+                                  [disabled]="contractIdDisable">
                             <i class="bi-search"></i>
                           </button>
                         </div>

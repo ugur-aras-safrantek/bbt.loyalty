@@ -10,6 +10,10 @@ export class ToastrHandleService {
   constructor(private toastrService: ToastrService) {
   }
 
+  warning(message?: string){
+    this.toastrService.warning(message);
+  }
+
   success(message?: string) {
     this.toastrService.success(message || "İşlem Başarılı");
   }

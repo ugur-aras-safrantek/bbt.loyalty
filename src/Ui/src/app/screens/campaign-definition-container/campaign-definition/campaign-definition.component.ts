@@ -28,6 +28,7 @@ export class CampaignDefinitionComponent implements OnInit {
   regex = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
   contractDocument: any = null;
+  contractIdDisable: boolean = false;
   formGroup: FormGroup;
   programTypeList: DropdownListModel[];
   viewOptionList: DropdownListModel[];
@@ -198,6 +199,13 @@ export class CampaignDefinitionComponent implements OnInit {
     return this.formGroup.controls;
   }
 
+  contractIdClicked() {
+    if (this.contractIdDisable) {
+      this.contractIdDisable = false;
+      this.formGroup.patchValue({contractId: ''});
+    }
+  }
+
   isBundleChanged() {
     if (this.formGroup.get('isBundle')?.value) {
       this.formGroup.patchValue({order: ''});
@@ -212,6 +220,8 @@ export class CampaignDefinitionComponent implements OnInit {
     if (this.formGroup.get('isContract')?.value) {
       this.f.contractId.setValidators(Validators.required);
     } else {
+      this.contractDocument = null;
+      this.contractIdDisable = false;
       this.formGroup.patchValue({contractId: ''});
       this.f.contractId.clearValidators();
     }
@@ -466,6 +476,8 @@ export class CampaignDefinitionComponent implements OnInit {
           next: res => {
             if (!res.hasError && res.data?.document) {
               this.contractDocument = res.data.document;
+              this.contractIdDisable = true;
+              this.formGroup.patchValue({contractId: res.data.document.documentName});
               this.toastrHandleService.success(`Sözleşme ID'si ${contractId} olan ${res.data.document.documentName} getirildi.`);
             } else {
               this.toastrHandleService.error(res.errorMessage);
@@ -477,6 +489,8 @@ export class CampaignDefinitionComponent implements OnInit {
             }
           }
         });
+    } else {
+      this.toastrHandleService.warning("Sözleşme ID girilmelidir.");
     }
   }
 
@@ -485,6 +499,8 @@ export class CampaignDefinitionComponent implements OnInit {
     if (document) {
       let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
       saveAs(file, document.documentName);
+    } else {
+      this.toastrHandleService.warning("Sözleşme bulunamadı.");
     }
   }
 }
