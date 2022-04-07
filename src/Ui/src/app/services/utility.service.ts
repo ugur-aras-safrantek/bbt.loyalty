@@ -46,7 +46,7 @@ export class UtilityService {
 
   tcknValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (control.value.length == 11) {
+      if (control.value?.length == 11) {
         let value = control.value.toString();
 
         let isEleven = /^[0-9]{11}$/.test(value);
@@ -86,7 +86,7 @@ export class UtilityService {
 
   vknValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (control.value.length == 10) {
+      if (control.value?.length == 10) {
         let vkn = control.value;
         let tmp;
         let sum = 0;
