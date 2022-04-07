@@ -98,7 +98,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int id)
         {
-            var result = await _campaignService.GetUpdateFormAsync(id);
+            var result = await _campaignService.GetUpdateFormAsync(id, _webHostEnvironment.ContentRootPath);
             return Ok(result);
         }
         /// <summary>

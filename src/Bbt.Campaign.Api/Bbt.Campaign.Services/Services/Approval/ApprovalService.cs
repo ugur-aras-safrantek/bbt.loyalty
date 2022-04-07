@@ -638,8 +638,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     }
                 }
             }
-            else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.BusinessLine || 
-                campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.AllCustomers)
+            else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.BusinessLine)
             {
                 if (campaignRuleDraftEntity.BusinessLines.Any())
                 {
@@ -886,9 +885,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                     CurrencyId = topLimitDraftEntitiy.CurrencyId,
                     Id = topLimitDraftEntitiy.Id,
                     IsActive = topLimitDraftEntitiy.IsActive,
-                    MaxTopLimitAmount = topLimitDraftEntitiy.MaxTopLimitAmount,
-                    MaxTopLimitRate = topLimitDraftEntitiy.MaxTopLimitRate,
-                    MaxTopLimitUtilization = topLimitDraftEntitiy.MaxTopLimitUtilization,
+                    //MaxTopLimitAmount = topLimitDraftEntitiy.MaxTopLimitAmount,
+                    //MaxTopLimitRate = topLimitDraftEntitiy.MaxTopLimitRate,
+                    //MaxTopLimitUtilization = topLimitDraftEntitiy.MaxTopLimitUtilization,
                     Name = topLimitDraftEntitiy.Name,
                     Type = topLimitDraftEntitiy.Type
                 };
@@ -910,9 +909,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                     CurrencyId = TopLimitEntity.CurrencyId,
                     Id = TopLimitEntity.Id,
                     IsActive = TopLimitEntity.IsActive,
-                    MaxTopLimitAmount = TopLimitEntity.MaxTopLimitAmount,
-                    MaxTopLimitRate = TopLimitEntity.MaxTopLimitRate,
-                    MaxTopLimitUtilization = TopLimitEntity.MaxTopLimitUtilization,
+                    //MaxTopLimitAmount = TopLimitEntity.MaxTopLimitAmount,
+                    //MaxTopLimitRate = TopLimitEntity.MaxTopLimitRate,
+                    //MaxTopLimitUtilization = TopLimitEntity.MaxTopLimitUtilization,
                     Name = TopLimitEntity.Name,
                     Type = TopLimitEntity.Type
                 };
@@ -1257,11 +1256,17 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (topLimitDraftEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
 
-            //campaign
-            var topLimitDto = _mapper.Map<TopLimitDto>(topLimitDraftEntity);
-            var topLimitEntity = _mapper.Map<TopLimitEntity>(topLimitDto);
-            topLimitEntity.Id = 0;
+            //topLimitEntity
+
+            TopLimitEntity topLimitEntity = new TopLimitEntity();
+            topLimitEntity.AchievementFrequencyId = topLimitDraftEntity.AchievementFrequencyId;
+            topLimitEntity.CurrencyId = topLimitDraftEntity.CurrencyId;
+            topLimitEntity.IsActive = topLimitDraftEntity.IsActive;
+            topLimitEntity.MaxTopLimitAmount = topLimitDraftEntity.MaxTopLimitAmount;
+            topLimitEntity.MaxTopLimitRate = topLimitDraftEntity.MaxTopLimitRate;
+            topLimitEntity.MaxTopLimitUtilization = topLimitDraftEntity.MaxTopLimitUtilization;
             topLimitEntity.Name = topLimitDraftEntity.Name + "-Copy";
+            topLimitEntity.Type = topLimitDraftEntity.Type;
             topLimitEntity.IsApproved = false;
             topLimitEntity.IsDraft = true;
             topLimitEntity.RefId = null;
@@ -1295,24 +1300,31 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             //target
             var targetDto = _mapper.Map<TargetDto>(targetDraftEntity);
+            targetDto.Id = 0;
             var targetEntity = _mapper.Map<TargetEntity>(targetDto);
-            targetEntity.Id = 0;
+            //targetEntity.Id = 0;
             targetEntity.Name = targetDraftEntity.Name + "-Copy";
             targetEntity.IsApproved = false;
             targetEntity.IsDraft = true;
             targetEntity.RefId = null;
+            targetEntity.TargetDetail = null;
 
-            await _unitOfWork.GetRepository<TargetEntity>().AddAsync(targetEntity);
+             await _unitOfWork.GetRepository<TargetEntity>().AddAsync(targetEntity);
 
             if (targetDraftEntity.TargetDetail != null) 
             {
                 var targetDetailDto = _mapper.Map<TargetDetailDto>(targetDraftEntity.TargetDetail);
+                targetDetailDto.Id = 0;
                 var targetDetailEntity = _mapper.Map<TargetDetailEntity>(targetDetailDto);
-                targetDetailEntity.Id = 0;
+                //targetDetailEntity.Id = 0;
                 targetDetailEntity.Target = targetEntity;
 
                 await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(targetDetailEntity);
+
+                //targetEntity.TargetDetail = targetDetailEntity;
             }
+            
+           
 
             await _unitOfWork.SaveChangesAsync();
 

@@ -7,6 +7,7 @@ using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.File;
+using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -21,12 +22,14 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly ICampaignService _campaignService;
 
-        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _campaignService = campaignService;
         }
 
         public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule)
@@ -42,7 +45,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             if (campaignRule.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
-                if (!string.IsNullOrEmpty(campaignRule.Identity))
+                if (campaignRule.IsSingleIdentity)
                 {
                     entity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
                     entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
@@ -62,7 +65,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
                         MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
                         Content = bytesList,
-                        DocumentName = campaignRule.CampaignId.ToString() + "-" + "CampaignRuleTCKN"
+                        DocumentName = campaignRule.Identity
                     });
 
                     using (var excelWorkbook = new XLWorkbook(memoryStream))
@@ -71,18 +74,21 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
                         var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
 
-                        List<string> identityList = new List<string>();
+                        //List<string> identityList = new List<string>();
 
                         foreach (var dataRow in nonEmptyDataRows)
                         {
                             string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
 
-                            if (identityList.Contains(identity))
-                                throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
+                            //if (identityList.Contains(identity))
+                            //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
 
-                            identityList.Add(identity);
+                            //identityList.Add(identity);
 
-                            CheckSingleIdentiy(identity);
+                            //CheckSingleIdentiy(identity);
+
+                            if (!await IsValidIdentiy(identity))
+                                continue;
 
                             entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                             {
@@ -96,8 +102,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     throw new Exception("TCKN girilmelidir veya dosya seçilmelidir.");
                 }
             }
-            else if (campaignRule.JoinTypeId == (int)JoinTypeEnum.BusinessLine || 
-                campaignRule.JoinTypeId == (int)JoinTypeEnum.AllCustomers)
+            else if (campaignRule.JoinTypeId == (int)JoinTypeEnum.BusinessLine)
             {
                 if (campaignRule.BusinessLines is { Count: > 0 })
                 {
@@ -220,7 +225,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
                         MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
                         Content = bytesList,
-                        DocumentName = campaignRule.CampaignId.ToString() + "-" + "CampaignRuleTCKN"
+                        DocumentName = campaignRule.Identity
                     });
 
 
@@ -228,18 +233,20 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     {
                         var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
 
-                        List<string> identityList = new List<string>();
+                        //List<string> identityList = new List<string>();
 
                         foreach (var dataRow in nonEmptyDataRows)
                         {
                             string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
 
-                            if(identityList.Contains(identity))
-                                throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
+                            //if(identityList.Contains(identity))
+                            //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
 
-                            identityList.Add(identity);
+                            //identityList.Add(identity);
 
-                            CheckSingleIdentiy(identity);
+                            //CheckSingleIdentiy(identity);
+                            if (!await IsValidIdentiy(identity))
+                                continue;
 
                             var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity() 
                             { 
@@ -252,7 +259,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     }
                 }
             }
-            else if (campaignRule.JoinTypeId == (int)JoinTypeEnum.BusinessLine || campaignRule.JoinTypeId == (int)JoinTypeEnum.AllCustomers) 
+            else if (campaignRule.JoinTypeId == (int)JoinTypeEnum.BusinessLine) 
             {
                 if (campaignRule.BusinessLines is { Count: > 0 })
                 {
@@ -345,6 +352,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             response.BranchList = (await _parameterService.GetBranchListAsync())?.Data;
             response.CustomerTypeList = (await _parameterService.GetCustomerTypeListAsync())?.Data;
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
+
+            
         }
 
         public async Task<BaseResponse<List<CampaignRuleDto>>> GetListAsync()
@@ -358,6 +367,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             CampaignRuleUpdateFormDto response = new CampaignRuleUpdateFormDto();
             
             await FillForm(response);
+
+            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
 
             var campaignRuleDto = await GetCampaignRuleDto(campaignId);
 
@@ -383,6 +394,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 return null;
             }
 
+            string documentName = null;
             string identityNumber = null;
             bool isSingleIdentity = false;
             if (campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
@@ -396,6 +408,18 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     isSingleIdentity = true;
                     identityNumber = identityList[0];
                 }
+                else 
+                {
+                    var ruleDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
+                       .GetAll(x => x.CampaignId == campaignId
+                           && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
+                           && !x.IsDeleted)
+                       .FirstOrDefaultAsync();
+                    if (ruleDocument != null) 
+                    {
+                        documentName = ruleDocument.DocumentName;
+                    }
+                }
             }
             CampaignRuleDto campaignRuleDto = new CampaignRuleDto()
             {
@@ -405,6 +429,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 CampaignStartTermId = campaignRuleEntity.CampaignStartTermId,
                 IdentityNumber = identityNumber,
                 IsSingleIdentity = isSingleIdentity,
+                DocumentName = documentName,
                 RuleBusinessLines = campaignRuleEntity.BusinessLines.Where(c => !c.IsDeleted).Select(c => c.BusinessLineId).ToList(),
                 RuleCustomerTypes = campaignRuleEntity.CustomerTypes.Where(c => !c.IsDeleted).Select(c => c.CustomerTypeId).ToList(),
                 RuleBranches = campaignRuleEntity.Branches.Where(c => !c.IsDeleted).Select(c => c.BranchCode).ToList()
@@ -441,7 +466,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     throw new Exception("Kampanya Başlama Dönemi seçilmelidir.");
             }
 
-            if(joinTypeId == (int)JoinTypeEnum.AllCustomers || joinTypeId == (int)JoinTypeEnum.BusinessLine) 
+            if(joinTypeId == (int)JoinTypeEnum.BusinessLine) 
             {
                 if (input.BusinessLines == null || input.BusinessLines is { Count: < 1 })
                     throw new Exception("İş Kolu seçilmelidir.");
@@ -456,9 +481,14 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             else if (joinTypeId == (int)JoinTypeEnum.Customer) 
             {
                 if (input.IsSingleIdentity)
-                    CheckSingleIdentiy(input.Identity ?? "");
-                else if (string.IsNullOrEmpty(input.File))
-                    throw new Exception("Dosya boş olamaz.");
+                    await CheckSingleIdentiy(input.Identity ?? "");
+                else 
+                {
+                    if (string.IsNullOrEmpty(input.File))
+                        throw new Exception("Dosya boş olamaz.");
+                    if(string.IsNullOrEmpty(input.Identity))
+                        throw new Exception("Dosya adı boş olamaz.");
+                }
             }
             else if (joinTypeId == (int)JoinTypeEnum.Branch) 
             {
@@ -522,7 +552,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await BaseResponse<GetFileResponse>.SuccessAsync(getFileResponse);
         }
 
-        static void CheckSingleIdentiy(string identity)
+        private async Task CheckSingleIdentiy(string identity)
         {
             if (string.IsNullOrWhiteSpace(identity) || string.IsNullOrEmpty(identity))
             { throw new Exception("TCKN/VKN boş olamaz."); }
@@ -545,8 +575,19 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 if (!Core.Helper.Helpers.FirmaVergiKontrol(identity))
                 { throw new Exception("VKN bilgisi doğrulanamadı."); }
             }
+        }
 
+        private async Task<bool> IsValidIdentiy(string identity) 
+        {
+            if (string.IsNullOrWhiteSpace(identity) || string.IsNullOrEmpty(identity))
+                return false;
+            
+            identity = identity.Trim();
 
+            if (identity.Trim().Length > 11 || identity.Trim().Length < 10)
+                return false;
+
+            return identity.Length == 11 ? Core.Helper.Helpers.TcAuthentication(identity) : Core.Helper.Helpers.FirmaVergiKontrol(identity);
         }
     }
 }

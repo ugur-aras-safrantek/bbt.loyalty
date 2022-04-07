@@ -17,6 +17,9 @@ namespace Bbt.Campaign.Core.DbEntities
         public AchievementFrequencyEntity AchievementFrequency { get; set; }
         public TopLimitType Type { get; set; }
 
+
+
+
         //tutar
         public decimal? MaxTopLimitAmount { get; set; } = 0;  //Çatı Max Tutar
 

@@ -181,6 +181,18 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
+        /// Returns Achievement Frequency list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-achievement-frequencies")]
+        public async Task<IActionResult> GetAchievementFrequencyList()
+        {
+            var result = await _parameterService.GetAchievementFrequencyListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Returns channel code list.
         /// </summary>
         /// <returns></returns>

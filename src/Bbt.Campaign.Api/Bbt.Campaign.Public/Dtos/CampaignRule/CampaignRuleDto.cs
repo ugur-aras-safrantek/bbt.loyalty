@@ -22,5 +22,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignRule
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModifiedOn { get; set; }
         public bool IsDeleted { get; set; }
+        public string? DocumentName { get; set; }
     }
 }

@@ -6,6 +6,6 @@
         public List<ParameterDto> JoinTypeList { get; set; }
         public List<ParameterDto> BranchList { get; set; }
         public List<ParameterDto> CustomerTypeList { get; set; }
-        public List<ParameterDto> CampaignStartTermList { get; set; }
+        public List<ParameterDto> CampaignStartTermList { get; set; }      
     }
 }

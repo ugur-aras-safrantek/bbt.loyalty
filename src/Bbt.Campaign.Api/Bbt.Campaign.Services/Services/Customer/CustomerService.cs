@@ -70,6 +70,8 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
 
+            //var campaignDto = campaignDtoAll
+
             response.Campaign = campaignDto;
 
             //target

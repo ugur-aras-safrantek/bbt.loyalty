@@ -7,6 +7,17 @@ namespace Bbt.Campaign.Core.Helper
 {
     public static class Helpers
     {
+        public const string cronRegex = @"^(?#minute)(\*|(?:[0-9]|(?:[1-5][0-9]))(?:(?:\-[0-9]|\-(?:[1-5][0-9]))?|
+(?:\,(?:[0-9]|(?:[1-5][0-9])))*)) (?#hour)(\*|(?:[0-9]|1[0-9]|2[0-3])
+(?:(?:\-(?:[0-9]|1[0-9]|2[0-3]))?|(?:\,(?:[0-9]|1[0-9]|2[0-3]))*)) 
+(?#day_of_month)(\*|(?:[1-9]|(?:[12][0-9])|3[01])(?:(?:\-(?:[1-9]|
+(?:[12][0-9])|3[01]))?|(?:\,(?:[1-9]|(?:[12][0-9])|3[01]))*)) (?#month)(\*|
+(?:[1-9]|1[012]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:\-(?:[1-9]|
+1[012]|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?|(?:\,(?:[1-9]|1[012]|
+JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))*)) (?#day_of_week)(\*|
+(?:[0-6]|SUN|MON|TUE|WED|THU|FRI|SAT)(?:(?:\-(?:[0-6]|SUN|MON|TUE|WED|THU|FRI|SAT))?|
+(?:\,(?:[0-6]|SUN|MON|TUE|WED|THU|FRI|SAT))*))$";
+
         public static PagingDto Paging(int totalItems, int currentPage, int pageSize = 10)
         {
             if (totalItems <= 0)
@@ -109,10 +120,17 @@ namespace Bbt.Campaign.Core.Helper
 
         public static decimal? ConvertNullableDecimal(string data)
         {
-
             if (string.IsNullOrEmpty(data))
                 return null;
             return Convert.ToDecimal(data);
+        }
+
+        //nullable price string with thousand seperator
+        public static string? ConvertNullablePriceString(decimal? data)
+        {
+            if (data == null)
+                return null;
+            return data?.ToString("N2");
         }
 
         public static decimal ConvertDecimal(string data)
@@ -180,39 +198,6 @@ namespace Bbt.Campaign.Core.Helper
             return Convert.ToInt32(Sonuc.TotalDays);
 
         }
-        //static bool IsVknValid(string vkn)
-        // {
-        //     try
-        //     {
-        //         if (vkn.Length == 10)
-        //         {
-        //             var x = new int[9];
-        //             var y = new int[9];
-
-        //             for (int i = 0; i < 9; i++)
-        //             {
-        //                 x[i] = (int.Parse(vkn[i].ToString()) + 9 - i) % 10;
-
-        //                 y[i] = (x[i] * (int)Math.Pow(2, 9 - i)) % 9;
-
-        //                 if (x[i] != 0 && y[i] == 0)
-        //                 {
-        //                     y[i] = 9;
-        //                 }
-        //             }
-
-        //             return ((10 - (y.Sum() % 10)) % 10) == int.Parse(vkn[9].ToString());
-        //         }
-        //         else
-        //         {
-        //             return false;
-        //         }
-        //     }
-        //     catch (Exception)
-        //     {
-        //         return false;
-        //     }
-        // }
 
 
         public static bool IsValidEmail(string email)
@@ -226,6 +211,14 @@ namespace Bbt.Campaign.Core.Helper
             {
                 return false;
             }
+        }
+
+        public static string StringToDecimalString(string? input) 
+        {
+            if (string.IsNullOrEmpty(input))
+                return null;
+
+            return input?.Replace(".", "").Replace(",", ".");
         }
 
         #region Enum

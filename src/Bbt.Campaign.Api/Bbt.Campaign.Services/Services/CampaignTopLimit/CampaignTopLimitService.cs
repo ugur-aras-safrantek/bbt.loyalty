@@ -36,11 +36,26 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit)
         {
             await CheckValidationAsync(campaignTopLimit);
-            var campaignIds = campaignTopLimit.CampaignIds.Distinct().ToList();
+
+            decimal? maxTopLimitAmount = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitAmount);
+            decimal? maxTopLimitRate = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitRate);
+            decimal? maxTopLimitUtilization = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitUtilization);
+
+            campaignTopLimit.MaxTopLimitAmount = null;
+            campaignTopLimit.MaxTopLimitRate = null;
+            campaignTopLimit.MaxTopLimitUtilization = null;
+
             TopLimitEntity entity = _mapper.Map<TopLimitEntity>(campaignTopLimit);
+
+            entity.MaxTopLimitAmount = maxTopLimitAmount;
+            entity.MaxTopLimitRate = maxTopLimitRate;
+            entity.MaxTopLimitUtilization = maxTopLimitUtilization;
+
             entity.IsDraft = true;
             entity.IsApproved = false;
-            entity = SetTopLimitChanges(entity);
+            entity = await SetTopLimitChanges(entity);
+            
+            var campaignIds = campaignTopLimit.CampaignIds.Distinct().ToList();
 
             //Campaigns
             if (campaignTopLimit.CampaignIds is { Count: > 0 })
@@ -65,7 +80,55 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
         }
 
-        private TopLimitEntity SetTopLimitChanges(TopLimitEntity entity)
+        public async Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest request)
+        {
+            await CheckValidationAsync(request);
+
+            if (request.Id <= 0)
+                throw new Exception("Kampanya Çatı Limiti bulunamadı.");
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == request.Id)
+                .Include(x => x.TopLimitCampaigns).FirstOrDefaultAsync();
+
+            if (entity is null)
+                throw new Exception("Kampanya Çatı Limiti bulunamadı.");
+
+            var campaignIds = request.CampaignIds.Distinct().ToList();
+
+            entity.AchievementFrequencyId = request.AchievementFrequencyId;
+            entity.CurrencyId = request.CurrencyId;
+            entity.IsActive = request.IsActive;
+            entity.MaxTopLimitAmount = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitAmount);
+            entity.MaxTopLimitRate = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitRate);
+            entity.MaxTopLimitUtilization = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitUtilization);
+            entity.Name = request.Name;
+            entity.Type = request.Type;
+            entity.IsDraft = true;
+            entity.IsApproved = false;
+
+            entity = await SetTopLimitChanges(entity);
+
+            foreach (var requestEntityDelete in _unitOfWork.GetRepository<CampaignTopLimitEntity>().GetAll(x => !x.IsDeleted
+                     && x.TopLimitId == request.Id))
+            {
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(requestEntityDelete);
+            }
+            foreach (int campaignId in campaignIds)
+            {
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(new CampaignTopLimitEntity()
+                {
+                    CampaignId = campaignId,
+                    TopLimitId = request.Id
+                });
+            }
+
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return await GetCampaignTopLimitAsync(request.Id);
+        }
+
+        private async Task<TopLimitEntity> SetTopLimitChanges(TopLimitEntity entity)
         {
             if (entity.Type == TopLimitType.Amount)
             {
@@ -75,6 +138,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             {
                 entity.MaxTopLimitAmount = null;
                 entity.CurrencyId = null;
+
+                if (entity.MaxTopLimitRate > 100)
+                    throw new Exception("Oran %100’den büyük bir değer girilemez.");
+                if (entity.MaxTopLimitRate < 0)
+                    throw new Exception("Oran %0’dan küçük bir değer girilemez");
             }
             entity.IsDeleted = false;
             return entity;
@@ -114,9 +182,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                     CurrencyId = campaignTopLimitEntity.CurrencyId,
                     Id = campaignTopLimitEntity.Id,
                     IsActive = campaignTopLimitEntity.IsActive,
-                    MaxTopLimitAmount = campaignTopLimitEntity.MaxTopLimitAmount,
-                    MaxTopLimitRate = campaignTopLimitEntity.MaxTopLimitRate,
-                    MaxTopLimitUtilization = campaignTopLimitEntity.MaxTopLimitUtilization,
+                    MaxTopLimitAmount = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitAmount),
+                    MaxTopLimitRate = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitRate),
+                    MaxTopLimitUtilization = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitUtilization),
                     Name = campaignTopLimitEntity.Name,
                     Type = campaignTopLimitEntity.Type
                 };
@@ -159,9 +227,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 CurrencyId = x.CurrencyId,
                 Id = x.Id,
                 IsActive = x.IsActive,
-                MaxTopLimitAmount = x.MaxTopLimitAmount,
-                MaxTopLimitRate = x.MaxTopLimitRate,
-                MaxTopLimitUtilization = x.MaxTopLimitUtilization,
+                //MaxTopLimitAmount = x.MaxTopLimitAmount,
+                //MaxTopLimitRate = x.MaxTopLimitRate,
+                //MaxTopLimitUtilization = x.MaxTopLimitUtilization,
                 Name = x.Name,
                 Type = x.Type
             }).ToList();
@@ -176,54 +244,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             response.CampaignTopLimit = (await GetCampaignTopLimitAsync(id))?.Data;
 
             return await BaseResponse<CampaignTopLimitUpdateFormDto>.SuccessAsync(response);
-        }
-
-        public async Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest request)
-        {
-            await CheckValidationAsync(request);
-
-            if (request.Id <= 0)
-                throw new Exception("Kampanya Çatı Limiti bulunamadı.");
-            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == request.Id)
-                .Include(x => x.TopLimitCampaigns).FirstOrDefaultAsync();
-
-            if (entity is null)
-                throw new Exception("Kampanya Çatı Limiti bulunamadı.");
-
-            var campaignIds = request.CampaignIds.Distinct().ToList();
-
-            entity.AchievementFrequencyId = request.AchievementFrequencyId;
-            entity.CurrencyId = request.CurrencyId;
-            entity.IsActive = request.IsActive;
-            entity.MaxTopLimitAmount = request.MaxTopLimitAmount;
-            entity.MaxTopLimitRate = request.MaxTopLimitRate;
-            entity.MaxTopLimitUtilization = request.MaxTopLimitUtilization;
-            entity.Name = request.Name;
-            entity.Type = request.Type;
-            entity.IsDraft = true;
-            entity.IsApproved = false;
-
-            entity = SetTopLimitChanges(entity);
-
-            foreach (var requestEntityDelete in _unitOfWork.GetRepository<CampaignTopLimitEntity>().GetAll(x => !x.IsDeleted
-                     && x.TopLimitId == request.Id))
-            {
-                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(requestEntityDelete);
-            }
-            foreach (int campaignId in campaignIds)
-            {
-                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(new CampaignTopLimitEntity()
-                {
-                    CampaignId = campaignId,
-                    TopLimitId = request.Id
-                });
-            }
-
-            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return await GetCampaignTopLimitAsync(request.Id);
         }
 
         public async Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request)
@@ -376,18 +396,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                         throw new Exception("Para Birimi hatalı.");
                 }
 
-
-                if (!input.MaxTopLimitAmount.HasValue || input.MaxTopLimitAmount.Value <= 0)
+                if (string.IsNullOrEmpty(input.MaxTopLimitAmount) || string.IsNullOrWhiteSpace(input.MaxTopLimitAmount))
                     throw new Exception("Çatı Max Tutar girilmelidir.");
             }
             else if (input.Type == TopLimitType.Rate)
             {
-                if (!input.MaxTopLimitRate.HasValue)
+                if (string.IsNullOrEmpty(input.MaxTopLimitRate) || string.IsNullOrWhiteSpace(input.MaxTopLimitRate))
                     throw new Exception("Çatı Oranı girilmelidir.");
-                if (input.MaxTopLimitRate > 100)
-                    throw new Exception("Oran %100’den büyük bir değer girilemez.");
-                if (input.MaxTopLimitRate < 0)
-                    throw new Exception("Oran %0’dan küçük bir değer girilemez");
             }
             else
                 throw new Exception("Çatı limit tipi seçilmelidir.");

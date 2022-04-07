@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Target.Detail;
@@ -8,6 +9,7 @@ using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace Bbt.Campaign.Services.Services.Target.Detail
 {
@@ -175,6 +177,10 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
 
                 //bool isValidCron = Quartz.CronExpression.IsValidExpression(request.FlowFrequency);
                 //if (!isValidCron)
+                //    throw new Exception("Akış frekansı cron formatı hatalı.");
+
+                //Regex regex = new Regex(Helpers.cronRegex);
+                //if (!regex.IsMatch(request.FlowFrequency))
                 //    throw new Exception("Akış frekansı cron formatı hatalı.");
 
 

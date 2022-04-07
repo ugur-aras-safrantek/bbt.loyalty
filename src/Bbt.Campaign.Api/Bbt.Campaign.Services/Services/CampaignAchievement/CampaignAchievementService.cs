@@ -16,7 +16,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 {
     public class CampaignAchievementService : ICampaignAchievementService, IScopedService
     {
-
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
@@ -225,13 +224,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             response.ActionOptions = (await _parameterService.GetActionOptionListAsync())?.Data;
             response.ChannelCodeList = (await _parameterService.GetCampaignChannelListAsync())?.Data;
 
-            response.IsInvisibleCampaign = false;
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            }
+            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
         }
 
         public async Task<BaseResponse<List<CampaignAchievementDto>>> GetListAsync()

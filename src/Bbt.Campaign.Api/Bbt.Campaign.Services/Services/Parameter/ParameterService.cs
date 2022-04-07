@@ -210,7 +210,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
                     result = serviceResult.Select(x => new ParameterDto
                     {
                         Code = x.Code,
-                        Name = x.Code + "-" + x.Name
+                        Name = x.Name
                     }).ToList();
                 }
                 else

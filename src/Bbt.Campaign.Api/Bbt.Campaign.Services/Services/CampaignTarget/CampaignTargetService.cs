@@ -7,6 +7,7 @@ using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target.Group;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignTarget;
+using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +19,14 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly ICampaignService _campaignService;
 
-        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _campaignService = campaignService;
         }
 
         public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request)
@@ -122,22 +125,20 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm()
         {
             CampaignTargetInsertFormDto response = new CampaignTargetInsertFormDto();
-            response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => !x.IsDeleted)
-                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
 
-            //await FillFormAsync(response);
+            await FillForm(response);
 
             return await BaseResponse<CampaignTargetInsertFormDto>.SuccessAsync(response);
         }
 
-        //private async Task<CampaignTargetInsertFormDto> FillFormAsync(CampaignTargetInsertFormDto response)
-        //{
-        //    //CampaignTargetInsertFormDto response = new CampaignTargetInsertFormDto();
-        //    response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
-        //        .GetAll(x => !x.IsDeleted)
-        //        .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
-        //}
+        private async Task FillForm(CampaignTargetInsertFormDto response)
+        {
+            response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => !x.IsDeleted)
+                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+
+            
+        }
 
         public async Task<BaseResponse<List<CampaignTargetDto>>> GetListAsync()
         {
@@ -241,17 +242,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             CampaignTargetUpdateFormDto response = new CampaignTargetUpdateFormDto();
 
-            //await FillFormAsync(response);
+            await FillForm(response);
 
-            response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => !x.IsDeleted)
-                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
 
             response.CampaignTargetList = (await GetListByCampaignAsync(campaignId))?.Data;
 
             return await BaseResponse<CampaignTargetUpdateFormDto>.SuccessAsync(response);
         }
-    
-    
     }
 }

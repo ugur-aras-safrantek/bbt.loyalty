@@ -129,11 +129,14 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(existCampaings);
         }
 
-        public async Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id)
+        public async Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id, string contentRootPath)
         {
             CampaignUpdateFormDto response = new CampaignUpdateFormDto();
             await FillFormAsync(response);
             response.Campaign = (await GetCampaignAsync(id))?.Data;
+
+            if(response.Campaign.IsContract && (response.Campaign.ContractId ?? 0) > 0)
+                response.ContractFile = await GetContractFile(response.Campaign.ContractId ?? 0, contentRootPath);
 
             return await BaseResponse<CampaignUpdateFormDto>.SuccessAsync(response);
         }
@@ -529,15 +532,22 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
         public async Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath) 
         {
+            GetFileResponse getFileResponse = await GetContractFile(id, contentRootPath);
+
+            return await BaseResponse<GetFileResponse>.SuccessAsync(getFileResponse);
+        }
+
+        private async Task<GetFileResponse> GetContractFile(int id, string contentRootPath) 
+        {
             var getFileResponse = new GetFileResponse();
 
-            if (StaticValues.IsDevelopment) 
+            if (StaticValues.IsDevelopment)
             {
                 byte[] data = null;
                 var filePath = Path.Combine(contentRootPath, "Download", $"Contract.pdf");
                 if (File.Exists(filePath))
                     data = File.ReadAllBytes(filePath);
-                else 
+                else
                     throw new Exception("Dosya bulunamadı");
 
                 getFileResponse = new GetFileResponse()
@@ -551,7 +561,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     }
                 };
             }
-            else 
+            else
             {
                 using (var httpClient = new HttpClient())
                 {
@@ -559,8 +569,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl);
                     if (response.IsSuccessStatusCode)
                     {
-                        if(response.Content != null) 
-                        { 
+                        if (response.Content != null)
+                        {
                             string apiResponse = await response.Content.ReadAsStringAsync();
                             var values = apiResponse.Split('\u002C');
                         }
@@ -571,7 +581,22 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     }
                 }
             }
-            return await BaseResponse<GetFileResponse>.SuccessAsync(getFileResponse);
+
+            return getFileResponse;
+
+        }
+
+
+        public async Task<bool> IsInvisibleCampaign(int campaignId) 
+        {
+            bool isInvisibleCampaign = false;
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+            if (campaignEntity != null)
+            {
+                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+            }
+            return isInvisibleCampaign;
         }
     }
 }
