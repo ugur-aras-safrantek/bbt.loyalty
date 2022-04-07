@@ -12,7 +12,7 @@ import {
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-target-selection',
@@ -43,7 +43,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
   selectedTargetId: any;
 
   constructor(private stepService: StepService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private modalService: NgxSmartModalService,
               private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
@@ -65,6 +65,11 @@ export class CampaignTargetSelectionComponent implements OnInit {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
       this.getCampaignTargets();
+
+      this.nextButtonVisible = false;
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
+        this.nextButtonVisible = true;
+      }
     } else {
       this.campaignTargetsGetInsertForm();
     }
@@ -136,11 +141,11 @@ export class CampaignTargetSelectionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.addTargetList = res.data.targetList;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -156,13 +161,13 @@ export class CampaignTargetSelectionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.router.navigate([GlobalVariable.gains, this.detailId], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -180,13 +185,13 @@ export class CampaignTargetSelectionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/gains`], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -234,7 +239,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
     });
   }
 
-  copyCampaign(event){
+  copyCampaign(event) {
     this.campaignDefinitionService.copyCampaign(event.id);
   }
 
@@ -248,13 +253,12 @@ export class CampaignTargetSelectionComponent implements OnInit {
             this.addTargetList = res.data.targetList;
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
             this.nextButtonText = "Kaydet ve ilerle";
-            this.nextButtonVisible = false;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }

@@ -12,7 +12,7 @@ import {
   CampaignLimitAddRequestModel,
   CampaignLimitUpdateRequestModel
 } from '../models/campaign-limits';
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class CampaignLimitsService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService) {
   }
 
@@ -86,13 +86,13 @@ export class CampaignLimitsService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`${GlobalVariable.limitUpdate}/${res.data.id}/limit`);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }

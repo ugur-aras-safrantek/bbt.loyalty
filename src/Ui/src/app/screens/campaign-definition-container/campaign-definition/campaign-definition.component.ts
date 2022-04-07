@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {IAngularMyDpOptions} from 'angular-mydatepicker';
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {GlobalVariable} from "../../../global";
+import {saveAs} from 'file-saver';
 import {
   CampaignDefinitionAddRequestModel,
   CampaignDefinitionUpdateRequestModel
@@ -13,7 +14,7 @@ import {
 import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {UtilityService} from "../../../services/utility.service";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-definition',
@@ -26,6 +27,9 @@ export class CampaignDefinitionComponent implements OnInit {
 
   regex = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
+  contractDocumentId: any;
+  contractDocument: any = null;
+  contractIdDisable: boolean = false;
   formGroup: FormGroup;
   programTypeList: DropdownListModel[];
   viewOptionList: DropdownListModel[];
@@ -60,13 +64,11 @@ export class CampaignDefinitionComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.campaignDefinitionGetInsertForm();
-
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.detailId = paramMap.get('detailId');
@@ -124,11 +126,14 @@ export class CampaignDefinitionComponent implements OnInit {
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
-      this.getCampaignDetail();
-    }
+      this.CampaignDefinitionGetUpdateForm();
 
-    if (this.detailId) {
-      this.getCampaignDetail();
+      this.nextButtonVisible = false;
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
+        this.nextButtonVisible = true;
+      }
+    } else {
+      this.campaignDefinitionGetInsertForm();
     }
   }
 
@@ -174,6 +179,12 @@ export class CampaignDefinitionComponent implements OnInit {
     })
   }
 
+  populateLists(data) {
+    this.programTypeList = data.programTypeList;
+    this.viewOptionList = data.viewOptionList;
+    this.sectorList = data.sectorList;
+  }
+
   setDate(date: string) {
     let dateParts = date.split("-");
     return {
@@ -196,6 +207,13 @@ export class CampaignDefinitionComponent implements OnInit {
     return this.formGroup.controls;
   }
 
+  contractIdClicked() {
+    if (this.contractIdDisable) {
+      this.contractIdDisable = false;
+      this.formGroup.patchValue({contractId: ''});
+    }
+  }
+
   isBundleChanged() {
     if (this.formGroup.get('isBundle')?.value) {
       this.formGroup.patchValue({order: ''});
@@ -210,6 +228,8 @@ export class CampaignDefinitionComponent implements OnInit {
     if (this.formGroup.get('isContract')?.value) {
       this.f.contractId.setValidators(Validators.required);
     } else {
+      this.contractDocument = null;
+      this.contractIdDisable = false;
       this.formGroup.patchValue({contractId: ''});
       this.f.contractId.clearValidators();
     }
@@ -295,7 +315,7 @@ export class CampaignDefinitionComponent implements OnInit {
     this.f.detailTr.updateValueAndValidity();
   }
 
-  private changedMethodsTrigger(){
+  private changedMethodsTrigger() {
     this.isBundleChanged();
     this.isContractChanged();
     this.programTypeChanged();
@@ -319,29 +339,31 @@ export class CampaignDefinitionComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.programTypeList = res.data.programTypeList;
-            this.viewOptionList = res.data.viewOptionList;
-            this.sectorList = res.data.sectorList;
+            this.populateLists(res.data);
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
 
-  private getCampaignDetail() {
-    this.campaignDefinitionService.getCampaignDetail(this.id)
+  private CampaignDefinitionGetUpdateForm() {
+    this.campaignDefinitionService.CampaignDefinitionGetUpdateForm(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.populateForm(res.data);
+            this.populateLists(res.data);
+            this.populateForm(res.data.campaign);
+            this.contractDocument = res.data.contractFile.document;
+            this.contractIdDisable = true;
+            this.contractDocumentId = res.data.campaign.contractId;
+            this.formGroup.patchValue({contractId: res.data.contractFile.document.documentName});
             this.changedMethodsTrigger();
             this.nextButtonText = "Kaydet ve ilerle";
-            this.nextButtonVisible = false;
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
@@ -349,11 +371,11 @@ export class CampaignDefinitionComponent implements OnInit {
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -375,7 +397,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isActive: formGroup.isActive,
       isContract: formGroup.isContract,
       isBundle: formGroup.isBundle,
-      contractId: parseInt(formGroup.contractId),
+      contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
@@ -395,13 +417,13 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.detailId = res.data.id;
             this.router.navigate([GlobalVariable.rules, this.detailId], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -424,7 +446,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isActive: formGroup.isActive,
       isContract: formGroup.isContract,
       isBundle: formGroup.isBundle,
-      contractId: parseInt(formGroup.contractId),
+      contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
@@ -444,14 +466,53 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.router.navigate([`/campaign-definition/create/${this.id}/true/rules`], {relativeTo: this.route});
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
+  }
+
+  getContractFile() {
+    let contractId = this.formGroup.getRawValue().contractId;
+    if (contractId != "") {
+      this.campaignDefinitionService.campaignDefinitionGetContractFile(contractId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: res => {
+            if (!res.hasError && res.data?.document) {
+              this.contractDocument = res.data.document;
+              this.contractIdDisable = true;
+              this.contractDocumentId = contractId;
+              this.formGroup.patchValue({contractId: res.data.document.documentName});
+              this.toastrHandleService.success(`Sözleşme ID'si ${contractId} olan ${res.data.document.documentName} getirildi.`);
+            } else {
+              this.toastrHandleService.error(res.errorMessage);
+            }
+          },
+          error: err => {
+            if (err.error) {
+              this.toastrHandleService.error(err.error);
+            }
+          }
+        });
+    } else {
+      this.toastrHandleService.warning("Sözleşme ID girilmelidir.");
+    }
+  }
+
+  showDocumentFile() {
+    let document = this.contractDocument;
+    if (document) {
+      let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    } else {
+      this.toastrHandleService.warning("Sözleşme bulunamadı.");
+    }
   }
 }

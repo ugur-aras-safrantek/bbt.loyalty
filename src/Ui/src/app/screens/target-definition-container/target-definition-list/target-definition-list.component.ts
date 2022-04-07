@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
 import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {UtilityService} from "../../../services/utility.service";
@@ -6,7 +6,7 @@ import {ListService} from "../../../services/list.service";
 import {saveAs} from 'file-saver';
 import {TargetDefinitionService} from "../../../services/target-definition.service";
 import {TargetDefinitionListRequestModel} from "../../../models/target-definition";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-target-definition-list',
@@ -38,7 +38,7 @@ export class TargetDefinitionListComponent implements OnInit {
   };
 
   constructor(private targetDefinitionService: TargetDefinitionService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
   }
@@ -69,7 +69,7 @@ export class TargetDefinitionListComponent implements OnInit {
     this.targetDefinitionListGetByFilter();
   }
 
-  getListParameters(){
+  getListParameters() {
     this.getTargetViewTypes();
     this.getTargetSources();
   }
@@ -82,11 +82,11 @@ export class TargetDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.targetViewTypeList = res.data;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -99,11 +99,11 @@ export class TargetDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.targetSourceList = res.data;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -129,8 +129,8 @@ export class TargetDefinitionListComponent implements OnInit {
           }
         },
         error: err => {
-          if (err.error.hasError) {
-            this.listService.setError(err.error.errorMessage);
+          if (err.error) {
+            this.toastrHandleService.error(err.error);
           }
         }
       });
@@ -154,14 +154,14 @@ export class TargetDefinitionListComponent implements OnInit {
             let document = res.data.document;
             let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
             saveAs(file, res.data?.document.documentName);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else {
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
           }
         },
         error: err => {
-          if (err.error.hasError) {
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error) {
+            this.toastrHandleService.error(err.error);
           }
         }
       });

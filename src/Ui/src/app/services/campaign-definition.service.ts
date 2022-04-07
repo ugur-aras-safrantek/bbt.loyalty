@@ -8,13 +8,13 @@ import {Subject, takeUntil} from "rxjs";
 import {UtilityService} from "./utility.service";
 import {
   CampaignDefinitionAddRequestModel,
-  CampaignDefinitionGainsAddRequestModel,
+  CampaignDefinitionGainsAddUpdateRequestModel,
   CampaignDefinitionListRequestModel,
   CampaignDefinitionUpdateRequestModel,
   CampaignRulesAddRequestModel,
   CampaignTargetsAddRequestModel
 } from "../models/campaign-definition";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class CampaignDefinitionService {
   private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService) {
   }
 
@@ -72,9 +72,12 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
-  getCampaignDetail(campaignId: any) {
-    const url = `${this.baseUrl}/${ApiPaths.GetCampaignDetail}/${campaignId}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url);
+  CampaignDefinitionGetUpdateForm(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('id', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionGetUpdateForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
   getCampaignInfo(campaignId: any) {
@@ -97,13 +100,13 @@ export class CampaignDefinitionService {
         next: res => {
           if (!res.hasError && res.data) {
             this.utilityService.redirectTo(`/campaign-definition/create/${res.data.id}/true/definition`);
-            this.toastrService.success("İşlem başarılı");
+            this.toastrHandleService.success();
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }
@@ -121,6 +124,14 @@ export class CampaignDefinitionService {
   campaignDefinitionUpdate(data: CampaignDefinitionUpdateRequestModel) {
     const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionUpdate}`;
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
+  }
+
+  campaignDefinitionGetContractFile(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionGetContractFile}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
   campaignRulesGetInsertForm() {
@@ -146,6 +157,14 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
+  campaignRuleDocumentDownload(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignRulesGetIdentityFile}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
   campaignTargetsGetInsertForm() {
     const url = `${this.baseUrl}/${ApiPaths.CampaignTargetsGetInsertForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
@@ -169,21 +188,29 @@ export class CampaignDefinitionService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  getCampaignDefinitionGainChannels(campaignId: any) {
+  getCampaignDefinitionGainsGetInsertForm(campaignId: any) {
     let params = new HttpParams();
     params = params.append('campaignId', campaignId);
 
-    const url = `${this.baseUrl}/${ApiPaths.CampaignGainChannelsGetListByCampaign}`;
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsGetInsertForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  getCampaignDefinitionGainsGetInsertForm() {
-    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsGetInsertForm}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url);
+  getCampaignDefinitionGain(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsGetUpdateForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  campaignDefinitionGainsAdd(data: CampaignDefinitionGainsAddRequestModel) {
+  campaignDefinitionGainsAdd(data: CampaignDefinitionGainsAddUpdateRequestModel) {
     const url = `${this.baseUrl}/${ApiPaths.CampaignGainsAdd}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, data);
+  }
+
+  campaignDefinitionGainsUpdate(data: CampaignDefinitionGainsAddUpdateRequestModel) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsUpdate}`;
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 }

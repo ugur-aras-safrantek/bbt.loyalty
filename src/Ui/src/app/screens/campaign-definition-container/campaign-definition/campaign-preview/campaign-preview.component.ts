@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {CampaignPreviewModel} from "../../../../models/campaign-definition";
 import {Subject, takeUntil} from "rxjs";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
-import {ToastrService} from "ngx-toastr";
+import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 @Component({
   selector: 'app-campaign-preview',
@@ -25,7 +25,7 @@ export class CampaignPreviewComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
-              private toastrService: ToastrService,
+              private toastrHandleService: ToastrHandleService,
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
@@ -51,11 +51,11 @@ export class CampaignPreviewComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaign = res.data.campaign;
           } else
-            this.toastrService.error(res.errorMessage);
+            this.toastrHandleService.error(res.errorMessage);
         },
         error: err => {
-          if (err.error.hasError)
-            this.toastrService.error(err.error.errorMessage);
+          if (err.error)
+            this.toastrHandleService.error(err.error);
         }
       });
   }

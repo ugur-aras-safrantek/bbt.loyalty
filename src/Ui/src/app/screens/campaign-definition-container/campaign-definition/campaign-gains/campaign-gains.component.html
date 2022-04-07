@@ -1,217 +1,174 @@
 <app-main-content>
   <app-step [data]="stepData" [id]="id"></app-step>
   <div class="container">
-    <ngx-smart-modal #modal identifier="addUpdateModal">
-      <h1>{{selectedChannel.campaignChannelName}}</h1>
-      <hr class="blue">
-      <div class="form-panel">
-        <form [formGroup]="formGroup">
-          <div class="row">
-            <div class="col form-group pl-20px">
-              <div class="form-check form-check-inline me-5">
-                <input class="form-check-input scale-2x" type="radio" name="typeId" id="type1"
-                       formControlName="typeId" [value]="1"
-                       (change)="typeIdChanged()">
-                <label class="form-check-label ms-2" for="type1">Tutar</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input scale-2x" type="radio" name="typeId" id="type2"
-                       formControlName="typeId" [value]="2"
-                       (change)="typeIdChanged()">
-                <label class="form-check-label ms-2" for="type2">Oran</label>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col form-group">
-              <label for="achievementTypeId">Kazanım Tipi</label>
-              <select class="form-select" name="achievementTypeId" id="achievementTypeId"
-                      formControlName="achievementTypeId"
-                      [ngClass]="{ 'is-invalid': submitted && f.achievementTypeId.invalid }">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of achievementTypeList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-              <div *ngIf="submitted && f.achievementTypeId.errors" class="invalid-feedback">
-                <div *ngIf="f.achievementTypeId.errors.required">Kazanım Tipi seçilmelidir.</div>
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
+      <div class="row p-4">
+        <div class="col-8 m-auto">
+          <form [formGroup]="formGroup">
+            <div class="row">
+              <div class="col form-group">
+                <label for="campaignChannelCodeList">Kazanım Kanalı</label>
+                <select class="form-select" multiple
+                        name="campaignChannelCodeList" id="campaignChannelCodeList"
+                        formControlName="campaignChannelCodeList"
+                        [ngClass]="{ 'is-invalid': submitted && f.campaignChannelCodeList.invalid }">
+                  <option *ngFor="let i of channelCodeList"
+                          [value]="i">{{i}}</option>
+                </select>
+                <div *ngIf="submitted && f.campaignChannelCodeList.errors" class="invalid-feedback">
+                  <div *ngIf="f.campaignChannelCodeList.errors.required">Kazanım Kanalı seçilmelidir.</div>
+                </div>
               </div>
             </div>
-            <div class="col form-group">
-              <label for="actionOptionId">Aksiyon</label>
-              <select class="form-select" name="actionOptionId" id="actionOptionId"
-                      formControlName="actionOptionId"
-                      [ngClass]="{ 'is-invalid': submitted && f.actionOptionId.invalid }">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of actionOptionList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-              <div *ngIf="submitted && f.actionOptionId.errors" class="invalid-feedback">
-                <div *ngIf="f.actionOptionId.errors.required">Aksiyon seçilmelidir.</div>
+            <div class="row mt-3">
+              <div class="col form-group pl-20px">
+                <div class="form-check form-check-inline me-5">
+                  <input class="form-check-input scale-2x" type="radio" name="type" id="type1"
+                         formControlName="type" [value]="1"
+                         (change)="typeChanged()">
+                  <label class="form-check-label ms-2" for="type1">Tutar</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input scale-2x" type="radio" name="type" id="type2"
+                         formControlName="type" [value]="2"
+                         (change)="typeChanged()">
+                  <label class="form-check-label ms-2" for="type2">Oran</label>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col form-group">
-              <label for="titleTr">Başlık (Türkçe)</label>
-              <input type="text" class="form-control" name="titleTr" id="titleTr"
-                     formControlName="titleTr"
-                     [ngClass]="{ 'is-invalid': submitted && f.titleTr.invalid }">
-              <div *ngIf="submitted && f.titleTr.errors" class="invalid-feedback">
-                <div *ngIf="f.titleTr.errors.required">Başlık (Türkçe) girilmelidir.</div>
+            <div class="row mt-3">
+              <div class="col form-group">
+                <label for="achievementTypeId">Kazanım Tipi</label>
+                <select class="form-select" name="achievementTypeId" id="achievementTypeId"
+                        formControlName="achievementTypeId"
+                        [ngClass]="{ 'is-invalid': submitted && f.achievementTypeId.invalid }">
+                  <option [ngValue]="null">Seçiniz</option>
+                  <option *ngFor="let i of achievementTypeList"
+                          [value]="i.id">{{i.name}}</option>
+                </select>
+                <div *ngIf="submitted && f.achievementTypeId.errors" class="invalid-feedback">
+                  <div *ngIf="f.achievementTypeId.errors.required">Kazanım Tipi seçilmelidir.</div>
+                </div>
+              </div>
+              <div class="col form-group">
+                <label for="actionOptionId">Aksiyon</label>
+                <select class="form-select" name="actionOptionId" id="actionOptionId"
+                        formControlName="actionOptionId">
+                  <option [ngValue]="null">Seçiniz</option>
+                  <option *ngFor="let i of actionOptionList"
+                          [value]="i.id">{{i.name}}</option>
+                </select>
               </div>
             </div>
-            <div class="col form-group">
-              <label for="titleEn">Başlık (İngilizce)</label>
-              <input type="text" class="form-control" name="titleEn" id="titleEn"
-                     formControlName="titleEn"
-                     [ngClass]="{ 'is-invalid': submitted && f.titleEn.invalid }">
-              <div *ngIf="submitted && f.titleEn.errors" class="invalid-feedback">
-                <div *ngIf="f.titleEn.errors.required">Başlık (İngilizce) girilmelidir.</div>
+            <div *ngIf="!isInvisibleCampaign">
+              <div class="row mt-3">
+                <div class="col form-group">
+                  <label for="titleTr">Başlık (Türkçe)</label>
+                  <input type="text" class="form-control" name="titleTr" id="titleTr"
+                         formControlName="titleTr"
+                         [ngClass]="{ 'is-invalid': submitted && f.titleTr.invalid }">
+                  <div *ngIf="submitted && f.titleTr.errors" class="invalid-feedback">
+                    <div *ngIf="f.titleTr.errors.required">Başlık (Türkçe) girilmelidir.</div>
+                  </div>
+                </div>
+                <div class="col form-group">
+                  <label for="titleEn">Başlık (İngilizce)</label>
+                  <input type="text" class="form-control" name="titleEn" id="titleEn"
+                         formControlName="titleEn"
+                         [ngClass]="{ 'is-invalid': submitted && f.titleEn.invalid }">
+                  <div *ngIf="submitted && f.titleEn.errors" class="invalid-feedback">
+                    <div *ngIf="f.titleEn.errors.required">Başlık (İngilizce) girilmelidir.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col form-group">
+                  <label for="descriptionTr">Açıklama (Türkçe)</label>
+                  <input type="text" class="form-control" name="descriptionTr" id="descriptionTr"
+                         formControlName="descriptionTr"
+                         [ngClass]="{ 'is-invalid': submitted && f.descriptionTr.invalid }">
+                  <div *ngIf="submitted && f.descriptionTr.errors" class="invalid-feedback">
+                    <div *ngIf="f.descriptionTr.errors.required">Açıklama (Türkçe) girilmelidir.</div>
+                  </div>
+                </div>
+                <div class="col form-group">
+                  <label for="descriptionEn">Açıklama (İngilizce)</label>
+                  <input type="text" class="form-control" name="descriptionEn" id="descriptionEn"
+                         formControlName="descriptionEn"
+                         [ngClass]="{ 'is-invalid': submitted && f.descriptionEn.invalid }">
+                  <div *ngIf="submitted && f.descriptionEn.errors" class="invalid-feedback">
+                    <div *ngIf="f.descriptionEn.errors.required">Açıklama (İngilizce) girilmelidir.</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col form-group">
-              <label for="descriptionTr">Açıklama (Türkçe)</label>
-              <input type="text" class="form-control" name="descriptionTr" id="descriptionTr"
-                     formControlName="descriptionTr"
-                     [ngClass]="{ 'is-invalid': submitted && f.descriptionTr.invalid }">
-              <div *ngIf="submitted && f.descriptionTr.errors" class="invalid-feedback">
-                <div *ngIf="f.descriptionTr.errors.required">Açıklama (Türkçe) girilmelidir.</div>
+            <div class="row mt-3" *ngIf="formGroup.get('type')?.value==1">
+              <div class="col form-group">
+                <label for="currencyId">Para Birimi</label>
+                <select class="form-select" name="currencyId" id="currencyId"
+                        formControlName="currencyId"
+                        [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
+                  <option *ngFor="let i of currencyList"
+                          [value]="i.id">{{i.name}}</option>
+                </select>
               </div>
-            </div>
-            <div class="col form-group">
-              <label for="descriptionEn">Açıklama (İngilizce)</label>
-              <input type="text" class="form-control" name="descriptionEn" id="descriptionEn"
-                     formControlName="descriptionEn"
-                     [ngClass]="{ 'is-invalid': submitted && f.descriptionEn.invalid }">
-              <div *ngIf="submitted && f.descriptionEn.errors" class="invalid-feedback">
-                <div *ngIf="f.descriptionEn.errors.required">Açıklama (İngilizce) girilmelidir.</div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3" *ngIf="formGroup.get('typeId')?.value==1">
-            <div class="col form-group">
-              <label for="currencyId">Para Birimi</label>
-              <select class="form-select" name="currencyId" id="currencyId"
-                      formControlName="currencyId"
-                      [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of currencyList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-              <div *ngIf="submitted && formGroup.get('typeId')?.value==1 && f.currencyId.errors"
-                   class="invalid-feedback">
-                <div *ngIf="f.currencyId.errors.required">Para Birimi seçilmelidir.</div>
-              </div>
-            </div>
-            <div class="col form-group">
-              <label for="maxAmount">Max Tutar</label>
-              <input type="text" class="form-control" name="maxAmount" id="maxAmount"
-                     formControlName="maxAmount"
-                     [ngClass]="{ 'is-invalid': submitted && f.maxAmount.invalid }">
-              <div *ngIf="submitted && formGroup.get('typeId')?.value==1 && f.maxAmount.errors"
-                   class="invalid-feedback">
-                <div *ngIf="f.maxAmount.errors.required">Max Tutar girilmelidir.</div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <ng-container *ngIf="formGroup.get('typeId')?.value==1;then amount else rate"></ng-container>
-            <ng-template #amount>
               <div class="col form-group">
                 <label for="amount">Kazanım Tutarı</label>
-                <input type="text" class="form-control" name="amount" id="amount" turkishLira
-                       formControlName="amount"
-                       [ngClass]="{ 'is-invalid': submitted && formGroup.get('typeId')?.value==1 && f.amount.invalid }">
-                <div *ngIf="submitted && formGroup.get('typeId')?.value==1 && f.amount.errors"
+                <input type="text" class="form-control" turkishLira
+                       name="amount" id="amount" formControlName="amount"
+                       [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==1 && f.amount.invalid }">
+                <div *ngIf="submitted && formGroup.get('type')?.value==1 && f.amount.errors"
                      class="invalid-feedback">
                   <div *ngIf="f.amount.errors.required">Kazanım Tutarı girilmelidir.</div>
                 </div>
               </div>
-            </ng-template>
-            <ng-template #rate>
-              <div class="col form-group">
-                <label for="rate">Kazanım Oranı</label>
-                <input type="text" class="form-control" name="rate" id="rate"
-                       formControlName="rate"
-                       [ngClass]="{ 'is-invalid': submitted && formGroup.get('typeId')?.value==2 && f.rate.invalid }">
-                <div *ngIf="submitted && formGroup.get('typeId')?.value==2 && f.rate.errors"
-                     class="invalid-feedback">
-                  <div *ngIf="f.rate.errors.required">Kazanım Oranı girilmelidir.</div>
+            </div>
+            <div class="row mt-3">
+              <ng-container *ngIf="formGroup.get('type')?.value==1;then amount else rate"></ng-container>
+              <ng-template #amount>
+                <div class="col form-group">
+                  <label for="maxAmount">Max Tutar</label>
+                  <input type="text" class="form-control" turkishLira
+                         name="maxAmount" id="maxAmount" formControlName="maxAmount">
                 </div>
-              </div>
-            </ng-template>
-            <div class="col form-group">
-              <label for="maxUtilization">Max Yararlanma</label>
-              <input type="text" class="form-control" name="maxUtilization" id="maxUtilization"
-                     formControlName="maxUtilization"
-                     [ngClass]="{ 'is-invalid': submitted && f.maxUtilization.invalid }">
-              <div *ngIf="submitted && f.maxUtilization.errors" class="invalid-feedback">
-                <div *ngIf="f.maxUtilization.errors.required">Max Yararlanma girilmelidir.</div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="mt-2 d-flex justify-content-center">
-        <button class="btn btn-orange px-5" type="button" (click)="save()">{{addUpdateButtonText}}</button>
-      </div>
-    </ngx-smart-modal>
-    <div class="box">
-      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
-      <div class="p-4">
-        <div class="col-10 m-auto">
-          <h5 class="mb-3">Kazanım Kanalı</h5>
-          <div class="accordion" id="accordionPanelGainChannels">
-            <div class="mb-2"
-                 *ngFor='let channel of campaignGainChannelList; let index = index'>
-              <button class="btn btn-sm accordion-button-custom collapsed" type="button"
-                      data-bs-toggle="collapse" aria-expanded="false"
-                      [attr.data-bs-target]="'#accordion-' + index"
-                      [attr.aria-controls]="'accordion-' + index">
-                {{channel.campaignChannelName}}
-              </button>
-              <div [id]="'accordion-' + index"
-                   class="accordion-collapse collapse">
-                <table class="table mt-2">
-                  <thead class="gain-channel-table-head">
-                  <tr>
-                    <th>#</th>
-                    <th>Tutar/Oran</th>
-                    <th>Kazanım Tipi</th>
-                    <th>Aksiyon</th>
-                    <th>Max Yararlanma</th>
-                    <th class="gain-channel-add-update">
-                      <img src="../../../../../assets/img/plus.png" (click)="showAddModal(channel)">
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor='let achievement of channel.achievementList'>
-                    <td class="gain-channel-add-update">
-                      <img class="w-75" src="../../../../../assets/img/eye.png" (click)="showUpdateModal(channel, achievement)">
-                    </td>
-                    <td>{{achievement.type}}</td>
-                    <td>{{achievement.achievementType}}</td>
-                    <td>{{achievement.action}}</td>
-                    <td>{{achievement.maxUtilization}}</td>
-                    <td class="gain-channel-delete">
-                      <img class="w-100" src="/assets/img/cross.png"
-                           (click)="deleteAchievement(channel, achievement)">
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
+              </ng-template>
+              <ng-template #rate>
+                <div class="col form-group">
+                  <label for="rate">Kazanım Oranı</label>
+                  <input type="text" class="form-control"
+                         name="rate" id="rate" formControlName="rate"
+                         [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==2 && f.rate.invalid }">
+                  <div *ngIf="submitted && formGroup.get('type')?.value==2 && f.rate.errors"
+                       class="invalid-feedback">
+                    <div *ngIf="f.rate.errors.required">Kazanım Oranı girilmelidir.</div>
+                  </div>
+                </div>
+              </ng-template>
+              <div class="col form-group">
+                <label for="maxUtilization">Max Yararlanma</label>
+                <input type="text" class="form-control" onlyNumber
+                       name="maxUtilization" id="maxUtilization" formControlName="maxUtilization">
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center flex-column align-items-center mt-4" *ngIf="!disabled && nextButtonVisible">
-      <a href="#" class="btn-link my-4" [routerLink]="[preview,id]">Görüntüle</a>
-      <button class="btn btn-orange px-5" type="button" (click)="continue()">{{nextButtonText}}</button>
+    <div class="d-flex justify-content-center flex-column align-items-center">
+      <a target="_blank" *ngIf="!isInvisibleCampaign && buttonTypeIsContinue" href="#" class="btn-link mt-4"
+         [routerLink]="[preview]">
+        Görüntüle
+      </a>
+      <div *ngIf="nextButtonVisible">
+        <ng-container *ngIf="buttonTypeIsContinue;then continueTemplate else saveTemplate"></ng-container>
+        <ng-template #saveTemplate>
+          <button class="btn btn-orange mt-4 px-5" type="button" (click)="save()">Kaydet</button>
+        </ng-template>
+        <ng-template #continueTemplate>
+          <button class="btn btn-orange mt-4 px-5" type="button" (click)="continue()">Bitir</button>
+        </ng-template>
+      </div>
     </div>
   </div>
 </app-main-content>
