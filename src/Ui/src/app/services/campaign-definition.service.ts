@@ -72,9 +72,12 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
-  getCampaignDetail(campaignId: any) {
-    const url = `${this.baseUrl}/${ApiPaths.GetCampaignDetail}/${campaignId}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url);
+  CampaignDefinitionGetUpdateForm(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('id', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionGetUpdateForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
   getCampaignInfo(campaignId: any) {

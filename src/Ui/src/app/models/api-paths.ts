@@ -8,6 +8,7 @@ export enum ApiPaths {
   CampaignDefinitionAdd = 'Campaign/add',
   CampaignDefinitionUpdate = 'Campaign/update',
   CampaignDefinitionGetInsertForm = 'Campaign/get-insert-form',
+  CampaignDefinitionGetUpdateForm = 'Campaign/get-update-form',
   CampaignDefinitionGetContractFile = 'Campaign/get-contract-file',
   CampaignRulesAdd = 'CampaignRule/add',
   CampaignRulesUpdate = 'CampaignRule/update',

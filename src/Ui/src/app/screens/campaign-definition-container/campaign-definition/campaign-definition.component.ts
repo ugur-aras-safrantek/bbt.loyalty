@@ -27,6 +27,7 @@ export class CampaignDefinitionComponent implements OnInit {
 
   regex = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
+  contractDocumentId: any;
   contractDocument: any = null;
   contractIdDisable: boolean = false;
   formGroup: FormGroup;
@@ -68,8 +69,6 @@ export class CampaignDefinitionComponent implements OnInit {
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.campaignDefinitionGetInsertForm();
-
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.detailId = paramMap.get('detailId');
@@ -127,11 +126,9 @@ export class CampaignDefinitionComponent implements OnInit {
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
-      this.getCampaignDetail();
-    }
-
-    if (this.detailId) {
-      this.getCampaignDetail();
+      this.CampaignDefinitionGetUpdateForm();
+    } else {
+      this.campaignDefinitionGetInsertForm();
     }
   }
 
@@ -175,6 +172,12 @@ export class CampaignDefinitionComponent implements OnInit {
       sectorId: data.sectorId,
       viewOptionId: data.viewOptionId,
     })
+  }
+
+  populateLists(data) {
+    this.programTypeList = data.programTypeList;
+    this.viewOptionList = data.viewOptionList;
+    this.sectorList = data.sectorList;
   }
 
   setDate(date: string) {
@@ -331,9 +334,7 @@ export class CampaignDefinitionComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.programTypeList = res.data.programTypeList;
-            this.viewOptionList = res.data.viewOptionList;
-            this.sectorList = res.data.sectorList;
+            this.populateLists(res.data);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -344,13 +345,18 @@ export class CampaignDefinitionComponent implements OnInit {
       });
   }
 
-  private getCampaignDetail() {
-    this.campaignDefinitionService.getCampaignDetail(this.id)
+  private CampaignDefinitionGetUpdateForm() {
+    this.campaignDefinitionService.CampaignDefinitionGetUpdateForm(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.populateForm(res.data);
+            this.populateLists(res.data);
+            this.populateForm(res.data.campaign);
+            this.contractDocument = res.data.contractFile.document;
+            this.contractIdDisable = true;
+            this.contractDocumentId = res.data.campaign.contractId;
+            this.formGroup.patchValue({contractId: res.data.contractFile.document.documentName});
             this.changedMethodsTrigger();
             this.nextButtonText = "Kaydet ve ilerle";
             this.nextButtonVisible = false;
@@ -387,7 +393,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isActive: formGroup.isActive,
       isContract: formGroup.isContract,
       isBundle: formGroup.isBundle,
-      contractId: parseInt(formGroup.contractId),
+      contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
@@ -436,7 +442,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isActive: formGroup.isActive,
       isContract: formGroup.isContract,
       isBundle: formGroup.isBundle,
-      contractId: parseInt(formGroup.contractId),
+      contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
@@ -477,6 +483,7 @@ export class CampaignDefinitionComponent implements OnInit {
             if (!res.hasError && res.data?.document) {
               this.contractDocument = res.data.document;
               this.contractIdDisable = true;
+              this.contractDocumentId = contractId;
               this.formGroup.patchValue({contractId: res.data.document.documentName});
               this.toastrHandleService.success(`Sözleşme ID'si ${contractId} olan ${res.data.document.documentName} getirildi.`);
             } else {
@@ -498,7 +505,8 @@ export class CampaignDefinitionComponent implements OnInit {
     let document = this.contractDocument;
     if (document) {
       let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
-      saveAs(file, document.documentName);
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
     } else {
       this.toastrHandleService.warning("Sözleşme bulunamadı.");
     }
