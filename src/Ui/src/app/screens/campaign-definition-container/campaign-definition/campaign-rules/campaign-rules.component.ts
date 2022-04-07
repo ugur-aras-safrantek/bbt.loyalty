@@ -8,6 +8,7 @@ import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {CampaignRulesAddRequestModel} from "../../../../models/campaign-definition";
 import {Subject, take, takeUntil} from 'rxjs';
 import * as _ from 'lodash';
+import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
@@ -40,6 +41,7 @@ export class CampaignRulesComponent implements OnInit {
   ];
 
   formGroup: FormGroup;
+  documentName: null;
 
   businessLineList: DropdownListModel[];
   joinTypeList: DropdownListModel[];
@@ -237,6 +239,7 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
+            this.documentName = null;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -267,6 +270,7 @@ export class CampaignRulesComponent implements OnInit {
                 branches: res.data.campaignRule.ruleBranches,
                 customerTypes: res.data.campaignRule.ruleCustomerTypes
               });
+              this.documentName = res.data.campaignRule.documentName
             }
             this.nextButtonText = "Kaydet ve ilerle";
             this.nextButtonVisible = false;
@@ -361,6 +365,28 @@ export class CampaignRulesComponent implements OnInit {
         error: err => {
           if (err.error)
             this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
+  campaignRuleDocumentDownload() {
+    this.campaignDefinitionService.campaignRuleDocumentDownload(this.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data?.document) {
+            let document = res.data.document;
+            let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+            saveAs(file, res.data?.document.documentName);
+            this.toastrHandleService.success();
+          } else {
+            this.toastrHandleService.error(res.errorMessage);
+          }
+        },
+        error: err => {
+          if (err.error) {
+            this.toastrHandleService.error(err.error);
+          }
         }
       });
   }

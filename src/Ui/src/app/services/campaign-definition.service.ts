@@ -146,6 +146,14 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
+  campaignRuleDocumentDownload(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignRulesGetIdentityFile}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
   campaignTargetsGetInsertForm() {
     const url = `${this.baseUrl}/${ApiPaths.CampaignTargetsGetInsertForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);

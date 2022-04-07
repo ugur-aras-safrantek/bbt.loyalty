@@ -12,6 +12,7 @@ export enum ApiPaths {
   CampaignRulesUpdate = 'CampaignRule/update',
   CampaignRulesGetInsertForm = 'CampaignRule/get-insert-form',
   CampaignRulesGetUpdateForm = 'CampaignRule/get-update-form',
+  CampaignRulesGetIdentityFile = 'CampaignRule/get-identity-file',
   CampaignTargetsAdd = 'CampaignTarget/add',
   CampaignTargetsUpdate = 'CampaignTarget/update',
   CampaignTargetsGetUpdateForm = 'CampaignTarget/get-update-form',

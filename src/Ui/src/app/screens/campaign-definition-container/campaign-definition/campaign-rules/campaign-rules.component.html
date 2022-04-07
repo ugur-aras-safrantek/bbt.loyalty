@@ -52,6 +52,11 @@
                   Geçersiz VKN.
                 </div>
               </div>
+              <a target="_blank"
+                 *ngIf="documentName"
+                 (click)="campaignRuleDocumentDownload()">
+                {{documentName}}
+              </a>
             </div>
             <div class="form-group mt-3" *ngIf="showBusinessLines">
               <label for="businessLines">İş Kolu</label>
