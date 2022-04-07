@@ -115,7 +115,7 @@
               </div>
               <div class="col form-group">
                 <label for="amount">Kazanım Tutarı</label>
-                <input type="text" class="form-control" turkishLira
+                <input type="text" class="form-control" currencyMask
                        name="amount" id="amount" formControlName="amount"
                        [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==1 && f.amount.invalid }">
                 <div *ngIf="submitted && formGroup.get('type')?.value==1 && f.amount.errors"
@@ -129,14 +129,14 @@
               <ng-template #amount>
                 <div class="col form-group">
                   <label for="maxAmount">Max Tutar</label>
-                  <input type="text" class="form-control" turkishLira
+                  <input type="text" class="form-control" currencyMask
                          name="maxAmount" id="maxAmount" formControlName="maxAmount">
                 </div>
               </ng-template>
               <ng-template #rate>
                 <div class="col form-group">
                   <label for="rate">Kazanım Oranı</label>
-                  <input type="text" class="form-control"
+                  <input type="text" class="form-control" currencyMask [options]="{ min: 0, max: 100 }"
                          name="rate" id="rate" formControlName="rate"
                          [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==2 && f.rate.invalid }">
                   <div *ngIf="submitted && formGroup.get('type')?.value==2 && f.rate.errors"

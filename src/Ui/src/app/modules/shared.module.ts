@@ -12,6 +12,20 @@ import {ListComponent} from "../components/list/list.component";
 import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 import {RepostComponent} from "../components/repost/repost.component";
 import {NgxSmartModalModule} from "ngx-smart-modal";
+import {CurrencyMaskInputMode, NgxCurrencyModule} from "ngx-currency";
+
+export const customCurrencyMaskConfig = {
+  thousands: ".",
+  decimal: ",",
+  precision: 2,
+  prefix: "",
+  suffix: "",
+  align: "left",
+  allowNegative: false,
+  allowZero: true,
+  nullable: true,
+  inputMode: CurrencyMaskInputMode.NATURAL,
+};
 
 @NgModule({
   declarations: [
@@ -30,6 +44,7 @@ import {NgxSmartModalModule} from "ngx-smart-modal";
     NgMultiSelectDropDownModule,
     UiSwitchModule,
     NgxSmartModalModule.forRoot(),
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
   exports: [
     MainContentComponent,
@@ -38,6 +53,7 @@ import {NgxSmartModalModule} from "ngx-smart-modal";
     StepComponent,
     NgMultiSelectDropDownModule,
     UiSwitchModule,
+    NgxCurrencyModule,
     FinishComponent,
     ListComponent,
     RepostComponent,
@@ -45,5 +61,6 @@ import {NgxSmartModalModule} from "ngx-smart-modal";
   ],
   providers: [DecimalPipe]
 })
+
 export class SharedModule {
 }

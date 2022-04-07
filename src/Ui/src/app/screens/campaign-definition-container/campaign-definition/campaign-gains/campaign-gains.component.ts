@@ -68,19 +68,19 @@ export class CampaignGainsComponent implements OnInit {
     }
 
     this.formGroup = this.fb.group({
-      campaignChannelCodeList: [{value: []}, Validators.required],
+      campaignChannelCodeList: [[], Validators.required],
       type: 1,
-      achievementTypeId: [{value: null}, Validators.required],
-      actionOptionId: [{value: null}],
-      titleTr: [{value: ''}],
-      titleEn: [{value: ''}],
-      descriptionTr: [{value: ''}],
-      descriptionEn: [{value: ''}],
-      currencyId: [{value: 1}],
-      maxAmount: [{value: ''}],
-      amount: [{value: ''}],
-      rate: [{value: ''}],
-      maxUtilization: [{value: ''}],
+      achievementTypeId: [null, Validators.required],
+      actionOptionId: null,
+      titleTr: '',
+      titleEn: '',
+      descriptionTr: '',
+      descriptionEn: '',
+      currencyId: 1,
+      maxAmount: '',
+      amount: '',
+      rate: '',
+      maxUtilization: '',
     });
   }
 
@@ -199,9 +199,13 @@ export class CampaignGainsComponent implements OnInit {
 
   save() {
     this.submitted = true;
-    if (this.formGroup.valid) {
-      this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
-    }
+    let formGroup = this.formGroup.getRawValue();
+    console.log(formGroup.amount);
+    console.log(formGroup.rate);
+    console.log(formGroup.maxAmount);
+    // if (this.formGroup.valid) {
+    //   this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
+    // }
   }
 
   finish(id) {
@@ -249,9 +253,9 @@ export class CampaignGainsComponent implements OnInit {
             this.populateLists(res.data);
             if (res.data.campaignAchievement) {
               this.populateForm(res.data.campaignAchievement);
-              this.campaignViewingStateActions(res.data.isInvisibleCampaign);
-              this.typeChanged();
             }
+            this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+            this.typeChanged();
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
