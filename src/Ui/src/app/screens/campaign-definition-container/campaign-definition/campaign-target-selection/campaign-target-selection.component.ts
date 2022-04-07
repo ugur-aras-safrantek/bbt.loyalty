@@ -65,6 +65,11 @@ export class CampaignTargetSelectionComponent implements OnInit {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
       this.getCampaignTargets();
+
+      this.nextButtonVisible = false;
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
+        this.nextButtonVisible = true;
+      }
     } else {
       this.campaignTargetsGetInsertForm();
     }
@@ -248,7 +253,6 @@ export class CampaignTargetSelectionComponent implements OnInit {
             this.addTargetList = res.data.targetList;
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
             this.nextButtonText = "Kaydet ve ilerle";
-            this.nextButtonVisible = false;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

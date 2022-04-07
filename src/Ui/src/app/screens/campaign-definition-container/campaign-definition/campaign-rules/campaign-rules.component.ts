@@ -98,6 +98,11 @@ export class CampaignRulesComponent implements OnInit {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
       this.getCampaignRules();
+
+      this.nextButtonVisible = false;
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
+        this.nextButtonVisible = true;
+      }
     } else {
       this.campaignRulesGetInsertForm();
     }
@@ -273,7 +278,6 @@ export class CampaignRulesComponent implements OnInit {
               this.documentName = res.data.campaignRule.documentName
             }
             this.nextButtonText = "Kaydet ve ilerle";
-            this.nextButtonVisible = false;
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {

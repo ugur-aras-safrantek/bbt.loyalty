@@ -127,6 +127,11 @@ export class CampaignDefinitionComponent implements OnInit {
       this.campaignDefinitionService.repostData.id = this.id;
       this.stepService.finish();
       this.CampaignDefinitionGetUpdateForm();
+
+      this.nextButtonVisible = false;
+      if (this.campaignDefinitionService.isCampaignValuesChanged) {
+        this.nextButtonVisible = true;
+      }
     } else {
       this.campaignDefinitionGetInsertForm();
     }
@@ -359,7 +364,6 @@ export class CampaignDefinitionComponent implements OnInit {
             this.formGroup.patchValue({contractId: res.data.contractFile.document.documentName});
             this.changedMethodsTrigger();
             this.nextButtonText = "Kaydet ve ilerle";
-            this.nextButtonVisible = false;
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
