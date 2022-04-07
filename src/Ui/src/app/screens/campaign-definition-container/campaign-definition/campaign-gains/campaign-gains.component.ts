@@ -28,8 +28,6 @@ export class CampaignGainsComponent implements OnInit {
 
   id: any;
   detailId: any;
-  repost: boolean = false;
-  disabled: boolean = false;
   stepData;
   repostData = this.campaignDefinitionService.repostData;
 
@@ -37,7 +35,6 @@ export class CampaignGainsComponent implements OnInit {
 
   nextButtonVisible = true;
   isInvisibleCampaign = false;
-  previewButtonVisibleState = false;
   buttonTypeIsContinue = false;
 
   constructor(private fb: FormBuilder,
@@ -49,10 +46,6 @@ export class CampaignGainsComponent implements OnInit {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.detailId = paramMap.get('detailId');
-      if (paramMap.get('repost')) {
-        this.repost = paramMap.get('repost') === 'true';
-      }
-      this.disabled = this.id && !this.repost;
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
@@ -75,19 +68,19 @@ export class CampaignGainsComponent implements OnInit {
     }
 
     this.formGroup = this.fb.group({
-      campaignChannelCodeList: [{value: [], disabled: this.disabled}, Validators.required],
+      campaignChannelCodeList: [{value: []}, Validators.required],
       type: 1,
-      achievementTypeId: [{value: null, disabled: this.disabled}, Validators.required],
-      actionOptionId: [{value: null, disabled: this.disabled}],
-      titleTr: [{value: '', disabled: this.disabled}],
-      titleEn: [{value: '', disabled: this.disabled}],
-      descriptionTr: [{value: '', disabled: this.disabled}],
-      descriptionEn: [{value: '', disabled: this.disabled}],
-      currencyId: [{value: 1, disabled: this.disabled}],
-      maxAmount: [{value: '', disabled: this.disabled}],
-      amount: [{value: '', disabled: this.disabled}],
-      rate: [{value: '', disabled: this.disabled}],
-      maxUtilization: [{value: '', disabled: this.disabled}],
+      achievementTypeId: [{value: null}, Validators.required],
+      actionOptionId: [{value: null}],
+      titleTr: [{value: ''}],
+      titleEn: [{value: ''}],
+      descriptionTr: [{value: ''}],
+      descriptionEn: [{value: ''}],
+      currencyId: [{value: 1}],
+      maxAmount: [{value: ''}],
+      amount: [{value: ''}],
+      rate: [{value: ''}],
+      maxUtilization: [{value: ''}],
     });
   }
 
@@ -208,20 +201,18 @@ export class CampaignGainsComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.valid) {
       this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
-
     }
+  }
+
+  finish(id) {
+    this.preview = `${this.preview}/${id}`;
+    this.buttonTypeIsContinue = true;
   }
 
   continue() {
     this.id
       ? this.router.navigate([`/campaign-definition/create/${this.id}/true/finish`], {relativeTo: this.route})
       : this.router.navigate(['./finish'], {relativeTo: this.route});
-  }
-
-  finish(id) {
-    this.preview = `${this.preview}/${id}`;
-    this.previewButtonVisibleState = true;
-    this.buttonTypeIsContinue = true;
   }
 
   copyCampaign(event) {

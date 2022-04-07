@@ -156,23 +156,19 @@
       </div>
     </div>
     <div class="d-flex justify-content-center flex-column align-items-center">
-      <a target="_blank" *ngIf="!isInvisibleCampaign && previewButtonVisibleState" href="#" class="btn-link mt-4"
+      <a target="_blank" *ngIf="!isInvisibleCampaign && buttonTypeIsContinue" href="#" class="btn-link mt-4"
          [routerLink]="[preview]">
         Görüntüle
       </a>
-      <ng-container *ngIf="buttonTypeIsContinue;then continueTemplate else saveTemplate"></ng-container>
-      <ng-template #saveTemplate>
-        <button *ngIf="!disabled && nextButtonVisible" class="btn btn-orange mt-4 px-5" type="button"
-                (click)="save()">
-          Kaydet
-        </button>
-      </ng-template>
-      <ng-template #continueTemplate>
-        <button *ngIf="!disabled && nextButtonVisible" class="btn btn-orange mt-4 px-5" type="button"
-                (click)="continue()">
-          Bitir
-        </button>
-      </ng-template>
+      <div *ngIf="nextButtonVisible">
+        <ng-container *ngIf="buttonTypeIsContinue;then continueTemplate else saveTemplate"></ng-container>
+        <ng-template #saveTemplate>
+          <button class="btn btn-orange mt-4 px-5" type="button" (click)="save()">Kaydet</button>
+        </ng-template>
+        <ng-template #continueTemplate>
+          <button class="btn btn-orange mt-4 px-5" type="button" (click)="continue()">Bitir</button>
+        </ng-template>
+      </div>
     </div>
   </div>
 </app-main-content>
