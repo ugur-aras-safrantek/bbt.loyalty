@@ -147,8 +147,6 @@ export class CampaignRulesComponent implements OnInit {
         ]);
         this.showForCustomer = true;
         break;
-      case 1:
-      case "1":
       case 3:
       case "3":
         this.f.businessLines.setValidators(Validators.required);
