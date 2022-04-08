@@ -58,7 +58,6 @@ export class CampaignRulesComponent implements OnInit {
   submitted = false;
   id: any;
   detailId: any;
-  repost: boolean = false;
   disabled: boolean = false;
 
   nextButtonText = 'Devam';
@@ -74,10 +73,6 @@ export class CampaignRulesComponent implements OnInit {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.detailId = paramMap.get('detailId');
-      if (paramMap.get('repost')) {
-        this.repost = paramMap.get('repost') === 'true';
-      }
-      this.disabled = this.id && !this.repost;
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
@@ -85,13 +80,13 @@ export class CampaignRulesComponent implements OnInit {
     this.stepData = this.stepService.stepData;
 
     this.formGroup = this.fb.group({
-      joinTypeId: [{value: null, disabled: this.disabled}, Validators.required],
-      identity: [{value: '', disabled: this.disabled}],
-      businessLines: [{value: [], disabled: this.disabled}],
-      file: [{value: ''}],
-      branches: [{value: [], disabled: this.disabled}],
-      customerTypes: [{value: [], disabled: this.disabled}],
-      startTermId: [{value: null, disabled: this.disabled}, Validators.required]
+      joinTypeId: [null, Validators.required],
+      identity: '',
+      businessLines: [],
+      file: '',
+      branches: [],
+      customerTypes: [],
+      startTermId: [null, Validators.required]
     });
 
     if (this.id) {
@@ -152,8 +147,6 @@ export class CampaignRulesComponent implements OnInit {
         ]);
         this.showForCustomer = true;
         break;
-      case 1:
-      case "1":
       case 3:
       case "3":
         this.f.businessLines.setValidators(Validators.required);

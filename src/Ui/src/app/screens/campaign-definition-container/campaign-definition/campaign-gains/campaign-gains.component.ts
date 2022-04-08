@@ -68,19 +68,19 @@ export class CampaignGainsComponent implements OnInit {
     }
 
     this.formGroup = this.fb.group({
-      campaignChannelCodeList: [{value: []}, Validators.required],
+      campaignChannelCodeList: [[], Validators.required],
       type: 1,
-      achievementTypeId: [{value: null}, Validators.required],
-      actionOptionId: [{value: null}],
-      titleTr: [{value: ''}],
-      titleEn: [{value: ''}],
-      descriptionTr: [{value: ''}],
-      descriptionEn: [{value: ''}],
-      currencyId: [{value: 1}],
-      maxAmount: [{value: ''}],
-      amount: [{value: ''}],
-      rate: [{value: ''}],
-      maxUtilization: [{value: ''}],
+      achievementTypeId: [null, Validators.required],
+      actionOptionId: null,
+      titleTr: '',
+      titleEn: '',
+      descriptionTr: '',
+      descriptionEn: '',
+      currencyId: 1,
+      maxAmount: null,
+      amount: null,
+      rate: null,
+      maxUtilization: '',
     });
   }
 
@@ -249,9 +249,9 @@ export class CampaignGainsComponent implements OnInit {
             this.populateLists(res.data);
             if (res.data.campaignAchievement) {
               this.populateForm(res.data.campaignAchievement);
-              this.campaignViewingStateActions(res.data.isInvisibleCampaign);
-              this.typeChanged();
             }
+            this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+            this.typeChanged();
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {

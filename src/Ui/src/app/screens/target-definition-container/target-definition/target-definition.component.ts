@@ -46,10 +46,10 @@ export class TargetDefinitionComponent implements OnInit {
     this.stepData = this.stepService.stepData;
 
     this.formGroup = this.fb.group({
-      id: [null],
+      id: null,
       name: ['', Validators.required],
       title: ['', Validators.required],
-      isActive: [false]
+      isActive: false
     })
 
     if (this.id) {

@@ -85,33 +85,33 @@ export class CampaignDefinitionComponent implements OnInit {
     this.stepData = this.stepService.stepData;
 
     this.formGroup = this.fb.group({
-      isActive: [{value: false, disabled: this.disabled}],
-      isBundle: [{value: false, disabled: this.disabled}],
-      isContract: [{value: false, disabled: this.disabled}],
-      contractId: [{value: '', disabled: this.disabled}],
-      name: [{value: '', disabled: this.disabled}, Validators.required],
-      code: [{value: '', disabled: this.disabled}],
-      descriptionTr: [{value: '', disabled: this.disabled}, Validators.required],
-      descriptionEn: [{value: '', disabled: this.disabled}, Validators.required],
-      titleTr: [{value: '', disabled: this.disabled}, Validators.required],
-      titleEn: [{value: '', disabled: this.disabled}, Validators.required],
-      summaryTr: [{value: '', disabled: this.disabled}, Validators.required],
-      summaryEn: [{value: '', disabled: this.disabled}, Validators.required],
-      contentTr: [{value: '', disabled: this.disabled}],
-      contentEn: [{value: '', disabled: this.disabled}],
-      detailTr: [{value: '', disabled: this.disabled}],
-      detailEn: [{value: '', disabled: this.disabled}],
-      startDate: [{value: null, disabled: this.disabled}],
-      endDate: [{value: null, disabled: this.disabled}],
-      campaignListImageUrl: [{value: '', disabled: this.disabled}, Validators.pattern(this.regex)],
+      isActive: false,
+      isBundle: false,
+      isContract: false,
+      contractId: '',
+      name: ['', Validators.required],
+      code: '',
+      descriptionTr: ['', Validators.required],
+      descriptionEn: ['', Validators.required],
+      titleTr: ['', Validators.required],
+      titleEn: ['', Validators.required],
+      summaryTr: ['', Validators.required],
+      summaryEn: ['', Validators.required],
+      contentTr: '',
+      contentEn: '',
+      detailTr: '',
+      detailEn: '',
+      startDate: null,
+      endDate: null,
+      campaignListImageUrl: ['', Validators.pattern(this.regex)],
       campaignListImageDownloadUrl: '',
-      campaignDetailImageUrl: [{value: '', disabled: this.disabled}, Validators.pattern(this.regex)],
+      campaignDetailImageUrl: ['', Validators.pattern(this.regex)],
       campaignDetailImageDownloadUrl: '',
-      order: [{value: '', disabled: this.disabled}, Validators.required],
-      maxNumberOfUser: [{value: '', disabled: this.disabled}],
-      programTypeId: [{value: null, disabled: this.disabled}, Validators.required],
-      sectorId: [{value: null, disabled: this.disabled}],
-      viewOptionId: [{value: null, disabled: this.disabled}, Validators.required],
+      order: ['', Validators.required],
+      maxNumberOfUser: '',
+      programTypeId: [null, Validators.required],
+      sectorId: null,
+      viewOptionId: [null, Validators.required],
     });
 
     this.formGroup.controls.startDate.setValidators([
@@ -358,10 +358,10 @@ export class CampaignDefinitionComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.populateForm(res.data.campaign);
-            this.contractDocument = res.data.contractFile.document;
+            this.contractDocument = res.data.contractFile?.document;
             this.contractIdDisable = true;
             this.contractDocumentId = res.data.campaign.contractId;
-            this.formGroup.patchValue({contractId: res.data.contractFile.document.documentName});
+            this.formGroup.patchValue({contractId: res.data.contractFile?.document.documentName});
             this.changedMethodsTrigger();
             this.nextButtonText = "Kaydet ve ilerle";
             this.formGroup.valueChanges

@@ -69,10 +69,10 @@ export class TargetSourceComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       targetSourceId: [null, Validators.required],
+      targetViewTypeId: [null, Validators.required],
 
-      targetViewTypeId: null,
       flowName: '',
-      totalAmount: '',
+      totalAmount: null,
       numberOfTransaction: '',
       flowFrequency: '',
       additionalFlowTime: '',
@@ -82,10 +82,10 @@ export class TargetSourceComponent implements OnInit {
       query: '',
       verificationTimeId: null,
 
-      targetDetailEn: '',
       targetDetailTr: '',
-      descriptionEn: '',
+      targetDetailEn: '',
       descriptionTr: '',
+      descriptionEn: '',
     });
   }
 
@@ -105,31 +105,87 @@ export class TargetSourceComponent implements OnInit {
 
   targetSourceChanged() {
     if (this.formGroup.get('targetSourceId')?.value == 1) {
-      this.f.targetViewTypeId.setValidators(Validators.required);
       this.f.flowName.setValidators(Validators.required);
       this.f.totalAmount.setValidators(Validators.required);
       this.f.numberOfTransaction.setValidators(Validators.required);
       this.f.flowFrequency.setValidators(Validators.required);
       this.f.triggerTimeId.setValidators(Validators.required);
 
+      this.formGroup.patchValue({
+        condition: '',
+        query: '',
+        verificationTimeId: null,
+      });
       this.f.condition.clearValidators();
       this.f.query.clearValidators();
       this.f.verificationTimeId.clearValidators();
-    } else {
+    } else if (this.formGroup.get('targetSourceId')?.value == 2) {
       this.f.condition.setValidators(Validators.required);
       this.f.query.setValidators(Validators.required);
       this.f.verificationTimeId.setValidators(Validators.required);
 
-      this.f.targetViewTypeId.clearValidators();
+      this.formGroup.patchValue({
+        flowName: '',
+        totalAmount: null,
+        numberOfTransaction: '',
+        flowFrequency: '',
+        triggerTimeId: null,
+      });
       this.f.flowName.clearValidators();
       this.f.totalAmount.clearValidators();
       this.f.numberOfTransaction.clearValidators();
       this.f.flowFrequency.clearValidators();
       this.f.triggerTimeId.clearValidators();
+    } else {
+      this.formGroup.patchValue({
+        targetViewTypeId: null,
+
+        flowName: '',
+        totalAmount: null,
+        numberOfTransaction: '',
+        flowFrequency: '',
+        additionalFlowTime: null,
+        triggerTimeId: null,
+
+        condition: '',
+        query: '',
+        verificationTimeId: null,
+      });
+
+      this.f.flowName.clearValidators();
+      this.f.totalAmount.clearValidators();
+      this.f.numberOfTransaction.clearValidators();
+      this.f.flowFrequency.clearValidators();
+      this.f.triggerTimeId.clearValidators();
+
+      this.f.condition.clearValidators();
+      this.f.query.clearValidators();
+      this.f.verificationTimeId.clearValidators();
     }
     Object.keys(this.f).forEach(key => {
       this.formGroup.controls[key].updateValueAndValidity();
     });
+  }
+
+  targetViewTypeIdChanged(value: any) {
+    if (value == 3) {
+      this.formGroup.patchValue({
+        targetDetailTr: '',
+        targetDetailEn: '',
+        descriptionTr: '',
+        descriptionEn: '',
+      });
+    }
+  }
+
+  totalAmountChanged(value: any) {
+    value ? this.f.numberOfTransaction.clearValidators() : this.f.numberOfTransaction.setValidators(Validators.required);
+    this.f.numberOfTransaction.updateValueAndValidity();
+  }
+
+  numberOfTransactionChanged(value: any) {
+    value == '' ? this.f.totalAmount.setValidators(Validators.required) : this.f.totalAmount.clearValidators();
+    this.f.totalAmount.updateValueAndValidity();
   }
 
   targetDetailTrChanged(value: string) {
@@ -206,24 +262,23 @@ export class TargetSourceComponent implements OnInit {
 
     requestModel.targetId = this.id ?? this.newTargetId;
     requestModel.targetSourceId = formGroup.targetSourceId;
-    requestModel.targetDetailEn = formGroup.targetDetailEn;
+    requestModel.targetViewTypeId = formGroup.targetViewTypeId;
     requestModel.targetDetailTr = formGroup.targetDetailTr;
-    requestModel.descriptionEn = formGroup.descriptionEn;
+    requestModel.targetDetailEn = formGroup.targetDetailEn;
     requestModel.descriptionTr = formGroup.descriptionTr;
+    requestModel.descriptionEn = formGroup.descriptionEn;
     switch (formGroup.targetSourceId) {
       case 1:
       case "1":
-        requestModel.targetViewTypeId = formGroup.targetViewTypeId;
         requestModel.flowName = formGroup.flowName;
-        requestModel.totalAmount = parseFloat(formGroup.totalAmount);
+        requestModel.totalAmount = formGroup.totalAmount;
         requestModel.numberOfTransaction = parseInt(formGroup.numberOfTransaction);
         requestModel.flowFrequency = formGroup.flowFrequency;
-        requestModel.additionalFlowTime = parseInt(formGroup.additionalFlowTime);
-        requestModel.triggerTimeId = parseInt(formGroup.triggerTimeId);
+        requestModel.additionalFlowTime = formGroup.additionalFlowTime;
+        requestModel.triggerTimeId = formGroup.triggerTimeId;
         break;
       case 2:
       case "2":
-        requestModel.targetViewTypeId = formGroup.targetViewTypeId;
         requestModel.condition = formGroup.condition;
         requestModel.query = formGroup.query;
         requestModel.verificationTimeId = formGroup.verificationTimeId;
@@ -257,8 +312,7 @@ export class TargetSourceComponent implements OnInit {
   }
 
   private getTargetSource() {
-    let targetId = this.id;
-    this.targetDefinitionService.getTargetSource(targetId)
+    this.targetDefinitionService.getTargetSource(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
