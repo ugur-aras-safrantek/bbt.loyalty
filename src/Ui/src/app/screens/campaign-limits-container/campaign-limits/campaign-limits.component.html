@@ -37,7 +37,9 @@
                         [value]="i.id">{{i.name}}</option>
               </select>
               <div *ngIf="submitted && f.campaignIds.errors" class="invalid-feedback">
-                <div *ngIf="f.campaignIds.errors.required">Kampanya seçilmelidir.</div>
+                <div *ngIf="f.campaignIds.errors.required || f.campaignIds.errors.minlength">
+                  En az 2 Kampanya seçilmelidir.
+                </div>
               </div>
             </div>
             <div class="form-group mt-3">
@@ -75,7 +77,6 @@
               <label for="currencyId">Para Birimi</label>
               <select name="currencyId" id="currencyId" class="form-select" formControlName="currencyId"
                       [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
-                <option [ngValue]="null">Seçiniz</option>
                 <option *ngFor="let i of currencyList"
                         [value]="i.id">{{i.name}}</option>
               </select>
@@ -88,7 +89,7 @@
               <input type="text" class="form-control"
                      [ngClass]="{ 'is-invalid': submitted && f.maxTopLimitAmount.invalid }"
                      name="maxTopLimitAmount" id="maxTopLimitAmount" formControlName="maxTopLimitAmount"
-                     turkishLira>
+                     currencyMask>
               <div *ngIf="submitted && f.maxTopLimitAmount.errors" class="invalid-feedback">
                 <div *ngIf="f.maxTopLimitAmount.errors.required">Çatı Max Tutar girilmelidir.</div>
               </div>
@@ -98,7 +99,7 @@
               <input type="text" class="form-control"
                      [ngClass]="{ 'is-invalid': submitted && f.maxTopLimitRate.invalid }"
                      name="maxTopLimitRate" id="maxTopLimitRate" formControlName="maxTopLimitRate"
-                     onlyNumber>
+                     currencyMask [options]="{ min: 0, max: 100 }">
               <div *ngIf="submitted && f.maxTopLimitRate.errors" class="invalid-feedback">
                 <div *ngIf="f.maxTopLimitRate.errors.required">Çatı Oranı girilmelidir.</div>
               </div>
@@ -111,10 +112,10 @@
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
-          <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
-        </div>
       </form>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
     </div>
   </div>
 </app-main-content>

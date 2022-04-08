@@ -47,12 +47,12 @@ export class CampaignLimitsComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       isActive: false,
-      campaignIds: [[], Validators.required],
+      campaignIds: [[], [Validators.required, Validators.minLength(2)]],
       achievementFrequencyId: [1, Validators.required],
       type: 1,
       currencyId: [1, Validators.required],
-      maxTopLimitAmount: ['', Validators.required],
-      maxTopLimitRate: '',
+      maxTopLimitAmount: [null, Validators.required],
+      maxTopLimitRate: null,
       maxTopLimitUtilization: '',
     });
 
@@ -77,6 +77,29 @@ export class CampaignLimitsComponent implements OnInit {
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  typeChanged() {
+    if (this.formGroup.get('type')?.value == 1) {
+      this.f.currencyId.setValidators(Validators.required);
+      this.f.maxTopLimitAmount.setValidators(Validators.required);
+
+      this.formGroup.patchValue({maxTopLimitRate: null});
+      this.f.maxTopLimitRate.clearValidators();
+    } else {
+      this.f.maxTopLimitRate.setValidators(Validators.required);
+
+      this.formGroup.patchValue({
+        currencyId: null,
+        maxTopLimitAmount: null
+      });
+      this.f.currencyId.clearValidators();
+      this.f.maxTopLimitAmount.clearValidators();
+    }
+
+    Object.keys(this.f).forEach(key => {
+      this.formGroup.controls[key].updateValueAndValidity();
+    });
   }
 
   private populateForm(data) {
@@ -118,14 +141,14 @@ export class CampaignLimitsComponent implements OnInit {
       case 1:
       case "1":
         requestModel.currencyId = formGroup.currencyId;
-        requestModel.maxTopLimitAmount = parseInt(formGroup.maxTopLimitAmount);
+        requestModel.maxTopLimitAmount = formGroup.maxTopLimitAmount;
         requestModel.maxTopLimitRate = null;
         break;
       case 2:
       case "2":
         requestModel.currencyId = null;
         requestModel.maxTopLimitAmount = null;
-        requestModel.maxTopLimitRate = parseInt(formGroup.maxTopLimitRate);
+        requestModel.maxTopLimitRate = formGroup.maxTopLimitRate;
         break;
       default:
         requestModel.currencyId = null;
@@ -134,31 +157,6 @@ export class CampaignLimitsComponent implements OnInit {
         break;
     }
     return requestModel;
-  }
-
-  typeChanged() {
-    if (this.formGroup.get('type')?.value == 1) {
-      this.f.currencyId.setValidators(Validators.required);
-      this.f.currencyId.updateValueAndValidity();
-      this.f.maxTopLimitAmount.setValidators(Validators.required);
-      this.f.maxTopLimitAmount.updateValueAndValidity();
-
-      this.formGroup.patchValue({maxTopLimitRate: ''});
-      this.f.maxTopLimitRate.clearValidators();
-      this.f.maxTopLimitRate.updateValueAndValidity();
-    } else {
-      this.f.maxTopLimitRate.setValidators(Validators.required);
-      this.f.maxTopLimitRate.updateValueAndValidity();
-
-      this.formGroup.patchValue({
-        currencyId: 1,
-        maxTopLimitAmount: ''
-      });
-      this.f.currencyId.clearValidators();
-      this.f.currencyId.updateValueAndValidity();
-      this.f.maxTopLimitAmount.clearValidators();
-      this.f.maxTopLimitAmount.updateValueAndValidity();
-    }
   }
 
   continue() {

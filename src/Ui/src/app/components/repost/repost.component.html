@@ -26,10 +26,10 @@
           </button>
         </div>
         <div class="col-2">
-          <button *ngIf="repostData.previewButtonVisible"
-                  class="btn btn-outline-primary w-100"
-                  [routerLink]="[repostData.previewLink,repostData.id]">Görüntüle
-          </button>
+          <a *ngIf="repostData.previewButtonVisible"
+             class="btn btn-outline-primary w-100" target="_blank"
+             [routerLink]="[repostData.previewLink,repostData.id]">Görüntüle
+          </a>
         </div>
         <div class="col-2">
           <button class="btn btn-primary w-100" (click)="openCopyModal()">Kopyala</button>
