@@ -37,7 +37,9 @@
                         [value]="i.id">{{i.name}}</option>
               </select>
               <div *ngIf="submitted && f.campaignIds.errors" class="invalid-feedback">
-                <div *ngIf="f.campaignIds.errors.required">Kampanya seçilmelidir.</div>
+                <div *ngIf="f.campaignIds.errors.required || f.campaignIds.errors.minlength">
+                  En az 2 Kampanya seçilmelidir.
+                </div>
               </div>
             </div>
             <div class="form-group mt-3">
@@ -75,7 +77,6 @@
               <label for="currencyId">Para Birimi</label>
               <select name="currencyId" id="currencyId" class="form-select" formControlName="currencyId"
                       [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
-                <option [ngValue]="null">Seçiniz</option>
                 <option *ngFor="let i of currencyList"
                         [value]="i.id">{{i.name}}</option>
               </select>
