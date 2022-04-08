@@ -51,8 +51,8 @@ export class CampaignLimitsComponent implements OnInit {
       achievementFrequencyId: [1, Validators.required],
       type: 1,
       currencyId: [1, Validators.required],
-      maxTopLimitAmount: ['', Validators.required],
-      maxTopLimitRate: '',
+      maxTopLimitAmount: [null, Validators.required],
+      maxTopLimitRate: null,
       maxTopLimitUtilization: '',
     });
 
@@ -118,14 +118,14 @@ export class CampaignLimitsComponent implements OnInit {
       case 1:
       case "1":
         requestModel.currencyId = formGroup.currencyId;
-        requestModel.maxTopLimitAmount = parseInt(formGroup.maxTopLimitAmount);
+        requestModel.maxTopLimitAmount = formGroup.maxTopLimitAmount;
         requestModel.maxTopLimitRate = null;
         break;
       case 2:
       case "2":
         requestModel.currencyId = null;
         requestModel.maxTopLimitAmount = null;
-        requestModel.maxTopLimitRate = parseInt(formGroup.maxTopLimitRate);
+        requestModel.maxTopLimitRate = formGroup.maxTopLimitRate;
         break;
       default:
         requestModel.currencyId = null;
@@ -143,7 +143,7 @@ export class CampaignLimitsComponent implements OnInit {
       this.f.maxTopLimitAmount.setValidators(Validators.required);
       this.f.maxTopLimitAmount.updateValueAndValidity();
 
-      this.formGroup.patchValue({maxTopLimitRate: ''});
+      this.formGroup.patchValue({maxTopLimitRate: null});
       this.f.maxTopLimitRate.clearValidators();
       this.f.maxTopLimitRate.updateValueAndValidity();
     } else {
@@ -152,7 +152,7 @@ export class CampaignLimitsComponent implements OnInit {
 
       this.formGroup.patchValue({
         currencyId: 1,
-        maxTopLimitAmount: ''
+        maxTopLimitAmount: null
       });
       this.f.currencyId.clearValidators();
       this.f.currencyId.updateValueAndValidity();
