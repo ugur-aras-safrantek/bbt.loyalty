@@ -77,9 +77,9 @@ export class CampaignGainsComponent implements OnInit {
       descriptionTr: '',
       descriptionEn: '',
       currencyId: 1,
-      maxAmount: '',
-      amount: '',
-      rate: '',
+      maxAmount: null,
+      amount: null,
+      rate: null,
       maxUtilization: '',
     });
   }
@@ -199,13 +199,9 @@ export class CampaignGainsComponent implements OnInit {
 
   save() {
     this.submitted = true;
-    let formGroup = this.formGroup.getRawValue();
-    console.log(formGroup.amount);
-    console.log(formGroup.rate);
-    console.log(formGroup.maxAmount);
-    // if (this.formGroup.valid) {
-    //   this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
-    // }
+    if (this.formGroup.valid) {
+      this.id ? this.campaignDefinitionGainsUpdate() : this.campaignDefinitionGainsAdd();
+    }
   }
 
   finish(id) {
