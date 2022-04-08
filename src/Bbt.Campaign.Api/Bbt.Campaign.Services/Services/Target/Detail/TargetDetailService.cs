@@ -206,9 +206,14 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 //if (!isValidCron)
                 //    throw new Exception("Akış frekansı cron formatı hatalı.");
 
-                //Regex regex = new Regex(Helpers.cronRegex);
-                //if (!regex.IsMatch(request.FlowFrequency))
-                //    throw new Exception("Akış frekansı cron formatı hatalı.");
+
+                string[] flowFrequencyArray = request.FlowFrequency.Split(' ');
+
+                //MatchCollection matches = Regex.Matches(request.FlowFrequency, Helpers.cronRegex);
+
+                Match match = Regex.Match(flowFrequencyArray[0], Helpers.flowFrequencyMinuteRegex);
+                if (!match.Success)
+                    throw new Exception("Akış frekansı cron formatı hatalı.");
 
                 int numberOfTransaction = request.NumberOfTransaction ?? 0;
                 if(numberOfTransaction == 0 && (request.TotalAmount ?? 0) == 0) 
