@@ -25,6 +25,7 @@
                   <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
                   <select name="targetViewTypeId" id="targetViewTypeId" class="form-select"
                           formControlName="targetViewTypeId"
+                          (ngModelChange)="targetViewTypeIdChanged($event)"
                           [ngClass]="{ 'is-invalid': submitted && f.targetViewTypeId.invalid }">
                     <option [ngValue]="null">Seçiniz</option>
                     <option *ngFor="let i of targetViewTypeList"
@@ -64,7 +65,8 @@
                       <div class="form-group">
                         <label for="totalAmount">Toplam Tutar</label>
                         <input type="text" class="form-control" name="totalAmount" id="totalAmount"
-                               formControlName="totalAmount" turkishLira
+                               formControlName="totalAmount" currencyMask
+                               (ngModelChange)="totalAmountChanged($event)"
                                [ngClass]="{ 'is-invalid': submitted && f.totalAmount.invalid }">
                         <div *ngIf="submitted && f.totalAmount.errors" class="invalid-feedback">
                           <div *ngIf="f.totalAmount.errors.required">Toplam Tutar girilmelidir.</div>
@@ -75,7 +77,8 @@
                       <div class="form-group">
                         <label for="numberOfTransaction">İşlem Adedi</label>
                         <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
-                               formControlName="numberOfTransaction"
+                               formControlName="numberOfTransaction" onlyNumber
+                               (ngModelChange)="numberOfTransactionChanged($event)"
                                [ngClass]="{ 'is-invalid': submitted && f.numberOfTransaction.invalid }">
                         <div *ngIf="submitted && f.numberOfTransaction.errors" class="invalid-feedback">
                           <div *ngIf="f.numberOfTransaction.errors.required">İşlem Adedi girilmelidir.</div>
