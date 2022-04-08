@@ -11,9 +11,12 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTopLimit
         public ParameterDto AchievementFrequency { get; set; }
         public int? CurrencyId { get; set; }
         public ParameterDto Currency { get; set; }
-        public string? MaxTopLimitAmount { get; set; }
-        public string? MaxTopLimitRate { get; set; }
-        public string? MaxTopLimitUtilization { get; set; }
+        public decimal? MaxTopLimitAmount { get; set; }
+        public decimal? MaxTopLimitRate { get; set; }
+        public decimal? MaxTopLimitUtilization { get; set; }
+        public string? MaxTopLimitAmountStr { get; set; }
+        public string? MaxTopLimitRateStr { get; set; }
+        public string? MaxTopLimitUtilizationStr { get; set; }
         public TopLimitType Type { get; set; }
         public bool IsActive { get; set; }
         public bool IsApproved { get; set; }

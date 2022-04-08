@@ -11,14 +11,10 @@ namespace Bbt.Campaign.Public.Dtos.Target.Detail
         public int TargetId { get; set; }
         public int TargetSourceId { get; set; }
         public TargetSourceDto  TargetSource { get; set; }
-
         public int TargetViewTypeId { get; set; }
         public TargetViewTypeDto TargetViewType { get; set; }
-
-
         public int? TriggerTimeId { get; set; }
-        public TriggerTimeDto? TriggerTime { get; set; }
-       
+        public TriggerTimeDto? TriggerTime { get; set; }     
         public int? VerificationTimeId { get; set; }
         public VerificationTimeDto? VerificationTime { get; set; }
         public string? FlowName { get; set; }
@@ -27,9 +23,10 @@ namespace Bbt.Campaign.Public.Dtos.Target.Detail
         public string? DescriptionEn { get; set; }
         public string? DescriptionTr { get; set; }
         public decimal? TotalAmount { get; set; }
+        public string? TotalAmountStr { get; set; }
         public int? NumberOfTransaction { get; set; }
         public string? FlowFrequency { get; set; }
-        public int? AdditionalFlowTime { get; set; }
+        public string? AdditionalFlowTime { get; set; }
         public string? Query { get; set; }
         public string? Condition { get; set; }
     }

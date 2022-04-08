@@ -198,12 +198,19 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             mappedCampaignAchievement.Rule = new ParameterDto { Id = mappedCampaignAchievement.Type, Code = "", 
                 Name = Helpers.GetEnumDescription<AchievementType>(mappedCampaignAchievement.Type)
             };
+
             if (entity.Currency != null) 
-            {
                 mappedCampaignAchievement.Currency = new ParameterDto { Id = entity.Currency.Id, Code = "", Name = entity.Currency.Name };
-            }
+            
             mappedCampaignAchievement.AchievementType = new ParameterDto { Id = entity.AchievementType.Id, Code = "", Name = entity.AchievementType.Name };
-            mappedCampaignAchievement.ActionOption = new ParameterDto { Id = entity.ActionOption.Id, Code = "", Name = entity.ActionOption.Name };
+            
+            if(mappedCampaignAchievement.ActionOption != null)
+                mappedCampaignAchievement.ActionOption = new ParameterDto { Id = entity.ActionOption.Id, Code = "", Name = entity.ActionOption.Name };
+
+            mappedCampaignAchievement.AmountStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.Amount);
+            mappedCampaignAchievement.RateStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.Rate);
+            mappedCampaignAchievement.MaxAmountStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.MaxAmount);
+            mappedCampaignAchievement.MaxUtilizationStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.MaxUtilization);
 
             return mappedCampaignAchievement;
         }
@@ -290,9 +297,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                     throw new Exception("Başlık (İngilizce) girilmelidir.");
             }
             
-            if (input.ActionOptionId <= 0)
-                throw new Exception("Aksiyon seçilmelidir.");
-            else
+            if ((input.ActionOptionId ?? 0) > 0)
             {
                 var actionOption = (await _parameterService.GetActionOptionListAsync())?.Data?.Any(x => x.Id == input.ActionOptionId);
                 if (!actionOption.GetValueOrDefault(false))
@@ -319,8 +324,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 }
                 if (!input.Amount.HasValue || input.Amount.Value <= 0)
                     throw new Exception("Kazanım Tutarı girilmelidir.");
-                if (!input.MaxAmount.HasValue || input.MaxAmount.Value <= 0)
-                    throw new Exception("Max Tutar girilmelidir.");
             }
             else if (input.Type == (int)AchievementType.Rate)
             {

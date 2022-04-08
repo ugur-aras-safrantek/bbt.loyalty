@@ -36,25 +36,10 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit)
         {
             await CheckValidationAsync(campaignTopLimit);
-
-            decimal? maxTopLimitAmount = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitAmount);
-            decimal? maxTopLimitRate = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitRate);
-            decimal? maxTopLimitUtilization = Core.Helper.Helpers.ConvertNullableDecimal(campaignTopLimit.MaxTopLimitUtilization);
-
-            campaignTopLimit.MaxTopLimitAmount = null;
-            campaignTopLimit.MaxTopLimitRate = null;
-            campaignTopLimit.MaxTopLimitUtilization = null;
-
-            TopLimitEntity entity = _mapper.Map<TopLimitEntity>(campaignTopLimit);
-
-            entity.MaxTopLimitAmount = maxTopLimitAmount;
-            entity.MaxTopLimitRate = maxTopLimitRate;
-            entity.MaxTopLimitUtilization = maxTopLimitUtilization;
-
+            var entity = _mapper.Map<TopLimitEntity>(campaignTopLimit);
             entity.IsDraft = true;
             entity.IsApproved = false;
             entity = await SetTopLimitChanges(entity);
-            
             var campaignIds = campaignTopLimit.CampaignIds.Distinct().ToList();
 
             //Campaigns
@@ -97,9 +82,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             entity.AchievementFrequencyId = request.AchievementFrequencyId;
             entity.CurrencyId = request.CurrencyId;
             entity.IsActive = request.IsActive;
-            entity.MaxTopLimitAmount = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitAmount);
-            entity.MaxTopLimitRate = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitRate);
-            entity.MaxTopLimitUtilization = Core.Helper.Helpers.ConvertNullableDecimal(request.MaxTopLimitUtilization);
+            entity.MaxTopLimitAmount = request.MaxTopLimitAmount;
+            entity.MaxTopLimitRate = request.MaxTopLimitRate;
+            entity.MaxTopLimitUtilization = request.MaxTopLimitUtilization;
             entity.Name = request.Name;
             entity.Type = request.Type;
             entity.IsDraft = true;
@@ -182,9 +167,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                     CurrencyId = campaignTopLimitEntity.CurrencyId,
                     Id = campaignTopLimitEntity.Id,
                     IsActive = campaignTopLimitEntity.IsActive,
-                    MaxTopLimitAmount = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitAmount),
-                    MaxTopLimitRate = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitRate),
-                    MaxTopLimitUtilization = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitUtilization),
+                    MaxTopLimitAmount = campaignTopLimitEntity.MaxTopLimitAmount,
+                    MaxTopLimitRate = campaignTopLimitEntity.MaxTopLimitRate,
+                    MaxTopLimitUtilization = campaignTopLimitEntity.MaxTopLimitUtilization,
+                    MaxTopLimitAmountStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitAmount),
+                    MaxTopLimitRateStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitRate),
+                    MaxTopLimitUtilizationStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitUtilization),
                     Name = campaignTopLimitEntity.Name,
                     Type = campaignTopLimitEntity.Type
                 };
@@ -386,23 +374,29 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             if (input.Type == TopLimitType.Amount)
             {
-                if (input.CurrencyId.HasValue)
-                { 
-                    if(input.CurrencyId <= 0)
-                        throw new Exception("Para Birimi hatalı.");
+                if (!input.CurrencyId.HasValue)
+                    throw new Exception("Para Birimi seçiniz.");
 
-                    var currency = (await _parameterService.GetCurrencyListAsync())?.Data?.Any(x => x.Id == input.CurrencyId);
-                    if (!currency.GetValueOrDefault(false))
-                        throw new Exception("Para Birimi hatalı.");
-                }
+                if (input.CurrencyId <= 0)
+                    throw new Exception("Para Birimi hatalı.");
 
-                if (string.IsNullOrEmpty(input.MaxTopLimitAmount) || string.IsNullOrWhiteSpace(input.MaxTopLimitAmount))
+                var currency = (await _parameterService.GetCurrencyListAsync())?.Data?.Any(x => x.Id == input.CurrencyId);
+                if (!currency.GetValueOrDefault(false))
+                    throw new Exception("Para Birimi hatalı.");
+
+                if (!input.MaxTopLimitAmount.HasValue)
+                    throw new Exception("Çatı Max Tutar girilmelidir.");
+
+                if (input.MaxTopLimitAmount <= 0)
                     throw new Exception("Çatı Max Tutar girilmelidir.");
             }
             else if (input.Type == TopLimitType.Rate)
             {
-                if (string.IsNullOrEmpty(input.MaxTopLimitRate) || string.IsNullOrWhiteSpace(input.MaxTopLimitRate))
-                    throw new Exception("Çatı Oranı girilmelidir.");
+                if (!input.MaxTopLimitRate.HasValue)
+                    throw new Exception("Çatı oranı girilmelidir.");
+
+                if (input.MaxTopLimitRate <= 0)
+                    throw new Exception("Çatı oranı girilmelidir.");
             }
             else
                 throw new Exception("Çatı limit tipi seçilmelidir.");
