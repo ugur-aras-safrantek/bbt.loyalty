@@ -8,6 +8,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
+using Cronos;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -202,18 +203,16 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 if (string.IsNullOrEmpty(request.FlowFrequency) || string.IsNullOrWhiteSpace(request.FlowFrequency))
                     throw new Exception("Akış frekansı boş olamaz.");
 
-                //bool isValidCron = Quartz.CronExpression.IsValidExpression(request.FlowFrequency);
-                //if (!isValidCron)
-                //    throw new Exception("Akış frekansı cron formatı hatalı.");
+                //try
+                //{
+                //    CronExpression expression = CronExpression.Parse(request.FlowFrequency);
 
-
-                string[] flowFrequencyArray = request.FlowFrequency.Split(' ');
-
-                //MatchCollection matches = Regex.Matches(request.FlowFrequency, Helpers.cronRegex);
-
-                Match match = Regex.Match(flowFrequencyArray[0], Helpers.flowFrequencyMinuteRegex);
-                if (!match.Success)
-                    throw new Exception("Akış frekansı cron formatı hatalı.");
+                //    DateTime? nextUtc = expression.GetNextOccurrence(DateTime.UtcNow);
+                //}
+                //catch (CronFormatException ex)
+                //{
+                //    throw new Exception("Akış frekansı cron formatı hatalı. Hata detayı : " + ex.Message);
+                //}
 
                 int numberOfTransaction = request.NumberOfTransaction ?? 0;
                 if(numberOfTransaction == 0 && (request.TotalAmount ?? 0) == 0) 

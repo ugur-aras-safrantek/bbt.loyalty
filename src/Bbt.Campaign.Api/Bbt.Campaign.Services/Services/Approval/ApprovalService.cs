@@ -600,7 +600,10 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .Include(x => x.BusinessLines.Where(t => t.IsDeleted != true))
                 .Include(x => x.CustomerTypes.Where(t => t.IsDeleted != true))
                 .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
-                .FirstAsync();
+                .FirstOrDefaultAsync();
+            if(campaignRuleDraftEntity == null)
+                throw new Exception("Kampanya kuralı bulunamadı."); 
+
 
             CampaignRuleEntity campaignRuleEntity = new CampaignRuleEntity()
             {
@@ -674,6 +677,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             List<CampaignTargetEntity> campaignTargetDraftList = _unitOfWork.GetRepository<CampaignTargetEntity>()
                      .GetAll(x => !x.IsDeleted && x.CampaignId == refId)
                      .ToList();
+            if(campaignTargetDraftList.Count == 0)
+                throw new Exception("Kampanya hedefleri bulunamadı."); 
+
             foreach (var campaignTargetDraftEntity in campaignTargetDraftList)
             {
                 var campaignTargetDto = _mapper.Map<CampaignTargetDto>(campaignTargetDraftEntity);
@@ -710,10 +716,14 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity) 
         {
-            foreach (var achievementDraftEntity in _unitOfWork.GetRepository<CampaignAchievementEntity>()
+            var achievementDraftList = _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
                 .Include(x => x.ChannelCodes.Where(x => !x.IsDeleted))
-                .ToList())
+                .ToList();
+            if(!achievementDraftList.Any())
+                throw new Exception("Kampanya kazanımları bulunamadı.");
+
+            foreach (var achievementDraftEntity in achievementDraftList)
             {
                 var campaignAchievementDto = _mapper.Map<CampaignAchievementDto>(achievementDraftEntity);
                 var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
@@ -1027,7 +1037,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             var targetDdraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
                 .GetAllIncluding(x => x.TargetDetail)
                 .Where(x => x.Id == refId)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
 
             var targetEntity = await _unitOfWork.GetRepository<TargetEntity>()
                 .GetAllIncluding(x => x.TargetDetail)
@@ -1226,9 +1236,9 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            await AddCampaignDocument(refId, campaignEntity);
-
             await AddCampaignRule(refId, campaignEntity);
+            
+            await AddCampaignDocument(refId, campaignEntity);
 
             await AddCampaignTarget(refId, campaignEntity);
 
