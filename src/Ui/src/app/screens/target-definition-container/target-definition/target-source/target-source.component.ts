@@ -262,24 +262,23 @@ export class TargetSourceComponent implements OnInit {
 
     requestModel.targetId = this.id ?? this.newTargetId;
     requestModel.targetSourceId = formGroup.targetSourceId;
-    requestModel.targetDetailEn = formGroup.targetDetailEn;
+    requestModel.targetViewTypeId = formGroup.targetViewTypeId;
     requestModel.targetDetailTr = formGroup.targetDetailTr;
-    requestModel.descriptionEn = formGroup.descriptionEn;
+    requestModel.targetDetailEn = formGroup.targetDetailEn;
     requestModel.descriptionTr = formGroup.descriptionTr;
+    requestModel.descriptionEn = formGroup.descriptionEn;
     switch (formGroup.targetSourceId) {
       case 1:
       case "1":
-        requestModel.targetViewTypeId = formGroup.targetViewTypeId;
         requestModel.flowName = formGroup.flowName;
-        requestModel.totalAmount = parseFloat(formGroup.totalAmount);
+        requestModel.totalAmount = formGroup.totalAmount;
         requestModel.numberOfTransaction = parseInt(formGroup.numberOfTransaction);
         requestModel.flowFrequency = formGroup.flowFrequency;
-        requestModel.additionalFlowTime = parseInt(formGroup.additionalFlowTime);
-        requestModel.triggerTimeId = parseInt(formGroup.triggerTimeId);
+        requestModel.additionalFlowTime = formGroup.additionalFlowTime;
+        requestModel.triggerTimeId = formGroup.triggerTimeId;
         break;
       case 2:
       case "2":
-        requestModel.targetViewTypeId = formGroup.targetViewTypeId;
         requestModel.condition = formGroup.condition;
         requestModel.query = formGroup.query;
         requestModel.verificationTimeId = formGroup.verificationTimeId;
@@ -313,8 +312,7 @@ export class TargetSourceComponent implements OnInit {
   }
 
   private getTargetSource() {
-    let targetId = this.id;
-    this.targetDefinitionService.getTargetSource(targetId)
+    this.targetDefinitionService.getTargetSource(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
