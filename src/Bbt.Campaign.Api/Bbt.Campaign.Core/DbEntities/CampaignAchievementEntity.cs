@@ -26,8 +26,8 @@ namespace Bbt.Campaign.Core.DbEntities
         public AchievementTypeEntity AchievementType { get; set; }
 
         [ForeignKey("ActionOption")]
-        public int ActionOptionId { get; set; }
-        public ActionOptionEntity ActionOption { get; set; }
+        public int? ActionOptionId { get; set; }
+        public ActionOptionEntity? ActionOption { get; set; }
 
         public string? DescriptionTr { get; set; }
         public string? DescriptionEn { get; set; }

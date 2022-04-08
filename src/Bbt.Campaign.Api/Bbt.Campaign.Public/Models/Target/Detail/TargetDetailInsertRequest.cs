@@ -14,10 +14,11 @@ namespace Bbt.Campaign.Public.Models.Target.Detail
 
         //akışa özel alanlar
         public string? FlowName { get; set; }
-        public decimal? TotalAmount { get; set; }
-        public int? NumberOfTransaction { get; set; }
-        public string? FlowFrequency { get; set; }
-        public int? AdditionalFlowTime { get; set; }
+        public decimal? TotalAmount { get; set; } //Toplam Tutar 1.000,00
+        public int? NumberOfTransaction { get; set; }//8 İşlem Adedi
+
+        public string? FlowFrequency { get; set; }//Akış Frekansı cron format
+        public string? AdditionalFlowTime { get; set; } //Timespan formatındadır
 
         //sorguya özel alanlar
         public string? Query { get; set; }

@@ -30,19 +30,30 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             await CheckValidationAsync(request);
 
             var entity = _mapper.Map<TargetDetailEntity>(request);
-            entity = await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(entity);
-            try 
-            { 
-            await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex) 
-            { 
-                string s = ex.ToString();
-            }
-            
 
+            entity = await SetChanges(entity);
+
+            entity = await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(entity);
+            
+            await _unitOfWork.SaveChangesAsync();
+            
             var mappedTarget = _mapper.Map<TargetDetailDto>(entity);
+            
             return await BaseResponse<TargetDetailDto>.SuccessAsync(mappedTarget);
+        }
+
+        private async Task<TargetDetailEntity> SetChanges(TargetDetailEntity entity)
+        {
+            if (entity.TargetSourceId == (int)TargetSourceEnum.Flow)
+            {
+
+            }
+            else
+            {
+
+            }
+
+            return entity;
         }
 
         public async Task<BaseResponse<TargetDetailDto>> DeleteAsync(int id)
@@ -68,6 +79,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             if (entity != null)
             {
                 var mappedTarget = _mapper.Map<TargetDetailDto>(entity);
+                mappedTarget.TotalAmountStr = Helpers.ConvertNullablePriceString(mappedTarget.TotalAmount);
                 return await BaseResponse<TargetDetailDto>.SuccessAsync(mappedTarget);
             }
             return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
@@ -81,6 +93,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             if (entity != null)
             {
                 var mappedTarget = _mapper.Map<TargetDetailDto>(entity);
+                mappedTarget.TotalAmountStr = Helpers.ConvertNullablePriceString(mappedTarget.TotalAmount);
                 return await BaseResponse<TargetDetailDto>.SuccessAsync(mappedTarget);
             }
             return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
@@ -163,7 +176,21 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             if (!targetViewType.GetValueOrDefault(false))
                 throw new Exception("Hedef gösterim tipi hatalı.");
 
-            if(request.TargetSourceId == (int)TargetSourceEnum.Flow) 
+            //DetailTr girildiyse DetailTr zorunludur
+            if (!string.IsNullOrWhiteSpace(request.TargetDetailTr) && !string.IsNullOrEmpty(request.TargetDetailTr))
+            {
+                if (string.IsNullOrWhiteSpace(request.TargetDetailEn) || string.IsNullOrEmpty(request.TargetDetailEn))
+                    throw new Exception("Hedef Detay (İngilizce) girilmelidir.");
+            }
+
+            //DetailTr girildiyse DetailTr zorunludur
+            if (!string.IsNullOrWhiteSpace(request.DescriptionTr) && !string.IsNullOrEmpty(request.DescriptionTr))
+            {
+                if (string.IsNullOrWhiteSpace(request.DescriptionEn) || string.IsNullOrEmpty(request.DescriptionEn))
+                    throw new Exception("Açıklama (İngilizce) girilmelidir.");
+            }
+
+            if (request.TargetSourceId == (int)TargetSourceEnum.Flow) 
             {
                 var triggerTime = (await _parameterService.GetTriggerTimeListAsync())?.Data?.Any(x => x.Id == (request.TriggerTimeId ?? 0));
                 if (!triggerTime.GetValueOrDefault(false))
@@ -183,10 +210,8 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 //if (!regex.IsMatch(request.FlowFrequency))
                 //    throw new Exception("Akış frekansı cron formatı hatalı.");
 
-
-                decimal totalAmount = request.TotalAmount ?? 0;
                 int numberOfTransaction = request.NumberOfTransaction ?? 0;
-                if(totalAmount == 0 && numberOfTransaction == 0) 
+                if(numberOfTransaction == 0 && (request.TotalAmount ?? 0) == 0) 
                 {
                     throw new Exception("Toplam tutar veya işlem adedi giriniz.");
                 }
@@ -197,10 +222,13 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 var verificationTime = (await _parameterService.GetVerificationTimeListAsync())?.Data?.Any(x => x.Id == (request.VerificationTimeId ?? 0));
                 if (!verificationTime.GetValueOrDefault(false))
                     throw new Exception("Kampanya Doğrulama Zamanı hatalı.");
+
+                if (string.IsNullOrEmpty(request.Query) || string.IsNullOrWhiteSpace(request.Query))
+                    throw new Exception("Sorgu boş olamaz.");
+
+                if (string.IsNullOrEmpty(request.Condition) || string.IsNullOrWhiteSpace(request.Condition))
+                    throw new Exception("Koşul boş olamaz.");
             }
-
         }
-
-
     }
 }

@@ -38,7 +38,7 @@ namespace Bbt.Campaign.Core.DbEntities
 
         [MaxLength(500)]      //Dakika 0-59, Saat 0-23, Gün 1-31,  Ay 1-12 ve Hafta 0-7 şeklinde tanımlanmıştır.
         public string? FlowFrequency { get; set; } //Akış frekansı - zorunlu
-        public int? AdditionalFlowTime { get; set; } //Akış ek süresi
+        public string? AdditionalFlowTime { get; set; } //Akış ek süresi, Timespan formatındadır
 
         //Sorgu ya özel alanlar
         public string? Query { get; set; } //
