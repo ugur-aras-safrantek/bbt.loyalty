@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bbt.Campaign.Core.Cron;
 using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
@@ -9,7 +10,6 @@ using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace Bbt.Campaign.Services.Services.Target.Detail
 {
@@ -202,14 +202,29 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 if (string.IsNullOrEmpty(request.FlowFrequency) || string.IsNullOrWhiteSpace(request.FlowFrequency))
                     throw new Exception("Akış frekansı boş olamaz.");
 
-                //bool isValidCron = Quartz.CronExpression.IsValidExpression(request.FlowFrequency);
-                //if (!isValidCron)
-                //    throw new Exception("Akış frekansı cron formatı hatalı.");
+                try
+                {
+                    CronExpression expression = CronExpression.Parse(request.FlowFrequency);
 
-                //Regex regex = new Regex(Helpers.cronRegex);
-                //if (!regex.IsMatch(request.FlowFrequency))
-                //    throw new Exception("Akış frekansı cron formatı hatalı.");
+                    DateTime? nextUtc = expression.GetNextOccurrence(DateTime.UtcNow);
+                }
+                catch (CronFormatException ex)
+                {
+                    throw new Exception("Akış frekansı cron formatı hatalı. Hata detayı : " + ex.Message);
+                }
 
+                if(!string.IsNullOrEmpty(request.AdditionalFlowTime) && !string.IsNullOrWhiteSpace(request.AdditionalFlowTime)) 
+                {
+                    try 
+                    { 
+                        TimeSpan ts = TimeSpan.Parse(request.AdditionalFlowTime);
+                    }
+                    catch(Exception ex) 
+                    {
+                        throw new Exception("Akış Ek Süresi timespan formatında olmalıdır.");
+                    }
+                }
+                
                 int numberOfTransaction = request.NumberOfTransaction ?? 0;
                 if(numberOfTransaction == 0 && (request.TotalAmount ?? 0) == 0) 
                 {

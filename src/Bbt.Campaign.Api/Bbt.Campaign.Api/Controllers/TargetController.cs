@@ -93,7 +93,7 @@ namespace Bbt.Target.Api.Controllers
         /// </summary>
         /// <param name="id">Target Id</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [Route("get-view-form")]
         public async Task<IActionResult> GetTargetViewFormAsync(int id)
         {
