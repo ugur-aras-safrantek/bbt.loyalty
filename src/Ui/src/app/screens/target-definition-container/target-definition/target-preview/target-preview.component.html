@@ -1,0 +1,214 @@
+<h1>Hedef Tanımı Görüntüle</h1>
+<hr class="blue">
+<div class="row p-4">
+  <div class="col">
+    <div class="row">
+      <div class="col-2 checkbox-mt d-flex justify-content-center">
+        <div class="form-group">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input scale-2x" name="isActive" id="isActive"
+                   [(ngModel)]="previewForm.isActive" disabled>
+            <label class="form-check-label ms-2" for="isActive">Aktif</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col form-group">
+        <label for="name">Hedef Tanım İsmi</label>
+        <input type="text" class="form-control" name="name" id="name" disabled
+               [(ngModel)]="previewForm.name">
+      </div>
+      <div class="col form-group">
+        <label for="title">Görüntülenecek Hedef Başlığı</label>
+        <input type="text" class="form-control" name="title" id="title" disabled
+               [(ngModel)]="previewForm.title">
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col form-group">
+        <label for="id">Hedef ID</label>
+        <input type="text" class="form-control" name="id" id="id" disabled
+               [(ngModel)]="previewForm.id">
+      </div>
+      <div class="col form-group">
+        <label for="targetSourceId">Hedef Kaynağı</label>
+        <select name="targetSourceId" id="targetSourceId" class="form-select"
+                [(ngModel)]="previewForm.targetSourceId" disabled>
+          <option *ngFor="let i of targetSourceList"
+                  [value]="i.id">{{i.name}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="form-group">
+          <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
+          <select name="targetViewTypeId" id="targetViewTypeId" class="form-select"
+                  [(ngModel)]="previewForm.targetViewTypeId" disabled>
+            <option *ngFor="let i of targetViewTypeList"
+                    [value]="i.id">{{i.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col" *ngIf="previewForm.targetSourceId==1">
+        <div class="form-group">
+          <label for="flowName">Akış İsmi</label>
+          <input type="text" class="form-control" name="flowName" id="flowName"
+                 [(ngModel)]="previewForm.flowName" disabled>
+        </div>
+      </div>
+      <div class="col" *ngIf="previewForm.targetSourceId==2">
+        <div class="form-group">
+          <label for="condition">Koşul</label>
+          <input type="text" class="form-control" name="condition" id="condition"
+                 [(ngModel)]="previewForm.condition" disabled>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="previewForm.targetSourceId==1">
+      <div class="row mt-3">
+        <div class="col">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="totalAmount">Toplam Tutar</label>
+                <input type="text" class="form-control" name="totalAmount" id="totalAmount"
+                       [(ngModel)]="previewForm.totalAmount" currencyMask disabled>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="numberOfTransaction">İşlem Adedi</label>
+                <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
+                       [(ngModel)]="previewForm.numberOfTransaction" onlyNumber disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="flowFrequency">Akış Frekansı</label>
+            <input type="text" class="form-control" name="flowFrequency" id="flowFrequency"
+                   [(ngModel)]="previewForm.flowFrequency" disabled>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <div class="form-group">
+            <label for="additionalFlowTime">Akış Ek Süresi</label>
+            <input type="text" class="form-control" name="additionalFlowTime" id="additionalFlowTime"
+                   [(ngModel)]="previewForm.additionalFlowTime" disabled>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="triggerTimeId">Tetiklenme Zamanı</label>
+            <select name="triggerTimeId" id="triggerTimeId" class="form-select"
+                    [(ngModel)]="previewForm.triggerTimeId" disabled>
+              <option *ngFor="let i of triggerTimeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="previewForm.targetSourceId==2">
+      <div class="row mt-3">
+        <div class="col">
+          <div class="form-group">
+            <label for="query">Sorgu</label>
+            <input type="text" name="query" id="query" class="form-control"
+                   [(ngModel)]="previewForm.query" disabled>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="verificationTimeId">Kampanya Doğrulama Zamanı</label>
+            <select name="verificationTimeId" id="verificationTimeId" class="form-select"
+                    [(ngModel)]="previewForm.verificationTimeId" disabled="">
+              <option *ngFor="let i of verificationTimeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="accordion mt-3" id="accordionTargetDetail">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTargetDetail">
+            <button class="accordion-button collapsed accordion-custom" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTargetDetail"
+                    aria-expanded="true"
+                    aria-controls="collapseTargetDetail">
+              Hedef Detay
+            </button>
+          </h2>
+          <div id="collapseTargetDetail" class="accordion-collapse collapse"
+               aria-labelledby="headingTargetDetail"
+               data-bs-parent="#accordionTargetDetail">
+            <div class="accordion-body">
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="targetDetailTr">Türkçe</label>
+                    <angular-editor [config]="editorConfig"
+                                    [(ngModel)]="previewForm.targetDetailTr" id="targetDetailTr">
+                    </angular-editor>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="targetDetailEn">İngilizce</label>
+                    <angular-editor [config]="editorConfig"
+                                    [(ngModel)]="previewForm.targetDetailEn" id="targetDetailEn">
+                    </angular-editor>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="accordion mt-3" id="accordionDescription">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingDescription">
+            <button class="accordion-button collapsed accordion-custom" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseDescription"
+                    aria-expanded="true"
+                    aria-controls="collapseDescription">
+              Açıklama
+            </button>
+          </h2>
+          <div id="collapseDescription" class="accordion-collapse collapse" aria-labelledby="headingDescription"
+               data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="descriptionTr">Türkçe</label>
+                    <angular-editor [config]="editorConfig"
+                                    [(ngModel)]="previewForm.descriptionTr" id="descriptionTr">
+                    </angular-editor>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="descriptionEn">İngilizce</label>
+                    <angular-editor [config]="editorConfig"
+                                    [(ngModel)]="previewForm.descriptionEn" id="descriptionEn">
+                    </angular-editor>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

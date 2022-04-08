@@ -37,6 +37,7 @@ export enum ApiPaths {
   GetTargetSources = 'Parameter/get-target-sources',
   TargetDefinitionListGetByFilter = 'Target/get-by-filter',
   TargetDefinitionListGetExcelFile = 'Target/get-list-excel',
+  TargetSourceViewForm = 'Target/get-view-form',
   CopyTarget = 'Approve/copy-target',
   GetTargetDetail = 'Target/get',
   TargetDefinitionAdd = 'Target/add',

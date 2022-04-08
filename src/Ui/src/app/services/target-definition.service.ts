@@ -112,6 +112,14 @@ export class TargetDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
+  getTargetInfo(targetId: any) {
+    let params = new HttpParams();
+    params = params.append('id', targetId);
+
+    const url = `${this.baseUrl}/${ApiPaths.TargetSourceViewForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
   targetSourceGetInsertForm() {
     const url = `${this.baseUrl}/${ApiPaths.TargetSourceGetInsertForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);

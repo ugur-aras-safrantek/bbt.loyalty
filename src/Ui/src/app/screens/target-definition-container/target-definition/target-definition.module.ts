@@ -8,6 +8,8 @@ import {TargetFinishComponent} from './target-finish/target-finish.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {AngularEditorModule} from "@kolkov/angular-editor";
 import {HttpClientModule} from "@angular/common/http";
+import {TargetPreviewComponent} from './target-preview/target-preview.component';
+import {NgxSmartModalModule} from "ngx-smart-modal";
 
 const routes: Routes = [
   {path: 'definition', component: TargetDefinitionComponent},
@@ -20,7 +22,8 @@ const routes: Routes = [
   declarations: [
     TargetDefinitionComponent,
     TargetSourceComponent,
-    TargetFinishComponent
+    TargetFinishComponent,
+    TargetPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -28,6 +31,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     HttpClientModule,
+    NgxSmartModalModule.forRoot(),
     AngularEditorModule
   ]
 })

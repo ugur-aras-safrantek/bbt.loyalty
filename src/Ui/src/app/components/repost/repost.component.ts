@@ -12,6 +12,7 @@ export class RepostComponent implements OnInit {
   @Input('repostData') repostData: any;
 
   @Output() copyItemEvent = new EventEmitter<any>();
+  @Output() previewItemEvent = new EventEmitter<any>();
 
   constructor(private modalService: NgxSmartModalService,
               private router: Router,
@@ -56,6 +57,16 @@ export class RepostComponent implements OnInit {
   copyModalOk() {
     this.copy();
     this.modalService.close('copyModal');
+  }
+
+  preview() {
+    if (this.previewItemEvent.observed) {
+      this.previewItemEvent.emit({id: this.repostData.id});
+    } else {
+      let baseUrl = window.location.href.replace(this.router.url, '');
+      let previewUrl = `${this.repostData.previewLink}/${this.repostData.id}`;
+      window.open(baseUrl + previewUrl, '_blank');
+    }
   }
 
   private copy() {
