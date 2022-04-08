@@ -277,6 +277,7 @@ export class CampaignRulesComponent implements OnInit {
                 this.nextButtonVisible = true;
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
+            this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

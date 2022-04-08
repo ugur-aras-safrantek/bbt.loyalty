@@ -332,6 +332,7 @@ export class TargetSourceComponent implements OnInit {
                 this.nextButtonVisible = true;
                 this.targetDefinitionService.targetFormChanged(true);
               });
+            this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

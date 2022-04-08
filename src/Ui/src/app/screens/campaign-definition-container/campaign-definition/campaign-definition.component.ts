@@ -370,6 +370,7 @@ export class CampaignDefinitionComponent implements OnInit {
                 this.nextButtonVisible = true;
                 this.campaignDefinitionService.campaignFormChanged(true);
               });
+            this.campaignDefinitionService.repostData.previewButtonVisible = res.data.campaign?.viewOptionId == 4 ? false : true;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

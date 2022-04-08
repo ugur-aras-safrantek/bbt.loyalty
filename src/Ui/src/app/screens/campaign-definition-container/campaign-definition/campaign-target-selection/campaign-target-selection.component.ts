@@ -253,6 +253,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
             this.addTargetList = res.data.targetList;
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
             this.nextButtonText = "Kaydet ve ilerle";
+            this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
