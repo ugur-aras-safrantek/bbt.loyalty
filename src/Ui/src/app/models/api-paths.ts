@@ -2,7 +2,7 @@ export enum ApiPaths {
   GetProgramTypes = 'Parameter/get-program-types',
   GetCampaignDetail = 'Campaign/get',
   CopyCampaign = 'Approve/copy-campaign',
-  GetCampaignInfo = 'Approve/view-campaign',
+  GetCampaignInfo = 'Customer/view-customer-min',
   CampaignDefinitionList = 'Campaign/get-by-filter',
   CampaignDefinitionListGetExcelFile = 'Campaign/get-by-filter-excel',
   CampaignDefinitionAdd = 'Campaign/add',

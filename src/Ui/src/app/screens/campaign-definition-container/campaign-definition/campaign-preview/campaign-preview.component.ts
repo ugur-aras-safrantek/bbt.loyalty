@@ -17,6 +17,9 @@ export class CampaignPreviewComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   campaign: CampaignPreviewModel = new CampaignPreviewModel();
+  targetGroupList: any;
+  campaignAchievement: any;
+
 
   editorConfig: AngularEditorConfig = {
     editable: false,
@@ -50,6 +53,8 @@ export class CampaignPreviewComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaign = res.data.campaign;
+            this.targetGroupList = res.data.campaignTarget?.targetGroupList;
+            this.campaignAchievement = res.data.campaignAchievement;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

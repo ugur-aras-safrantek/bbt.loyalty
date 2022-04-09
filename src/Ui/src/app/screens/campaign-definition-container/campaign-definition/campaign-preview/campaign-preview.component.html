@@ -22,62 +22,73 @@
       </div>
     </div>
     <div class="button-container col-6 m-auto mt-3">
-      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">Okudum, onaylıyorum
+      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">
+        Okudum, onaylıyorum
       </button>
-      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">Okudum, onaylamıyorum
+      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">
+        Okudum, onaylamıyorum
       </button>
     </div>
   </ngx-smart-modal>
   <div class="container d-flex">
     <div class="preview-container mt-5">
       <div class="row">
-        <div class="mx-auto col-8">
+        <div class="col-8 mx-auto">
           <div class="campaign-image" *ngIf="campaign.campaignDetail?.campaignListImageUrl">
             <img src="{{campaign.campaignDetail?.campaignListImageUrl}}" alt="">
           </div>
-          <h3 class="campaign-title text-center"
-              [ngClass]="{'my-4':campaign.campaignDetail?.campaignListImageUrl}">{{campaign.titleTr}}</h3>
+          <h3 class="campaign-title text-center" [ngClass]="{'my-4':campaign.campaignDetail?.campaignListImageUrl}">
+            {{campaign.titleTr}}
+          </h3>
           <div class="row">
-            <div class="mx-auto col-8">
-              <div class="row mt-3">
+            <div class="col-8 mx-auto">
+              <div class="row mt-4">
                 <div class="col-auto">
                   <i class="bi bi-circle-fill text-purple"></i>
                 </div>
                 <div class="col">
-                  <label class="mb-3">Özet Bilgileri</label>
-                  <angular-editor [config]="editorConfig"
-                                  [ngModel]="campaign.campaignDetail?.summaryTr"></angular-editor>
+                  <label>Özet Bilgileri</label>
                 </div>
               </div>
-              <div class="accordion mt-5 mb-3" id="accordionCampaignDetail">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingCampaignDetail">
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseCampaignDetail"
-                            aria-expanded="true"
-                            aria-controls="collapseCampaignDetail">
-                      Detaylar için tıklayın
-                    </button>
-                  </h2>
-                  <div id="collapseCampaignDetail"
-                       class="accordion-collapse collapse"
-                       aria-labelledby="headingCampaignDetail"
-                       data-bs-parent="#accordionCampaignDetail">
-                    <div class="accordion-body">
-                      <angular-editor [config]="editorConfig"
-                                      [ngModel]="campaign.campaignDetail?.detailTr"></angular-editor>
+              <div class="row mt-4">
+                <div class="col">
+                  <angular-editor [config]="editorConfig" [ngModel]="campaign.campaignDetail?.summaryTr">
+                  </angular-editor>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="accordion mt-4" id="accordionCampaignDetail">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="headingCampaignDetail">
+                        <button class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapseCampaignDetail"
+                                aria-expanded="true"
+                                aria-controls="collapseCampaignDetail">
+                          Detaylar için tıklayın
+                        </button>
+                      </h2>
+                      <div id="collapseCampaignDetail"
+                           class="accordion-collapse collapse"
+                           aria-labelledby="headingCampaignDetail"
+                           data-bs-parent="#accordionCampaignDetail">
+                        <div class="accordion-body">
+                          <angular-editor [config]="editorConfig"
+                                          [ngModel]="campaign.campaignDetail?.detailTr">
+                          </angular-editor>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="form-check">
+              <div class="form-check mt-3">
                 <input class="form-check-input" type="checkbox" value="" id="campaignContractCheckDefault">
                 <label class="form-check-label" for="campaignContractCheckDefault">
-                  <u><b (click)="contractApprovalModal.open()" class="cursor-pointer">{{campaign.name}}
-                    Sözleşmesi'ni</b></u>
-                  okudum ve onaylıyorum.
+                  <u><b (click)="contractApprovalModal.open()" class="cursor-pointer">
+                    {{campaign.name}} Sözleşmesi</b></u>'ni okudum ve onaylıyorum.
                 </label>
               </div>
               <div class="row mt-4">
@@ -91,40 +102,42 @@
           </div>
         </div>
       </div>
-      <hr class="my-5">
+      <hr class="my-4">
       <h3 class="title text-purple-dark">Dönem İçi İşlemleriniz</h3>
       <b>Kampanyadan yararlanmak için {{campaign.endDate}} tarihine kadar aşağıdaki koşulu tamamlamalısınız.</b>
-      <div class="box my-5 pt-4">
+      <div class="box my-5">
         <div class="px-4">
-          <div class="row">
-            <div class="col-auto d-flex justify-content-center align-items-center">
-              <i class="bi bi-square-fill text-purple"></i>
+          <div *ngFor="let targetGroup of targetGroupList">
+            <div class="row py-3">
+              <div class="col">
+                <div class="row" *ngFor="let campaignTarget of targetGroup.targetList">
+                  <div class="col-auto d-flex justify-content-center align-items-center">
+                    <i class="bi bi-square-fill text-purple"></i>
+                  </div>
+                  <div class="col">
+                    <p class="my-1">{{campaignTarget.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col">
-              <p class="mb-0">Debit kart ile geçtiğimiz ayda tek seferde 3500 TL harcama</p>
-              <p class="mb-0">-</p>
+            <div *ngIf="targetGroup != targetGroupList[targetGroupList.length-1]">
+              <strong class="text-purple">VEYA</strong>
             </div>
           </div>
         </div>
         <div class="bg-purple px-4 py-1">
           <div class="row">
-            <div class="col"><b>Harcama hedef: 3500 TL</b></div>
+            <div class="col"><b>Harcama hedef: - TL</b></div>
             <div class="col d-flex justify-content-end"><b>Kalan harcama tutarı: - TL</b></div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-4">
-          <div class="box p-3">
-            <b>Harcamalara İade</b>
-            <p class="mb-0">Kart harcamaları, fatura/kurum ödemeleri ve dijital ödemelerinizin %2si kadar iade.</p>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="box p-3 position-relative">
-            <b>Harcamalara aidatı geri ödemesi</b>
+      <div class="row" *ngIf="campaignAchievement && campaignAchievement.channelCodeList">
+        <div class="col-4" *ngFor="let channel of campaignAchievement.channelCodeList">
+          <div class="box mb-3 p-3 position-relative">
+            <b>{{channel}}</b>
             <p class="mb-0">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              {{campaignAchievement.descriptionTr}}
             </p>
             <div class="ok">
               <i class="bi bi-arrow-right"></i>
