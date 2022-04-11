@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Bbt.Campaign.EntityFrameworkCore\Bbt.Campaign.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Bbt.Campaign.Public\Bbt.Campaign.Public.csproj" />
     <ProjectReference Include="..\Bbt.Campaign.Shared\Bbt.Campaign.Shared.csproj" />
+    <ProjectReference Include="..\Cronos\Cronos.csproj" />
   </ItemGroup>
 
 </Project>

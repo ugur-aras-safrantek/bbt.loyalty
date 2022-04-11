@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Bbt.Campaign.Core.Cron;
 using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
@@ -9,6 +8,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
+using Cronos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bbt.Campaign.Services.Services.Target.Detail
