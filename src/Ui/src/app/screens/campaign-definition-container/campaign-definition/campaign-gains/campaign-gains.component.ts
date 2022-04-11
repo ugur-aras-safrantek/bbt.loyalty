@@ -8,6 +8,7 @@ import {CampaignDefinitionGainsAddUpdateRequestModel} from "../../../../models/c
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {NgxSmartModalService} from "ngx-smart-modal";
 
 @Component({
   selector: 'app-campaign-gains',
@@ -27,25 +28,28 @@ export class CampaignGainsComponent implements OnInit {
   currencyList: DropdownListModel[];
 
   id: any;
-  detailId: any;
+  newId: any;
   stepData;
   repostData = this.campaignDefinitionService.repostData;
 
-  preview = GlobalVariable.preview;
+  previewLink = GlobalVariable.preview;
 
   nextButtonVisible = true;
   isInvisibleCampaign = false;
   buttonTypeIsContinue = false;
 
+  alertModalText = '';
+
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private modalService: NgxSmartModalService,
               private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
-      this.detailId = paramMap.get('detailId');
+      this.newId = paramMap.get('newId');
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
@@ -173,7 +177,7 @@ export class CampaignGainsComponent implements OnInit {
     let formGroup = this.formGroup.getRawValue();
     let requestModel = new CampaignDefinitionGainsAddUpdateRequestModel();
 
-    requestModel.campaignId = this.id ?? this.detailId;
+    requestModel.campaignId = this.id ?? this.newId;
     requestModel.campaignChannelCodeList = formGroup.campaignChannelCodeList;
     requestModel.type = formGroup.type;
     requestModel.achievementTypeId = formGroup.achievementTypeId;
@@ -206,14 +210,21 @@ export class CampaignGainsComponent implements OnInit {
   }
 
   finish(id) {
-    this.preview = `${this.preview}/${id}`;
+    this.previewLink = `${this.previewLink}/${id}`;
     this.buttonTypeIsContinue = true;
   }
 
   continue() {
-    this.id
-      ? this.router.navigate([`/campaign-definition/create/${this.id}/true/finish`], {relativeTo: this.route})
-      : this.router.navigate(['./finish'], {relativeTo: this.route});
+    this.alertModalText = this.id
+      ? 'Yaptığınız değişiklikleri kaydetmeyi onaylıyor musunuz?'
+      : 'Yeni kampanyayı kaydetmeyi onaylıyor musunuz?';
+    this.modalService.open("campaignGainsApproveAlertModal");
+  }
+
+  alertModalOk() {
+    this.newId
+      ? this.router.navigate([`/campaign-definition/create/finish/${this.newId}`], {relativeTo: this.route})
+      : this.router.navigate([`/campaign-definition/update/${this.id}/finish`], {relativeTo: this.route});
   }
 
   copyCampaign(event) {
@@ -221,7 +232,7 @@ export class CampaignGainsComponent implements OnInit {
   }
 
   private getCampaignDefinitionGainsGetInsertForm() {
-    let campaignId = parseInt(this.id ?? this.detailId);
+    let campaignId = parseInt(this.newId);
     this.campaignDefinitionService.getCampaignDefinitionGainsGetInsertForm(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -241,7 +252,7 @@ export class CampaignGainsComponent implements OnInit {
   }
 
   private getCampaignDefinitionGain() {
-    let campaignId = parseInt(this.id ?? this.detailId);
+    let campaignId = parseInt(this.id);
     this.campaignDefinitionService.getCampaignDefinitionGain(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

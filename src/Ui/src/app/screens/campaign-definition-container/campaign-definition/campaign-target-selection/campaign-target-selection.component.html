@@ -42,7 +42,7 @@
             <strong class="color-blue">Hedef Tanım İsmi</strong>
           </div>
           <div class="col-2 d-flex justify-content-end">
-            <button class="btn btn-primary" [disabled]="disabled" (click)="openModal()">Yeni Hedef Ekle</button>
+            <button class="btn btn-primary" (click)="openModal()">Yeni Hedef Ekle</button>
           </div>
         </div>
         <hr class="row mt-3 blue">
@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center mt-4" *ngIf="!disabled && nextButtonVisible">
+    <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
       <button class="btn btn-orange px-5" (click)="continue()">{{nextButtonText}}</button>
     </div>
   </div>

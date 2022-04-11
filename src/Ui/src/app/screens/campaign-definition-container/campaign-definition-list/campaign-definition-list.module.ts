@@ -30,5 +30,6 @@ const routes: Routes = [
     AngularMyDatePickerModule,
   ]
 })
+
 export class CampaignDefinitionListModule {
 }

@@ -57,8 +57,7 @@ export class CampaignRulesComponent implements OnInit {
 
   submitted = false;
   id: any;
-  detailId: any;
-  disabled: boolean = false;
+  newId: any;
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
@@ -72,7 +71,7 @@ export class CampaignRulesComponent implements OnInit {
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
-      this.detailId = paramMap.get('detailId');
+      this.newId = paramMap.get('newId');
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
@@ -249,7 +248,7 @@ export class CampaignRulesComponent implements OnInit {
   }
 
   private getCampaignRules() {
-    let campaignId = parseInt(this.id ?? this.detailId);
+    let campaignId = parseInt(this.id);
     this.campaignDefinitionService.getCampaignRules(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -291,7 +290,7 @@ export class CampaignRulesComponent implements OnInit {
   private campaignRulesAdd() {
     let formGroup = this.formGroup.getRawValue();
     let requestModel: CampaignRulesAddRequestModel = {
-      campaignId: this.detailId,
+      campaignId: this.newId,
       joinTypeId: formGroup.joinTypeId,
       isSingleIdentity: !this.disableIdentity,
       identity: formGroup.identity,
@@ -315,7 +314,7 @@ export class CampaignRulesComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate([GlobalVariable.target, this.detailId], {relativeTo: this.route});
+            this.router.navigate([GlobalVariable.target, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -330,7 +329,7 @@ export class CampaignRulesComponent implements OnInit {
   private campaignRulesUpdate() {
     let formGroup = this.formGroup.getRawValue();
     let requestModel: CampaignRulesAddRequestModel = {
-      campaignId: this.id ?? this.detailId,
+      campaignId: this.id,
       joinTypeId: formGroup.joinTypeId,
       isSingleIdentity: !this.disableIdentity,
       identity: formGroup.identity,
@@ -355,7 +354,7 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
-            this.router.navigate([`/campaign-definition/create/${this.id}/true/target-selection`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${this.id}/target-selection`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

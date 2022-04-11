@@ -32,7 +32,7 @@ export class CampaignPreviewComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
-      this.campaign.id = paramMap.get('detailId');
+      this.campaign.id = paramMap.get('id');
     });
 
     this.getCampaignInfo();

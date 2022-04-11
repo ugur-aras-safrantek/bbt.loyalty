@@ -1,3 +1,12 @@
+<ngx-smart-modal #campaignGainsApproveAlertModal identifier="campaignGainsApproveAlertModal">
+  <h1>Bilgilendirme</h1>
+  <p>{{alertModalText}}</p>
+
+  <div class="button-container">
+    <button class="btn btn-primary" (click)="alertModalOk()">Kaydet</button>
+    <button class="btn btn-outline-primary" (click)="campaignGainsApproveAlertModal.close()">İptal</button>
+  </div>
+</ngx-smart-modal>
 <app-main-content>
   <app-step [data]="stepData" [id]="id"></app-step>
   <div class="container">
@@ -157,7 +166,7 @@
     </div>
     <div class="d-flex justify-content-center flex-column align-items-center">
       <a target="_blank" *ngIf="!isInvisibleCampaign && buttonTypeIsContinue" href="#" class="btn-link mt-4"
-         [routerLink]="[preview]">
+         [routerLink]="[previewLink]">
         Görüntüle
       </a>
       <div *ngIf="nextButtonVisible">

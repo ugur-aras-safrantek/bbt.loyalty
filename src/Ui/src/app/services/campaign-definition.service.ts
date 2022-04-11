@@ -99,7 +99,7 @@ export class CampaignDefinitionService {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.utilityService.redirectTo(`/campaign-definition/create/${res.data.id}/true/definition`);
+            this.utilityService.redirectTo(`/campaign-definition/update/${res.data.id}/definition`);
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

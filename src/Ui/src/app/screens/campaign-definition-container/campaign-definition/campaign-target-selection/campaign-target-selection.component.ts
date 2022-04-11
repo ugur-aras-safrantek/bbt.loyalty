@@ -26,9 +26,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
   stepData;
   repostData = this.campaignDefinitionService.repostData;
   id: any;
-  detailId: any;
-  repost: boolean = false;
-  disabled: boolean = false;
+  newId: any;
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
@@ -51,11 +49,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
-      this.detailId = paramMap.get('detailId');
-      if (paramMap.get('repost')) {
-        this.repost = paramMap.get('repost') === 'true';
-      }
-      this.disabled = this.id && !this.repost;
+      this.newId = paramMap.get('newId');
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
@@ -152,7 +146,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
 
   campaignTargetsAdd(targetList: any[]) {
     let requestModel: CampaignTargetsAddRequestModel = {
-      campaignId: this.detailId,
+      campaignId: this.newId,
       targetList: targetList
     };
     this.campaignDefinitionService.campaignTargetsAdd(requestModel)
@@ -160,7 +154,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate([GlobalVariable.gains, this.detailId], {relativeTo: this.route});
+            this.router.navigate([GlobalVariable.gains, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -173,7 +167,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
   }
 
   campaignTargetsUpdate(targetList: any[]) {
-    let campaignId = this.id ?? this.detailId;
+    let campaignId = this.id;
     let requestModel: CampaignTargetsAddRequestModel = {
       campaignId: campaignId,
       targetList: targetList
@@ -184,7 +178,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
-            this.router.navigate([`/campaign-definition/create/${this.id}/true/gains`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${this.id}/gains`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -244,7 +238,7 @@ export class CampaignTargetSelectionComponent implements OnInit {
   }
 
   private getCampaignTargets() {
-    let campaignId = this.id ?? this.detailId;
+    let campaignId = this.id;
     this.campaignDefinitionService.getCampaignTargets(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
