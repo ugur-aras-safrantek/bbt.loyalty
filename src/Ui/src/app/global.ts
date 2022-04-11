@@ -8,12 +8,12 @@ export const GlobalVariable = Object.freeze({
   preview: '/campaign-definition/create/preview',
 
   limitList: '/campaign-limits/list',
-  limitCreate: '/campaign-limits/create',
+  limitCreate: '/campaign-limits/create/limit',
   limitUpdate: '/campaign-limits/update',
   limitPreview: '/campaign-limits/preview',
 
   targetList: '/target-definition/list',
-  targetCreate: '/target-definition/create',
+  targetCreate: '/target-definition/create/definition',
   targetUpdate: '/target-definition/update',
   targetPreview: '/target-definition/preview',
 });
