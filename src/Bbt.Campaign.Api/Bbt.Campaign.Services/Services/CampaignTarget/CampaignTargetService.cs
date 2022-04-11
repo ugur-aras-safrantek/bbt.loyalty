@@ -88,6 +88,10 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 throw new Exception("Kampanya hatalı.");
             }
 
+            int targetCount = input.TargetList.Where(x => x > 0).Count();
+            if(targetCount == 0)
+                throw new Exception("Hedef giriniz.");
+
             foreach (int targetId in input.TargetList.Where(x => x > 0))
             {
                 var entity = await _unitOfWork.GetRepository<TargetEntity>()
@@ -98,7 +102,72 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     throw new Exception("Hedef hatalı.");
                 }
             }
+
+
+            //tekillik kontrolu
+            string targetListStr = ",";
+            foreach (int targetId in input.TargetList)
+            {
+                targetListStr += targetId == 0 ? "#" : ("," + targetId.ToString());
+            }
+            List<CampaignTargetEntity> campaignTargetList = new List<CampaignTargetEntity>();
+            int targetGroupId = 1;
+            string[] targetListArray = targetListStr.Split('#');
+            foreach (string targetIds in targetListArray)
+            {
+                string[] targetIdsArray = targetIds.Split(',');
+                if (targetIdsArray.Length > 0)
+                {
+                    foreach (string targetId in targetIdsArray)
+                    {
+                        if (!string.IsNullOrEmpty(targetId))
+                        {
+                            var entity = new CampaignTargetEntity()
+                            {
+                                CampaignId = input.CampaignId,
+                                TargetGroupId = targetGroupId,
+                                TargetOperationId = (int)TargetOperationsEnum.And,
+                                TargetId = Convert.ToInt32(targetId),
+                            };
+                            campaignTargetList.Add(entity);
+                        }  
+                    }
+                }
+                targetGroupId++;
+            }
+
+            var groupList = campaignTargetList.Select(x=>x.TargetGroupId).Distinct().ToList();
+            foreach (var groupId in groupList) 
+            { 
+                int currentTargetCount = campaignTargetList.Where(x => x.TargetGroupId == groupId).Count();
+                foreach(var entity in campaignTargetList.Where(x=>x.TargetGroupId != groupId)) 
+                {
+                    int nextTargetGroupId = entity.TargetGroupId;
+                    int nextTargetCount = campaignTargetList.Where(x => x.TargetGroupId == nextTargetGroupId).Count();
+                    if (currentTargetCount != nextTargetCount)
+                        continue;
+
+                    bool isExists = true;
+                    foreach (var currentEntity in campaignTargetList.Where(x => x.TargetGroupId == groupId))
+                    {
+                        int currenctTargetId = currentEntity.TargetId;
+                        var nextEntity = campaignTargetList.Where(t => t.TargetGroupId == nextTargetGroupId && t.TargetId == currenctTargetId).FirstOrDefault();
+                        if (nextEntity == null)
+                        {
+                            isExists = false;
+                            continue;
+                        }
+                    }
+
+                    if (isExists)
+                    {
+                        throw new Exception("Aynı hedef grubu girilemez.");
+                    }
+                }
+            }
         }
+
+        
 
         public async Task<BaseResponse<CampaignTargetDto>> DeleteAsync(int id)
         {

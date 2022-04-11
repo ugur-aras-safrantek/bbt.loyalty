@@ -210,10 +210,17 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 }
                 catch (CronFormatException ex)
                 {
-                    throw new Exception("Akış frekansı cron formatı hatalı. Hata detayı : " + ex.Message);
+                    //throw new Exception("Akış frekansı cron formatı hatalı. Hata detayı : " + ex.Message);
+                    throw new Exception("Akış frekansı cron formatı hatalı.");
                 }
 
-                if(!string.IsNullOrEmpty(request.AdditionalFlowTime) && !string.IsNullOrWhiteSpace(request.AdditionalFlowTime)) 
+                string[] flowFrequencyArray = request.FlowFrequency.Split(' ');
+                if(flowFrequencyArray[4].Contains("0")) 
+                {
+                    throw new Exception("Akış frekansı cron formatı hatalı.");
+                }
+
+                if (!string.IsNullOrEmpty(request.AdditionalFlowTime) && !string.IsNullOrWhiteSpace(request.AdditionalFlowTime)) 
                 {
                     try 
                     { 

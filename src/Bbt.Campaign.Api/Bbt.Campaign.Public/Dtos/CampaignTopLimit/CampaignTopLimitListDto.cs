@@ -9,6 +9,9 @@
         public decimal? MaxTopLimitAmount { get; set; } = 0;
         public decimal? MaxTopLimitRate { get; set; }
         public decimal? MaxTopLimitUtilization { get; set; }
+        public string? MaxTopLimitAmountStr { get; set; }
+        public string? MaxTopLimitRateStr { get; set; }
+        public string? MaxTopLimitUtilizationStr { get; set; }
         public bool Amount { get; set; }
         public bool Rate { get; set; }
         public bool IsActive { get; set; }

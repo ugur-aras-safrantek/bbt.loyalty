@@ -240,8 +240,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             var campaignTopLimitQuery = await GetFilteredQuery(request); 
 
-         
-
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
             var totalItems = campaignTopLimitQuery.Count();
@@ -255,10 +253,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 Amount = x.Type == Public.Enums.TopLimitType.Amount,
                 Rate = x.Type == Public.Enums.TopLimitType.Rate,
                 Name = x.Name,
-                Currency = x.Currency.Name,
+                Currency = x.Currency == null ? null : x.Currency.Name,
                 MaxTopLimitAmount = x.MaxTopLimitAmount,
                 MaxTopLimitRate = x.MaxTopLimitRate,
                 MaxTopLimitUtilization = x.MaxTopLimitUtilization,
+                MaxTopLimitAmountStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitAmount),
+                MaxTopLimitRateStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitRate),
+                MaxTopLimitUtilizationStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitUtilization),
                 IsActive = x.IsActive,
             }).ToList();
 

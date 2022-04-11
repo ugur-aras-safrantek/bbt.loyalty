@@ -255,7 +255,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.CampaignDetail.DetailTr = null;
             }
 
-            if (entity.IsBundle)
+            if (entity.IsBundle || !entity.IsActive)
                 entity.Order = null;
 
             if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignListImageUrl) || 
@@ -364,8 +364,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if (startDate > endDate)
                 throw new Exception("Başlama Tarihi, Bitiş Tarihinden büyük olamaz”");
 
-            //sıralama: birleştirilebilir değilse zorunludur
-            if (!input.IsBundle)
+            //sıralama: birleştirilebilir ve  değilse zorunludur
+            if (!input.IsBundle || input.IsActive)
             {
                 int order = input.Order ?? 0;
 
