@@ -215,9 +215,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 CurrencyId = x.CurrencyId,
                 Id = x.Id,
                 IsActive = x.IsActive,
-                //MaxTopLimitAmount = x.MaxTopLimitAmount,
-                //MaxTopLimitRate = x.MaxTopLimitRate,
-                //MaxTopLimitUtilization = x.MaxTopLimitUtilization,
+                MaxTopLimitAmount = x.MaxTopLimitAmount,
+                MaxTopLimitRate = x.MaxTopLimitRate,
+                MaxTopLimitUtilization = x.MaxTopLimitUtilization,
                 Name = x.Name,
                 Type = x.Type
             }).ToList();

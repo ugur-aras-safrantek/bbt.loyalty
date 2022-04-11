@@ -36,9 +36,9 @@ namespace Bbt.Campaign.Core.DbEntities
         public int ProgramTypeId { get; set; }
         public ProgramTypeEntity ProgramType { get; set; }
 
-        public virtual CampaignRuleEntity CampaignRule { get; set; }
+        public virtual CampaignRuleEntity? CampaignRule { get; set; }
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
-        public virtual ICollection<CampaignAchievementEntity> Achievements { get; set; }
+        public virtual CampaignAchievementEntity? Achievement { get; set; }
 
         //Approve
         public bool IsApproved { get; set; }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
-using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;

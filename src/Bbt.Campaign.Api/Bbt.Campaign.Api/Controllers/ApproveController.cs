@@ -1,8 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
-using Bbt.Campaign.Public.Models.Approval;
-using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Services.Services.Approval;
-using Bbt.Campaign.Services.Services.Campaign;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bbt.Campaign.Api.Controllers

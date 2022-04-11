@@ -46,13 +46,19 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
         {
             if (entity.TargetSourceId == (int)TargetSourceEnum.Flow)
             {
-
+                entity.Query = null;
+                entity.Condition = null;
+                entity.VerificationTimeId = null;
             }
             else
             {
-
+                entity.FlowName = null;
+                entity.TotalAmount = null;
+                entity.NumberOfTransaction = null;
+                entity.FlowFrequency = null;
+                entity.AdditionalFlowTime = null;
+                entity.TriggerTimeId = null;
             }
-
             return entity;
         }
 
@@ -123,6 +129,8 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 entity.TargetViewTypeId = targetDetail.TargetViewTypeId;
                 entity.TriggerTimeId = targetDetail.TriggerTimeId;
                 entity.VerificationTimeId = targetDetail.VerificationTimeId;
+
+                entity = await SetChanges(entity);
 
                 await _unitOfWork.GetRepository<TargetDetailEntity>().UpdateAsync(entity);
 

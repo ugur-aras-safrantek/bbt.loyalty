@@ -2,7 +2,7 @@
 
 namespace Bbt.Campaign.Public.Models.Campaign
 {
-    public class CampaignListFilterRequest: PagingRequest
+    public class CampaignListFilterRequest : PagingRequest
     {
         public string? CampaignName { get; set; }
         public string? CampaignCode { get; set; }
