@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {StepService} from "../../../services/step.service";
 import {TargetDefinitionService} from "../../../services/target-definition.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -10,6 +10,8 @@ import {
   TargetDefinitionUpdateRequestModel
 } from "../../../models/target-definition";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {NgxSmartModalService} from "ngx-smart-modal";
+import {TargetPreviewComponent} from "./target-preview/target-preview.component";
 
 @Component({
   selector: 'app-target-definition',
@@ -19,6 +21,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 export class TargetDefinitionComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(TargetPreviewComponent) targetPreviewComponent: TargetPreviewComponent;
 
   formGroup: FormGroup;
 
@@ -34,6 +38,7 @@ export class TargetDefinitionComponent implements OnInit {
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
+              private modalService: NgxSmartModalService,
               private targetDefinitionService: TargetDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -93,6 +98,11 @@ export class TargetDefinitionComponent implements OnInit {
     this.targetDefinitionService.copyTarget(event.id);
   }
 
+  previewTarget(event) {
+    this.targetPreviewComponent.getTargetInfo(event.id);
+    this.modalService.open("previewModal");
+  }
+
   private getTargetDetail() {
     this.targetDefinitionService.getTargetDetail(this.id)
       .pipe(takeUntil(this.destroy$))
@@ -108,6 +118,7 @@ export class TargetDefinitionComponent implements OnInit {
                 this.nextButtonVisible = true;
                 this.targetDefinitionService.targetFormChanged(true);
               });
+            this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

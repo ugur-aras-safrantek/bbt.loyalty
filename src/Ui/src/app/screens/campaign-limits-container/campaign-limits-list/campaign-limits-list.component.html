@@ -35,7 +35,7 @@
           <div class="form-group">
             <label>Çatı Max Tutar</label>
             <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.maxTopLimitAmount"
-                   onlyNumber>
+                   currencyMask>
           </div>
         </div>
         <div class="col">
@@ -51,7 +51,7 @@
           <div class="form-group">
             <label>Çatı Oranı</label>
             <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.maxTopLimitRate"
-                   onlyNumber>
+                   currencyMask [options]="{ min: 0, max: 100 }">
           </div>
         </div>
         <div class="col">

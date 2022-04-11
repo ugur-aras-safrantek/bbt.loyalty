@@ -9,7 +9,22 @@
 app-root {
   color: #464646;
 
-  .turn-list-button{
+  .preview-modal-custom-class {
+    max-width: fit-content !important;
+  }
+
+  .accordion-custom {
+    background: none !important;
+    color: #464646 !important;
+    font-weight: 600 !important;
+    padding-left: 10px;
+  }
+
+  .accordion-invalid {
+    border-color: red !important;
+  }
+
+  .turn-list-button {
     font-weight: 600;
     color: #0099d8;
     padding-left: 0 !important;

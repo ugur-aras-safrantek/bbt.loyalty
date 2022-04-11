@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {StepService} from "../../../../services/step.service";
 import {TargetDefinitionService} from "../../../../services/target-definition.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -8,6 +8,8 @@ import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {TargetSourceAddUpdateRequestModel} from "../../../../models/target-definition";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {TargetPreviewComponent} from "../target-preview/target-preview.component";
+import {NgxSmartModalService} from "ngx-smart-modal";
 
 @Component({
   selector: 'app-target-source',
@@ -17,6 +19,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 export class TargetSourceComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(TargetPreviewComponent) targetPreviewComponent: TargetPreviewComponent;
 
   editorConfig: AngularEditorConfig = {
     editable: true
@@ -40,6 +44,7 @@ export class TargetSourceComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
+              private modalService: NgxSmartModalService,
               private targetDefinitionService: TargetDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -327,6 +332,7 @@ export class TargetSourceComponent implements OnInit {
                 this.nextButtonVisible = true;
                 this.targetDefinitionService.targetFormChanged(true);
               });
+            this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -377,5 +383,10 @@ export class TargetSourceComponent implements OnInit {
 
   copyTarget(event) {
     this.targetDefinitionService.copyTarget(event.id);
+  }
+
+  previewTarget(event) {
+    this.targetPreviewComponent.getTargetInfo(event.id);
+    this.modalService.open("previewModal");
   }
 }

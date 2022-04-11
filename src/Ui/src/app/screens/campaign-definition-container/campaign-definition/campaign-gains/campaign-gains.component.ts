@@ -121,6 +121,7 @@ export class CampaignGainsComponent implements OnInit {
 
   private campaignViewingStateActions(state: boolean) {
     this.isInvisibleCampaign = state;
+    this.campaignDefinitionService.repostData.previewButtonVisible = !state;
     if (state) {
       this.formGroup.patchValue({
         titleTr: null,
