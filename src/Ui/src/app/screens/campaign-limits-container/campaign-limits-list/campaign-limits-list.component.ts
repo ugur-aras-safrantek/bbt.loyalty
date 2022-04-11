@@ -21,9 +21,9 @@ export class CampaignLimitsListComponent implements OnInit {
     {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false},
     {columnName: 'Kazanım Sıklığı', propertyName: 'achievementFrequency', isBoolean: false},
     {columnName: 'Para Birimi', propertyName: 'currency', isBoolean: false},
-    {columnName: 'Çatı Max Tutar', propertyName: 'maxTopLimitAmount', isBoolean: false},
+    {columnName: 'Çatı Max Tutar', propertyName: 'maxTopLimitAmountStr', isBoolean: false},
     {columnName: 'Çatı Max Yararlanma', propertyName: 'maxTopLimitUtilization', isBoolean: false},
-    {columnName: 'Çatı Oranı', propertyName: 'maxTopLimitRate', isBoolean: false},
+    {columnName: 'Çatı Oranı', propertyName: 'maxTopLimitRateStr', isBoolean: false},
     {columnName: 'Tutar', propertyName: 'amount', isBoolean: true},
     {columnName: 'Oran', propertyName: 'rate', isBoolean: true},
     {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true}
@@ -37,9 +37,9 @@ export class CampaignLimitsListComponent implements OnInit {
     name: '',
     achievementFrequencyId: null,
     currencyId: null,
-    maxTopLimitAmount: '',
+    maxTopLimitAmount: null,
     maxTopLimitUtilization: '',
-    maxTopLimitRate: '',
+    maxTopLimitRate: null,
     type: null,
     isActive: null
   };
@@ -65,9 +65,9 @@ export class CampaignLimitsListComponent implements OnInit {
       name: '',
       achievementFrequencyId: null,
       currencyId: null,
-      maxTopLimitAmount: '',
+      maxTopLimitAmount: null,
       maxTopLimitUtilization: '',
-      maxTopLimitRate: '',
+      maxTopLimitRate: null,
       type: null,
       isActive: null
     };
@@ -103,9 +103,9 @@ export class CampaignLimitsListComponent implements OnInit {
       name: this.filterForm.name,
       achievementFrequencyId: this.filterForm.achievementFrequencyId,
       currencyId: this.filterForm.currencyId,
-      maxTopLimitAmount: parseInt(this.filterForm.maxTopLimitAmount),
+      maxTopLimitAmount: this.filterForm.maxTopLimitAmount,
       maxTopLimitUtilization: parseInt(this.filterForm.maxTopLimitUtilization),
-      maxTopLimitRate: parseInt(this.filterForm.maxTopLimitRate),
+      maxTopLimitRate: this.filterForm.maxTopLimitRate,
       type: this.filterForm.type,
       isActive: this.filterForm.isActive
     };
@@ -134,9 +134,9 @@ export class CampaignLimitsListComponent implements OnInit {
       name: this.filterForm.name,
       achievementFrequencyId: this.filterForm.achievementFrequencyId,
       currencyId: this.filterForm.currencyId,
-      maxTopLimitAmount: parseInt(this.filterForm.maxTopLimitAmount),
+      maxTopLimitAmount: this.filterForm.maxTopLimitAmount,
       maxTopLimitUtilization: parseInt(this.filterForm.maxTopLimitUtilization),
-      maxTopLimitRate: parseInt(this.filterForm.maxTopLimitRate),
+      maxTopLimitRate: this.filterForm.maxTopLimitRate,
       type: this.filterForm.type,
       isActive: this.filterForm.isActive
     };
