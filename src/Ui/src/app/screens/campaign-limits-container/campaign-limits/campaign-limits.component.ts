@@ -7,6 +7,7 @@ import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {CampaignLimitAddRequestModel, CampaignLimitUpdateRequestModel} from "../../../models/campaign-limits";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {NgxSmartModalService} from 'ngx-smart-modal';
 
 @Component({
   selector: 'app-campaign-limits',
@@ -28,10 +29,13 @@ export class CampaignLimitsComponent implements OnInit {
   id: any;
   submitted = false;
 
+  alertModalText = '';
+
   nextButtonVisible = true;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private modalService: NgxSmartModalService,
               private toastrHandleService: ToastrHandleService,
               private campaignLimitsService: CampaignLimitsService,
               private router: Router,
@@ -162,8 +166,15 @@ export class CampaignLimitsComponent implements OnInit {
   continue() {
     this.submitted = true;
     if (this.formGroup.valid) {
-      this.id ? this.campaignLimitUpdate() : this.campaignLimitAdd();
+      this.alertModalText = this.id
+        ? 'Yaptığınız değişiklikleri kaydetmeyi onaylıyor musunuz?'
+        : 'Yeni çatı limitini kaydetmeyi onaylıyor musunuz?';
+      this.modalService.open("campaignLimitsApproveAlertModal");
     }
+  }
+
+  alertModalOk() {
+    this.id ? this.campaignLimitUpdate() : this.campaignLimitAdd();
   }
 
   private campaignLimitGetInsertForm() {
@@ -223,7 +234,7 @@ export class CampaignLimitsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate(['../finish'], {relativeTo: this.route});
+            this.router.navigate([`/campaign-limits/create/finish`], {relativeTo: this.route})
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -242,7 +253,7 @@ export class CampaignLimitsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate(['./finish'], {relativeTo: this.route});
+            this.router.navigate([`/campaign-limits/update/${this.id}/finish`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

@@ -5,7 +5,7 @@
       <div class="p-5">
         <app-finish
           cardTitle="TEBRİKLER"
-          subTitle="Kampanya çatı limiti başarılı bir şekilde onaya gönderilmiştir."
+          [subTitle]=finishComponentSubTitle
         >
           <a [routerLink]="[newLimit]" class="btn btn-primary px-5 mt-3 w-100">Yeni Kampanya Çatı Limiti</a>
           <a [routerLink]="[limitList]" class="btn btn-outline-primary px-5 mt-3 w-100">Listeye Geri Dön</a>
