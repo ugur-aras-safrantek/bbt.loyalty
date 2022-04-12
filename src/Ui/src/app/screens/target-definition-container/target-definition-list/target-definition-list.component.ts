@@ -18,12 +18,12 @@ export class TargetDefinitionListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   columns = [
-    {columnName: 'Hedef Tanımı Adı', propertyName: 'name', isBoolean: false},
-    {columnName: 'Hedef ID', propertyName: 'targetId', isBoolean: false},
-    {columnName: 'Hedef Gösterim Tipi', propertyName: 'targetViewType', isBoolean: false},
-    {columnName: 'Akış', propertyName: 'flow', isBoolean: true},
-    {columnName: 'Sorgu', propertyName: 'query', isBoolean: true},
-    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true}
+    {columnName: 'Hedef Tanımı Adı', propertyName: 'name', isBoolean: false, sortDir: null},
+    {columnName: 'Hedef ID', propertyName: 'targetId', isBoolean: false, sortDir: null},
+    {columnName: 'Hedef Gösterim Tipi', propertyName: 'targetViewType', isBoolean: false, sortDir: null},
+    {columnName: 'Akış', propertyName: 'flow', isBoolean: true, sortDir: null},
+    {columnName: 'Sorgu', propertyName: 'query', isBoolean: true, sortDir: null},
+    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null}
   ];
 
   targetViewTypeList: DropdownListModel[];

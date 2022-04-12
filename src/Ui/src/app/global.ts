@@ -5,7 +5,7 @@ export const GlobalVariable = Object.freeze({
   target: '/campaign-definition/create/target-selection',
   gains: '/campaign-definition/create/gains',
   finish: '/campaign-definition/create/finish',
-  preview: '/campaign-definition/create/preview',
+  preview: '/campaign-definition/preview',
 
   limitList: '/campaign-limits/list',
   limitCreate: '/campaign-limits/create/limit',

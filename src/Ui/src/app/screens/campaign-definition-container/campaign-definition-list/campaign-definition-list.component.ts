@@ -167,7 +167,7 @@ export class CampaignDefinitionListComponent implements OnInit {
 
   setRouterLinks(responseList) {
     responseList.map(res => {
-      res.routerLink = `../create/${res.id}/true/definition`;
+      res.routerLink = `../update/${res.id}/definition`;
     });
     return responseList;
   }

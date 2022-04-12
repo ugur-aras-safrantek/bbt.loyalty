@@ -43,7 +43,7 @@ export class TargetDefinitionComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
-      this.id = paramMap.get('detailId');
+      this.id = paramMap.get('id');
     });
 
     this.stepService.setSteps(this.targetDefinitionService.stepData);

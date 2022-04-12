@@ -17,7 +17,7 @@ const routes: Routes = [
         loadChildren: () => import('./target-definition/target-definition.module').then(m => m.TargetDefinitionModule)
       },
       {
-        path: 'update/:detailId',
+        path: 'update/:id',
         loadChildren: () => import('./target-definition/target-definition.module').then(m => m.TargetDefinitionModule)
       }
     ]

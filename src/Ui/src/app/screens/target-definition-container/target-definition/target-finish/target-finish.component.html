@@ -5,7 +5,7 @@
       <div class="p-5">
         <app-finish
           cardTitle="TEBRİKLER"
-          subTitle="Hedef Tanımı başarılı bir şekilde kaydedildi."
+          [subTitle]=finishComponentSubTitle
         >
           <a [routerLink]="[newTarget]" class="btn btn-primary px-5 mt-3 w-100">Yeni Hedef Tanımı</a>
           <a [routerLink]="[targetList]" class="btn btn-outline-primary px-5 mt-3 w-100">Listeye Geri Dön</a>

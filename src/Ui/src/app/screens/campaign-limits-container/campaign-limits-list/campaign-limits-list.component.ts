@@ -18,15 +18,15 @@ export class CampaignLimitsListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   columns = [
-    {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false},
-    {columnName: 'Kazanım Sıklığı', propertyName: 'achievementFrequency', isBoolean: false},
-    {columnName: 'Para Birimi', propertyName: 'currency', isBoolean: false},
-    {columnName: 'Çatı Max Tutar', propertyName: 'maxTopLimitAmountStr', isBoolean: false},
-    {columnName: 'Çatı Max Yararlanma', propertyName: 'maxTopLimitUtilization', isBoolean: false},
-    {columnName: 'Çatı Oranı', propertyName: 'maxTopLimitRateStr', isBoolean: false},
-    {columnName: 'Tutar', propertyName: 'amount', isBoolean: true},
-    {columnName: 'Oran', propertyName: 'rate', isBoolean: true},
-    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true}
+    {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Sıklığı', propertyName: 'achievementFrequency', isBoolean: false, sortDir: null},
+    {columnName: 'Para Birimi', propertyName: 'currency', isBoolean: false, sortDir: null},
+    {columnName: 'Çatı Max Tutar', propertyName: 'maxTopLimitAmountStr', isBoolean: false, sortDir: null},
+    {columnName: 'Çatı Max Yararlanma', propertyName: 'maxTopLimitUtilization', isBoolean: false, sortDir: null},
+    {columnName: 'Çatı Oranı', propertyName: 'maxTopLimitRateStr', isBoolean: false, sortDir: null},
+    {columnName: 'Tutar', propertyName: 'amount', isBoolean: true, sortDir: null},
+    {columnName: 'Oran', propertyName: 'rate', isBoolean: true, sortDir: null},
+    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null}
   ];
 
   achievementFrequencyList: DropdownListModel[];

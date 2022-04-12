@@ -6,7 +6,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {IAngularMyDpOptions} from 'angular-mydatepicker';
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {GlobalVariable} from "../../../global";
-import {saveAs} from 'file-saver';
 import {
   CampaignDefinitionAddRequestModel,
   CampaignDefinitionUpdateRequestModel
@@ -50,9 +49,7 @@ export class CampaignDefinitionComponent implements OnInit {
   stepData;
   repostData = this.campaignDefinitionService.repostData;
   id: any;
-  detailId: any;
-  repost: boolean = false;
-  disabled: boolean = false;
+  newId: any;
   submitted = false;
 
   nextButtonText = 'Devam';
@@ -71,14 +68,8 @@ export class CampaignDefinitionComponent implements OnInit {
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
-      this.detailId = paramMap.get('detailId');
-      if (paramMap.get('repost')) {
-        this.repost = paramMap.get('repost') === 'true';
-      }
-      this.disabled = this.id && !this.repost;
+      this.newId = paramMap.get('newId');
     });
-
-    this.editorConfig.editable = !this.disabled;
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
     this.stepService.updateStep(1);
@@ -416,8 +407,8 @@ export class CampaignDefinitionComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.detailId = res.data.id;
-            this.router.navigate([GlobalVariable.rules, this.detailId], {relativeTo: this.route});
+            this.newId = res.data.id;
+            this.router.navigate([GlobalVariable.rules, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -466,7 +457,7 @@ export class CampaignDefinitionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
-            this.router.navigate([`/campaign-definition/create/${this.id}/true/rules`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${this.id}/rules`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

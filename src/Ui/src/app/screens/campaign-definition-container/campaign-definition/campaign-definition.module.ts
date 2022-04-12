@@ -12,20 +12,17 @@ import {HttpClientModule} from '@angular/common/http';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {AngularMyDatePickerModule} from 'angular-mydatepicker';
-import {CampaignPreviewComponent} from './campaign-preview/campaign-preview.component';
 
 const routes: Routes = [
   {path: 'definition', component: CampaignDefinitionComponent},
-  {path: 'definition/:detailId', component: CampaignDefinitionComponent},
   {path: 'rules', component: CampaignRulesComponent},
-  {path: 'rules/:detailId', component: CampaignRulesComponent},
+  {path: 'rules/:newId', component: CampaignRulesComponent},
   {path: 'target-selection', component: CampaignTargetSelectionComponent},
-  {path: 'target-selection/:detailId', component: CampaignTargetSelectionComponent},
+  {path: 'target-selection/:newId', component: CampaignTargetSelectionComponent},
   {path: 'gains', component: CampaignGainsComponent},
-  {path: 'gains/:detailId', component: CampaignGainsComponent},
+  {path: 'gains/:newId', component: CampaignGainsComponent},
   {path: 'finish', component: CampaignFinishComponent},
-  {path: 'finish/:detailId', component: CampaignFinishComponent},
-  {path: 'preview/:detailId', component: CampaignPreviewComponent},
+  {path: 'finish/:newId', component: CampaignFinishComponent},
 ]
 
 @NgModule({
@@ -35,7 +32,6 @@ const routes: Routes = [
     CampaignTargetSelectionComponent,
     CampaignGainsComponent,
     CampaignFinishComponent,
-    CampaignPreviewComponent
   ],
   imports: [
     SharedModule,
@@ -48,5 +44,6 @@ const routes: Routes = [
     AngularMyDatePickerModule,
   ]
 })
+
 export class CampaignDefinitionModule {
 }

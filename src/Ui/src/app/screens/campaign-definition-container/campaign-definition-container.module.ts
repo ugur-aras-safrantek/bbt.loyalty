@@ -2,6 +2,10 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {CampaignDefinitionContainerComponent} from './campaign-definition-container.component';
 import {RouterModule, Routes} from "@angular/router";
+import {CampaignPreviewComponent} from "./campaign-definition/campaign-preview/campaign-preview.component";
+import {NgxSmartModalModule} from "ngx-smart-modal";
+import {AngularEditorModule} from "@kolkov/angular-editor";
+import {SharedModule} from "../../modules/shared.module";
 
 const routes: Routes = [
   {path: '', redirectTo: 'list', pathMatch: 'full'},
@@ -17,13 +21,13 @@ const routes: Routes = [
         loadChildren: () => import('./campaign-definition/campaign-definition.module').then(m => m.CampaignDefinitionModule)
       },
       {
-        path: 'create/:id',
+        path: 'update/:id',
         loadChildren: () => import('./campaign-definition/campaign-definition.module').then(m => m.CampaignDefinitionModule)
       },
       {
-        path: 'create/:id/:repost',
-        loadChildren: () => import('./campaign-definition/campaign-definition.module').then(m => m.CampaignDefinitionModule)
-      }
+        path: 'preview/:id',
+        component: CampaignPreviewComponent
+      },
     ]
   },
   {path: '**', redirectTo: 'list'}
@@ -31,14 +35,18 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    CampaignDefinitionContainerComponent
+    CampaignDefinitionContainerComponent,
+    CampaignPreviewComponent
   ],
-  exports: [
-  ],
+  exports: [],
   imports: [
+    SharedModule,
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    NgxSmartModalModule.forRoot(),
+    AngularEditorModule,
   ]
 })
+
 export class CampaignDefinitionContainerModule {
 }
