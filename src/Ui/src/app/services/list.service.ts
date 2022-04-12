@@ -10,6 +10,9 @@ export class ListService {
   columns: Column[];
   rows: any[];
 
+  currentSortBy: null;
+  currentSortDir: null;
+
   paging: PagingResponseModel = {
     currentPage: 1,
     totalPages: 1,
@@ -30,12 +33,15 @@ export class ListService {
       totalPages: 1,
       totalItems: 0,
     };
+    this.currentSortBy = null;
+    this.currentSortDir = null;
     this.hasError = false;
     this.errorMessage = '';
   }
 
   setList(columns: Column[], rows: any[], paging: any) {
-    this.clearList();
+    this.hasError = false;
+    this.errorMessage = '';
 
     this.columns = columns;
     this.rows = rows;

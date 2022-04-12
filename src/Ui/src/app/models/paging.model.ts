@@ -1,6 +1,8 @@
 export interface IPagingRequestModel {
   pageNumber: number;
   pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
 }
 
 export interface IPagingResponseModel {
