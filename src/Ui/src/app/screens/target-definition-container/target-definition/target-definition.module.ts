@@ -16,6 +16,7 @@ const routes: Routes = [
   {path: 'source', component: TargetSourceComponent},
   {path: 'source/:newId', component: TargetSourceComponent},
   {path: 'finish', component: TargetFinishComponent},
+  {path: 'finish/:newId', component: TargetFinishComponent},
 ]
 
 @NgModule({

@@ -29,6 +29,8 @@ export class TargetSourceComponent implements OnInit {
   formGroup: FormGroup;
   submitted = false;
 
+  alertModalText = '';
+
   targetSourceList: DropdownListModel[];
   targetViewTypeList: DropdownListModel[];
   triggerTimeList: DropdownListModel[];
@@ -49,7 +51,7 @@ export class TargetSourceComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
-      this.id = paramMap.get('detailId');
+      this.id = paramMap.get('id');
       this.newTargetId = paramMap.get('newId');
     });
 
@@ -295,8 +297,15 @@ export class TargetSourceComponent implements OnInit {
   continue() {
     this.submitted = true;
     if (this.formGroup.valid) {
-      this.newTargetId ? this.targetSourceAdd() : this.targetSourceUpdate();
+      this.alertModalText = this.id
+        ? 'Yaptığınız değişiklikleri kaydetmeyi onaylıyor musunuz?'
+        : 'Yeni hedef tanımını kaydetmeyi onaylıyor musunuz?';
+      this.modalService.open("campaignTargetsApproveAlertModal");
     }
+  }
+
+  alertModalOk() {
+    this.newTargetId ? this.targetSourceAdd() : this.targetSourceUpdate();
   }
 
   private targetSourceGetInsertForm() {
@@ -350,7 +359,7 @@ export class TargetSourceComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate([`/target-definition/create/finish`], {relativeTo: this.route});
+            this.router.navigate([`/target-definition/create/finish/${this.newTargetId}`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -369,7 +378,7 @@ export class TargetSourceComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.router.navigate(['../finish'], {relativeTo: this.route});
+            this.router.navigate([`/target-definition/update/${this.id}/finish`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
