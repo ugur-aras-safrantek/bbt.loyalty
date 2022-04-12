@@ -21,7 +21,7 @@ StaticValues.Campaign_Redis_Ttl = configuration["ConnectionStrings:RedisTtl"];
 StaticValues.Campaign_MsSql_ConStr = configuration["ConnectionStrings:DefaultConnection"];
 StaticValues.CampaignListImageUrlDefault = configuration["CampaignDefaultImageUrl:List"];
 StaticValues.CampaignDetailImageUrlDefault = configuration["CampaignDefaultImageUrl:Detail"];
-StaticValues.IsDevelopment = Convert.ToBoolean(configuration["IsDevelopment"]);
+StaticValues.IsDevelopment = configuration["IsDevelopment"] == null ? false : Convert.ToBoolean(configuration["IsDevelopment"]);
 StaticValues.BranchServiceUrl = configuration["ServiceUrl:Branch"];
 StaticValues.ChannelCodeServiceUrl = configuration["ServiceUrl:ChannelCode"];
 StaticValues.ContractServiceUrl = configuration["ServiceUrl:Contract"];

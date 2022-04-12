@@ -1308,6 +1308,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (targetDraftEntity == null)
                 throw new Exception("Hedef bulunamadı.");
 
+            if (targetDraftEntity.TargetDetail == null)
+                throw new Exception("Hedef detayı bulunamadı.");
+
             //target
             var targetDto = _mapper.Map<TargetDto>(targetDraftEntity);
             targetDto.Id = 0;
