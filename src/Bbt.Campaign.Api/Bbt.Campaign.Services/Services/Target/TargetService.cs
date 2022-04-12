@@ -144,33 +144,15 @@ namespace Bbt.Target.Services.Services.Target
         public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request)
         {
             var response = new TargetListFilterResponse();
-
             try 
             {
                 Helpers.ListByFilterCheckValidation(request);
-
-                var targetQuery = GetFilteredQuery(request);
-
-                var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-                var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-                var totalItems = targetQuery.Count();
-
-                targetQuery = targetQuery.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-                var targetList = targetQuery.Select(x => new TargetListDto
-                {
-                    Id = x.Id,
-                    TargetId = x.Id,
-                    Flow = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Flow,
-                    Query = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Query,
-                    Name = x.Name,
-                    IsActive = x.IsActive,
-                    TargetViewType = x.TargetDetail.TargetViewType.Name
-                }).ToList();
-
+                List<TargetListDto> targetList = await GetFilteredTargetList(request);
                 if (!targetList.Any())
                     return await BaseResponse<TargetListFilterResponse>.SuccessAsync(response, "Hedef bulunamadı");
-
+                var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+                var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+                var totalItems = targetList.Count();
                 response.ResponseList = targetList;
                 response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
 
@@ -188,25 +170,9 @@ namespace Bbt.Target.Services.Services.Target
 
             try 
             {
-                Helpers.ListByFilterCheckValidation(request);
-
-                var targetQuery = GetFilteredQuery(request);
-
-                var targetList = targetQuery.Select(x => new TargetListDto
-                {
-                    Id = x.Id,
-                    TargetId = x.Id,
-                    Flow = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Flow,
-                    Query = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Query,
-                    Name = x.Name,
-                    IsActive = x.IsActive,
-                    TargetViewType = x.TargetDetail.TargetViewType.Name,
-                    TargetDetail = _mapper.Map<TargetDetailDto>(x.TargetDetail)
-                }).ToList();
-
+                List<TargetListDto> targetList = await GetFilteredTargetList(request);
                 if (!targetList.Any())
                     return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Hedef bulunamadı");
-
                 byte[] data = ListFileOperations.GetTargetListExcel(targetList);
 
                 response = new GetFileResponse()
@@ -228,7 +194,7 @@ namespace Bbt.Target.Services.Services.Target
             }
         }
 
-        private IQueryable<TargetEntity> GetFilteredQuery(TargetListFilterRequest request) 
+        private  async Task<List<TargetListDto>> GetFilteredTargetList(TargetListFilterRequest request) 
         {
             Helpers.ListByFilterCheckValidation(request);
 
@@ -253,7 +219,34 @@ namespace Bbt.Target.Services.Services.Target
                 .Include(x => x.TargetDetail)
                 .OrderByDescending(x => x.Id);
 
-            return targetQuery;
+            var targetList = targetQuery.Select(x => new TargetListDto
+            {
+                Id = x.Id,
+                TargetId = x.Id,
+                Flow = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Flow,
+                Query = x.TargetDetail.TargetSourceId == (int)TargetSourceEnum.Query,
+                Name = x.Name,
+                IsActive = x.IsActive,
+                TargetViewType = x.TargetDetail.TargetViewType.Name
+            }).ToList();
+
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                targetList = targetList.OrderByDescending(x => x.Id).ToList();
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+                if (isDescending)
+                    targetList = targetList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                else
+                    targetList = targetList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+            }
+
+            return targetList;
         }
     }
 }

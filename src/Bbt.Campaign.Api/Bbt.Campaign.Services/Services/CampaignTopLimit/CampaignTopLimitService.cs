@@ -236,37 +236,16 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
         public async Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request)
         {
-            Core.Helper.Helpers.ListByFilterCheckValidation(request);
-
-            var campaignTopLimitQuery = await GetFilteredQuery(request); 
-
+            CampaignTopLimitListFilterResponse response = new CampaignTopLimitListFilterResponse();
+            List<CampaignTopLimitListDto> campaignList = await GetFilteredCampaignTopLimitList(request); 
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = campaignTopLimitQuery.Count();
-
-            campaignTopLimitQuery = campaignTopLimitQuery.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-            var campaignList = campaignTopLimitQuery.Select(x => new CampaignTopLimitListDto
-            {
-                Id = x.Id,
-                AchievementFrequency = x.AchievementFrequency.Name,
-                Amount = x.Type == Public.Enums.TopLimitType.Amount,
-                Rate = x.Type == Public.Enums.TopLimitType.Rate,
-                Name = x.Name,
-                Currency = x.Currency == null ? null : x.Currency.Name,
-                MaxTopLimitAmount = x.MaxTopLimitAmount,
-                MaxTopLimitRate = x.MaxTopLimitRate,
-                MaxTopLimitUtilization = x.MaxTopLimitUtilization,
-                MaxTopLimitAmountStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitAmount),
-                MaxTopLimitRateStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitRate),
-                MaxTopLimitUtilizationStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitUtilization),
-                IsActive = x.IsActive,
-            }).ToList();
-
-            CampaignTopLimitListFilterResponse response = new CampaignTopLimitListFilterResponse();
+            var totalItems = campaignList.Count();
+            if (!campaignList.Any())
+                return await BaseResponse<CampaignTopLimitListFilterResponse>.SuccessAsync(response, "Çatı limiti bulunamadı");
+            campaignList = campaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             response.ResponseList = campaignList;
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
-
             return await BaseResponse<CampaignTopLimitListFilterResponse>.SuccessAsync(response);
         }
 
@@ -276,25 +255,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             try 
             {
-                var campaignTopLimitQuery = await GetFilteredQuery(request);
+                List<CampaignTopLimitListDto> campaignList = await GetFilteredCampaignTopLimitList(request);
 
-                campaignTopLimitQuery = campaignTopLimitQuery.OrderByDescending(x => x.CreatedOn);
-
-                var campaignList = campaignTopLimitQuery.Select(x => new CampaignTopLimitListDto
-                {
-                    Id = x.Id,
-                    AchievementFrequency = x.AchievementFrequency.Name,
-                    Amount = x.Type == Public.Enums.TopLimitType.Amount,
-                    Rate = x.Type == Public.Enums.TopLimitType.Rate,
-                    Name = x.Name,
-                    Currency = x.Currency.Name,
-                    MaxTopLimitAmount = x.MaxTopLimitAmount,
-                    MaxTopLimitRate = x.MaxTopLimitRate,
-                    MaxTopLimitUtilization = x.MaxTopLimitUtilization,
-                    IsActive = x.IsActive,
-                }).ToList();
-
-                if (!campaignList.Any())
+                if (campaignList.Count() == 0)
                     return await BaseResponse<GetFileResponse>.FailAsync("Çatı Limiti bulunamadı");
 
                 byte[] data = ListFileOperations.GetTopLimitListExcel(campaignList);
@@ -318,8 +281,10 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             }
         }
 
-        private async Task<IQueryable<TopLimitEntity>> GetFilteredQuery(CampaignTopLimitListFilterRequest request) 
+        private async Task<List<CampaignTopLimitListDto>> GetFilteredCampaignTopLimitList(CampaignTopLimitListFilterRequest request) 
         {
+            Core.Helper.Helpers.ListByFilterCheckValidation(request);
+
             var campaignTopLimitQuery = _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(request.Name))
@@ -343,7 +308,40 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             //if (request.IsApproved.HasValue)
             //    campaignTopLimitQuery = campaignTopLimitQuery.Where(x => x.IsApproved == request.IsApproved.Value);
 
-            return campaignTopLimitQuery;
+            var campaignList = campaignTopLimitQuery.Select(x => new CampaignTopLimitListDto
+            {
+                Id = x.Id,
+                AchievementFrequency = x.AchievementFrequency.Name,
+                Amount = x.Type == Public.Enums.TopLimitType.Amount,
+                Rate = x.Type == Public.Enums.TopLimitType.Rate,
+                Name = x.Name,
+                Currency = x.Currency == null ? null : x.Currency.Name,
+                MaxTopLimitAmount = x.MaxTopLimitAmount,
+                MaxTopLimitRate = x.MaxTopLimitRate,
+                MaxTopLimitUtilization = x.MaxTopLimitUtilization,
+                MaxTopLimitAmountStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitAmount),
+                MaxTopLimitRateStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitRate),
+                MaxTopLimitUtilizationStr = Core.Helper.Helpers.ConvertNullablePriceString(x.MaxTopLimitUtilization),
+                IsActive = x.IsActive,
+            }).ToList();
+
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+                if (isDescending)
+                    campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                else
+                    campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+            }
+
+            return campaignList;
         }
 
         public async Task<BaseResponse<CampaignTopLimitFilterParameterResponse>> GetFilterParameterList()

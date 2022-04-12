@@ -390,84 +390,28 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
         public async Task<BaseResponse<CampaignListFilterResponse>> GetByFilterAsync(CampaignListFilterRequest request)
         {
-            //Core.Helper.Helpers.ListByFilterCheckValidation(request);
-
-            //var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => !x.IsDeleted);
-
-            //if (request.IsBundle.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
-            //if (!string.IsNullOrWhiteSpace(request.CampaignCode))
-            //    campaignQuery = campaignQuery.Where(x => x.Code == request.CampaignCode);
-            //if (!string.IsNullOrWhiteSpace(request.CampaignName))
-            //    campaignQuery = campaignQuery.Where(x => x.Name == request.CampaignName);
-            //if (request.ContractId.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.ContractId == request.ContractId.Value);
-            //if (request.IsActive.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsActive == request.IsActive.Value);
-            //if (request.ProgramTypeId.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
-            //if (request.StartDate.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= request.StartDate.Value);
-            //if (request.EndDate.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= request.EndDate.Value);
-            //if (request.IsDraft.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsDraft == request.IsDraft.Value);
-            //if (request.IsApproved.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
-
-            var campaignQuery = this.GetFilteredQuery(request);
-
+            CampaignListFilterResponse response = new CampaignListFilterResponse();
+            List<CampaignListDto> campaignList = await this.GetFilteredCampaignList(request);
+            var totalItems = campaignList.Count();
+            if (totalItems == 0)
+                return await BaseResponse<CampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = campaignQuery.Count();
-
-            campaignQuery = campaignQuery.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-            var campaignList = campaignQuery.Select(x => new CampaignListDto
-            {
-                Id = x.Id,
-                Code = x.Id.ToString(),
-                StartDate = x.StartDate.ToShortDateString(),
-                EndDate = x.EndDate.ToShortDateString(),
-                ContractId = x.ContractId,
-                IsActive = x.IsActive,
-                IsBundle = x.IsBundle,
-                ProgramType = x.ProgramType.Name,
-                Name = x.Name
-            }).ToList();
-
-            CampaignListFilterResponse response = new CampaignListFilterResponse();
+            campaignList = campaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             response.ResponseList = campaignList;
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
-
             return await BaseResponse<CampaignListFilterResponse>.SuccessAsync(response);
         }
 
         public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request)
         {
             GetFileResponse response = new GetFileResponse();
-            var campaignQuery = this.GetFilteredQuery(request);
-            campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
-            var totalItems = campaignQuery.Count();
+            List<CampaignListDto> campaignList = await this.GetFilteredCampaignList(request);
+            var totalItems = campaignList.Count();
             if (totalItems == 0)
             {
                 return await BaseResponse<GetFileResponse>.SuccessAsync(response);
             }
-
-            campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
-
-            var campaignList = campaignQuery.Select(x => new CampaignListDto
-            {
-                Id = x.Id,
-                Code = x.Id.ToString(),
-                StartDate = x.EndDate.ToShortDateString(),
-                EndDate = x.EndDate.ToShortDateString(),
-                ContractId = x.ContractId,
-                IsActive = x.IsActive,
-                IsBundle = x.IsBundle,
-                ProgramType = x.ProgramType.Name,
-                Name = x.Name
-            }).ToList();
 
             byte[] data = ListFileOperations.GetCampaignListExcel(campaignList);
 
@@ -485,7 +429,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
 
-        private IQueryable<CampaignEntity> GetFilteredQuery(CampaignListFilterRequest request)
+        private async Task<List<CampaignListDto>> GetFilteredCampaignList(CampaignListFilterRequest request)
         {
             Core.Helper.Helpers.ListByFilterCheckValidation(request);
 
@@ -505,8 +449,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 
                 }
                 campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
-            }
-                
+            } 
             if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
                 campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.CampaignName));
             if (request.ContractId.HasValue)
@@ -524,9 +467,80 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if (request.IsApproved.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
 
-            campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+            var campaignList = campaignQuery.Select(x => new CampaignListDto
+            {
+                Id = x.Id,
+                Code = x.Id.ToString(),
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                StartDateStr = x.StartDate.ToShortDateString(),
+                EndDateStr = x.EndDate.ToShortDateString(),
+                ContractId = x.ContractId,
+                IsActive = x.IsActive,
+                IsBundle = x.IsBundle,
+                ProgramType = x.ProgramType.Name,
+                Name = x.Name
+            }).ToList();
 
-            return campaignQuery;
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+                if (isDescending)
+                    campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                else
+                    campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+            }
+            return campaignList;
+        }
+
+        private async Task<List<CampaignListDto>> GetSortedCampaignListDto(List<CampaignListDto> campaignList, string sortBy, string sortDir) 
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
+            }
+            else
+            {
+                bool isDescending = sortDir?.ToLower() == "desc";
+
+                switch (sortBy)
+                {
+                    case "CampaignName":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.Name).ToList() : campaignList.OrderBy(x => x.Name).ToList();
+                        break;
+                    case "CampaignCode":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.Id).ToList() : campaignList.OrderBy(x => x.Id).ToList();
+                        break;
+                    case "ContractId":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.ContractId).ToList() : campaignList.OrderBy(x => x.ContractId).ToList();
+                        break;
+                    case "IsActive":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.IsActive).ToList() : campaignList.OrderBy(x => x.IsActive).ToList();
+                        break;
+                    case "IsBundle":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.IsBundle).ToList() : campaignList.OrderBy(x => x.IsBundle).ToList();
+                        break;
+                    case "StartDate":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.StartDate).ToList() : campaignList.OrderBy(x => x.StartDate).ToList();
+                        break;
+                    case "EndDate":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.EndDate).ToList() : campaignList.OrderBy(x => x.EndDate).ToList();
+                        break;
+                    case "ProgramType":
+                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.ProgramType).ToList() : campaignList.OrderBy(x => x.ProgramType).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return campaignList;
         }
 
         public async Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath) 
@@ -584,8 +598,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return getFileResponse;
 
         }
-
-
         public async Task<bool> IsInvisibleCampaign(int campaignId) 
         {
             bool isInvisibleCampaign = false;

@@ -7,10 +7,6 @@ namespace Bbt.Campaign.Core.Helper
 {
     public static class Helpers
     {
-        public const string cronRegex = @"[1-5]?[0-9]/s2[0-3]?1[0-9]?[0-9]";
-
-        public const string flowFrequencyMinuteRegex = @"[0-9]|[1-5][0-9]";
-
         public static PagingDto Paging(int totalItems, int currentPage, int pageSize = 10)
         {
             if (totalItems <= 0)

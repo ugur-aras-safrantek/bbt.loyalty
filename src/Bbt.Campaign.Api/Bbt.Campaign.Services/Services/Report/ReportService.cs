@@ -36,7 +36,20 @@ namespace Bbt.Campaign.Services.Services.Report
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
             var totalItems = campaignList.Count();
-            campaignList = campaignList.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            if(string.IsNullOrEmpty(request.SortBy))
+                campaignList = campaignList.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            else 
+            {
+                var pi = typeof(CampaignEntity).GetProperty(request.SortBy);
+                var orderByAddress = campaignList.OrderBy(x => pi.GetValue(x, null));
+
+
+                //campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s));
+            }
+            
+            
+            
             var campaignListFiltered = campaignList.Select(x => new CampaignReportListDto
             {
                 Id = x.Id,
@@ -169,8 +182,8 @@ namespace Bbt.Campaign.Services.Services.Report
             {
                 Id = x.Id,
                 Code = x.Id.ToString(),
-                StartDate = x.EndDate.ToShortDateString(),
-                EndDate = x.EndDate.ToShortDateString(),
+                StartDate = DateTime.Parse(x.StartDate.ToShortDateString()),
+                EndDate = DateTime.Parse(x.EndDate.ToShortDateString()),
                 ContractId = x.ContractId,
                 IsActive = x.IsActive,
                 IsBundle = x.IsBundle,
