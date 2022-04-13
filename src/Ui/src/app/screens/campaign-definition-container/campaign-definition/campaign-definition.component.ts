@@ -33,6 +33,7 @@ export class CampaignDefinitionComponent implements OnInit {
   programTypeList: DropdownListModel[];
   viewOptionList: DropdownListModel[];
   sectorList: DropdownListModel[];
+  participationTypeList: DropdownListModel[];
 
   yesterday = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
   dpOptions: IAngularMyDpOptions = {
@@ -98,9 +99,10 @@ export class CampaignDefinitionComponent implements OnInit {
       campaignListImageDownloadUrl: '',
       campaignDetailImageUrl: ['', Validators.pattern(this.regex)],
       campaignDetailImageDownloadUrl: '',
-      order: ['', Validators.required],
+      order: '',
       maxNumberOfUser: '',
       programTypeId: [null, Validators.required],
+      participationTypeId : [null, Validators.required],
       sectorId: null,
       viewOptionId: [null, Validators.required],
     });
@@ -165,6 +167,7 @@ export class CampaignDefinitionComponent implements OnInit {
       order: data.order,
       maxNumberOfUser: data.maxNumberOfUser,
       programTypeId: data.programTypeId,
+      participationTypeId: data.participationTypeId,
       sectorId: data.sectorId,
       viewOptionId: data.viewOptionId,
     })
@@ -174,6 +177,7 @@ export class CampaignDefinitionComponent implements OnInit {
     this.programTypeList = data.programTypeList;
     this.viewOptionList = data.viewOptionList;
     this.sectorList = data.sectorList;
+    this.participationTypeList = data.participationTypeList;
   }
 
   setDate(date: string) {
@@ -205,12 +209,12 @@ export class CampaignDefinitionComponent implements OnInit {
     }
   }
 
-  isBundleChanged() {
-    if (this.formGroup.get('isBundle')?.value) {
+  orderStatusChanged() {
+    if (this.formGroup.get('isActive')?.value && !this.formGroup.get('isBundle')?.value) {
+      this.f.order.setValidators(Validators.required);
+    } else {
       this.formGroup.patchValue({order: ''});
       this.f.order.clearValidators();
-    } else {
-      this.f.order.setValidators(Validators.required);
     }
     this.f.order.updateValueAndValidity();
   }
@@ -315,7 +319,7 @@ export class CampaignDefinitionComponent implements OnInit {
   }
 
   private changedMethodsTrigger() {
-    this.isBundleChanged();
+    this.orderStatusChanged();
     this.isContractChanged();
     this.programTypeChanged();
     this.viewOptionChanged();
@@ -399,6 +403,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isBundle: formGroup.isBundle,
       contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
+      participationTypeId: formGroup.participationTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
         campaignDetailImageUrl: formGroup.campaignDetailImageUrl,
@@ -448,6 +453,7 @@ export class CampaignDefinitionComponent implements OnInit {
       isBundle: formGroup.isBundle,
       contractId: this.contractIdDisable ? this.contractDocumentId : parseInt(formGroup.contractId),
       programTypeId: formGroup.programTypeId,
+      participationTypeId: formGroup.participationTypeId,
       campaignDetail: {
         campaignListImageUrl: formGroup.campaignListImageUrl,
         campaignDetailImageUrl: formGroup.campaignDetailImageUrl,

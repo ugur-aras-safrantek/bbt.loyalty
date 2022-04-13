@@ -43,6 +43,7 @@ interface ICampaignDefinitionAddRequestModel {
   isBundle?: any;
   contractId?: any;
   programTypeId?: any;
+  participationTypeId?: any;
   campaignDetail?: {
     campaignListImageUrl?: any;
     campaignDetailImageUrl?: any;
@@ -72,6 +73,7 @@ export class CampaignDefinitionAddRequestModel implements ICampaignDefinitionAdd
   isBundle?: any;
   contractId?: any;
   programTypeId?: any;
+  participationTypeId?: any;
   campaignDetail?: {
     campaignListImageUrl?: any;
     campaignDetailImageUrl?: any;
@@ -102,6 +104,7 @@ interface ICampaignDefinitionUpdateRequestModel {
   isBundle?: any;
   contractId?: any;
   programTypeId?: any;
+  participationTypeId?: any;
   campaignDetail?: {
     campaignListImageUrl?: any;
     campaignDetailImageUrl?: any;
@@ -132,6 +135,7 @@ export class CampaignDefinitionUpdateRequestModel implements ICampaignDefinition
   isBundle?: any;
   contractId?: any;
   programTypeId?: any;
+  participationTypeId?: any;
   campaignDetail?: {
     campaignListImageUrl?: any;
     campaignDetailImageUrl?: any;

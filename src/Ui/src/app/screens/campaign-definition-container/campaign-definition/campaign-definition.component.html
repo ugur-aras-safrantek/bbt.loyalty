@@ -13,9 +13,8 @@
                   <div class="col pl-20px">
                     <div class="form-group">
                       <div class="form-check">
-                        <input class="form-check-input scale-2x" type="checkbox" id="isActive"
-                               name="isActive"
-                               formControlName="isActive">
+                        <input class="form-check-input scale-2x" type="checkbox" id="isActive" name="isActive"
+                               formControlName="isActive" (change)="orderStatusChanged()">
                         <label class="form-check-label ms-2" for="isActive">Aktif</label>
                       </div>
                     </div>
@@ -24,7 +23,7 @@
                     <div class="form-group">
                       <div class="form-check">
                         <input class="form-check-input scale-2x" type="checkbox" id="isBundle" name="isBundle"
-                               formControlName="isBundle" (change)="isBundleChanged()">
+                               formControlName="isBundle" (change)="orderStatusChanged()">
                         <label class="form-check-label ms-2" for="isBundle">
                           Birleştirilebilir
                         </label>
@@ -420,8 +419,8 @@
                 </div>
               </div>
             </div>
-            <div class="row" *ngIf="f.programTypeId.value != 1">
-              <div class="col">
+            <div class="row">
+              <div class="col" *ngIf="f.programTypeId.value != 1">
                 <div class="form-group mt-3">
                   <label for="sectorId">Sektör</label>
                   <select name="sectorId" id="sectorId" class="form-select"
@@ -430,6 +429,21 @@
                     <option *ngFor="let i of sectorList"
                             [value]="i.id">{{i.name}}</option>
                   </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group mt-3">
+                  <label for="participationTypeId">Katılım Şekli</label>
+                  <select name="participationTypeId" id="participationTypeId" class="form-select"
+                          formControlName="participationTypeId"
+                          [ngClass]="{ 'is-invalid': submitted && f.participationTypeId.invalid }">
+                    <option [ngValue]="null">Seçiniz</option>
+                    <option *ngFor="let i of participationTypeList"
+                            [value]="i.id">{{i.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.participationTypeId.errors" class="invalid-feedback">
+                    <div *ngIf="f.participationTypeId.errors.required">Katılım Şekli seçilmelidir.</div>
+                  </div>
                 </div>
               </div>
             </div>
