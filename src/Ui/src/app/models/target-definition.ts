@@ -11,6 +11,8 @@ interface ITargetDefinitionListRequestModel {
 export class TargetDefinitionListRequestModel implements ITargetDefinitionListRequestModel, IPagingRequestModel {
   pageNumber: number;
   pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
   name?: any;
   id?: any;
   targetViewTypeId?: any;

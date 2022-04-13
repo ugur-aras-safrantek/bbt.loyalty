@@ -27,8 +27,16 @@
         <table class="table table-hover table-custom">
           <thead>
           <tr class="table-primary">
-            <th [ngClass]="column.isBoolean ? 'no-wrap' : ''"
-                *ngFor="let column of listService.columns">{{column.columnName}}</th>
+            <th class="cursor-pointer"
+                [ngClass]="column.isBoolean ? 'no-wrap' : ''"
+                *ngFor="let column of listService.columns"
+                (click)="columnNameClick(column)">
+              {{column.columnName}}
+              <i class="ms-1"
+                 [ngClass]="column.sortDir == 'asc' ? 'bi-arrow-up' : ''"
+                 [ngClass]="column.sortDir == 'desc' ? 'bi-arrow-down' : ''">
+              </i>
+            </th>
           </tr>
           </thead>
           <tbody>

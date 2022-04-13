@@ -25,14 +25,14 @@ export class CampaignDefinitionListComponent implements OnInit {
   locale: string = 'tr';
 
   columns = [
-    {columnName: 'Kampanya Adı', propertyName: 'name', isBoolean: false},
-    {columnName: 'Kampanya Kodu', propertyName: 'code', isBoolean: false},
-    {columnName: 'Sözleşme ID', propertyName: 'contractId', isBoolean: false},
-    {columnName: 'Başlama Tarihi', propertyName: 'startDate', isBoolean: false},
-    {columnName: 'Bitiş Tarihi', propertyName: 'endDate', isBoolean: false},
-    {columnName: 'Program Tipi', propertyName: 'programType', isBoolean: false},
-    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true},
-    {columnName: 'Birleştirilebilir', propertyName: 'isBundle', isBoolean: true}
+    {columnName: 'Kampanya Adı', propertyName: 'name', isBoolean: false, sortDir: null},
+    {columnName: 'Kampanya Kodu', propertyName: 'code', isBoolean: false, sortDir: null},
+    {columnName: 'Sözleşme ID', propertyName: 'contractId', isBoolean: false, sortDir: null},
+    {columnName: 'Başlama Tarihi', propertyName: 'startDateStr', isBoolean: false, sortDir: null},
+    {columnName: 'Bitiş Tarihi', propertyName: 'endDateStr', isBoolean: false, sortDir: null},
+    {columnName: 'Program Tipi', propertyName: 'programType', isBoolean: false, sortDir: null},
+    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null},
+    {columnName: 'Birleştirilebilir', propertyName: 'isBundle', isBoolean: true, sortDir: null}
   ];
 
   programTypeList: DropdownListModel[];
@@ -56,7 +56,7 @@ export class CampaignDefinitionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProgramTypes();
-    this.campaignDefinitionListGetByFilter();
+    this.clear();
   }
 
   ngOnDestroy() {
@@ -87,6 +87,8 @@ export class CampaignDefinitionListComponent implements OnInit {
     let requestModel: CampaignDefinitionListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       campaignName: this.filterForm.campaignName,
       campaignCode: this.filterForm.campaignCode,
       contractId: parseInt(this.filterForm.contractId),
@@ -118,6 +120,8 @@ export class CampaignDefinitionListComponent implements OnInit {
     let requestModel: CampaignDefinitionListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       campaignName: this.filterForm.campaignName,
       campaignCode: this.filterForm.campaignCode,
       contractId: parseInt(this.filterForm.contractId),

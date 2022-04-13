@@ -33,6 +33,38 @@ export class ListComponent implements OnInit {
     this.downloadExcelFileEvent.emit();
   }
 
+  columnSortDirChange(column) {
+    this.listService.columns.map(x => {
+      if (x == column) {
+        switch (x.sortDir) {
+          case null:
+            x.sortDir = 'asc';
+            break;
+          case 'asc':
+            x.sortDir = 'desc';
+            break;
+          case 'desc':
+            x.sortDir = null
+            break;
+        }
+      } else {
+        x.sortDir = null;
+      }
+    });
+
+    return column;
+  }
+
+  columnNameClick(column) {
+    column = this.columnSortDirChange(column);
+    this.listService.currentSortDir = column.sortDir;
+    this.listService.currentSortBy = column.sortDir
+      ? column.propertyName.charAt(0).toUpperCase() + column.propertyName.slice(1)
+      : null;
+
+    this.getList();
+  }
+
   changePage(changeValue) {
     this.listService.paging.currentPage = this.listService.paging.currentPage + changeValue;
     this.getList();

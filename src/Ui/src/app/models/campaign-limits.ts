@@ -16,6 +16,8 @@ interface ICampaignLimitsListRequestModel {
 export class CampaignLimitsListRequestModel implements ICampaignLimitsListRequestModel, IPagingRequestModel {
   pageNumber: number;
   pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
   name?: any;
   achievementFrequencyId?: any;
   currencyId?: any;

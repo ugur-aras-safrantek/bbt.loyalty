@@ -52,7 +52,7 @@ export class CampaignLimitsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getParameterList();
-    this.campaignLimitsListGetByFilter();
+    this.clear();
   }
 
   ngOnDestroy() {
@@ -100,6 +100,8 @@ export class CampaignLimitsListComponent implements OnInit {
     let requestModel: CampaignLimitsListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       name: this.filterForm.name,
       achievementFrequencyId: this.filterForm.achievementFrequencyId,
       currencyId: this.filterForm.currencyId,
@@ -131,6 +133,8 @@ export class CampaignLimitsListComponent implements OnInit {
     let requestModel: CampaignLimitsListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       name: this.filterForm.name,
       achievementFrequencyId: this.filterForm.achievementFrequencyId,
       currencyId: this.filterForm.currencyId,

@@ -268,6 +268,14 @@ export class CampaignDefinitionComponent implements OnInit {
     this.f.campaignDetailImageUrl.updateValueAndValidity();
   }
 
+  startDateChanged(){
+    this.formGroup.controls.endDate.updateValueAndValidity();
+  }
+
+  endDateChanged(){
+    this.formGroup.controls.startDate.updateValueAndValidity();
+  }
+
   contentTrChanged(value: string) {
     if (value == '' || value == null) {
       this.formGroup.patchValue({contentEn: value});

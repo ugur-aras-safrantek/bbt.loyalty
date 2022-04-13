@@ -45,7 +45,7 @@ export class TargetDefinitionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getListParameters();
-    this.targetDefinitionListGetByFilter();
+    this.clear();
   }
 
   ngOnDestroy() {
@@ -112,6 +112,8 @@ export class TargetDefinitionListComponent implements OnInit {
     let requestModel: TargetDefinitionListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       name: this.filterForm.name,
       id: parseInt(this.filterForm.id),
       targetViewTypeId: this.filterForm.targetViewTypeId,
@@ -140,6 +142,8 @@ export class TargetDefinitionListComponent implements OnInit {
     let requestModel: TargetDefinitionListRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
+      sortBy: this.listService.currentSortBy,
+      sortDir: this.listService.currentSortDir,
       name: this.filterForm.name,
       id: parseInt(this.filterForm.id),
       targetViewTypeId: this.filterForm.targetViewTypeId,

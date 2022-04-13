@@ -14,6 +14,8 @@ interface ICampaignDefinitionListRequestModel {
 export class CampaignDefinitionListRequestModel implements ICampaignDefinitionListRequestModel, IPagingRequestModel {
   pageNumber: number;
   pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
   campaignName?: any;
   campaignCode?: any;
   contractId?: any;
