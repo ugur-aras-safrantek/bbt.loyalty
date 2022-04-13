@@ -45,7 +45,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             _campaignAchievementService = campaignAchievementService;
         }
 
-        public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId) 
+        public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath) 
         {
             CustomerViewFormMinDto response = new CustomerViewFormMinDto();
 
@@ -73,6 +73,9 @@ namespace Bbt.Campaign.Services.Services.Customer
             //var campaignDto = campaignDtoAll
 
             response.Campaign = campaignDto;
+
+            if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
+                response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
 
             //target
 

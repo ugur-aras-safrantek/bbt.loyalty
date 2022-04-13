@@ -1,6 +1,7 @@
 ﻿using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using Bbt.Campaign.Public.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public CampaignDto Campaign { get; set; }
         public CampaignTargetDto CampaignTarget { get; set; }
         public CampaignAchievementDto CampaignAchievement { get; set; }
+        public GetFileResponse ContractFile { get; set; }
     }
 }

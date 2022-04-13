@@ -20,6 +20,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         public Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request);
         public Task<CampaignDto> GetCampaignDtoAsync(int id);
         public Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath);
+        public Task<GetFileResponse> GetContractFile(int id, string contentRootPath);
         public Task<bool> IsInvisibleCampaign(int campaignId);
     }
 }

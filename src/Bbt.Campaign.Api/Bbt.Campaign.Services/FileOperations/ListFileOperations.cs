@@ -206,12 +206,12 @@ namespace Bbt.Campaign.Services.FileOperations
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = topLimit.Amount;
+                    worksheet.Cell(currentRow, column).Value = topLimit.Amount ? "Evet" : "Hayır"; 
                     worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = topLimit.Rate;
+                    worksheet.Cell(currentRow, column).Value = topLimit.Rate ? "Evet" : "Hayır"; 
                     worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 

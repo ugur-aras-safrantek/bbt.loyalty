@@ -10,6 +10,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 {
     public interface ICustomerService
     {
-        public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId);
+        public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath);
     }
 }

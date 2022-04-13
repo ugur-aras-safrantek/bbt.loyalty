@@ -7,5 +7,6 @@
         public List<ParameterDto> ActionOptionList { get; set; }
         public List<ParameterDto> ProgramTypeList { get; set; }
         public List<ParameterDto> ParticipationTypeList { get; set; }
+        public List<int> OrderList { get; set; }
     }
 }

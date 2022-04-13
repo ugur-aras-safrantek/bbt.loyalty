@@ -134,6 +134,21 @@ namespace Bbt.Campaign.Services.Services.Campaign
             await FillFormAsync(response);
             response.Campaign = (await GetCampaignAsync(id))?.Data;
 
+            List<int> orderList = response.OrderList;
+            if(response.Campaign != null) 
+            {
+                int order = response.Campaign.Order ?? 0;
+                if(order > 0) 
+                {
+                    if (!orderList.Exists(p => p.Equals(order))) 
+                    {
+                        orderList.Add(order);
+                        orderList.Sort();
+                        response.OrderList = orderList;
+                    }
+                }
+            }
+
             if(response.Campaign.IsContract && (response.Campaign.ContractId ?? 0) > 0)
                 response.ContractFile = await GetContractFile(response.Campaign.ContractId ?? 0, contentRootPath);
 
@@ -147,6 +162,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             response.SectorList = (await _parameterService.GetSectorListAsync())?.Data;
             response.ProgramTypeList = (await _parameterService.GetProgramTypeListAsync())?.Data;
             response.ParticipationTypeList = (await _parameterService.GetParticipationTypeListAsync())?.Data;
+            response.OrderList = await this.GetOrderListAsync(20);
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign)
@@ -376,20 +392,20 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 throw new Exception("Başlama Tarihi, Bitiş Tarihinden büyük olamaz”");
 
             //sıralama: birleştirilebilir ve  değilse zorunludur
-            if (!input.IsBundle || input.IsActive)
+            if (!input.IsBundle && input.IsActive)
             {
+                DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
                 int order = input.Order ?? 0;
 
                 if (order <= 0)
                     throw new Exception("Sıralama girilmelidir.");
 
                 var orderCampaignEntity = _unitOfWork.GetRepository<CampaignEntity>().
-                    GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order)
+                    GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order && x.EndDate >= today && x.Id != campaignId)
                     .FirstOrDefault();
                 if (orderCampaignEntity != null) 
                 {
-                    if (campaignId == 0 || campaignId != orderCampaignEntity.Id)
-                        throw new Exception("Aynı Sıralama Girilemez.");
+                    throw new Exception("Aynı Sıralama Girilemez.");
                 }
             }
 
@@ -503,7 +519,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
 
                 bool isDescending = request.SortDir?.ToLower() == "desc";
-                if (request.SortBy.Equals("CampaignCode")) 
+                if (request.SortBy.Equals("Code")) 
                 {
                     if (isDescending)
                         campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
@@ -521,57 +537,14 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return campaignList;
         }
 
-        private async Task<List<CampaignListDto>> GetSortedCampaignListDto(List<CampaignListDto> campaignList, string sortBy, string sortDir) 
-        {
-            if (string.IsNullOrEmpty(sortBy))
-            {
-                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
-            }
-            else
-            {
-                bool isDescending = sortDir?.ToLower() == "desc";
-
-                switch (sortBy)
-                {
-                    case "CampaignName":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.Name).ToList() : campaignList.OrderBy(x => x.Name).ToList();
-                        break;
-                    case "CampaignCode":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.Id).ToList() : campaignList.OrderBy(x => x.Id).ToList();
-                        break;
-                    case "ContractId":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.ContractId).ToList() : campaignList.OrderBy(x => x.ContractId).ToList();
-                        break;
-                    case "IsActive":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.IsActive).ToList() : campaignList.OrderBy(x => x.IsActive).ToList();
-                        break;
-                    case "IsBundle":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.IsBundle).ToList() : campaignList.OrderBy(x => x.IsBundle).ToList();
-                        break;
-                    case "StartDate":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.StartDate).ToList() : campaignList.OrderBy(x => x.StartDate).ToList();
-                        break;
-                    case "EndDate":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.EndDate).ToList() : campaignList.OrderBy(x => x.EndDate).ToList();
-                        break;
-                    case "ProgramType":
-                        campaignList = isDescending ? campaignList.OrderByDescending(x => x.ProgramType).ToList() : campaignList.OrderBy(x => x.ProgramType).ToList();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return campaignList;
-        }
-
         public async Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath) 
         {
-            GetFileResponse getFileResponse = await GetContractFile(id, contentRootPath);
+            //GetFileResponse getFileResponse = await GetContractFile(id, contentRootPath);
 
-            return await BaseResponse<GetFileResponse>.SuccessAsync(getFileResponse);
+            return await BaseResponse<GetFileResponse>.SuccessAsync(await GetContractFile(id, contentRootPath));
         }
 
-        private async Task<GetFileResponse> GetContractFile(int id, string contentRootPath) 
+        public async Task<GetFileResponse> GetContractFile(int id, string contentRootPath) 
         {
             var getFileResponse = new GetFileResponse();
 
@@ -619,6 +592,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return getFileResponse;
 
         }
+        
         public async Task<bool> IsInvisibleCampaign(int campaignId) 
         {
             bool isInvisibleCampaign = false;
@@ -629,6 +603,31 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
             }
             return isInvisibleCampaign;
+        }
+
+        private async Task<List<int>> GetOrderListAsync(int maxCount) 
+        {
+            List<int> orderList = new List<int>();
+
+            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            List<int?> usedList = _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => !x.IsDeleted && x.IsActive && x.EndDate >= today && !x.IsBundle && (x.Order ?? 0) > 0)
+                .Select(x => x.Order)
+                .ToList();
+
+            int count = 0;
+            for(int i = 1; i < int.MaxValue; i++) 
+            {
+                if(!usedList.Exists(p => p.Equals(i)))
+                {
+                    orderList.Add(i);
+                    count++;
+                }
+                
+                if(count == maxCount)
+                    break;
+            }
+            return orderList;
         }
     }
 }

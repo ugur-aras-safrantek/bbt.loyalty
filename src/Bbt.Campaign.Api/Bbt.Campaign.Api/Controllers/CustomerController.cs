@@ -7,9 +7,11 @@ namespace Bbt.Campaign.Api.Controllers
     public class CustomerController : BaseController<CustomerController>
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public CustomerController(ICustomerService customerService, IWebHostEnvironment webHostEnvironment)
         {
             _customerService = customerService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -21,7 +23,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("view-customer-min")]
         public async Task<IActionResult> GetCustomerViewMinFormAsync(int campaignId)
         {
-            var result = await _customerService.GetCustomerViewMinFormAsync(campaignId);
+            var result = await _customerService.GetCustomerViewMinFormAsync(campaignId, _webHostEnvironment.ContentRootPath);
             return Ok(result);
         }
     }
