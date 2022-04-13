@@ -204,6 +204,18 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Returns Join participation type list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-participation-types")]
+        public async Task<IActionResult> GetParticipationTypeList()
+        {
+            var result = await _parameterService.GetParticipationTypeListAsync();
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// Clears all keys on the cache.

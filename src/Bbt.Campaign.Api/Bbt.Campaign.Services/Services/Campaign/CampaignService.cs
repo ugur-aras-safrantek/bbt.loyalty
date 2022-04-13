@@ -146,6 +146,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             response.ViewOptionList = (await _parameterService.GetViewOptionListAsync())?.Data;
             response.SectorList = (await _parameterService.GetSectorListAsync())?.Data;
             response.ProgramTypeList = (await _parameterService.GetProgramTypeListAsync())?.Data;
+            response.ParticipationTypeList = (await _parameterService.GetParticipationTypeListAsync())?.Data;
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign)
@@ -204,6 +205,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.Code = campaign.Id.ToString();
                 entity.IsDraft = true;
                 entity.IsApproved = false;
+                entity.ParticipationTypeId = campaign.ParticipationTypeId;
 
                 entity = await SetDefaults(entity);
 
@@ -289,6 +291,16 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 var programType = (await _parameterService.GetProgramTypeListAsync())?.Data?.Any(x => x.Id == input.ProgramTypeId);
                 if (!programType.GetValueOrDefault(false))
                     throw new Exception("Program Tipi hatalı.");
+            }
+
+            //Katılım şekli
+            if (input.ParticipationTypeId <= 0)
+                throw new Exception("Katılım şekli seçilmelidir.");
+            else
+            {
+                var participationType = (await _parameterService.GetParticipationTypeListAsync())?.Data?.Any(x => x.Id == input.ParticipationTypeId);
+                if (!participationType.GetValueOrDefault(false))
+                    throw new Exception("Katılım şekli hatalı.");
             }
 
             if (input.ProgramTypeId != (int)ProgramTypeEnum.Loyalty)//Program Tipi sadakat değil ise
@@ -425,7 +437,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
                 }
             };
-
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
 
@@ -437,12 +448,12 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             if (request.IsBundle.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
-            if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode)) 
+            if (!string.IsNullOrEmpty(request.Code) && !string.IsNullOrWhiteSpace(request.Code)) 
             {
                 int campaignId = -1;
                 try 
                 { 
-                    campaignId = int.Parse(request.CampaignCode);
+                    campaignId = int.Parse(request.Code);
                 }
                 catch (Exception ex) 
                 { 
@@ -450,8 +461,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 }
                 campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
             } 
-            if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
-                campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.CampaignName));
+            if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
+                campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.Name));
             if (request.ContractId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.ContractId == request.ContractId.Value);
             if (request.IsActive.HasValue)

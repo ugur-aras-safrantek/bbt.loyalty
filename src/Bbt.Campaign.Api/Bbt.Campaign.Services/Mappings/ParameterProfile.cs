@@ -25,6 +25,7 @@ namespace Bbt.Campaign.Services.Mappings
             CreateMap<ParameterDto, TriggerTimeEntity>().ReverseMap();
             CreateMap<ParameterDto, TargetViewTypeEntity>().ReverseMap();
             CreateMap<ParameterDto, VerificationTimeEntity>().ReverseMap();
+            CreateMap<ParameterDto, ParticipationTypeEntity>().ReverseMap();
         }
     }
 }

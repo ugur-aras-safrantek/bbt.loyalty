@@ -320,5 +320,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<string>>.SuccessAsync(result);
         }
+
+        public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync()
+        {
+            return GetListAsync<ParticipationTypeEntity>(CacheKeys.ParticipationType);
+        }
     }
 }

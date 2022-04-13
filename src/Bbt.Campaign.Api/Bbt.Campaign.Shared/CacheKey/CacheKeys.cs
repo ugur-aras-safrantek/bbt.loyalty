@@ -45,5 +45,7 @@
         public const string BranchSelectDate = "BranchSelectDate";
 
         public const string ChannelCodeSelectDate = "ChannelCodeSelectDate";
+
+        public const string ParticipationType = "ParticipationType";
     }
 }

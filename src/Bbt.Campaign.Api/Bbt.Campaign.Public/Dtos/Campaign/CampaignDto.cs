@@ -25,6 +25,9 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
         public int? ViewOptionId { get; set; }
         public ViewOptionDto? ViewOption { get; set; }
 
+        public int ParticipationTypeId { get; set; }
+        public ParameterDto ParticipationType { get; set; }
+
         public bool IsActive { get; set; }
         public bool IsBundle { get; set; }
         public int Id { get; set; }

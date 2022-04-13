@@ -21,6 +21,8 @@ namespace Bbt.Campaign.Public.Models.Campaign
         public int? ContractId { get; set; }
         public int ProgramTypeId { get; set; }
 
+        public int ParticipationTypeId { get; set; }
+
         public CampaignDetailDto  CampaignDetail { get; set; }
     }
 }

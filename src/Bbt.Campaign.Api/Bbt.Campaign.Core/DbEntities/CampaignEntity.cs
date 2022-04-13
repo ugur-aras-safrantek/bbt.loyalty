@@ -36,6 +36,10 @@ namespace Bbt.Campaign.Core.DbEntities
         public int ProgramTypeId { get; set; }
         public ProgramTypeEntity ProgramType { get; set; }
 
+        [ForeignKey("ParticipationType")]
+        public int ParticipationTypeId { get; set; }
+        public ParticipationTypeEntity ParticipationType { get; set; }
+
         public virtual CampaignRuleEntity? CampaignRule { get; set; }
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
         public virtual CampaignAchievementEntity? Achievement { get; set; }

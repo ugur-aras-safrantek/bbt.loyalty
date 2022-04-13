@@ -3,9 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class ProgramTypeEntity : AuditableEntity
+    public class ParticipationTypeEntity : AuditableEntity
     {
         [MaxLength(250), Required]
-        public string Name { get; set; }    
+        public string Name { get; set; }
+
+        [MaxLength(4), Required]
+        public string Code { get; set; }
+
     }
 }

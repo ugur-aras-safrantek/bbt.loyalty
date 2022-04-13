@@ -152,6 +152,7 @@ namespace Bbt.Target.Services.Services.Target
                     return await BaseResponse<TargetListFilterResponse>.SuccessAsync(response, "Hedef bulunamadı");
                 var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
                 var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+                targetList = targetList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
                 var totalItems = targetList.Count();
                 response.ResponseList = targetList;
                 response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);

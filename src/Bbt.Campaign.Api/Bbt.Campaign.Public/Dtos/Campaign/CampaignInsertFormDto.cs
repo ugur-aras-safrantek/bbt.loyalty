@@ -6,5 +6,6 @@
         public List<ParameterDto> ViewOptionList { get; set; }
         public List<ParameterDto> ActionOptionList { get; set; }
         public List<ParameterDto> ProgramTypeList { get; set; }
+        public List<ParameterDto> ParticipationTypeList { get; set; }
     }
 }

@@ -151,6 +151,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new TargetSourceEntity() { Id = 2, Name = "Sorgu", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
 
+            modelBuilder.Entity<ParticipationTypeEntity>().HasData(
+               new ParticipationTypeEntity() { Id = 1, Name = "Otomatik Katılım", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new ParticipationTypeEntity() { Id = 2, Name = "Müşteri Seçimi", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new ParticipationTypeEntity() { Id = 3, Name = "Operatör Seçimi", Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            );
+
         }
     }
 }
