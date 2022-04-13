@@ -355,57 +355,67 @@
             </div>
             <div class="row">
               <div class="col">
-                <div class="form-group mt-3 new-camp-calendar">
-                  <label for="startDate">Başlama Tarihi</label>
-                  <input class="form-control pl-32px" angular-mydatepicker
-                         name="startDate" id="startDate" formControlName="startDate" (click)="sDp.toggleCalendar()"
-                         [options]="dpOptions" #sDp="angular-mydatepicker" [locale]="locale"
-                         [ngClass]="{ 'is-invalid': submitted && f.startDate.invalid }"/>
-                  <div *ngIf="submitted && f.startDate.errors" class="invalid-feedback">
-                    <div *ngIf="f.startDate.errors.required">Başlama Tarihi seçilmelidir.</div>
-                    <div *ngIf="!f.startDate.errors.required && f.startDate.errors.invalidDateFormat">
-                      Başlama Tarihi bugünün tarihinden küçük olamaz.
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group mt-3 new-camp-calendar">
+                      <label for="startDate">Başlama Tarihi</label>
+                      <input class="form-control pl-32px" angular-mydatepicker
+                             name="startDate" id="startDate" formControlName="startDate" (click)="sDp.toggleCalendar()"
+                             (ngModelChange)="startDateChanged()"
+                             [options]="dpOptions" #sDp="angular-mydatepicker" [locale]="locale"
+                             [ngClass]="{ 'is-invalid': submitted && f.startDate.invalid }"/>
+                      <div *ngIf="submitted && f.startDate.errors" class="invalid-feedback">
+                        <div *ngIf="f.startDate.errors.required">Başlama Tarihi seçilmelidir.</div>
+                        <div *ngIf="!f.startDate.errors.required && f.startDate.errors.invalidDateFormat">
+                          Başlama Tarihi bugünün tarihinden küçük olamaz.
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      *ngIf="!f.startDate.errors.required && f.startDate.errors.endDateGreaterThanStartDateValidator">
-                      Başlama Tarihi, Bitiş Tarihinden büyük olamaz.
+                  </div>
+                  <div class="col">
+                    <div class="form-group mt-3 new-camp-calendar">
+                      <label for="endDate">Bitiş Tarihi</label>
+                      <input class="form-control pl-32px" angular-mydatepicker
+                             name="endDate" id="endDate" formControlName="endDate" (click)="eDp.toggleCalendar()"
+                             (ngModelChange)="endDateChanged()"
+                             [options]="dpOptions" #eDp="angular-mydatepicker" [locale]="locale"
+                             [ngClass]="{ 'is-invalid': submitted && f.endDate.invalid }"/>
+                      <div *ngIf="submitted && f.endDate.errors" class="invalid-feedback">
+                        <div *ngIf="f.endDate.errors.required">Bitiş Tarihi seçilmelidir.</div>
+                        <div *ngIf="!f.endDate.errors.required && f.endDate.errors.invalidDateFormat">
+                          Bitiş Tarihi bugünün tarihinden küçük olamaz.
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                  <div class="d-block mt-0 invalid-feedback"
+                       *ngIf="submitted &&
+                              (f.startDate.errors?.endDateGreaterThanStartDateValidator ||
+                               f.endDate.errors?.endDateGreaterThanStartDateValidator)"
+                  >
+                    Başlama Tarihi, Bitiş Tarihinden büyük olamaz.
                   </div>
                 </div>
               </div>
               <div class="col">
-                <div class="form-group mt-3 new-camp-calendar">
-                  <label for="endDate">Bitiş Tarihi</label>
-                  <input class="form-control pl-32px" angular-mydatepicker
-                         name="endDate" id="endDate" formControlName="endDate" (click)="eDp.toggleCalendar()"
-                         [options]="dpOptions" #eDp="angular-mydatepicker" [locale]="locale"
-                         [ngClass]="{ 'is-invalid': submitted && f.endDate.invalid }"/>
-                  <div *ngIf="submitted && f.endDate.errors" class="invalid-feedback">
-                    <div *ngIf="f.endDate.errors.required">Bitiş Tarihi seçilmelidir.</div>
-                    <div *ngIf="!f.endDate.errors.required && f.endDate.errors.invalidDateFormat">
-                      Bitiş Tarihi bugünün tarihinden küçük olamaz.
-                    </div>
-                    <div *ngIf="!f.endDate.errors.required && f.endDate.errors.endDateGreaterThanStartDateValidator">
-                      Başlama Tarihi, Bitiş Tarihinden büyük olamaz.
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group mt-3">
+                      <label for="maxNumberOfUser">Max Kullanıcı</label>
+                      <input type="text" class="form-control" name="maxNumberOfUser" pattern="[0-9]*"
+                             id="maxNumberOfUser" formControlName="maxNumberOfUser" onlyNumber>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group mt-3">
-                  <label for="maxNumberOfUser">Max Kullanıcı</label>
-                  <input type="text" class="form-control" name="maxNumberOfUser" pattern="[0-9]*"
-                         id="maxNumberOfUser" formControlName="maxNumberOfUser" onlyNumber>
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group mt-3" *ngIf="!f.isBundle.value">
-                  <label for="order">Sıralama</label>
-                  <input type="text" class="form-control" name="order" id="order"
-                         formControlName="order" onlyNumber
-                         [ngClass]="{ 'is-invalid': submitted && f.order.invalid }">
-                  <div *ngIf="submitted && f.order.errors" class="invalid-feedback">
-                    <div *ngIf="f.order.errors.required">Sıralama girilmelidir.</div>
+                  <div class="col">
+                    <div class="form-group mt-3" *ngIf="!f.isBundle.value">
+                      <label for="order">Sıralama</label>
+                      <input type="text" class="form-control" name="order" id="order"
+                             formControlName="order" onlyNumber
+                             [ngClass]="{ 'is-invalid': submitted && f.order.invalid }">
+                      <div *ngIf="submitted && f.order.errors" class="invalid-feedback">
+                        <div *ngIf="f.order.errors.required">Sıralama girilmelidir.</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
