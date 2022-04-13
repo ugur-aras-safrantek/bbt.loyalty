@@ -209,22 +209,12 @@ export class CampaignDefinitionComponent implements OnInit {
     }
   }
 
-  isActiveChanged() {
-    if (this.formGroup.get('isActive')?.value) {
+  orderStatusChanged() {
+    if (this.formGroup.get('isActive')?.value && !this.formGroup.get('isBundle')?.value) {
       this.f.order.setValidators(Validators.required);
     } else {
       this.formGroup.patchValue({order: ''});
       this.f.order.clearValidators();
-    }
-    this.f.order.updateValueAndValidity();
-  }
-
-  isBundleChanged() {
-    if (this.formGroup.get('isBundle')?.value) {
-      this.formGroup.patchValue({order: ''});
-      this.f.order.clearValidators();
-    } else {
-      this.f.order.setValidators(Validators.required);
     }
     this.f.order.updateValueAndValidity();
   }
@@ -329,7 +319,7 @@ export class CampaignDefinitionComponent implements OnInit {
   }
 
   private changedMethodsTrigger() {
-    this.isBundleChanged();
+    this.orderStatusChanged();
     this.isContractChanged();
     this.programTypeChanged();
     this.viewOptionChanged();

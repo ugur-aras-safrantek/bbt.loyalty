@@ -14,7 +14,7 @@
                     <div class="form-group">
                       <div class="form-check">
                         <input class="form-check-input scale-2x" type="checkbox" id="isActive" name="isActive"
-                               formControlName="isActive" (change)="isActiveChanged()">
+                               formControlName="isActive" (change)="orderStatusChanged()">
                         <label class="form-check-label ms-2" for="isActive">Aktif</label>
                       </div>
                     </div>
@@ -23,7 +23,7 @@
                     <div class="form-group">
                       <div class="form-check">
                         <input class="form-check-input scale-2x" type="checkbox" id="isBundle" name="isBundle"
-                               formControlName="isBundle" (change)="isBundleChanged()">
+                               formControlName="isBundle" (change)="orderStatusChanged()">
                         <label class="form-check-label ms-2" for="isBundle">
                           Birleştirilebilir
                         </label>
