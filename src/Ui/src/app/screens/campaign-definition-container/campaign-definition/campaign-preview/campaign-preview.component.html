@@ -2,30 +2,12 @@
   <ngx-smart-modal #contractApprovalModal identifier="contractApprovalModal" customClass="contract-modal">
     <h1 class="text-purple-dark">Sözleşme Metni</h1>
     <hr class="purple">
-    <div class="modal-scrollable">
-      <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus nulla quis similique ut. Amet
-        aperiam architecto esse impedit iste nesciunt placeat quibusdam quod reiciendis repellat reprehenderit,
-        sapiente, sequi vel voluptate.
-      </div>
-      <div>Aliquid dicta dolorum eos est eum facere, id impedit ipsa laboriosam, magnam minus natus omnis optio porro
-        reprehenderit ut voluptatibus. Aliquid commodi corporis earum eos et illo incidunt necessitatibus sequi.
-      </div>
-      <div>A ad, alias amet atque aut commodi consequuntur dolor eaque eius impedit in, ipsum iste libero mollitia
-        officiis omnis porro quas qui quidem saepe suscipit temporibus tenetur vero vitae voluptatem.
-      </div>
-      <div>A ad animi aut consequuntur dignissimos dolor dolorum expedita fuga harum, ipsum iste iure magnam maxime
-        molestiae neque non quam quidem recusandae repellat rerum similique sint tempora temporibus ut veritatis.
-      </div>
-      <div>Culpa dolore error perferendis quis. Aspernatur atque consequuntur culpa dignissimos dolores ducimus, est
-        incidunt ipsam iure laboriosam modi odio officia omnis optio quas quos ratione recusandae, reiciendis sed
-        tenetur veritatis.
-      </div>
-    </div>
+    <iframe [src]="contractFileUrl | safe" width="100%" height=500></iframe>
     <div class="button-container col-6 m-auto mt-3">
-      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">
+      <button class="btn btn-purple px-5" type="button" disabled>
         Okudum, onaylıyorum
       </button>
-      <button class="btn btn-purple px-5" type="button" (click)="contractApprovalModal.close()">
+      <button class="btn btn-purple px-5" type="button" disabled>
         Okudum, onaylamıyorum
       </button>
     </div>
@@ -85,8 +67,9 @@
                 </div>
               </div>
               <div class="form-check mt-3">
-                <input class="form-check-input" type="checkbox" value="" id="campaignContractCheckDefault">
-                <label class="form-check-label" for="campaignContractCheckDefault">
+                <input class="form-check-input" type="checkbox" id="campaignContractCheckDefault"
+                       [checked]="true" disabled>
+                <label>
                   <u><b (click)="contractApprovalModal.open()" class="cursor-pointer">
                     {{campaign.name}} Sözleşmesi</b></u>'ni okudum ve onaylıyorum.
                 </label>

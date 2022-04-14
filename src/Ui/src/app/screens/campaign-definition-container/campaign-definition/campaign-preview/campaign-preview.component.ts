@@ -6,6 +6,7 @@ import {CampaignPreviewModel} from "../../../../models/campaign-definition";
 import {Subject, takeUntil} from "rxjs";
 import {AngularEditorConfig} from "@kolkov/angular-editor";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {UtilityService} from "../../../../services/utility.service";
 
 @Component({
   selector: 'app-campaign-preview',
@@ -19,6 +20,7 @@ export class CampaignPreviewComponent implements OnInit {
   campaign: CampaignPreviewModel = new CampaignPreviewModel();
   targetGroupList: any;
   campaignAchievement: any;
+  contractFileUrl: any;
 
 
   editorConfig: AngularEditorConfig = {
@@ -29,6 +31,7 @@ export class CampaignPreviewComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
               private toastrHandleService: ToastrHandleService,
+              private utilityService: UtilityService,
               private router: Router,
               private route: ActivatedRoute) {
     this.route.paramMap.subscribe(paramMap => {
@@ -55,6 +58,12 @@ export class CampaignPreviewComponent implements OnInit {
             this.campaign = res.data.campaign;
             this.targetGroupList = res.data.campaignTarget?.targetGroupList;
             this.campaignAchievement = res.data.campaignAchievement;
+            let document = res.data.contractFile?.document;
+            if (document) {
+              let blob = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+              let url = window.URL.createObjectURL(blob);
+              this.contractFileUrl = url;
+            }
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

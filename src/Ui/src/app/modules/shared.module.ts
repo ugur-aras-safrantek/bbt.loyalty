@@ -13,6 +13,7 @@ import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 import {RepostComponent} from "../components/repost/repost.component";
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {CurrencyMaskInputMode, NgxCurrencyModule} from "ngx-currency";
+import {SafePipe} from "../pipes/safe.pipe";
 
 export const customCurrencyMaskConfig = {
   thousands: ".",
@@ -32,6 +33,7 @@ export const customCurrencyMaskConfig = {
     MainContentComponent,
     BackButtonDirective,
     OnlyNumberDirective,
+    SafePipe,
     StepComponent,
     FinishComponent,
     ListComponent,
@@ -50,6 +52,7 @@ export const customCurrencyMaskConfig = {
     MainContentComponent,
     BackButtonDirective,
     OnlyNumberDirective,
+    SafePipe,
     StepComponent,
     NgMultiSelectDropDownModule,
     UiSwitchModule,
