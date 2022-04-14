@@ -93,37 +93,26 @@ jobs:
         run: |
           sed -i -e "s/ELASTIC_SEARCH/${{ secrets.ELASTIC_SEARCH }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-       
-      - name: Replace Branch Service Secret
-        run: |
-          sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-      
       - name: Replace Elastic Password Secret
         run: |
           sed -i -e "s/ELASTIC_PASSWORD/${{ secrets.ELASTIC_PASSWORD }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  
       - name: Replace Branch Service Secret
         run: |
           sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  
       - name: Replace Channel Code Service Secret
         run: |
           sed -i -e "s/CHANNEL_CODE_SERVICE_URL/${{ secrets.CHANNEL_CODE_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  
       - name: Replace Contract Service Secret
         run: |
           sed -i -e "s/CONTRACT_SERVICE_URL/${{ secrets.CONTRACT_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  		  
       - name: Replace List Image Service Secret
         run: |
           sed -i -e "s/CAMPAIGN_LIST_IMAGE_URL/${{ secrets.CAMPAIGN_LIST_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json  
       - name: Replace Detail Image Service Secret
         run: |
           sed -i -e "s/CAMPAIGN_DETAIL_IMAGE_URL/${{ secrets.CAMPAIGN_DETAIL_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
