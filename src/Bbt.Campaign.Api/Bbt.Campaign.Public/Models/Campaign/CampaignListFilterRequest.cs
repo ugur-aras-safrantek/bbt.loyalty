@@ -5,6 +5,8 @@ namespace Bbt.Campaign.Public.Models.Campaign
     public class CampaignListFilterRequest : PagingRequest
     {
         public string? Name { get; set; }
+
+
         public string? Code { get; set; }
         public int? ContractId { get; set; }
         public bool? IsActive { get; set; }
