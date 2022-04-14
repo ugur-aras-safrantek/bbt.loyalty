@@ -103,6 +103,7 @@ jobs:
         run: |
           sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
       - name: Replace Channel Code Service Secret
         run: |
           sed -i -e "s/CHANNEL_CODE_SERVICE_URL/${{ secrets.CHANNEL_CODE_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
@@ -116,9 +117,9 @@ jobs:
       - name: Replace List Image Service Secret
         run: |
           sed -i -e "s/CAMPAIGN_LIST_IMAGE_URL/${{ secrets.CAMPAIGN_LIST_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json  
-      - name: Replace Detail Image Service Secret
-      
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
+      - name: Replace Detail Image Service Secret  
         run: |
           sed -i -e "s/CAMPAIGN_DETAIL_IMAGE_URL/${{ secrets.CAMPAIGN_DETAIL_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
