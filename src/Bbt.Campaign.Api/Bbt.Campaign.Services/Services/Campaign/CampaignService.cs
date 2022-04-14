@@ -551,7 +551,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if (StaticValues.IsDevelopment)
             {
                 byte[] data = null;
-                var filePath = Path.Combine(contentRootPath, "Download", $"Contract.pdf");
+                var filePath = Path.Combine(contentRootPath, "Download", $"Kampanya.html");
                 if (File.Exists(filePath))
                     data = File.ReadAllBytes(filePath);
                 else
@@ -562,9 +562,9 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     Document = new Public.Models.CampaignDocument.DocumentModel()
                     {
                         Data = Convert.ToBase64String(data, 0, data.Length),
-                        DocumentName = id.ToString() + "-Sözleşme.pdf",
+                        DocumentName = id.ToString() + "-Sözleşme.html",
                         DocumentType = DocumentTypePublicEnum.Contract,
-                        MimeType = MimeTypeExtensions.ToMimeType(".pdf")
+                        MimeType = MimeTypeExtensions.ToMimeType(".html")
                     }
                 };
             }
@@ -573,13 +573,28 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl);
+                    var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl+id.ToString());
                     if (response.IsSuccessStatusCode)
                     {
-                        if (response.Content != null)
+                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
+                            //var valueDateResult = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDate);
                             string apiResponse = await response.Content.ReadAsStringAsync();
-                            var values = apiResponse.Split('\u002C');
+                            getFileResponse = new GetFileResponse()
+                            {
+                                Document = new Public.Models.CampaignDocument.DocumentModel()
+                                {
+                                    //Data = Convert.ToBase64String(response.Content, 0, response.Content.Length),
+                                    //Data = apiResponse.con
+                                    DocumentName = id.ToString() + "-Sözleşme.html",
+                                    DocumentType = DocumentTypePublicEnum.Contract,
+                                    MimeType = MimeTypeExtensions.ToMimeType(".html")
+                                }
+                            };
+                        }
+                        else if(response.StatusCode == System.Net.HttpStatusCode.MethodNotAllowed) 
+                        { 
+                        
                         }
                     }
                     else

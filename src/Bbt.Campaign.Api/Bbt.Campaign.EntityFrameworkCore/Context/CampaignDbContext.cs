@@ -107,5 +107,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<TargetGroupLineEntity> TargetGroupLines { get; set; }
         public DbSet<TopLimitEntity> TopLimits { get; set; }
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
+        public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
     }
 }

@@ -10,6 +10,10 @@ namespace Bbt.Campaign.Services.Services.Customer
 {
     public interface ICustomerService
     {
+        public Task<BaseResponse<CustomerCampaignDto>> SetJoin(string customerCode, int campaignId);
+        public Task<BaseResponse<CustomerCampaignDto>> SetFavorite(string customerCode, int campaignId, bool isFavorite);
+        public Task<BaseResponse<CustomerCampaignDto>> DeleteAsync(int id);
+        public Task<BaseResponse<CustomerCampaignDto>> GetCustomerCampaignAsync(int id);      
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath);
     }
 }

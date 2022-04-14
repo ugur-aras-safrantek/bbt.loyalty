@@ -7,6 +7,8 @@ using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Customer;
 using Bbt.Campaign.Public.Dtos.Target.Group;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
+using Bbt.Campaign.Public.Models.Customer;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignRule;
@@ -45,7 +47,123 @@ namespace Bbt.Campaign.Services.Services.Customer
             _campaignAchievementService = campaignAchievementService;
         }
 
-        public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath) 
+        public async Task<BaseResponse<CustomerCampaignDto>> SetJoin(string customerCode, int campaignId) 
+        {
+            CustomerCampaignDto response = new CustomerCampaignDto();
+
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+               .GetAll(x => x.CustomerCode == customerCode && x.CampaignId == campaignId && x.IsDeleted != true)
+               .FirstOrDefaultAsync();
+            if (entity != null)
+            {
+                entity.IsJoin = true;
+
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
+            }
+            else
+            {
+                entity = new CustomerCampaignEntity();
+                entity.CustomerCode = customerCode;
+                entity.CampaignId = campaignId;
+                entity.IsFavorite = false;
+                entity.IsJoin = true;
+
+                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+            }
+
+            return await BaseResponse<CustomerCampaignDto>.SuccessAsync(response);
+        }
+        public async Task<BaseResponse<CustomerCampaignDto>> SetFavorite(string customerCode, int campaignId, bool isFavorite)
+        {
+            CustomerCampaignDto response = new CustomerCampaignDto();
+
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity> ()
+               .GetAll(x => x.CustomerCode == customerCode && x.CampaignId == campaignId && x.IsDeleted != true)
+               .FirstOrDefaultAsync();
+            if(entity != null) 
+            { 
+                entity.IsFavorite = isFavorite;
+                
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
+            }
+            else 
+            {
+                entity = new CustomerCampaignEntity();
+                entity.CustomerCode = customerCode;
+                entity.CampaignId = campaignId; 
+                entity.IsFavorite = isFavorite;
+                entity.IsJoin = false;
+
+                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return await GetCustomerCampaignAsync(entity.Id);
+        }
+
+        public async Task<BaseResponse<CustomerCampaignDto>> DeleteAsync(int id)
+        {
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().GetByIdAsync(id);
+            if (entity != null)
+            {
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(entity);
+                await _unitOfWork.SaveChangesAsync();
+                return await GetCustomerCampaignAsync(entity.Id);
+            }
+            return await BaseResponse<CustomerCampaignDto>.FailAsync("Kayıt bulunamadı.");
+        }
+        public async Task<BaseResponse<CustomerCampaignDto>> GetCustomerCampaignAsync(int id)
+        {
+            var customerCampaignEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().GetByIdAsync(id);
+            if (customerCampaignEntity != null)
+            {
+                CustomerCampaignDto customerCampaignDto = _mapper.Map<CustomerCampaignDto>(customerCampaignEntity);
+                return await BaseResponse<CustomerCampaignDto>.SuccessAsync(customerCampaignDto);
+
+            }
+            return null;
+        }
+
+        public async Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request)
+        {
+            CustomerCampaignListFilterResponse response = new CustomerCampaignListFilterResponse();
+            List<CustomerCampaignListDto> customerCampaignList = await this.GetFilteredCampaignList(request);
+            var totalItems = customerCampaignList.Count();
+            if (totalItems == 0)
+                return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            customerCampaignList = customerCampaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            response.CustomerCampaignList = customerCampaignList;
+            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
+            return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
+        }
+
+        private async Task<List<CustomerCampaignListDto>> GetFilteredCampaignList(CustomerCampaignListFilterRequest request) 
+        {
+            List<CustomerCampaignListDto> customerCampaignList = new List<CustomerCampaignListDto>();
+
+            var customerCampaigns = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => x.CustomerCode == request.CustomerCode && !x.IsDeleted)
+                .ToListAsync();
+            var campaignList = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => !x.IsDeleted && x.IsActive)
+                .ToListAsync();
+            foreach(var campaign in campaignList) 
+            {
+                //CustomerCampaignListTypeEnum
+
+                CustomerCampaignListDto customerCampaignListDto = new CustomerCampaignListDto();
+                customerCampaignList.Add(customerCampaignListDto);
+            }
+                
+
+            //if(request.)
+
+            return customerCampaignList;
+        }
+        public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath)
         {
             CustomerViewFormMinDto response = new CustomerViewFormMinDto();
 
@@ -92,5 +210,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
 
         }
+        
+
     }
 }
