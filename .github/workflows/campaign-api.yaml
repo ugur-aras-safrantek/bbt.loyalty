@@ -68,8 +68,7 @@ jobs:
       - name: Replace Elastic Password Secret
         run: |
           sed -i -e "s/ELASTIC_PASSWORD/${{ secrets.ELASTIC_PASSWORD }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-	  
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json  
       # Set the target Azure Kubernetes Service (AKS) cluster. 
       - uses: azure/aks-set-context@v1
         with:
