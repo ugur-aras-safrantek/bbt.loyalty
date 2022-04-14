@@ -49,11 +49,6 @@ jobs:
         run: |
           sed -i -e "s/DEFAULT_CONNECTION/${{ secrets.DEFAULT_CONNECTION }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-		  
-      - name: Replace Branch Service Secret
-        run: |
-          sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           
       - name: Replace Redis Secret
         run: |
