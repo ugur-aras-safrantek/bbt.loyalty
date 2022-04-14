@@ -1,8 +1,8 @@
 import {IPagingRequestModel} from "./paging.model";
 
 interface ICampaignDefinitionListRequestModel {
-  campaignName?: any;
-  campaignCode?: any;
+  name?: any;
+  code?: any;
   contractId?: any;
   startDate?: any;
   endDate?: any;
@@ -16,8 +16,8 @@ export class CampaignDefinitionListRequestModel implements ICampaignDefinitionLi
   pageSize: number;
   sortBy?: any;
   sortDir?: any;
-  campaignName?: any;
-  campaignCode?: any;
+  name?: any;
+  code?: any;
   contractId?: any;
   startDate?: any;
   endDate?: any;

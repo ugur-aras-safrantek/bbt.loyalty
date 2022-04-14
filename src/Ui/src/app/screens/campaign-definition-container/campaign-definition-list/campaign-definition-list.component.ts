@@ -38,8 +38,8 @@ export class CampaignDefinitionListComponent implements OnInit {
   programTypeList: DropdownListModel[];
 
   filterForm = {
-    campaignName: '',
-    campaignCode: '',
+    name: '',
+    code: '',
     contractId: '',
     programTypeId: null,
     isActive: null,
@@ -68,8 +68,8 @@ export class CampaignDefinitionListComponent implements OnInit {
 
   clear() {
     this.filterForm = {
-      campaignName: '',
-      campaignCode: '',
+      name: '',
+      code: '',
       contractId: '',
       programTypeId: null,
       isActive: null,
@@ -89,8 +89,8 @@ export class CampaignDefinitionListComponent implements OnInit {
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
       sortDir: this.listService.currentSortDir,
-      campaignName: this.filterForm.campaignName,
-      campaignCode: this.filterForm.campaignCode,
+      name: this.filterForm.name,
+      code: this.filterForm.code,
       contractId: parseInt(this.filterForm.contractId),
       startDate: this.startDate?.singleDate?.formatted,
       endDate: this.endDate?.singleDate?.formatted,
@@ -122,8 +122,8 @@ export class CampaignDefinitionListComponent implements OnInit {
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
       sortDir: this.listService.currentSortDir,
-      campaignName: this.filterForm.campaignName,
-      campaignCode: this.filterForm.campaignCode,
+      name: this.filterForm.name,
+      code: this.filterForm.code,
       contractId: parseInt(this.filterForm.contractId),
       startDate: this.startDate?.singleDate?.formatted,
       endDate: this.endDate?.singleDate?.formatted,
