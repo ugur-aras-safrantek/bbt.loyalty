@@ -1,3 +1,32 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@ismail-yazar-safrantek 
+hub-burgan-com-tr
+/
+bbt.loyalty
+Public
+Code
+Issues
+4
+Pull requests
+Actions
+Projects
+1
+Wiki
+Security
+Insights
+.github/workflows/campaign-api.yaml CI-CD-CampaignAPI #1
+Summary
+Workflow file
+Jobs
+ci-cd-CampaignApi
+Workflow file for this run
+.github/workflows/campaign-api.yaml at 89b178f
 name: CI-CD-CampaignAPI
 on:
   push:
@@ -64,17 +93,22 @@ jobs:
         run: |
           sed -i -e "s/ELASTIC_SEARCH/${{ secrets.ELASTIC_SEARCH }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+       
+      - name: Replace Branch Service Secret
+        run: |
+          sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
       
       - name: Replace Elastic Password Secret
         run: |
           sed -i -e "s/ELASTIC_PASSWORD/${{ secrets.ELASTIC_PASSWORD }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-	
-      - name: Replace Branch Service Secret
+		  
+		  - name: Replace Branch Service Secret
         run: |
           sed -i -e "s/BRANCH_SERVICE_URL/${{ secrets.BRANCH_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json    
-	    
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+		  
       - name: Replace Channel Code Service Secret
         run: |
           sed -i -e "s/CHANNEL_CODE_SERVICE_URL/${{ secrets.CHANNEL_CODE_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
@@ -84,7 +118,7 @@ jobs:
         run: |
           sed -i -e "s/CONTRACT_SERVICE_URL/${{ secrets.CONTRACT_SERVICE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          
+		  		  
       - name: Replace List Image Service Secret
         run: |
           sed -i -e "s/CAMPAIGN_LIST_IMAGE_URL/${{ secrets.CAMPAIGN_LIST_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
@@ -93,7 +127,7 @@ jobs:
       - name: Replace Detail Image Service Secret
         run: |
           sed -i -e "s/CAMPAIGN_DETAIL_IMAGE_URL/${{ secrets.CAMPAIGN_DETAIL_IMAGE_URL }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
-          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json		  
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
       # Set the target Azure Kubernetes Service (AKS) cluster. 
       - uses: azure/aks-set-context@v1
         with:
