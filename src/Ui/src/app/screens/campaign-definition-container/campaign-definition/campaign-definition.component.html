@@ -408,11 +408,15 @@
                   <div class="col">
                     <div class="form-group mt-3" *ngIf="!f.isBundle.value">
                       <label for="order">Sıralama</label>
-                      <input type="text" class="form-control" name="order" id="order"
-                             formControlName="order" onlyNumber
-                             [ngClass]="{ 'is-invalid': submitted && f.order.invalid }">
+                      <select name="order" id="order" class="form-select"
+                              formControlName="order"
+                              [ngClass]="{ 'is-invalid': submitted && f.order.invalid }">
+                        <option [ngValue]="null">Seçiniz</option>
+                        <option *ngFor="let i of orderList"
+                                [value]="i">{{i}}</option>
+                      </select>
                       <div *ngIf="submitted && f.order.errors" class="invalid-feedback">
-                        <div *ngIf="f.order.errors.required">Sıralama girilmelidir.</div>
+                        <div *ngIf="f.order.errors.required">Sıralama seçilmelidir.</div>
                       </div>
                     </div>
                   </div>

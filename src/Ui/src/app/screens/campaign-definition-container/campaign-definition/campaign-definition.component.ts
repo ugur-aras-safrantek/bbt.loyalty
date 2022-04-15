@@ -30,8 +30,10 @@ export class CampaignDefinitionComponent implements OnInit {
   contractDocument: any = null;
   contractIdDisable: boolean = false;
   formGroup: FormGroup;
+
   programTypeList: DropdownListModel[];
   viewOptionList: DropdownListModel[];
+  orderList: DropdownListModel[];
   sectorList: DropdownListModel[];
   participationTypeList: DropdownListModel[];
 
@@ -99,7 +101,7 @@ export class CampaignDefinitionComponent implements OnInit {
       campaignListImageDownloadUrl: '',
       campaignDetailImageUrl: ['', Validators.pattern(this.regex)],
       campaignDetailImageDownloadUrl: '',
-      order: '',
+      order: null,
       maxNumberOfUser: '',
       programTypeId: [null, Validators.required],
       participationTypeId : [null, Validators.required],
@@ -176,6 +178,7 @@ export class CampaignDefinitionComponent implements OnInit {
   populateLists(data) {
     this.programTypeList = data.programTypeList;
     this.viewOptionList = data.viewOptionList;
+    this.orderList = data.orderList;
     this.sectorList = data.sectorList;
     this.participationTypeList = data.participationTypeList;
   }
@@ -213,7 +216,7 @@ export class CampaignDefinitionComponent implements OnInit {
     if (this.formGroup.get('isActive')?.value && !this.formGroup.get('isBundle')?.value) {
       this.f.order.setValidators(Validators.required);
     } else {
-      this.formGroup.patchValue({order: ''});
+      this.formGroup.patchValue({order: null});
       this.f.order.clearValidators();
     }
     this.f.order.updateValueAndValidity();
@@ -394,7 +397,7 @@ export class CampaignDefinitionComponent implements OnInit {
       titleEn: formGroup.titleEn,
       startDate: this.setRequestDate(formGroup.startDate?.singleDate?.date),
       endDate: this.setRequestDate(formGroup.endDate?.singleDate?.date),
-      order: parseInt(formGroup.order),
+      order: formGroup.order,
       maxNumberOfUser: parseInt(formGroup.maxNumberOfUser),
       sectorId: formGroup.sectorId,
       viewOptionId: formGroup.viewOptionId,
@@ -444,7 +447,7 @@ export class CampaignDefinitionComponent implements OnInit {
       titleEn: formGroup.titleEn,
       startDate: this.setRequestDate(formGroup.startDate?.singleDate?.date),
       endDate: this.setRequestDate(formGroup.endDate?.singleDate?.date),
-      order: parseInt(formGroup.order),
+      order: formGroup.order,
       maxNumberOfUser: parseInt(formGroup.maxNumberOfUser),
       sectorId: formGroup.sectorId,
       viewOptionId: formGroup.viewOptionId,
