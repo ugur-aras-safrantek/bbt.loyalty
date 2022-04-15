@@ -44,6 +44,8 @@ namespace Bbt.Campaign.Core.DbEntities
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
         public virtual CampaignAchievementEntity? Achievement { get; set; }
 
+        public virtual ICollection<CustomerCampaignEntity?> CustomerCampaigns { get; set; }
+
         //Approve
         public bool IsApproved { get; set; }
         public bool IsDraft { get; set; }

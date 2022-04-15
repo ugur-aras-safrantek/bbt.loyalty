@@ -5,7 +5,7 @@ namespace Bbt.Campaign.Core.DbEntities
 {
     public class CustomerCampaignEntity : AuditableEntity
     {
-        [Column(TypeName = "ntext"), Required]
+        [Required]
         public string CustomerCode { get; set; }
 
         [ForeignKey("Campaign")]

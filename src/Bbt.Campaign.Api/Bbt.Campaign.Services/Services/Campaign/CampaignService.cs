@@ -162,7 +162,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             response.SectorList = (await _parameterService.GetSectorListAsync())?.Data;
             response.ProgramTypeList = (await _parameterService.GetProgramTypeListAsync())?.Data;
             response.ParticipationTypeList = (await _parameterService.GetParticipationTypeListAsync())?.Data;
-            response.OrderList = await this.GetOrderListAsync(20);
+            response.OrderList = await this.GetOrderListAsync(50);
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign)
@@ -599,7 +599,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     }
                     else
                     {
-                        throw new Exception("Servisten sözleşme bilgisi çekilemedi.");
+                        throw new Exception("Burgan Bank servisten sözleşme bilgisi çekilemedi.");
                     }
                 }
             }
