@@ -599,7 +599,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     }
                     else
                     {
-                        throw new Exception("Burgan Bank servisten sözleşme bilgisi çekilemedi.");
+                        throw new Exception("Servisten sözleşme bilgisi çekilemedi.");
                     }
                 }
             }

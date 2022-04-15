@@ -62,8 +62,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 SectorName = x.SectorId == null ? null : Helpers.GetEnumDescription<SectorsEnum>(x.SectorId ?? 0),
                 ViewOptionName = x.ViewOptionId == null ? null : Helpers.GetEnumDescription<ViewOptionsEnum>(x.ViewOptionId ?? 0),
                 ProgramTypeName = Helpers.GetEnumDescription<ProgramTypeEnum>(x.ProgramTypeId),
-                AchievementTypeName = x.Achievement == null ? null : Helpers.GetEnumDescription<AchievementTypeEnum>(x.Achievement.AchievementTypeId),
-                JoinTypeName = x.CampaignRule == null ? null : Helpers.GetEnumDescription<JoinTypeEnum>(x.CampaignRule.JoinTypeId),
+                //AchievementTypeName = x.Achievement == null ? null : Helpers.GetEnumDescription<AchievementTypeEnum>(x.Achievement.AchievementTypeId),
+                //JoinTypeName = x.CampaignRule == null ? null : Helpers.GetEnumDescription<JoinTypeEnum>(x.CampaignRule.JoinTypeId),
                 Name = x.Name
             }).ToList();
 
@@ -84,8 +84,8 @@ namespace Bbt.Campaign.Services.Services.Report
 
              var campaignList = _unitOfWork.GetRepository<CampaignEntity>()
                .GetAll(x => !x.IsDeleted && x.Id == 15)
-               .Include(x => x.CampaignRule)
-               .Include(x => x.Achievement)
+               //.Include(x => x.CampaignRule)
+               //.Include(x => x.Achievement)
                .ToList();
 
             if (request.IsBundle.HasValue)
@@ -122,10 +122,10 @@ namespace Bbt.Campaign.Services.Services.Report
                 campaignList = campaignList.Where(x => x.ViewOptionId == request.ViewOptionId.Value).ToList();           
             if (request.ProgramTypeId.HasValue)
                 campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
-            if (request.AchievementTypeId.HasValue)
-                campaignList = campaignList.Where(x => x.Achievement?.AchievementTypeId == request.AchievementTypeId.Value).ToList();
-            if (request.JoinTypeId.HasValue)
-                campaignList = campaignList.Where(x => x.CampaignRule?.JoinTypeId == request.JoinTypeId.Value).ToList();
+            //if (request.AchievementTypeId.HasValue)
+            //    campaignList = campaignList.Where(x => x.Achievement?.AchievementTypeId == request.AchievementTypeId.Value).ToList();
+            //if (request.JoinTypeId.HasValue)
+            //    campaignList = campaignList.Where(x => x.CampaignRule?.JoinTypeId == request.JoinTypeId.Value).ToList();
 
             return campaignList;
         }

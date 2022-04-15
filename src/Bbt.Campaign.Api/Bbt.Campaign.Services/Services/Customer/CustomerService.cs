@@ -151,14 +151,18 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            List<CustomerCampaignListDto> customerCampaignList = new List<CustomerCampaignListDto>();
+            List<CustomerCampaignListDto> returnList = new List<CustomerCampaignListDto>();
+
             var campaignList = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.IsActive)
-                .Include(x => x.CampaignDetail)
-                .Include(x=>x.CustomerCampaigns.Where(t=>t.CustomerCode == request.CustomerCode))
+                //.Include(x => x.CampaignDetail)
                 .ToListAsync();
-            if(request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
-                campaignList = campaignList.Where(t=> t.EndDate < today).ToList();
+            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
+                campaignList = campaignList.Where(t => t.EndDate < today).ToList();
+
+            var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => !x.IsDeleted && x.CustomerCode == request.CustomerCode)
+                .ToListAsync();
 
             foreach (var campaign in campaignList)
             {
@@ -175,12 +179,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                 customerCampaignListDto.IsJoin = false;
                 customerCampaignListDto.IsFavorite = false;
 
-                if (campaign.CustomerCampaigns != null && campaign.CustomerCampaigns.Any()) 
-                { 
-                    var customerCampaign = campaign.CustomerCampaigns
-                        .Where(x => x.CustomerCode == request.CustomerCode)
-                        .FirstOrDefault();
-                    if(customerCampaign != null) 
+                if (customerCampaignList.Any()) 
+                {
+                    var customerCampaign = customerCampaignList.Where(x => x.CampaignId == campaign.Id).FirstOrDefault();
+                    if (customerCampaign != null)
                     {
                         customerCampaignListDto.Id = customerCampaign.Id;
                         customerCampaignListDto.IsJoin = customerCampaign.IsJoin;
@@ -197,25 +199,25 @@ namespace Bbt.Campaign.Services.Services.Customer
                 if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Campaign) 
                 {
                     if (campaign.EndDate >= today)
-                        customerCampaignList.Add(customerCampaignListDto);
+                        returnList.Add(customerCampaignListDto);
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join) 
                 { 
                     if(customerCampaignListDto.IsJoin)
-                        customerCampaignList.Add(customerCampaignListDto);
+                        returnList.Add(customerCampaignListDto);
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite)
                 {
                     if (customerCampaignListDto.IsFavorite)
-                        customerCampaignList.Add(customerCampaignListDto);
+                        returnList.Add(customerCampaignListDto);
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue) 
                 {
                     if (DateTime.UtcNow > campaign.EndDate)
-                        customerCampaignList.Add(customerCampaignListDto);
+                        returnList.Add(customerCampaignListDto);
                 }
             }
-            return customerCampaignList;
+            return returnList;
         }
         public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath)
         {

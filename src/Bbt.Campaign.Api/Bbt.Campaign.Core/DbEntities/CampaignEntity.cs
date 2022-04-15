@@ -40,11 +40,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public int ParticipationTypeId { get; set; }
         public ParticipationTypeEntity ParticipationType { get; set; }
 
-        public virtual CampaignRuleEntity? CampaignRule { get; set; }
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
-        public virtual CampaignAchievementEntity? Achievement { get; set; }
-
-        public virtual ICollection<CustomerCampaignEntity?> CustomerCampaigns { get; set; }
 
         //Approve
         public bool IsApproved { get; set; }
