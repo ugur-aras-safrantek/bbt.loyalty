@@ -10,6 +10,8 @@ import {TargetSourceAddUpdateRequestModel} from "../../../../models/target-defin
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {TargetPreviewComponent} from "../target-preview/target-preview.component";
 import {NgxSmartModalService} from "ngx-smart-modal";
+import {FormChange} from "../../../../models/form-change";
+import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 
 @Component({
   selector: 'app-target-source',
@@ -17,8 +19,12 @@ import {NgxSmartModalService} from "ngx-smart-modal";
   styleUrls: ['./target-source.component.scss']
 })
 
-export class TargetSourceComponent implements OnInit {
+export class TargetSourceComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   @ViewChild(TargetPreviewComponent) targetPreviewComponent: TargetPreviewComponent;
 
@@ -72,6 +78,7 @@ export class TargetSourceComponent implements OnInit {
       this.getTargetSource();
     } else {
       this.targetSourceGetInsertForm();
+      this.formChangeState = true;
     }
 
     this.formGroup = this.fb.group({
@@ -96,14 +103,18 @@ export class TargetSourceComponent implements OnInit {
     });
   }
 
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
+  }
+
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.targetDefinitionService.targetFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   get f() {
@@ -338,8 +349,8 @@ export class TargetSourceComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.targetDefinitionService.targetFormChanged(true);
               });
             this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
           } else
@@ -359,6 +370,7 @@ export class TargetSourceComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([`/target-definition/create/finish/${this.newTargetId}`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
@@ -378,6 +390,7 @@ export class TargetSourceComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([`/target-definition/update/${this.id}/finish`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else

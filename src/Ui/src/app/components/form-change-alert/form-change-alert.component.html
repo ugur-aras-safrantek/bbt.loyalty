@@ -1,0 +1,9 @@
+<ngx-smart-modal #formChangeAlertModal identifier="formChangeAlertModal">
+  <h1>Bilgilendirme</h1>
+  <p>Kaydedilmemiş değişiklikler bulunmaktadır. Devam etmek istediğinize emin misiniz?</p>
+
+  <div class="button-container">
+    <button class="btn btn-primary" (click)="actionAlertModal(true)">Evet</button>
+    <button class="btn btn-outline-primary" (click)="actionAlertModal(false)">İptal</button>
+  </div>
+</ngx-smart-modal>

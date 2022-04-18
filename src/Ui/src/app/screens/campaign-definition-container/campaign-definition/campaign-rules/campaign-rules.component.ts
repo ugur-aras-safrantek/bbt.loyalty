@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {CampaignDefinitionService} from "../../../../services/campaign-definition.service";
 import {StepService} from "../../../../services/step.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -11,6 +11,8 @@ import * as _ from 'lodash';
 import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {FormChange} from "../../../../models/form-change";
+import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 
 // import {IDropdownSettings} from "ng-multiselect-dropdown";
 
@@ -19,8 +21,12 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
   templateUrl: './campaign-rules.component.html',
   styleUrls: ['./campaign-rules.component.scss']
 })
-export class CampaignRulesComponent implements OnInit {
+export class CampaignRulesComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   // dropdownSettings: IDropdownSettings = {
   //   singleSelection: false,
@@ -99,17 +105,22 @@ export class CampaignRulesComponent implements OnInit {
       }
     } else {
       this.campaignRulesGetInsertForm();
+      this.formChangeState = true;
     }
+  }
+
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.campaignDefinitionService.campaignFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   get f() {
@@ -273,8 +284,8 @@ export class CampaignRulesComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.campaignDefinitionService.campaignFormChanged(true);
               });
             this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
           } else
@@ -314,6 +325,7 @@ export class CampaignRulesComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([GlobalVariable.target, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
@@ -354,6 +366,7 @@ export class CampaignRulesComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
+            this.formChangeState = false;
             this.router.navigate([`/campaign-definition/update/${this.id}/target-selection`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else

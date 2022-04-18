@@ -14,6 +14,7 @@ import {RepostComponent} from "../components/repost/repost.component";
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {CurrencyMaskInputMode, NgxCurrencyModule} from "ngx-currency";
 import {SafePipe} from "../pipes/safe.pipe";
+import {FormChangeAlertComponent} from "../components/form-change-alert/form-change-alert.component";
 
 export const customCurrencyMaskConfig = {
   thousands: ".",
@@ -38,6 +39,7 @@ export const customCurrencyMaskConfig = {
     FinishComponent,
     ListComponent,
     RepostComponent,
+    FormChangeAlertComponent,
     TurkishLiraDirective
   ],
   imports: [
@@ -60,6 +62,7 @@ export const customCurrencyMaskConfig = {
     FinishComponent,
     ListComponent,
     RepostComponent,
+    FormChangeAlertComponent,
     TurkishLiraDirective
   ],
   providers: [DecimalPipe]

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {CampaignDefinitionService} from "../../../../services/campaign-definition.service";
 import {StepService} from "../../../../services/step.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -9,6 +9,8 @@ import {DropdownListModel} from "../../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {NgxSmartModalService} from "ngx-smart-modal";
+import {FormChange} from "../../../../models/form-change";
+import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 
 @Component({
   selector: 'app-campaign-gains',
@@ -16,8 +18,12 @@ import {NgxSmartModalService} from "ngx-smart-modal";
   styleUrls: ['./campaign-gains.component.scss']
 })
 
-export class CampaignGainsComponent implements OnInit {
+export class CampaignGainsComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   formGroup: FormGroup;
   submitted = false;
@@ -69,6 +75,7 @@ export class CampaignGainsComponent implements OnInit {
       }
     } else {
       this.getCampaignDefinitionGainsGetInsertForm();
+      this.formChangeState = true;
     }
 
     this.formGroup = this.fb.group({
@@ -88,14 +95,18 @@ export class CampaignGainsComponent implements OnInit {
     });
   }
 
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
+  }
+
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.campaignDefinitionService.campaignFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   get f() {
@@ -222,6 +233,7 @@ export class CampaignGainsComponent implements OnInit {
   }
 
   alertModalOk() {
+    this.formChangeState = false;
     this.newId
       ? this.router.navigate([`/campaign-definition/create/finish/${this.newId}`], {relativeTo: this.route})
       : this.router.navigate([`/campaign-definition/update/${this.id}/finish`], {relativeTo: this.route});
@@ -267,8 +279,8 @@ export class CampaignGainsComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.campaignDefinitionService.campaignFormChanged(true);
               });
           } else
             this.toastrHandleService.error(res.errorMessage);

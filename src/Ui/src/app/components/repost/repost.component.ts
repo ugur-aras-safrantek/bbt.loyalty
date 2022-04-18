@@ -26,24 +26,7 @@ export class RepostComponent implements OnInit {
   }
 
   backToList() {
-    if (this.repostData.isFormChanged) {
-      this.openAlertModal();
-    } else {
-      this.router.navigate([this.repostData.listLink], {relativeTo: this.route});
-    }
-  }
-
-  openAlertModal() {
-    this.modalService.open('alertModal');
-  }
-
-  closeAlertModal() {
-    this.modalService.close('alertModal');
-  }
-
-  alertModalOk() {
     this.router.navigate([this.repostData.listLink], {relativeTo: this.route});
-    this.modalService.close('alertModal');
   }
 
   openCopyModal() {
