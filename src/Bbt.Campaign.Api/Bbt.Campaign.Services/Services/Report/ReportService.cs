@@ -129,52 +129,52 @@ namespace Bbt.Campaign.Services.Services.Report
 
             
 
-             var campaignList = _unitOfWork.GetRepository<CampaignEntity>()
-               .GetAll(x => !x.IsDeleted && x.Id == 15)
+             var campaignList = _unitOfWork.GetRepository<CampaignReportEntity>()
+               .GetAll()
                //.Include(x => x.CampaignRule)
                //.Include(x => x.Achievement)
                .ToList();
 
-            if (request.IsBundle.HasValue)
-                campaignList = campaignList.Where(x => x.IsBundle == request.IsBundle.Value).ToList();
-            if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
-            {
-                int campaignId = -1;
-                try
-                {
-                    campaignId = int.Parse(request.CampaignCode);
-                }
-                catch (Exception ex){}
+            //if (request.IsBundle.HasValue)
+            //    campaignList = campaignList.Where(x => x.IsBundle == request.IsBundle.Value).ToList();
+            //if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
+            //{
+            //    int campaignId = -1;
+            //    try
+            //    {
+            //        campaignId = int.Parse(request.CampaignCode);
+            //    }
+            //    catch (Exception ex){}
 
-                campaignList = campaignList.Where(x => x.Id == campaignId).ToList();
-            }
+            //    campaignList = campaignList.Where(x => x.Id == campaignId).ToList();
+            //}
 
-            if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
-                campaignList = campaignList.Where(x => x.Name.Contains(request.CampaignName)).ToList();
-            if (request.ContractId.HasValue)
-                campaignList = campaignList.Where(x => x.ContractId == request.ContractId.Value).ToList();
-            if (request.IsActive.HasValue)
-                campaignList = campaignList.Where(x => x.IsActive == request.IsActive.Value).ToList();
-            if (request.ProgramTypeId.HasValue)
-                campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
-            if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
-                campaignList = campaignList.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate)).ToList();
-            if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
-                campaignList = campaignList.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate)).ToList();
-            if (request.IsApproved.HasValue)
-                campaignList = campaignList.Where(x => x.IsApproved == request.IsApproved.Value).ToList();
-            if (request.SectorId.HasValue)
-                campaignList = campaignList.Where(x => x.SectorId == request.SectorId.Value).ToList();
-            if (request.ViewOptionId.HasValue)
-                campaignList = campaignList.Where(x => x.ViewOptionId == request.ViewOptionId.Value).ToList();           
-            if (request.ProgramTypeId.HasValue)
-                campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
+            //if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
+            //    campaignList = campaignList.Where(x => x.Name.Contains(request.CampaignName)).ToList();
+            //if (request.ContractId.HasValue)
+            //    campaignList = campaignList.Where(x => x.ContractId == request.ContractId.Value).ToList();
+            //if (request.IsActive.HasValue)
+            //    campaignList = campaignList.Where(x => x.IsActive == request.IsActive.Value).ToList();
+            //if (request.ProgramTypeId.HasValue)
+            //    campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
+            //if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
+            //    campaignList = campaignList.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate)).ToList();
+            //if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
+            //    campaignList = campaignList.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate)).ToList();
+            //if (request.IsApproved.HasValue)
+            //    campaignList = campaignList.Where(x => x.IsApproved == request.IsApproved.Value).ToList();
+            //if (request.SectorId.HasValue)
+            //    campaignList = campaignList.Where(x => x.SectorId == request.SectorId.Value).ToList();
+            //if (request.ViewOptionId.HasValue)
+            //    campaignList = campaignList.Where(x => x.ViewOptionId == request.ViewOptionId.Value).ToList();           
+            //if (request.ProgramTypeId.HasValue)
+            //    campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
             //if (request.AchievementTypeId.HasValue)
             //    campaignList = campaignList.Where(x => x.Achievement?.AchievementTypeId == request.AchievementTypeId.Value).ToList();
             //if (request.JoinTypeId.HasValue)
             //    campaignList = campaignList.Where(x => x.CampaignRule?.JoinTypeId == request.JoinTypeId.Value).ToList();
 
-            return campaignList;
+            return null;
         }
 
         public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request) 

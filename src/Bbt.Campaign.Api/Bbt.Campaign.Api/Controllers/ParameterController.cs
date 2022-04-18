@@ -228,5 +228,18 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _cacheService.ClearCacheRedis();
             return Ok(result);
         }
+
+        /// <summary>
+        /// Gets the service data given by the url
+        /// </summary>
+        /// <param name="url">Service url</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-service-data")]
+        public async Task<IActionResult> GetServiceData( string url)
+        {
+            var result = await _parameterService.GetServiceData(url);
+            return Ok(result);
+        }
     }
 }

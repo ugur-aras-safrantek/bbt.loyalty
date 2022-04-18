@@ -10,6 +10,7 @@ using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 
 namespace Bbt.Campaign.Services.Services.Parameter
@@ -230,7 +231,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
                                 result = branchList.Select(x => new ParameterDto
                                 {
                                     Code = x.Code,
-                                    Name = x.Code + "-" + x.Name
+                                    Name = x.Name
                                 }).ToList();
                             }
                             else
@@ -324,6 +325,37 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync()
         {
             return GetListAsync<ParticipationTypeEntity>(CacheKeys.ParticipationType);
+        }
+
+        public async Task<string> GetServiceData(string serviceUrl) 
+        {
+            string retVal = string.Empty;
+            using (var httpClient = new HttpClient()) 
+            {
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await httpClient.GetAsync(serviceUrl);
+                if (response.IsSuccessStatusCode) 
+                {
+                    if (response.Content != null)
+                    {
+                        retVal = await response.Content.ReadAsStringAsync();
+                        //var list = JsonConvert.DeserializeObject<string>(retVal);
+
+
+                        //List<string> tmp = JsonConvert.DeserializeObject<List<string>>((JObject.Parse(retVal)["data"]).ToString());
+                    }
+                    else
+                    {
+                        throw new Exception("Şube listesi servisinden veri çekilemedi.");
+                    }
+                }
+                else 
+                {
+                    throw new Exception("Şube listesi servisinden veri çekilemedi.");
+                }
+            }
+
+            return retVal;
         }
     }
 }

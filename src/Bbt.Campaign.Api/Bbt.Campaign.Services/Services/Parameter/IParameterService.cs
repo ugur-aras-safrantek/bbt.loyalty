@@ -28,5 +28,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetAchievementTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync();
 
+        public Task<string> GetServiceData(string serviceUrl);
+
     }
 }
