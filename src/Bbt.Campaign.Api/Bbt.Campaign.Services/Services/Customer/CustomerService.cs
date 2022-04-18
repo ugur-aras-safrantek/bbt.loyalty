@@ -13,6 +13,7 @@ using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -51,6 +52,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (entity != null)
             {
                 entity.IsJoin = isJoin;
+                entity.StartDate = isJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
 
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
             }
@@ -61,9 +63,11 @@ namespace Bbt.Campaign.Services.Services.Customer
                 entity.CampaignId = campaignId;
                 entity.IsFavorite = false;
                 entity.IsJoin = isJoin;
+                entity.StartDate = isJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
 
                 entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
             }
+            
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -136,15 +140,20 @@ namespace Bbt.Campaign.Services.Services.Customer
         public async Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request)
         {
             CustomerCampaignListFilterResponse response = new CustomerCampaignListFilterResponse();
+            
             List<CustomerCampaignListDto> customerCampaignList = await this.GetFilteredCampaignList(request);
             var totalItems = customerCampaignList.Count();
             if (totalItems == 0)
                 return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+            
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
             customerCampaignList = customerCampaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             response.CustomerCampaignList = customerCampaignList;
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
+            
+            if (customerCampaignList.Any()) Dispose(customerCampaignList);
+            
             return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
         }
         private async Task<List<CustomerCampaignListDto>> GetFilteredCampaignList(CustomerCampaignListFilterRequest request) 
@@ -155,7 +164,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             var campaignList = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.IsActive)
-                //.Include(x => x.CampaignDetail)
                 .ToListAsync();
             if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
                 campaignList = campaignList.Where(t => t.EndDate < today).ToList();
@@ -217,6 +225,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         returnList.Add(customerCampaignListDto);
                 }
             }
+            
             return returnList;
         }
         public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath)
@@ -264,6 +273,13 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignAchievement = campaignAchievement;
 
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
+        }
+        public static void Dispose(IEnumerable collection)
+        {
+            foreach (var obj in collection.OfType<IDisposable>())
+            {
+                obj.Dispose();
+            }
         }
     }
 }

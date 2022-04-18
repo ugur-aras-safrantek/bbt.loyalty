@@ -13,5 +13,6 @@ namespace Bbt.Campaign.Core.DbEntities
         public CampaignEntity Campaign { get; set; }
         public bool IsJoin { get; set; }
         public bool IsFavorite { get; set; }
+        public DateTime? StartDate { get; set; }
     }
 }

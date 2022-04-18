@@ -47,9 +47,56 @@ namespace Bbt.Campaign.Services.Services.Report
 
                 //campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s));
             }
-            
-            
-            
+
+
+            //string tSql = @"SELECT 
+            //                      C.Id, 
+		          //                C.TitleTr, 
+		          //                C.TitleEn,
+		          //                CC.Id,
+		          //                CC.CustomerCode,
+		          //                CC.IsJoin,
+		          //                CC.IsFavorite
+            //                FROM Campaigns C INNER JOIN CustomerCampaigns CC on C.Id = CC.CampaignId
+            //                WHERE 
+            //                        C.IsDeleted = 0 
+            //                        CC.CustomerCode = '{0}'
+            //                        AND C.IsActive = 1";
+            //if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.OverDue)
+            //{
+            //    tSql += " AND c.EndDate < CONVERT(DATETIME, '" + Core.Helper.Helpers.GetDatabaseDateString(today) + "', 102)";
+            //}
+            //else
+            //{
+            //    tSql += " AND c.EndDate >= CONVERT(DATETIME, '" + Core.Helper.Helpers.GetDatabaseDateString(today) + "', 102)";
+
+            //    if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Campaign)
+            //    {
+
+            //    }
+            //    else if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Join)
+            //    {
+            //        tSql += " AND CC.IsJoin = 1 ";
+            //    }
+            //    else if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Favorite)
+            //    {
+            //        tSql += " AND CC.IsFavorite = 1 ";
+            //    }
+            //}
+            //tSql += "  ORDER BY C.Id DESC ";
+
+            //tSql = string.Format(tSql, request.CustomerCode);
+
+            //var result = await _unitOfWork.RawSqlQuery(tSql,
+            //        x => new CustomerCampaignListDto
+            //        {
+            //            CampaignId = (int)x[0],
+            //            Id = (int)x[3],
+            //            CustomerCode = (string)x[4],
+            //            IsJoin = (bool)x[5],
+            //            IsFavorite = (bool)x[6],
+            //        });
+
             var campaignListFiltered = campaignList.Select(x => new CampaignReportListDto
             {
                 Id = x.Id,

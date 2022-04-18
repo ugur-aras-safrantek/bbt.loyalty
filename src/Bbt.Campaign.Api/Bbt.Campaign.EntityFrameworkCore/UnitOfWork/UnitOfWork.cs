@@ -1,10 +1,15 @@
 ﻿using Bbt.Campaign.EntityFrameworkCore.Context;
 using Bbt.Campaign.EntityFrameworkCore.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace Bbt.Campaign.EntityFrameworkCore.UnitOfWork
 {
@@ -27,8 +32,36 @@ namespace Bbt.Campaign.EntityFrameworkCore.UnitOfWork
             //_dbContext.Configuration.ProxyCreationEnabled = false;
         }
 
+        public async Task<List<T>> RawSqlQuery<T>(string query, Func<DbDataReader, T> map)
+        {
+            using (var command = _dbContext.Database.GetDbConnection().CreateCommand()) 
+            {
+                command.CommandText = query;
+                command.CommandType = CommandType.StoredProcedure;
+
+                //command.Parameters.AddRange();
+
+                //_dbContext.
+
+                //var userType = _dbContext.Set<T>.FromSql("dbo.SomeSproc @Id = {0}, @Name = {1}", 45, "Ada"
+
+                _dbContext.Database.OpenConnection();
+
+                using (var result = command.ExecuteReader())
+                {
+                    var entities = new List<T>();
+
+                    while (result.Read())
+                    {
+                        entities.Add(map(result));
+                    }
+                    return entities;
+                }
+            }  
+        }
+
         #region IUnitOfWork Members
-        
+
         public IRepositoryAsync<T> GetRepository<T>() where T : class
         {
             return new RepositoryAsync<T>(_dbContext);

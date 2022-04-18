@@ -78,6 +78,16 @@ namespace Bbt.Campaign.Core.Helper
             return "";
         }
 
+        public static string GetDatabaseDateString(DateTime tarih) 
+        {
+            return tarih.ToString("yyyy-MM-dd");
+        }
+
+        public static string GetDatabaseDateTimeString(DateTime tarih)
+        {
+            return tarih.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        }
+
         public static string SaatsizTarihDonustur(this DateTime tarih)
         {
             if (tarih != null)
