@@ -32,8 +32,7 @@ export class TargetDefinitionService {
     listLink: GlobalVariable.targetList,
     previewButtonVisible: true,
     previewLink: GlobalVariable.targetPreview,
-    copyModalMessage: 'Mevcut hedef tanımının aynısı olacak şekilde yeni bir hedef tanımı yapılacaktır. Onaylıyor musunuz?',
-    isFormChanged: false
+    copyModalMessage: 'Mevcut hedef tanımının aynısı olacak şekilde yeni bir hedef tanımı yapılacaktır. Onaylıyor musunuz?'
   };
 
   private baseUrl = environment.baseUrl;
@@ -48,10 +47,6 @@ export class TargetDefinitionService {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-  }
-
-  targetFormChanged(value: boolean) {
-    this.repostData.isFormChanged = value;
   }
 
   getTargetViewTypes() {

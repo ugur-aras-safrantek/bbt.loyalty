@@ -12,6 +12,8 @@ import {
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {NgxSmartModalService} from "ngx-smart-modal";
 import {TargetPreviewComponent} from "./target-preview/target-preview.component";
+import {FormChange} from "../../../models/form-change";
+import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
 
 @Component({
   selector: 'app-target-definition',
@@ -19,8 +21,12 @@ import {TargetPreviewComponent} from "./target-preview/target-preview.component"
   styleUrls: ['./target-definition.component.scss']
 })
 
-export class TargetDefinitionComponent implements OnInit {
+export class TargetDefinitionComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   @ViewChild(TargetPreviewComponent) targetPreviewComponent: TargetPreviewComponent;
 
@@ -61,17 +67,23 @@ export class TargetDefinitionComponent implements OnInit {
       this.targetDefinitionService.repostData.id = this.id;
       this.stepService.finish();
       this.getTargetDetail();
+    } else {
+      this.formChangeState = true;
     }
+  }
+
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.targetDefinitionService.targetFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   get f() {
@@ -115,8 +127,8 @@ export class TargetDefinitionComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.targetDefinitionService.targetFormChanged(true);
               });
             this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
           } else
@@ -141,6 +153,7 @@ export class TargetDefinitionComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([`/target-definition/create/source/${res.data.id}`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
@@ -167,6 +180,7 @@ export class TargetDefinitionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.targetDefinitionService.isTargetValuesChanged = true;
+            this.formChangeState = false;
             this.router.navigate([`/target-definition/update/${res.data.id}/source`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else

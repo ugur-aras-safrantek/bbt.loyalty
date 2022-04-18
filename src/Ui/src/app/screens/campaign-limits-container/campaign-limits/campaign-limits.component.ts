@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {StepService} from "../../../services/step.service";
 import {CampaignLimitsService} from "../../../services/campaign-limits.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -8,6 +8,8 @@ import {Subject, take, takeUntil} from "rxjs";
 import {CampaignLimitAddRequestModel, CampaignLimitUpdateRequestModel} from "../../../models/campaign-limits";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {NgxSmartModalService} from 'ngx-smart-modal';
+import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
+import {FormChange} from "../../../models/form-change";
 
 @Component({
   selector: 'app-campaign-limits',
@@ -15,8 +17,12 @@ import {NgxSmartModalService} from 'ngx-smart-modal';
   styleUrls: ['./campaign-limits.component.scss']
 })
 
-export class CampaignLimitsComponent implements OnInit {
+export class CampaignLimitsComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   formGroup: FormGroup;
 
@@ -66,17 +72,22 @@ export class CampaignLimitsComponent implements OnInit {
       this.getLimitDetail();
     } else {
       this.campaignLimitGetInsertForm();
+      this.formChangeState = true;
     }
+  }
+
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.campaignLimitsService.limitFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   get f() {
@@ -214,8 +225,8 @@ export class CampaignLimitsComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.campaignLimitsService.limitFormChanged(true);
               });
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -234,6 +245,7 @@ export class CampaignLimitsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([`/campaign-limits/create/finish`], {relativeTo: this.route})
             this.toastrHandleService.success();
           } else
@@ -253,6 +265,7 @@ export class CampaignLimitsComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.formChangeState = false;
             this.router.navigate([`/campaign-limits/update/${this.id}/finish`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else

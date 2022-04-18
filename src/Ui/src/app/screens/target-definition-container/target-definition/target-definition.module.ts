@@ -10,11 +10,12 @@ import {AngularEditorModule} from "@kolkov/angular-editor";
 import {HttpClientModule} from "@angular/common/http";
 import {TargetPreviewComponent} from './target-preview/target-preview.component';
 import {NgxSmartModalModule} from "ngx-smart-modal";
+import {FormChangeCheckGuard} from 'src/app/guards/form-change-check.guard';
 
 const routes: Routes = [
-  {path: 'definition', component: TargetDefinitionComponent},
-  {path: 'source', component: TargetSourceComponent},
-  {path: 'source/:newId', component: TargetSourceComponent},
+  {path: 'definition', component: TargetDefinitionComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'source', component: TargetSourceComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'source/:newId', component: TargetSourceComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'finish', component: TargetFinishComponent},
   {path: 'finish/:newId', component: TargetFinishComponent},
 ]

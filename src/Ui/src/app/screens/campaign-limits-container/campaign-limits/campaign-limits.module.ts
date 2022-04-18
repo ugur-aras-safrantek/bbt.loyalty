@@ -7,9 +7,10 @@ import {CampaignLimitsFinishComponent} from './campaign-limits-finish/campaign-l
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {NgxSmartModalModule} from "ngx-smart-modal";
+import {FormChangeCheckGuard} from 'src/app/guards/form-change-check.guard';
 
 const routes: Routes = [
-  {path: 'limit', component: CampaignLimitsComponent},
+  {path: 'limit', component: CampaignLimitsComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'finish', component: CampaignLimitsFinishComponent},
 ]
 

@@ -31,8 +31,7 @@ export class CampaignLimitsService {
     listLink: GlobalVariable.limitList,
     previewButtonVisible: false,
     previewLink: GlobalVariable.limitPreview,
-    copyModalMessage: 'Mevcut çatı limitinin aynısı olacak şekilde yeni bir çatı limiti tanımı yapılacaktır. Onaylıyor musunuz?',
-    isFormChanged: false
+    copyModalMessage: 'Mevcut çatı limitinin aynısı olacak şekilde yeni bir çatı limiti tanımı yapılacaktır. Onaylıyor musunuz?'
   };
 
   private baseUrl = environment.baseUrl;
@@ -45,10 +44,6 @@ export class CampaignLimitsService {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-  }
-
-  limitFormChanged(value: boolean) {
-    this.repostData.isFormChanged = value;
   }
 
   getParameterList() {
