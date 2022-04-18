@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {CampaignDefinitionService} from "../../../services/campaign-definition.service";
 import {StepService} from "../../../services/step.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -14,6 +14,8 @@ import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, take, takeUntil} from "rxjs";
 import {UtilityService} from "../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {FormChange} from 'src/app/models/form-change';
+import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
 
 @Component({
   selector: 'app-campaign-definition',
@@ -21,8 +23,12 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
   styleUrls: ['./campaign-definition.component.scss']
 })
 
-export class CampaignDefinitionComponent implements OnInit {
+export class CampaignDefinitionComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
+  formChangeSubject: Subject<boolean> = new Subject<boolean>();
+  formChangeState = false;
 
   regex = '(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
 
@@ -104,7 +110,7 @@ export class CampaignDefinitionComponent implements OnInit {
       order: null,
       maxNumberOfUser: '',
       programTypeId: [null, Validators.required],
-      participationTypeId : [null, Validators.required],
+      participationTypeId: [null, Validators.required],
       sectorId: null,
       viewOptionId: [null, Validators.required],
     });
@@ -129,17 +135,22 @@ export class CampaignDefinitionComponent implements OnInit {
       }
     } else {
       this.campaignDefinitionGetInsertForm();
+      this.formChangeState = true;
     }
+  }
+
+  openFormChangeAlertModal() {
+    this.formChangeAlertComponent.openAlertModal();
+    this.formChangeSubject = this.formChangeAlertComponent.subject;
   }
 
   ngOnInit(): void {
   }
 
   ngOnDestroy() {
-    this.campaignDefinitionService.campaignFormChanged(false);
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.formChangeSubject.unsubscribe();
   }
 
   populateForm(data) {
@@ -275,11 +286,11 @@ export class CampaignDefinitionComponent implements OnInit {
     this.f.campaignDetailImageUrl.updateValueAndValidity();
   }
 
-  startDateChanged(){
+  startDateChanged() {
     this.formGroup.controls.endDate.updateValueAndValidity();
   }
 
-  endDateChanged(){
+  endDateChanged() {
     this.formGroup.controls.startDate.updateValueAndValidity();
   }
 
@@ -373,8 +384,8 @@ export class CampaignDefinitionComponent implements OnInit {
             this.formGroup.valueChanges
               .pipe(take(1))
               .subscribe(x => {
+                this.formChangeState = true;
                 this.nextButtonVisible = true;
-                this.campaignDefinitionService.campaignFormChanged(true);
               });
             this.campaignDefinitionService.repostData.previewButtonVisible = res.data.campaign?.viewOptionId == 4 ? false : true;
           } else
@@ -424,6 +435,7 @@ export class CampaignDefinitionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.newId = res.data.id;
+            this.formChangeState = false;
             this.router.navigate([GlobalVariable.rules, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
@@ -474,6 +486,7 @@ export class CampaignDefinitionComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
+            this.formChangeState = false;
             this.router.navigate([`/campaign-definition/update/${this.id}/rules`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else

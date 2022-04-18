@@ -12,15 +12,16 @@ import {HttpClientModule} from '@angular/common/http';
 import {AngularEditorModule} from '@kolkov/angular-editor';
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {AngularMyDatePickerModule} from 'angular-mydatepicker';
+import {FormChangeCheckGuard} from 'src/app/guards/form-change-check.guard';
 
 const routes: Routes = [
-  {path: 'definition', component: CampaignDefinitionComponent},
-  {path: 'rules', component: CampaignRulesComponent},
-  {path: 'rules/:newId', component: CampaignRulesComponent},
-  {path: 'target-selection', component: CampaignTargetSelectionComponent},
-  {path: 'target-selection/:newId', component: CampaignTargetSelectionComponent},
-  {path: 'gains', component: CampaignGainsComponent},
-  {path: 'gains/:newId', component: CampaignGainsComponent},
+  {path: 'definition', component: CampaignDefinitionComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'rules', component: CampaignRulesComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'rules/:newId', component: CampaignRulesComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'target-selection', component: CampaignTargetSelectionComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'target-selection/:newId', component: CampaignTargetSelectionComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'gains', component: CampaignGainsComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'gains/:newId', component: CampaignGainsComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'finish', component: CampaignFinishComponent},
   {path: 'finish/:newId', component: CampaignFinishComponent},
 ]

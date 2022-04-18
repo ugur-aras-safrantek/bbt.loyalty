@@ -35,8 +35,7 @@ export class CampaignDefinitionService {
     listLink: GlobalVariable.list,
     previewButtonVisible: true,
     previewLink: GlobalVariable.preview,
-    copyModalMessage: 'Mevcut kampanyanın aynısı olacak şekilde yeni bir kampanya tanımı yapılacaktır. Onaylıyor musunuz?',
-    isFormChanged: false
+    copyModalMessage: 'Mevcut kampanyanın aynısı olacak şekilde yeni bir kampanya tanımı yapılacaktır. Onaylıyor musunuz?'
   };
 
   isCampaignValuesChanged: boolean = false;
@@ -51,10 +50,6 @@ export class CampaignDefinitionService {
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-  }
-
-  campaignFormChanged(value: boolean) {
-    this.repostData.isFormChanged = value;
   }
 
   getProgramTypes() {
