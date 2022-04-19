@@ -716,33 +716,30 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity) 
         {
-            var achievementDraftList = _unitOfWork.GetRepository<CampaignAchievementEntity>()
+            var achievementDraftEntity = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
                 .Include(x => x.ChannelCodes.Where(x => !x.IsDeleted))
-                .ToList();
-            if(!achievementDraftList.Any())
+                .FirstOrDefaultAsync();
+            if(achievementDraftEntity == null)
                 throw new Exception("Kampanya kazanımları bulunamadı.");
 
-            foreach (var achievementDraftEntity in achievementDraftList)
-            {
-                var campaignAchievementDto = _mapper.Map<CampaignAchievementDto>(achievementDraftEntity);
-                var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
-                campaignAchievementEntity.Id = 0;
-                campaignAchievementEntity.Campaign = campaignEntity;
+            var campaignAchievementDto = _mapper.Map<CampaignAchievementDto>(achievementDraftEntity);
+            var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
+            campaignAchievementEntity.Id = 0;
+            campaignAchievementEntity.Campaign = campaignEntity;
 
-                if (achievementDraftEntity.ChannelCodes.Where(x => !x.IsDeleted).Any())
+            if (achievementDraftEntity.ChannelCodes.Any())
+            {
+                campaignAchievementEntity.ChannelCodes = new List<CampaignAchievementChannelCodeEntity>();
+                foreach (var x in achievementDraftEntity.ChannelCodes)
                 {
-                    campaignAchievementEntity.ChannelCodes = new List<CampaignAchievementChannelCodeEntity>();
-                    foreach(var x in achievementDraftEntity.ChannelCodes) 
+                    campaignAchievementEntity.ChannelCodes.Add(new CampaignAchievementChannelCodeEntity()
                     {
-                        campaignAchievementEntity.ChannelCodes.Add(new CampaignAchievementChannelCodeEntity()
-                        {
-                            ChannelCode = x.ChannelCode,
-                        });
-                    }
+                        ChannelCode = x.ChannelCode,
+                    });
                 }
-                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
             }
+            await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
 
             return new SuccessDto() { IsSuccess = true };
         }

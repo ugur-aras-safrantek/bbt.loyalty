@@ -30,228 +30,190 @@ namespace Bbt.Campaign.Services.Services.Report
             _parameterService = parameterService;
         }
 
-        public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request) 
+        private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportListFilterRequest request) 
         {
-            var campaignList = await GetCampaignFilteredList(request);
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = campaignList.Count();
+            var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
 
-            if(string.IsNullOrEmpty(request.SortBy))
-                campaignList = campaignList.OrderByDescending(x => x.Id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            else 
-            {
-                var pi = typeof(CampaignEntity).GetProperty(request.SortBy);
-                var orderByAddress = campaignList.OrderBy(x => pi.GetValue(x, null));
+            //var x = _unitOfWork.
 
-
-                //campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s));
-            }
-
-
-            //string tSql = @"SELECT 
-            //                      C.Id, 
-		          //                C.TitleTr, 
-		          //                C.TitleEn,
-		          //                CC.Id,
-		          //                CC.CustomerCode,
-		          //                CC.IsJoin,
-		          //                CC.IsFavorite
-            //                FROM Campaigns C INNER JOIN CustomerCampaigns CC on C.Id = CC.CampaignId
-            //                WHERE 
-            //                        C.IsDeleted = 0 
-            //                        CC.CustomerCode = '{0}'
-            //                        AND C.IsActive = 1";
-            //if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.OverDue)
-            //{
-            //    tSql += " AND c.EndDate < CONVERT(DATETIME, '" + Core.Helper.Helpers.GetDatabaseDateString(today) + "', 102)";
-            //}
-            //else
-            //{
-            //    tSql += " AND c.EndDate >= CONVERT(DATETIME, '" + Core.Helper.Helpers.GetDatabaseDateString(today) + "', 102)";
-
-            //    if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Campaign)
-            //    {
-
-            //    }
-            //    else if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Join)
-            //    {
-            //        tSql += " AND CC.IsJoin = 1 ";
-            //    }
-            //    else if (request.PageTypeId == (int)(int)CustomerCampaignListTypeEnum.Favorite)
-            //    {
-            //        tSql += " AND CC.IsFavorite = 1 ";
-            //    }
-            //}
-            //tSql += "  ORDER BY C.Id DESC ";
-
-            //tSql = string.Format(tSql, request.CustomerCode);
-
-            //var result = await _unitOfWork.RawSqlQuery(tSql,
-            //        x => new CustomerCampaignListDto
-            //        {
-            //            CampaignId = (int)x[0],
-            //            Id = (int)x[3],
-            //            CustomerCode = (string)x[4],
-            //            IsJoin = (bool)x[5],
-            //            IsFavorite = (bool)x[6],
-            //        });
-
-            var campaignListFiltered = campaignList.Select(x => new CampaignReportListDto
-            {
-                Id = x.Id,
-                Code = x.Id.ToString(),
-                StartDate = x.StartDate.ToShortDateString(),
-                EndDate = x.EndDate.ToShortDateString(),
-                ContractId = x.ContractId,
-                IsActive = x.IsActive,
-                IsBundle = x.IsBundle,
-                SectorName = x.SectorId == null ? null : Helpers.GetEnumDescription<SectorsEnum>(x.SectorId ?? 0),
-                ViewOptionName = x.ViewOptionId == null ? null : Helpers.GetEnumDescription<ViewOptionsEnum>(x.ViewOptionId ?? 0),
-                ProgramTypeName = Helpers.GetEnumDescription<ProgramTypeEnum>(x.ProgramTypeId),
-                //AchievementTypeName = x.Achievement == null ? null : Helpers.GetEnumDescription<AchievementTypeEnum>(x.Achievement.AchievementTypeId),
-                //JoinTypeName = x.CampaignRule == null ? null : Helpers.GetEnumDescription<JoinTypeEnum>(x.CampaignRule.JoinTypeId),
-                Name = x.Name
-            }).ToList();
-
-            CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
-            response.ResponseList = campaignListFiltered;
-            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
-
-            return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response);
-        }
-
-
-        private async Task<List<CampaignEntity>> GetCampaignFilteredList(CampaignReportListFilterRequest request)
-        {
-            Core.Helper.Helpers.ListByFilterCheckValidation(request);
-
-
-            
-
-             var campaignList = _unitOfWork.GetRepository<CampaignReportEntity>()
-               .GetAll()
-               //.Include(x => x.CampaignRule)
-               //.Include(x => x.Achievement)
-               .ToList();
-
-            //if (request.IsBundle.HasValue)
-            //    campaignList = campaignList.Where(x => x.IsBundle == request.IsBundle.Value).ToList();
-            //if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
-            //{
-            //    int campaignId = -1;
-            //    try
-            //    {
-            //        campaignId = int.Parse(request.CampaignCode);
-            //    }
-            //    catch (Exception ex){}
-
-            //    campaignList = campaignList.Where(x => x.Id == campaignId).ToList();
-            //}
-
-            //if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
-            //    campaignList = campaignList.Where(x => x.Name.Contains(request.CampaignName)).ToList();
-            //if (request.ContractId.HasValue)
-            //    campaignList = campaignList.Where(x => x.ContractId == request.ContractId.Value).ToList();
-            //if (request.IsActive.HasValue)
-            //    campaignList = campaignList.Where(x => x.IsActive == request.IsActive.Value).ToList();
-            //if (request.ProgramTypeId.HasValue)
-            //    campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
-            //if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
-            //    campaignList = campaignList.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate)).ToList();
-            //if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
-            //    campaignList = campaignList.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate)).ToList();
-            //if (request.IsApproved.HasValue)
-            //    campaignList = campaignList.Where(x => x.IsApproved == request.IsApproved.Value).ToList();
-            //if (request.SectorId.HasValue)
-            //    campaignList = campaignList.Where(x => x.SectorId == request.SectorId.Value).ToList();
-            //if (request.ViewOptionId.HasValue)
-            //    campaignList = campaignList.Where(x => x.ViewOptionId == request.ViewOptionId.Value).ToList();           
-            //if (request.ProgramTypeId.HasValue)
-            //    campaignList = campaignList.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value).ToList();
-            //if (request.AchievementTypeId.HasValue)
-            //    campaignList = campaignList.Where(x => x.Achievement?.AchievementTypeId == request.AchievementTypeId.Value).ToList();
-            //if (request.JoinTypeId.HasValue)
-            //    campaignList = campaignList.Where(x => x.CampaignRule?.JoinTypeId == request.JoinTypeId.Value).ToList();
-
-            return null;
-        }
-
-        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request) 
-        {
-            GetFileResponse response = new GetFileResponse();
-
-            Core.Helper.Helpers.ListByFilterCheckValidation(request);
-
-            var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => !x.IsDeleted);
-
-            if (request.IsBundle.HasValue)
-                campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
-            if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
+            if (!string.IsNullOrEmpty(request.Code))
             {
                 int campaignId = -1;
                 try
                 {
-                    campaignId = int.Parse(request.CampaignCode);
+                    campaignId = int.Parse(request.Code);
                 }
-                catch (Exception ex){}
+                catch (Exception ex)
+                {
+
+                }
                 campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
             }
-
-            if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
-                campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.CampaignName));
-            if (request.ContractId.HasValue)
-                campaignQuery = campaignQuery.Where(x => x.ContractId == request.ContractId.Value);
+            if (!string.IsNullOrEmpty(request.Name))
+                campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.Name));
+            if (request.ViewOptionId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.ViewOptionId == request.ViewOptionId);
+            if (!string.IsNullOrEmpty(request.StartDate))
+                campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));
+            if (!string.IsNullOrEmpty(request.EndDate))
+                campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
             if (request.IsActive.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.IsActive == request.IsActive.Value);
+            if (request.IsBundle.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
             if (request.ProgramTypeId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
-            if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
-                campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));
-            if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
-                campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
-            if (request.IsApproved.HasValue)
-                campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
+            if (request.AchievementTypeId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.AchievementTypeId == request.AchievementTypeId.Value);
+            if (request.JoinTypeId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.JoinTypeId == request.JoinTypeId.Value);
+            if (request.SectorId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.SectorId == request.SectorId.Value);
 
-            campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+            return campaignQuery;          
+        }
 
+        public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request)
+        {
+            CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
 
-            campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
-            var totalItems = campaignQuery.Count();
-            if (totalItems == 0)
-            {
-                return await BaseResponse<GetFileResponse>.SuccessAsync(response);
-            }
+            Core.Helper.Helpers.ListByFilterCheckValidation(request);
 
-            campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
+            IQueryable<CampaignReportEntity> campaignQuery = await GetCampaignQueryAsync(request);
 
-            var campaignList = campaignQuery.Select(x => new CampaignListDto
+            if (campaignQuery.Count() == 0)
+                return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+
+            var campaignList = campaignQuery.Select(x => new CampaignReportListDto
             {
                 Id = x.Id,
+                Name = x.Name,
                 Code = x.Id.ToString(),
-                StartDate = DateTime.Parse(x.StartDate.ToShortDateString()),
-                EndDate = DateTime.Parse(x.EndDate.ToShortDateString()),
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                StartDateStr = x.StartDate.ToShortDateString(),
+                EndDateStr = x.EndDate.ToShortDateString(),
                 ContractId = x.ContractId,
                 IsActive = x.IsActive,
                 IsBundle = x.IsBundle,
-                ProgramType = x.ProgramType.Name,
-                Name = x.Name
+                SectorName = x.SectorName,
+                ViewOptionName = x.ViewOptionName,
+                ProgramTypeName = x.ProgramTypeName,
+                AchievementTypeName = x.AchievementTypeName,
+                JoinTypeName = x.JoinTypeName
+
             }).ToList();
 
-            byte[] data = ListFileOperations.GetCampaignListExcel(campaignList);
-
-            response = new GetFileResponse()
+            if (string.IsNullOrEmpty(request.SortBy))
             {
-                Document = new Public.Models.CampaignDocument.DocumentModel()
+                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+                if (request.SortBy.Equals("Code"))
                 {
-                    Data = Convert.ToBase64String(data, 0, data.Length),
-                    DocumentName = "Kampanya Listesi.xlsx",
-                    DocumentType = DocumentTypePublicEnum.ExcelReport,
-                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                    if (isDescending)
+                        campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
+                    else
+                        campaignList = campaignList.OrderBy(x => x.Id).ToList();
                 }
-            };
-            return await BaseResponse<GetFileResponse>.SuccessAsync(response);
+                else
+                {
+                    if (isDescending)
+                        campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                    else
+                        campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                }
+            }
+
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = campaignQuery.Count();
+            campaignList = campaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            response.ResponseList = campaignList;
+            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
+            return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response);
         }
+
+        //public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request) 
+        //{
+        //    GetFileResponse response = new GetFileResponse();
+
+        //    //Core.Helper.Helpers.ListByFilterCheckValidation(request);
+
+        //    //var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => !x.IsDeleted);
+
+        //    //if (request.IsBundle.HasValue)
+        //    //    campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
+        //    //if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
+        //    //{
+        //    //    int campaignId = -1;
+        //    //    try
+        //    //    {
+        //    //        campaignId = int.Parse(request.CampaignCode);
+        //    //    }
+        //    //    catch (Exception ex){}
+        //    //    campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
+        //    //}
+
+        //    //if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
+        //    //    campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.CampaignName));
+        //    //if (request.ContractId.HasValue)
+        //    //    campaignQuery = campaignQuery.Where(x => x.ContractId == request.ContractId.Value);
+        //    //if (request.IsActive.HasValue)
+        //    //    campaignQuery = campaignQuery.Where(x => x.IsActive == request.IsActive.Value);
+        //    //if (request.ProgramTypeId.HasValue)
+        //    //    campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
+        //    //if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
+        //    //    campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));
+        //    //if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
+        //    //    campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
+        //    //if (request.IsApproved.HasValue)
+        //    //    campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
+
+        //    //campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+
+
+        //    campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
+        //    var totalItems = campaignQuery.Count();
+        //    if (totalItems == 0)
+        //    {
+        //        return await BaseResponse<GetFileResponse>.SuccessAsync(response);
+        //    }
+
+        //    campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
+
+        //    var campaignList = campaignQuery.Select(x => new CampaignListDto
+        //    {
+        //        Id = x.Id,
+        //        Code = x.Id.ToString(),
+        //        StartDate = DateTime.Parse(x.StartDate.ToShortDateString()),
+        //        EndDate = DateTime.Parse(x.EndDate.ToShortDateString()),
+        //        ContractId = x.ContractId,
+        //        IsActive = x.IsActive,
+        //        IsBundle = x.IsBundle,
+        //        ProgramType = x.ProgramType.Name,
+        //        Name = x.Name
+        //    }).ToList();
+
+        //    byte[] data = ListFileOperations.GetCampaignListExcel(campaignList);
+
+        //    response = new GetFileResponse()
+        //    {
+        //        Document = new Public.Models.CampaignDocument.DocumentModel()
+        //        {
+        //            Data = Convert.ToBase64String(data, 0, data.Length),
+        //            DocumentName = "Kampanya Listesi.xlsx",
+        //            DocumentType = DocumentTypePublicEnum.ExcelReport,
+        //            MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+        //        }
+        //    };
+        //    return await BaseResponse<GetFileResponse>.SuccessAsync(response);
+        //}
 
         public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync()
         {

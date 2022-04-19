@@ -4,8 +4,8 @@ namespace Bbt.Campaign.Public.Models.Report
 {
     public class CampaignReportListFilterRequest : PagingRequest
     {
-        public string? CampaignName { get; set; }
-        public string? CampaignCode { get; set; }
+        public string? Name { get; set; }
+        public string? Code { get; set; }
         public int? ContractId { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsBundle { get; set; }    

@@ -35,8 +35,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
-            modelBuilder.Ignore<CampaignReportEntity>();
-            
+            //migration yapılırken bu satır açılacak
+            //modelBuilder.Ignore<CampaignReportEntity>();
+
             new CampaignDbInitializer(modelBuilder).Seed();
         }
 
@@ -111,7 +112,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<TopLimitEntity> TopLimits { get; set; }
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
         public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
-
-        public DbSet<CampaignReportEntity> CampaignReportView { get; set; }
+        public DbSet<CampaignReportEntity> CampaignReports { get; set; }
     }
 }
