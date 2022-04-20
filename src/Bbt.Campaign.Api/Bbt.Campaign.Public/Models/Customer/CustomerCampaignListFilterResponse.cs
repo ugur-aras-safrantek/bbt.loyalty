@@ -13,8 +13,8 @@ namespace Bbt.Campaign.Public.Models.Customer
     {
         public CustomerCampaignListFilterResponse()
         {
-            CustomerCampaignList = new List<CustomerCampaignListDto>();
+            CustomerCampaignList = new List<CustomerCampaignMinListDto>();
         }
-        public List<CustomerCampaignListDto> CustomerCampaignList { get; set; }
+        public List<CustomerCampaignMinListDto> CustomerCampaignList { get; set; }
     }
 }

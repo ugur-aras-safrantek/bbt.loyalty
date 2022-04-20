@@ -53,6 +53,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 entity.IsJoin = isJoin;
                 entity.StartDate = isJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.LastModifiedBy = customerCode;
 
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
             }
@@ -64,11 +65,11 @@ namespace Bbt.Campaign.Services.Services.Customer
                 entity.IsFavorite = false;
                 entity.IsJoin = isJoin;
                 entity.StartDate = isJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.CreatedBy = customerCode;
 
                 entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
             }
             
-
             await _unitOfWork.SaveChangesAsync();
 
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
@@ -87,7 +88,8 @@ namespace Bbt.Campaign.Services.Services.Customer
             if(entity != null) 
             { 
                 entity.IsFavorite = isFavorite;
-                
+                entity.LastModifiedBy = customerCode;
+
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
             }
             else 
@@ -97,6 +99,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 entity.CampaignId = campaignId; 
                 entity.IsFavorite = isFavorite;
                 entity.IsJoin = false;
+                entity.CreatedBy = customerCode;
 
                 entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
             }
@@ -140,54 +143,40 @@ namespace Bbt.Campaign.Services.Services.Customer
         public async Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request)
         {
             CustomerCampaignListFilterResponse response = new CustomerCampaignListFilterResponse();
-            
-            List<CustomerCampaignListDto> customerCampaignList = await this.GetFilteredCampaignList(request);
-            var totalItems = customerCampaignList.Count();
-            if (totalItems == 0)
-                return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
-            
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            customerCampaignList = customerCampaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            response.CustomerCampaignList = customerCampaignList;
-            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
-            
-            if (customerCampaignList.Any()) Dispose(customerCampaignList);
-            
-            return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
-        }
-        private async Task<List<CustomerCampaignListDto>> GetFilteredCampaignList(CustomerCampaignListFilterRequest request) 
-        {
             DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            List<CustomerCampaignListDto> returnList = new List<CustomerCampaignListDto>();
+            IQueryable<CampaignDetailListEntity> campaignQuery = await GetCampaignQueryAsync(request);
+            if (campaignQuery.Count() == 0)
+                return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
 
-            var campaignList = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => !x.IsDeleted && x.IsActive)
-                .ToListAsync();
-            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
-                campaignList = campaignList.Where(t => t.EndDate < today).ToList();
-
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = campaignQuery.Count();
+            campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+           
+            var campaignList = campaignQuery.Select(x => new CampaignMinDto
+            {
+                Id = x.Id,
+                TitleEn = x.TitleEn,
+                TitleTr = x.TitleTr,
+                EndDate = x.EndDate,
+            }).ToList();
             var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.CustomerCode == request.CustomerCode)
                 .ToListAsync();
 
+            List<CustomerCampaignMinListDto> returnList = new List<CustomerCampaignMinListDto>();
             foreach (var campaign in campaignList)
             {
-                CustomerCampaignListDto customerCampaignListDto = new CustomerCampaignListDto();
-                
-                customerCampaignListDto.CampaignId = campaign.Id;                
-                CampaignMinDto campaignMinDto = new CampaignMinDto();
-                campaignMinDto.Id = campaign.Id;
-                campaignMinDto.TitleTr = campaign.TitleTr;
-                campaignMinDto.TitleEn = campaign.TitleEn;
-                customerCampaignListDto.Campaign = campaignMinDto;
+                CustomerCampaignMinListDto customerCampaignListDto = new CustomerCampaignMinListDto();
 
+                customerCampaignListDto.CampaignId = campaign.Id;
+                customerCampaignListDto.Campaign = campaign;
                 customerCampaignListDto.CustomerCode = request.CustomerCode;
                 customerCampaignListDto.IsJoin = false;
                 customerCampaignListDto.IsFavorite = false;
 
-                if (customerCampaignList.Any()) 
+                if (customerCampaignList.Any())
                 {
                     var customerCampaign = customerCampaignList.Where(x => x.CampaignId == campaign.Id).FirstOrDefault();
                     if (customerCampaign != null)
@@ -198,20 +187,20 @@ namespace Bbt.Campaign.Services.Services.Customer
                     }
                 }
 
-                if(campaign.EndDate > today) 
+                if (campaign.EndDate > today)
                 {
                     TimeSpan ts = campaign.EndDate - today;
-                    customerCampaignListDto.DueDay = ts.Days + 1; 
+                    customerCampaignListDto.DueDay = ts.Days + 1;
                 }
 
-                if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Campaign) 
+                if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Campaign)
                 {
                     if (campaign.EndDate >= today)
                         returnList.Add(customerCampaignListDto);
                 }
-                else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join) 
-                { 
-                    if(customerCampaignListDto.IsJoin)
+                else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join)
+                {
+                    if (customerCampaignListDto.IsJoin)
                         returnList.Add(customerCampaignListDto);
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite)
@@ -219,15 +208,59 @@ namespace Bbt.Campaign.Services.Services.Customer
                     if (customerCampaignListDto.IsFavorite)
                         returnList.Add(customerCampaignListDto);
                 }
-                else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue) 
+                else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
                 {
                     if (DateTime.UtcNow > campaign.EndDate)
                         returnList.Add(customerCampaignListDto);
                 }
             }
+
+            response.CustomerCampaignList = returnList;
+            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
             
-            return returnList;
+            if (customerCampaignList.Any()) Dispose(customerCampaignList);
+            
+            return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
         }
+
+        private async Task<IQueryable<CampaignDetailListEntity>> GetCampaignQueryAsync(CustomerCampaignListFilterRequest request) 
+        {
+            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
+                .GetAll(x => !x.IsDeleted && x.IsActive);
+
+            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Campaign)
+                campaignQuery = campaignQuery.Where(t => t.EndDate >= today);
+            else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
+                campaignQuery = campaignQuery.Where(t => t.EndDate < today);
+
+            //sort
+            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
+                campaignQuery = campaignQuery.Where(t => t.EndDate < today);
+
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+                return campaignQuery;
+            }
+
+            if (request.SortBy.EndsWith("Str"))
+                request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+            bool isDescending = request.SortDir?.ToLower() == "desc";
+
+            if (request.SortBy.Equals("Id") || request.SortBy.Equals("Code")) 
+            { 
+                campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Id) : campaignQuery = campaignQuery.OrderBy(x => x.Id);
+            }
+            else if (request.SortBy.Equals("Order"))
+            {
+                campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Order) : campaignQuery = campaignQuery.OrderBy(x => x.Order);
+            }
+
+            return campaignQuery;
+        }
+
         public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath)
         {
             CustomerViewFormMinDto response = new CustomerViewFormMinDto();

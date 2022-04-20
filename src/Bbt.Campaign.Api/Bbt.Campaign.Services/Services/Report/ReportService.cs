@@ -34,8 +34,6 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
 
-            //var x = _unitOfWork.
-
             if (!string.IsNullOrEmpty(request.Code))
             {
                 int campaignId = -1;
@@ -70,6 +68,32 @@ namespace Bbt.Campaign.Services.Services.Report
             if (request.SectorId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.SectorId == request.SectorId.Value);
 
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+                if (request.SortBy.Equals("Code"))
+                {
+                    if (isDescending)
+                        campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+                    else
+                        campaignQuery = campaignQuery.OrderBy(x => x.Id);
+                }
+                else
+                {
+                    if (isDescending)
+                        campaignQuery = campaignQuery.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null));
+                    else
+                        campaignQuery = campaignQuery.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null));
+                }
+            }
+
             return campaignQuery;          
         }
 
@@ -77,12 +101,17 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
 
-            Core.Helper.Helpers.ListByFilterCheckValidation(request);
+            Helpers.ListByFilterCheckValidation(request);
 
             IQueryable<CampaignReportEntity> campaignQuery = await GetCampaignQueryAsync(request);
 
             if (campaignQuery.Count() == 0)
                 return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = campaignQuery.Count();
+            campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             var campaignList = campaignQuery.Select(x => new CampaignReportListDto
             {
@@ -104,38 +133,8 @@ namespace Bbt.Campaign.Services.Services.Report
 
             }).ToList();
 
-            if (string.IsNullOrEmpty(request.SortBy))
-            {
-                campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
-            }
-            else
-            {
-                if (request.SortBy.EndsWith("Str"))
-                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
-
-                bool isDescending = request.SortDir?.ToLower() == "desc";
-                if (request.SortBy.Equals("Code"))
-                {
-                    if (isDescending)
-                        campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
-                    else
-                        campaignList = campaignList.OrderBy(x => x.Id).ToList();
-                }
-                else
-                {
-                    if (isDescending)
-                        campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
-                    else
-                        campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
-                }
-            }
-
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = campaignQuery.Count();
-            campaignList = campaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             response.ResponseList = campaignList;
-            response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
+            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response);
         }
 
@@ -228,9 +227,7 @@ namespace Bbt.Campaign.Services.Services.Report
             response.ViewOptionList = (await _parameterService.GetViewOptionListAsync())?.Data;
             response.SectorList = (await _parameterService.GetSectorListAsync())?.Data;
             response.ProgramTypeList = (await _parameterService.GetProgramTypeListAsync())?.Data;
-
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
-
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
     }

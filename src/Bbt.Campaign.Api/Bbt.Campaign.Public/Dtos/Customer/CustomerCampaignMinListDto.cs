@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Dtos.Customer
 {
-    public class CustomerCampaignListDto
+    public class CustomerCampaignMinListDto
     {
         public int CampaignId { get; set; }
         public CampaignMinDto Campaign { get; set; } 

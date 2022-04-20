@@ -37,6 +37,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
 
             //migration yapılırken bu satır açılacak
             //modelBuilder.Ignore<CampaignReportEntity>();
+            //modelBuilder.Ignore<CampaignListEntity>();
+            //modelBuilder.Ignore<CampaignDetailListEntity>();
 
             new CampaignDbInitializer(modelBuilder).Seed();
         }
@@ -113,5 +115,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
         public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
         public DbSet<CampaignReportEntity> CampaignReports { get; set; }
+        public DbSet<CampaignListEntity> CampaignList { get; set; }
+        public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }
     }
 }
