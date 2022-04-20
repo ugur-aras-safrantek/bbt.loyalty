@@ -1100,7 +1100,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             response.CampaignRule = campaignRule;
 
-            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId);
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, false, 0, 0);
 
             response.CampaignTargetList = campaignTargetDto;
 

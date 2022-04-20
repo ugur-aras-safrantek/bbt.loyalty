@@ -8,16 +8,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         {
             TargetGroupList = new List<TargetGroupDto>();
         }
-
-        //public int Id { get; set; }
         public int CampaignId { get; set; }
-
+        public int GroupCount { get; set; }
         public List<TargetGroupDto> TargetGroupList { get; set; }
-
-
-        //public int TargetGroupId { get; set; }
-        //public int TargetOperationId { get; set; }
-        //public int TargetId { get; set; }
-        //public ParameterDto Target { get; set; }
     }
 }

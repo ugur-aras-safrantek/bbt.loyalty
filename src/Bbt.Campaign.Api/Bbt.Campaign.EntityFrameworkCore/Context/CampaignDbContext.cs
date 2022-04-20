@@ -39,6 +39,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             //modelBuilder.Ignore<CampaignReportEntity>();
             //modelBuilder.Ignore<CampaignListEntity>();
             //modelBuilder.Ignore<CampaignDetailListEntity>();
+            //modelBuilder.Ignore<CampaignTargetListEntity>();
 
             new CampaignDbInitializer(modelBuilder).Seed();
         }
@@ -117,5 +118,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<CampaignReportEntity> CampaignReports { get; set; }
         public DbSet<CampaignListEntity> CampaignList { get; set; }
         public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }
+        public DbSet<CampaignTargetListEntity> CampaignTargetList { get; set; }
     }
 }

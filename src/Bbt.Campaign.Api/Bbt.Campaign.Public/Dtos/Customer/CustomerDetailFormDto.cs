@@ -5,7 +5,7 @@ using Bbt.Campaign.Public.Models.File;
 
 namespace Bbt.Campaign.Public.Dtos.Customer
 {
-    public class CustomerViewFormMinDto
+    public class CustomerDetailFormDto
     {
         public int CampaignId { get; set; }
         public bool IsInvisibleCampaign { get; set; }

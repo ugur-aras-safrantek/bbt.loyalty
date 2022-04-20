@@ -222,7 +222,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             
             return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
         }
-
         private async Task<IQueryable<CampaignDetailListEntity>> GetCampaignQueryAsync(CustomerCampaignListFilterRequest request) 
         {
             DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
@@ -260,7 +259,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return campaignQuery;
         }
-
         public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewMinFormAsync(int campaignId, string contentRootPath)
         {
             CustomerViewFormMinDto response = new CustomerViewFormMinDto();
@@ -295,7 +293,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             //target
 
-            var campaignTargetDto = await _campaignTargetService.GetCampaignVisibleTargetDto(campaignId);
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, true, 0, 0);
 
             response.CampaignTarget = campaignTargetDto;
 
@@ -306,6 +304,57 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignAchievement = campaignAchievement;
 
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
+        }
+
+        public async Task<BaseResponse<CustomerDetailFormDto>> GetCustomerDetailFormAsync(int campaignId, int month, string contentRootPath) 
+        {
+            CustomerDetailFormDto response = new CustomerDetailFormDto();
+
+            //campaign
+            response.CampaignId = campaignId;
+
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (campaignEntity == null)
+            {
+                if (campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
+            }
+
+            response.IsInvisibleCampaign = false;
+
+            if (campaignEntity != null)
+            {
+                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+            }
+
+            var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
+
+            //var campaignDto = campaignDtoAll
+
+            response.Campaign = campaignDto;
+
+            if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
+                response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+
+            //target
+
+            int usedAmount = 1000;
+            int usedNumberOfTransaction = 2;
+
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, true, usedAmount, usedNumberOfTransaction);
+
+            response.CampaignTarget = campaignTargetDto;
+
+
+            //achievement
+            var campaignAchievement = await _campaignAchievementService.GetCampaignAchievementDto(campaignId);
+
+            response.CampaignAchievement = campaignAchievement;
+
+            return await BaseResponse<CustomerDetailFormDto>.SuccessAsync(response);
+
         }
         public static void Dispose(IEnumerable collection)
         {

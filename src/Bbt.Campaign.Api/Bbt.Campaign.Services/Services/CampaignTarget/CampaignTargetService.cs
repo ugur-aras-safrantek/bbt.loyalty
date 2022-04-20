@@ -4,9 +4,11 @@ using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Group;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignTarget;
+using Bbt.Campaign.Services.ListData;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -167,8 +169,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             }
         }
 
-        
-
         public async Task<BaseResponse<CampaignTargetDto>> DeleteAsync(int id)
         {
             var entity = await _unitOfWork.GetRepository<CampaignTargetEntity>().GetByIdAsync(id);
@@ -221,7 +221,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
         public async Task<BaseResponse<CampaignTargetDto>> GetListByCampaignAsync(int campaignId)
         {
-            var campaignTargetDto = await GetCampaignTargetDto(campaignId);
+            var campaignTargetDto = await GetCampaignTargetDto(campaignId, false, 0, 0);
 
             if (campaignTargetDto != null)
             {
@@ -231,76 +231,65 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return await BaseResponse<CampaignTargetDto>.FailAsync("Kampanya hedefi bulunamadı.");
         }
 
-        public async Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId) 
+        public async Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool removeInvisible, decimal usedAmount, int usedNumberOfTransaction)
         {
-            var campaignTargetList =
-                await _unitOfWork.GetRepository<CampaignTargetEntity>()
-                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
-                .Include(x => x.Target)
-                .ToListAsync();
-            if (!campaignTargetList.Any()) 
-            { 
-                return null;
-            }
+            var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
+                .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
+            if (removeInvisible)
+                campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);
+
+            if (!campaignTargetQuery.Any()) return null;
+
+            var campaignTargetList = CampaignTargetListData.GetCampaignTargetList(campaignTargetQuery);
 
             var grouplist = campaignTargetList.Select(x => x.TargetGroupId).Distinct().ToList();
 
             var campaignTargetDto = new CampaignTargetDto();
             campaignTargetDto.CampaignId = campaignId;
+            campaignTargetDto.GroupCount = grouplist.Count();
+
             foreach (var targetGroupId in grouplist)
             {
                 var targetGroupDto = new TargetGroupDto();
                 targetGroupDto.Id = targetGroupId;
+
+                decimal remainAmount = 0;
+                decimal targetAmount = campaignTargetList
+                    .Where(x => x.TargetGroupId == targetGroupId && x.TotalAmount != null)
+                    .Sum(t=>t.TotalAmount) ?? 0;
+                if(targetAmount > 0) 
+                {
+                    remainAmount = (usedAmount >  targetAmount) ? 0 : (targetAmount - usedAmount);
+
+                    targetGroupDto.TargetAmount = targetAmount;
+                    targetGroupDto.RemainAmount = remainAmount;
+                }
+
+                int remainNumberOfTransaction = 0;
+                int targetNumberOfTransaction = campaignTargetList
+                    .Where(x => x.TargetGroupId == targetGroupId && x.NumberOfTransaction != null)
+                    .Sum(t => t.NumberOfTransaction) ?? 0;
+                if(targetNumberOfTransaction > 0) 
+                {
+                    remainNumberOfTransaction = (usedNumberOfTransaction > targetNumberOfTransaction) ? 0 : 
+                        (targetNumberOfTransaction - usedNumberOfTransaction);
+
+                    targetGroupDto.TargetNumberOfTransaction = targetNumberOfTransaction;
+                    targetGroupDto.RemainNumberOfTransaction = remainNumberOfTransaction;
+                }
+                
                 foreach (var campaignTarget in campaignTargetList.Where(x => x.TargetGroupId == targetGroupId))
                 {
-                    targetGroupDto.TargetList.Add(new ParameterDto { Id = campaignTarget.Target.Id, Name = campaignTarget.Target.Name, Code = "" });
+                    targetGroupDto.TargetList.Add(
+                        new TargetParameterDto
+                        {
+                            Id = campaignTarget.TargetId,
+                            Name = campaignTarget.Name,
+                            Code = "",
+                            UsedAmount = usedAmount == 0 ? null : usedAmount,
+                            UsedNumberOfTransaction = usedNumberOfTransaction == 0 ? null : usedNumberOfTransaction,
+                        });
                 }
-
-                campaignTargetDto.TargetGroupList.Add(targetGroupDto);
-            }
-
-            return campaignTargetDto;
-        }
-
-        public async Task<CampaignTargetDto> GetCampaignVisibleTargetDto(int campaignId)
-        {
-            var campaignTargetList =
-                await _unitOfWork.GetRepository<CampaignTargetEntity>()
-                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
-                .Include(x => x.Target)
-                .ToListAsync();
-            if (!campaignTargetList.Any())
-            {
-                return null;
-            }
-
-            foreach (var campaignTarget in campaignTargetList) 
-            { 
-                var targetDetail = await _unitOfWork.GetRepository<TargetDetailEntity>()
-                    .GetAll(x => x.TargetId == campaignTarget.TargetId && !x.IsDeleted)
-                    .FirstOrDefaultAsync();
-                if(targetDetail != null) 
-                {
-                    if (targetDetail.TargetViewTypeId == (int)TargetViewTypeEnum.Invisible) 
-                    {
-                        campaignTarget.IsDeleted = true;
-                    }
-                }
-            }
-
-            var grouplist = campaignTargetList.Where(x => !x.IsDeleted).Select(x => x.TargetGroupId).Distinct().ToList();
-
-            var campaignTargetDto = new CampaignTargetDto();
-            campaignTargetDto.CampaignId = campaignId;
-            foreach (var targetGroupId in grouplist)
-            {
-                var targetGroupDto = new TargetGroupDto();
-                targetGroupDto.Id = targetGroupId;
-                foreach (var campaignTarget in campaignTargetList.Where(x => !x.IsDeleted && x.TargetGroupId == targetGroupId))
-                {
-                    targetGroupDto.TargetList.Add(new ParameterDto { Id = campaignTarget.Target.Id, Name = campaignTarget.Target.Name, Code = "" });
-                }
-
                 campaignTargetDto.TargetGroupList.Add(targetGroupDto);
             }
 

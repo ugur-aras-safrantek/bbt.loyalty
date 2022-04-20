@@ -11,23 +11,13 @@ namespace Bbt.Campaign.Public.Dtos.Target.Group
     {
         public TargetGroupDto() 
         {
-            TargetList = new List<ParameterDto>();
+            TargetList = new List<TargetParameterDto>();
         }
-
         public int Id { get; set; }
-        [MaxLength(250), Required]
-
-        public List<ParameterDto> TargetList { get; set; }
-
-        //public string Name { get; set; }
-        //public int TargetId { get; set; }
-        //public ParameterDto Target { get; set; }
-
-        ////public ParameterDto TargetGroupLines { get; set; }
-        //public string CreatedBy { get; set; }
-        //public DateTime CreatedOn { get; set; }
-        //public string? LastModifiedBy { get; set; }
-        //public DateTime? LastModifiedOn { get; set; }
-        //public bool IsDeleted { get; set; }
+        public decimal? TargetAmount { get; set; }
+        public decimal? RemainAmount { get; set; }
+        public int? TargetNumberOfTransaction { get; set; }
+        public int? RemainNumberOfTransaction { get; set; }
+        public List<TargetParameterDto> TargetList { get; set; }
     }
 }
