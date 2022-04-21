@@ -178,7 +178,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                     .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted)
                     .Include(x => x.ChannelCodes.Where(x => !x.IsDeleted))
                     .Include(x => x.Campaign)
-                    .Include(x=>x.Currency)
+                    .Include(x => x.Currency)
                     .Include(x => x.AchievementType)
                     .Include(x => x.ActionOption)
                     .FirstOrDefaultAsync();

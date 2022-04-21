@@ -59,13 +59,27 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Returns the campaign list by selected filter options
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">Page types: Campaign = 1, Join = 2, Favorite = 3, OverDue = 4</param>
         /// <returns></returns>
         [HttpPost]
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CustomerCampaignListFilterRequest request)
         {
             var result = await _customerService.GetByFilterAsync(request);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the form data for customer view min page
+        /// </summary>
+        /// <param name="campaignId">Record Id of the campaign</param>
+        /// <param name="customerCode">customer tckn or code</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-customer-achievements")]
+        public async Task<IActionResult> GetCustomerAchievementFormAsync(int campaignId, string customerCode)
+        {
+            var result = await _customerService.GetCustomerAchievementFormAsync(campaignId, customerCode);
             return Ok(result);
         }
     }

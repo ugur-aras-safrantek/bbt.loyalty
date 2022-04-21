@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Campaign;
@@ -12,6 +13,7 @@ using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
+using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
@@ -159,6 +161,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                 Id = x.Id,
                 TitleEn = x.TitleEn,
                 TitleTr = x.TitleTr,
+                CampaignListImageUrl = x.CampaignListImageUrl,
+                CampaignDetailImageUrl = x.CampaignDetailImageUrl,
                 EndDate = x.EndDate,
             }).ToList();
             var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
@@ -305,14 +309,12 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
         }
-
-        public async Task<BaseResponse<CustomerDetailFormDto>> GetCustomerDetailFormAsync(int campaignId, int month, string contentRootPath) 
+        public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode) 
         {
-            CustomerDetailFormDto response = new CustomerDetailFormDto();
+            CustomerAchievementFormDto response = new CustomerAchievementFormDto();
 
             //campaign
             response.CampaignId = campaignId;
-
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == campaignId && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -320,40 +322,44 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 if (campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
             }
-
             response.IsInvisibleCampaign = false;
-
             if (campaignEntity != null)
             {
                 int viewOptionId = campaignEntity.ViewOptionId ?? 0;
                 response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
             }
-
             var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
-
-            //var campaignDto = campaignDtoAll
-
             response.Campaign = campaignDto;
 
-            if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
-                response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+            //servisten gelecek bilgiler
 
-            //target
-
+            decimal totalAchievement = 100;
             int usedAmount = 1000;
             int usedNumberOfTransaction = 2;
+            if (StaticValues.IsDevelopment) 
+            {
+                totalAchievement = 0;
+                usedAmount = 1000;
+                usedNumberOfTransaction = 2;
 
+            }
+            else 
+            { 
+            
+            }
+
+            response.TotalAchievement = totalAchievement;
+            response.TotalAchievementStr = (totalAchievement == 0) ? "0" : Helpers.ConvertNullablePriceString(response.TotalAchievement);
+            
             var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, true, usedAmount, usedNumberOfTransaction);
-
             response.CampaignTarget = campaignTargetDto;
-
 
             //achievement
             var campaignAchievement = await _campaignAchievementService.GetCampaignAchievementDto(campaignId);
 
             response.CampaignAchievement = campaignAchievement;
 
-            return await BaseResponse<CustomerDetailFormDto>.SuccessAsync(response);
+            return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
 
         }
         public static void Dispose(IEnumerable collection)

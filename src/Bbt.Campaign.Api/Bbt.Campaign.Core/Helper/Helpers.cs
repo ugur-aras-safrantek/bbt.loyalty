@@ -171,16 +171,6 @@ namespace Bbt.Campaign.Core.Helper
             return data.ToString("N0");
         }
         #endregion
-        //static bool IsVknValid(string vkn)
-        // {
-        //     try
-        //     {
-        //         if (vkn.Length == 10)
-        //         {
-        //             var x = new int[9];
-        //             var y = new int[9];
-
-
         public static DateTime? ConvertToNullableDatetime(this string x)
         {
             if (!string.IsNullOrEmpty(x))

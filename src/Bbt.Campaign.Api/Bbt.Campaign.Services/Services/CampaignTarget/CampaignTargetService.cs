@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
@@ -231,7 +232,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return await BaseResponse<CampaignTargetDto>.FailAsync("Kampanya hedefi bulunamadı.");
         }
 
-        public async Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool removeInvisible, decimal usedAmount, int usedNumberOfTransaction)
+        public async Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool removeInvisible, 
+            decimal usedAmount, int usedNumberOfTransaction)
         {
             var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
                 .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
@@ -253,31 +255,47 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 var targetGroupDto = new TargetGroupDto();
                 targetGroupDto.Id = targetGroupId;
 
-                decimal remainAmount = 0;
+                
                 decimal targetAmount = campaignTargetList
-                    .Where(x => x.TargetGroupId == targetGroupId && x.TotalAmount != null)
-                    .Sum(t=>t.TotalAmount) ?? 0;
-                if(targetAmount > 0) 
-                {
-                    remainAmount = (usedAmount >  targetAmount) ? 0 : (targetAmount - usedAmount);
+                        .Where(x => x.TargetGroupId == targetGroupId && x.TotalAmount != null)
+                        .Sum(t => t.TotalAmount) ?? 0;
+                int targetNumberOfTransaction = campaignTargetList
+                        .Where(x => x.TargetGroupId == targetGroupId && x.NumberOfTransaction != null)
+                        .Sum(t => t.NumberOfTransaction) ?? 0;
 
+                if(targetAmount > 0) 
+                { 
+                    decimal remainAmount = 0;
+                    if (targetAmount > 0)
+                    {
+                        remainAmount = (usedAmount > targetAmount) ? 0 : (targetAmount - usedAmount);
+                    }
                     targetGroupDto.TargetAmount = targetAmount;
                     targetGroupDto.RemainAmount = remainAmount;
+                    targetGroupDto.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
+                    targetGroupDto.RemainAmountStr = Helpers.ConvertNullablePriceString(remainAmount);
+                    targetGroupDto.Percent = (int)(usedAmount / targetAmount) * 100;
+                }
+                else if(targetNumberOfTransaction > 0) 
+                { 
+                    
                 }
 
-                int remainNumberOfTransaction = 0;
-                int targetNumberOfTransaction = campaignTargetList
-                    .Where(x => x.TargetGroupId == targetGroupId && x.NumberOfTransaction != null)
-                    .Sum(t => t.NumberOfTransaction) ?? 0;
-                if(targetNumberOfTransaction > 0) 
+                 if(usedNumberOfTransaction > 0) 
                 {
-                    remainNumberOfTransaction = (usedNumberOfTransaction > targetNumberOfTransaction) ? 0 : 
-                        (targetNumberOfTransaction - usedNumberOfTransaction);
+                    int remainNumberOfTransaction = 0;
+                    
+                    if (targetNumberOfTransaction > 0)
+                    {
+                        remainNumberOfTransaction = (usedNumberOfTransaction > targetNumberOfTransaction) ? 0 :
+                            (targetNumberOfTransaction - usedNumberOfTransaction);
 
-                    targetGroupDto.TargetNumberOfTransaction = targetNumberOfTransaction;
-                    targetGroupDto.RemainNumberOfTransaction = remainNumberOfTransaction;
+                        targetGroupDto.TargetNumberOfTransaction = targetNumberOfTransaction;
+                        targetGroupDto.RemainNumberOfTransaction = remainNumberOfTransaction;
+                        targetGroupDto.Percent = (int)(usedNumberOfTransaction / targetNumberOfTransaction) * 100;
+                    }
                 }
-                
+
                 foreach (var campaignTarget in campaignTargetList.Where(x => x.TargetGroupId == targetGroupId))
                 {
                     targetGroupDto.TargetList.Add(
@@ -287,6 +305,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                             Name = campaignTarget.Name,
                             Code = "",
                             UsedAmount = usedAmount == 0 ? null : usedAmount,
+                            UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount),
                             UsedNumberOfTransaction = usedNumberOfTransaction == 0 ? null : usedNumberOfTransaction,
                         });
                 }

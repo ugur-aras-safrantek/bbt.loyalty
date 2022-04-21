@@ -12,6 +12,7 @@ namespace Bbt.Campaign.Public.Dtos.Target
         public string Name { get; set; }
         public string Code { get; set; }
         public decimal? UsedAmount { get; set; }
+        public string? UsedAmountStr { get; set; }
         public int? UsedNumberOfTransaction { get; set; }
     }
 }

@@ -12,8 +12,8 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
         public string? TitleTr { get; set; }
         public string? TitleEn { get; set; }
         public DateTime EndDate { get; set; }
-
-        //public string TitleEn { get; set; }
+        public string? CampaignListImageUrl { get; set; }
+        public string? CampaignDetailImageUrl { get; set; }
 
     }
 }
