@@ -718,6 +718,8 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             var campaignChannelCodes = _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
                 .GetAll(x => x.CampaignId == refId && !x.IsDeleted);
+            if(!campaignChannelCodes.Any())
+                throw new Exception("Kampanya kanal kodu bulunamadı.");
             foreach (var x in campaignChannelCodes)
             {
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(new CampaignChannelCodeEntity()

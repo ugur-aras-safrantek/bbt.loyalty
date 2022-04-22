@@ -59,7 +59,33 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 entity.TitleEn = x.TitleEn;
                 entity.Type = x.Type == (int)AchievementType.Amount ? AchievementType.Amount : AchievementType.Rate;
 
-                entity = await SetDefaults(entity);
+                #region defaults
+
+                if (entity.Type == AchievementType.Amount)
+                {
+                    entity.Rate = null;
+                }
+                else if (entity.Type == AchievementType.Rate)
+                {
+                    entity.Amount = null;
+                    entity.CurrencyId = null;
+                    entity.MaxAmount = null;
+                }
+
+                var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(entity.CampaignId);
+                if (campaignEntity != null)
+                {
+                    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                    if (viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign)
+                    {
+                        entity.DescriptionTr = null;
+                        entity.DescriptionEn = null;
+                        entity.TitleTr = null;
+                        entity.TitleEn = null;
+                    }
+                }
+
+                #endregion
 
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(entity);    
             }
@@ -69,35 +95,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             response = await GetCampaignAchievementListDto(request.CampaignId);
 
             return await BaseResponse<List<CampaignAchievementDto>>.SuccessAsync(response);
-        }
-
-        private async Task<CampaignAchievementEntity> SetDefaults(CampaignAchievementEntity entity)
-        {
-            if (entity.Type == AchievementType.Amount)
-            {
-                entity.Rate = null;
-            }
-            else if (entity.Type == AchievementType.Rate)
-            {
-                entity.Amount = null;
-                entity.CurrencyId = null;
-                entity.MaxAmount = null;
-            }
-
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(entity.CampaignId);
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                if (viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign) 
-                {
-                    entity.DescriptionTr = null;
-                    entity.DescriptionEn = null;
-                    entity.TitleTr = null;
-                    entity.TitleEn = null;
-                }
-            }
-
-            return entity;
         }
 
         public async Task<BaseResponse<CampaignAchievementDto>> DeleteAsync(int id)
@@ -227,7 +224,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                .FirstOrDefaultAsync();
             if (campaignRuleEntity == null)
             {
-                throw new Exception("Kampanya kuralları girilmemiş.");
+                throw new Exception("Kampanya kuralları giriniz.");
             }
 
             var campaignTargetEntity = await _unitOfWork.GetRepository<CampaignTargetEntity>()
@@ -235,10 +232,28 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 .FirstOrDefaultAsync();
             if (campaignTargetEntity == null)
             {
-                throw new Exception("Kampanya hedefleri girilmemiş.");
+                throw new Exception("Kampanya hedefleri giriniz.");
             }
 
-            foreach(var input in request.CampaignAchievementList) 
+            var campaignChannelCodeEntity = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
+                .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (campaignChannelCodeEntity == null)
+            {
+                throw new Exception("Kampanya kanal kodu giriniz.");
+            }
+
+            if(!request.CampaignAchievementList.Any())
+                throw new Exception("Kazanım giriniz.");
+
+            var groupedAchievementType = request.CampaignAchievementList
+                .GroupBy(x => x.AchievementTypeId)
+                .Where(grp => grp.Count() > 1)
+                .FirstOrDefault();
+            if(groupedAchievementType != null)
+                throw new Exception("Kazanım Tipi çoklanamaz");
+
+            foreach (var input in request.CampaignAchievementList) 
             {
                 int viewOptionId = campaignEntity.ViewOptionId ?? 0;
                 if (viewOptionId != (int)ViewOptionsEnum.InvisibleCampaign)

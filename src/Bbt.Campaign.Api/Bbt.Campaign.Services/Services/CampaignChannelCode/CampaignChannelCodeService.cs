@@ -25,23 +25,11 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             _parameterService = parameterService;
             _campaignService = campaignService;
         }
-
         public async Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request) 
         {
+            await CheckValidationAsync(request);
+
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
-
-            if (request.CampaignChannelCodeList == null || !request.CampaignChannelCodeList.Any())
-                throw new Exception("Kanal kod listesi boş olamaz.");
-
-            foreach (string code in request.CampaignChannelCodeList)
-            {
-                if(string.IsNullOrEmpty(code))
-                    throw new Exception("Kanal kodu boş olamaz.");
-
-                var channelCode = (await _parameterService.GetCampaignChannelListAsync())?.Data?.Any(x => x == code);
-                if (!channelCode.GetValueOrDefault(false))
-                    throw new Exception("Kanal kodu hatalı.");
-            }
 
             foreach (var deleteEntity in _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
                 .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true))
@@ -57,6 +45,8 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
                     ChannelCode = x,
                 });
             });
+
+            await _unitOfWork.SaveChangesAsync();
 
             response.CampaignId = request.CampaignId;
             response.CampaignChannelCodeList = await GetCampaignChannelCodeList(request.CampaignId);
@@ -87,12 +77,41 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
                 .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
                 .Select(x => x.ChannelCode)
                 .ToListAsync();
+
+
         }
         private async Task FillForm(CampaignChannelCodeInsertFormDto response, int campaignId)
         {
             response.ChannelCodeList = (await _parameterService.GetCampaignChannelListAsync())?.Data;
 
             response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
+        }
+        async Task CheckValidationAsync(CampaignChannelCodeUpdateRequest request) 
+        {
+            if (request.CampaignId == 0)
+                throw new Exception("Kampanya giriniz.");
+
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                    .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
+            if (campaignEntity == null)
+            {
+                throw new Exception("Kampanya bulunamadı.");
+            }
+
+            if (request.CampaignChannelCodeList == null || !request.CampaignChannelCodeList.Any())
+                throw new Exception("Kanal kod listesi boş olamaz.");
+
+            foreach (string code in request.CampaignChannelCodeList)
+            {
+                if (string.IsNullOrEmpty(code))
+                    throw new Exception("Kanal kodu boş olamaz.");
+
+                var channelCode = (await _parameterService.GetCampaignChannelListAsync())?.Data?.Any(x => x == code);
+                if (!channelCode.GetValueOrDefault(false))
+                    throw new Exception("Kanal kodu hatalı.");
+            }
+
         }
     }
 }
