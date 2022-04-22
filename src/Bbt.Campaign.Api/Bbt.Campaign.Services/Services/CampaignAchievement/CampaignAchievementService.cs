@@ -330,9 +330,9 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 if (!input.Rate.HasValue)
                     throw new Exception("Kazanım Oranı girilmelidir.");
                 if (input.Rate > 100)
-                    throw new Exception("Oran %100’den büyük bir değer girilemez.");
-                if (input.Rate < 0)
-                    throw new Exception("Oran %0’dan küçük bir değer girilemez");
+                    throw new Exception("“Kazanım Oranı % 100’ün üzerinde bir değer girilemez.");
+                if (input.Rate <= 0)
+                    throw new Exception("Kazanım Oranı 0’dan küçük bir değer girilemez");
             }
             else
                 throw new Exception("Kazanım türü (Tutar/Oran) seçilmelidir.");

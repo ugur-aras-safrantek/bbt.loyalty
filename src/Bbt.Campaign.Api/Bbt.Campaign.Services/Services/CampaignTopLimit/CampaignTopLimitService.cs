@@ -394,8 +394,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 if (!input.MaxTopLimitRate.HasValue)
                     throw new Exception("Çatı oranı girilmelidir.");
 
+                if (input.MaxTopLimitRate > 100)
+                    throw new Exception("“Çatı Oranı % 100’ün üzerinde bir değer girilemez.");
+
                 if (input.MaxTopLimitRate <= 0)
-                    throw new Exception("Çatı oranı girilmelidir.");
+                    throw new Exception("Çatı Oranı girilmelidir.");
             }
             else
                 throw new Exception("Çatı limit tipi seçilmelidir.");
