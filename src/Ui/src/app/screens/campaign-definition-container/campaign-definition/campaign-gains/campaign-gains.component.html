@@ -146,12 +146,13 @@
               <ng-template #rate>
                 <div class="col form-group">
                   <label for="rate">Kazanım Oranı</label>
-                  <input type="text" class="form-control" currencyMask [options]="{ min: 0, max: 100 }"
+                  <input type="text" class="form-control" currencyMask [options]="{ min: 0, max: 999 }"
                          name="rate" id="rate" formControlName="rate"
                          [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==2 && f.rate.invalid }">
                   <div *ngIf="submitted && formGroup.get('type')?.value==2 && f.rate.errors"
                        class="invalid-feedback">
                     <div *ngIf="f.rate.errors.required">Kazanım Oranı girilmelidir.</div>
+                    <div *ngIf="f.rate.errors.max">Kazanım Oranı 100’ün üzerinde bir değer girilemez.</div>
                   </div>
                 </div>
               </ng-template>

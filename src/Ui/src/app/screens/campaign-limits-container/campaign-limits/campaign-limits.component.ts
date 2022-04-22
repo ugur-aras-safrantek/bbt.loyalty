@@ -106,7 +106,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
       this.formGroup.patchValue({maxTopLimitRate: null});
       this.f.maxTopLimitRate.clearValidators();
     } else {
-      this.f.maxTopLimitRate.setValidators(Validators.required);
+      this.f.maxTopLimitRate.setValidators([Validators.required, Validators.max(100)]);
 
       this.formGroup.patchValue({
         currencyId: null,

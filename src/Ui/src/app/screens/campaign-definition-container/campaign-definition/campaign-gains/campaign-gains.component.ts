@@ -120,7 +120,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       this.formGroup.patchValue({rate: null});
       this.f.rate.clearValidators();
     } else {
-      this.f.rate.setValidators(Validators.required);
+      this.f.rate.setValidators([Validators.required, Validators.max(100)]);
 
       this.formGroup.patchValue({
         currencyId: 1,
