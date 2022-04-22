@@ -88,7 +88,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<CampaignRuleBusinessLineEntity>  CampaignRuleBusinesses { get; set; }
         public DbSet<CampaignRuleBranchEntity>  CampaignRuleBranches { get; set; }      
         public DbSet<CampaignAchievementEntity> CampaignAchievements { get; set; }
-        public DbSet<CampaignAchievementChannelCodeEntity> CampaignAchievementChannelCodes { get; set; }
+        public DbSet<CampaignChannelCodeEntity> CampaignChannelCodes { get; set; }
         public DbSet<CampaignTargetEntity> CampaignTargets { get; set; }
         public DbSet<CampaignTopLimitEntity> CampaignTopLimits { get; set; }
         public DbSet<CampaignDocumentEntity> CampaignDocuments { get; set; }

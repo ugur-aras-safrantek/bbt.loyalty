@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CampaignAchievementChannelCodeEntity : AuditableEntity
+    public class CampaignChannelCodeEntity : AuditableEntity
     {
 
-        [ForeignKey("Achievement")]
-        public int AchievementId { get; set; }
-        public CampaignAchievementEntity Achievement { get; set; }
+        [ForeignKey("Campaign")]
+        public int CampaignId { get; set; }
+        public CampaignEntity Campaign { get; set; }
 
         [MaxLength(100), Required]
         public string ChannelCode { get; set; }

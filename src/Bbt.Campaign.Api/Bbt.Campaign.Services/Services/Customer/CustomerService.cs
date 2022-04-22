@@ -303,9 +303,9 @@ namespace Bbt.Campaign.Services.Services.Customer
 
 
             //achievement
-            var campaignAchievement = await _campaignAchievementService.GetCampaignAchievementDto(campaignId);
+            var campaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(campaignId);
 
-            response.CampaignAchievement = campaignAchievement;
+            response.CampaignAchievementList = campaignAchievementList;
 
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
         }
@@ -355,9 +355,9 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignTarget = campaignTargetDto;
 
             //achievement
-            var campaignAchievement = await _campaignAchievementService.GetCampaignAchievementDto(campaignId);
+            var campaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(campaignId);
 
-            response.CampaignAchievement = campaignAchievement;
+            response.CampaignAchievementList = campaignAchievementList;
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
 

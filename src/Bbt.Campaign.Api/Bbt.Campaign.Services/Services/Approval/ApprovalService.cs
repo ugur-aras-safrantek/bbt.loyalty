@@ -714,11 +714,28 @@ namespace Bbt.Campaign.Services.Services.Approval
             return new SuccessDto() { IsSuccess = true };
         }
 
+        private async Task<SuccessDto> AddCampaignChannelCode(int refId, CampaignEntity campaignEntity) 
+        {
+            var campaignChannelCodes = _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
+                .GetAll(x => x.CampaignId == refId && !x.IsDeleted);
+            foreach (var x in campaignChannelCodes)
+            {
+                await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(new CampaignChannelCodeEntity()
+                {
+                    Campaign = campaignEntity,
+                    ChannelCode = x.ChannelCode,
+                });
+            }
+
+            return new SuccessDto() { IsSuccess = true };
+        }
+
+    
+
         private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity) 
         {
             var achievementDraftEntity = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
-                .Include(x => x.ChannelCodes.Where(x => !x.IsDeleted))
                 .FirstOrDefaultAsync();
             if(achievementDraftEntity == null)
                 throw new Exception("Kampanya kazanımları bulunamadı.");
@@ -728,17 +745,6 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignAchievementEntity.Id = 0;
             campaignAchievementEntity.Campaign = campaignEntity;
 
-            if (achievementDraftEntity.ChannelCodes.Any())
-            {
-                campaignAchievementEntity.ChannelCodes = new List<CampaignAchievementChannelCodeEntity>();
-                foreach (var x in achievementDraftEntity.ChannelCodes)
-                {
-                    campaignAchievementEntity.ChannelCodes.Add(new CampaignAchievementChannelCodeEntity()
-                    {
-                        ChannelCode = x.ChannelCode,
-                    });
-                }
-            }
             await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
 
             return new SuccessDto() { IsSuccess = true };
@@ -1238,6 +1244,8 @@ namespace Bbt.Campaign.Services.Services.Approval
             await AddCampaignDocument(refId, campaignEntity);
 
             await AddCampaignTarget(refId, campaignEntity);
+
+            await AddCampaignChannelCode(refId, campaignEntity);
 
             await AddCampaignAchievement(refId, campaignEntity);
 

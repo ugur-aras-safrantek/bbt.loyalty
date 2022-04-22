@@ -6,8 +6,6 @@ namespace Bbt.Campaign.Core.DbEntities
 {
     public class CampaignAchievementEntity : AuditableEntity
     {
-        public virtual ICollection<CampaignAchievementChannelCodeEntity> ChannelCodes { get; set; }
-
         [ForeignKey("Campaign")]
         public int CampaignId { get; set; }
         public CampaignEntity Campaign { get; set; }

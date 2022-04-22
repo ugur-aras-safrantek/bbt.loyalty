@@ -2,6 +2,7 @@
 {
     public class CampaignAchievementUpdateFormDto : CampaignAchievementInsertFormDto
     {
-        public CampaignAchievementDto CampaignAchievement { get; set; }
+        public int CampaignId { get; set; }
+        public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
     }
 }

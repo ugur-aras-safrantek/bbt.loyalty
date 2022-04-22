@@ -27,6 +27,5 @@ namespace Bbt.Campaign.Public.Dtos.CampaignAchievement
         public string? DescriptionEn { get; set; }
         public string? TitleTr { get; set; }
         public string? TitleEn { get; set; }
-        public List<string> ChannelCodeList { get; set; }
     }
 }

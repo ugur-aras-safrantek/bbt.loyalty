@@ -11,7 +11,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public bool IsInvisibleCampaign { get; set; }
         public CampaignDto Campaign { get; set; }
         public CampaignTargetDto CampaignTarget { get; set; }
-        public CampaignAchievementDto CampaignAchievement { get; set; }
+        public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
         public GetFileResponse ContractFile { get; set; }
     }
 }

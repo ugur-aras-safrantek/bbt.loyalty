@@ -26,20 +26,7 @@ namespace Bbt.Campaign.Api.Controllers
             var adminSektor = await _campaignAchievementService.GetCampaignAchievementAsync(id);
             return Ok(adminSektor);
         }
-        /// <summary>
-        /// Adds new campaign Achievement
-        /// </summary>
-        /// <param name="campaignAchievement"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("add")]
-        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement)
-        {
-            var createResult = await _campaignAchievementService.AddAsync(campaignAchievement);
-            return Ok(createResult);
-        }
-
-
+       
         /// <summary>
         /// Updates campaign Achievement by Id
         /// </summary>
