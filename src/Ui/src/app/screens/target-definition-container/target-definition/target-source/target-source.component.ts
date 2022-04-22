@@ -35,6 +35,9 @@ export class TargetSourceComponent implements OnInit, FormChange {
   formGroup: FormGroup;
   submitted = false;
 
+  totalAmountDisabled = false;
+  numberOfTransactionDisabled = false;
+
   alertModalText = '';
 
   targetSourceList: DropdownListModel[];
@@ -124,8 +127,8 @@ export class TargetSourceComponent implements OnInit, FormChange {
   targetSourceChanged() {
     if (this.formGroup.get('targetSourceId')?.value == 1) {
       this.f.flowName.setValidators(Validators.required);
-      this.f.totalAmount.setValidators(Validators.required);
-      this.f.numberOfTransaction.setValidators(Validators.required);
+      this.f.totalAmount.setValidators([Validators.required, Validators.min(0.01)]);
+      this.f.numberOfTransaction.setValidators([Validators.required, Validators.min(1)]);
       this.f.flowFrequency.setValidators(Validators.required);
       this.f.triggerTimeId.setValidators(Validators.required);
 
@@ -196,14 +199,30 @@ export class TargetSourceComponent implements OnInit, FormChange {
     }
   }
 
-  totalAmountChanged(value: any) {
-    value ? this.f.numberOfTransaction.clearValidators() : this.f.numberOfTransaction.setValidators(Validators.required);
-    this.f.numberOfTransaction.updateValueAndValidity();
+  totalAmountChanged() {
+      let value = this.formGroup.get('totalAmount')?.value;
+      if (value && value >= 0) {
+          this.numberOfTransactionDisabled = true;
+          this.f.numberOfTransaction.clearValidators();
+          this.formGroup.patchValue({numberOfTransaction: ''});
+      } else {
+          this.f.numberOfTransaction.setValidators([Validators.required, Validators.min(1)]);
+          this.numberOfTransactionDisabled = false;
+      }
+      this.f.numberOfTransaction.updateValueAndValidity();
   }
 
-  numberOfTransactionChanged(value: any) {
-    value == '' ? this.f.totalAmount.setValidators(Validators.required) : this.f.totalAmount.clearValidators();
-    this.f.totalAmount.updateValueAndValidity();
+  numberOfTransactionChanged() {
+      let value = this.formGroup.get('numberOfTransaction')?.value;
+      if (value && value != '') {
+          this.totalAmountDisabled = true;
+          this.f.totalAmount.clearValidators();
+          this.formGroup.patchValue({totalAmount: null});
+      } else {
+          this.totalAmountDisabled = false;
+          this.f.totalAmount.setValidators([Validators.required, Validators.min(0.01)]);
+      }
+      this.f.totalAmount.updateValueAndValidity();
   }
 
   targetDetailTrChanged(value: string) {
@@ -345,6 +364,8 @@ export class TargetSourceComponent implements OnInit, FormChange {
             this.populateLists(res.data);
             if (res.data.targetDetail) {
               this.populateForm(res.data.targetDetail);
+              this.totalAmountChanged();
+              this.numberOfTransactionChanged();
             }
             this.formGroup.valueChanges
               .pipe(take(1))
