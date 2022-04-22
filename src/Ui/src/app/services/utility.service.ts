@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Router} from "@angular/router";
 import {AbstractControl, ValidationErrors, ValidatorFn} from "@angular/forms";
+import {IDropdownListModel} from "../models/dropdown-list.model";
+import {IDropdownSettings} from "ng-multiselect-dropdown";
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,24 @@ import {AbstractControl, ValidationErrors, ValidatorFn} from "@angular/forms";
 
 export class UtilityService {
 
+  dropdownSettings: IDropdownSettings = {
+    singleSelection: false,
+    idField: 'id',
+    textField: 'name',
+    selectAllText: 'Hepsini seç',
+    unSelectAllText: 'Hepsini kaldır ',
+    itemsShowLimit: 5,
+    allowSearchFilter: true,
+    searchPlaceholderText: 'Ara',
+    noDataAvailablePlaceholderText: 'Kayıt yok',
+    noFilteredDataAvailablePlaceholderText: 'Kayıt bulunamadı'
+  };
+
   constructor(private router: Router) {
+  }
+
+  getSelectedItemsForDropdownList(allList: IDropdownListModel[], selectedList: any[]) {
+    return selectedList.map(s => allList.find(a => a.id == s));
   }
 
   convertBase64ToFile = (base64String, fileName, mimeType) => {

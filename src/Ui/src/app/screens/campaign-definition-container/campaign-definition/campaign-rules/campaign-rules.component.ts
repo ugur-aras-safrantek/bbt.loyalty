@@ -14,30 +14,18 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 
-// import {IDropdownSettings} from "ng-multiselect-dropdown";
-
 @Component({
   selector: 'app-campaign-rules',
   templateUrl: './campaign-rules.component.html',
   styleUrls: ['./campaign-rules.component.scss']
 })
+
 export class CampaignRulesComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
   formChangeState = false;
-
-  // dropdownSettings: IDropdownSettings = {
-  //   singleSelection: false,
-  //   idField: 'id',
-  //   textField: 'name',
-  //   selectAllText: 'Hepsini seç',
-  //   unSelectAllText: 'Hepsini kaldır ',
-  //   itemsShowLimit: 5,
-  //   allowSearchFilter: true,
-  //   searchPlaceholderText: 'Ara...',
-  // };
 
   stepData;
   repostData = this.campaignDefinitionService.repostData;
@@ -309,15 +297,6 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       businessLines: formGroup.businessLines,
       branches: formGroup.branches,
       customerTypes: formGroup.customerTypes,
-      // businessLines: formGroup.businessLines.map(x => {
-      //   return parseInt(x.id);
-      // }),
-      // branches: formGroup.branches.map(x => {
-      //   return parseInt(x.id);
-      // }),
-      // customerTypes: formGroup.customerTypes.map(x => {
-      //   return parseInt(x.id);
-      // }),
       startTermId: formGroup.startTermId,
     };
     this.campaignDefinitionService.campaignRulesAdd(requestModel)
@@ -349,15 +328,6 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       businessLines: formGroup.businessLines,
       branches: formGroup.branches,
       customerTypes: formGroup.customerTypes,
-      // businessLines: formGroup.businessLines.map(x => {
-      //   return parseInt(x.id);
-      // }),
-      // branches: formGroup.branches.map(x => {
-      //   return parseInt(x.id);
-      // }),
-      // customerTypes: formGroup.customerTypes.map(x => {
-      //   return parseInt(x.id);
-      // }),
       startTermId: formGroup.startTermId,
     };
     this.campaignDefinitionService.campaignRulesUpdate(requestModel)
