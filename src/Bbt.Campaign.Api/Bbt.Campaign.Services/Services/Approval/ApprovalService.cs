@@ -736,19 +736,22 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity) 
         {
-            var achievementDraftEntity = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
+            var achievementDraftList = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
-                .FirstOrDefaultAsync();
-            if(achievementDraftEntity == null)
+                .ToListAsync();
+            if(!achievementDraftList.Any())
                 throw new Exception("Kampanya kazanımları bulunamadı.");
 
-            var campaignAchievementDto = _mapper.Map<CampaignAchievementDto>(achievementDraftEntity);
-            var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
-            campaignAchievementEntity.Id = 0;
-            campaignAchievementEntity.Campaign = campaignEntity;
+            foreach(var achievementDraftEntity in achievementDraftList) 
+            {
+                var campaignAchievementDto = _mapper.Map<CampaignAchievementDto>(achievementDraftEntity);
+                var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
+                campaignAchievementEntity.Id = 0;
+                campaignAchievementEntity.Campaign = campaignEntity;
 
-            await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
+                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
 
+            }
             return new SuccessDto() { IsSuccess = true };
         }
 
