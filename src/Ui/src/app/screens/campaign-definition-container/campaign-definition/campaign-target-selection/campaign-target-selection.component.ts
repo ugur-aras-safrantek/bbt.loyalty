@@ -15,6 +15,7 @@ import {Subject, takeUntil} from "rxjs";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
+import {UtilityService} from "../../../../services/utility.service";
 
 @Component({
   selector: 'app-campaign-target-selection',
@@ -39,6 +40,8 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
 
   submitted = false;
 
+  dropdownSettings = this.utilityService.dropdownSettings;
+
   addTargetList: DropdownListModel[];
   formGroup: FormGroup;
   campaignTargetGroups: CampaignTargetGroup[] = new Array<CampaignTargetGroup>();
@@ -49,6 +52,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
   constructor(private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private modalService: NgxSmartModalService,
+              private utilityService: UtilityService,
               private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
@@ -100,6 +104,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
 
   openModal() {
     this.submitted = false;
+    this.formGroup.patchValue({targets: []});
     this.modalService.open('addTargetModal');
   }
 
@@ -210,8 +215,8 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
     };
     targetList.map(x => {
       targetGroup.targetList.push({
-        id: x,
-        name: this.addTargetList[this.addTargetList.findIndex(i => i.id == x)]?.name
+        id: x.id,
+        name: x.name
       });
     });
     this.campaignTargetGroups.push(targetGroup);

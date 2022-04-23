@@ -84,10 +84,12 @@
                         <label for="totalAmount">Toplam Tutar</label>
                         <input type="text" class="form-control" name="totalAmount" id="totalAmount"
                                formControlName="totalAmount" currencyMask
-                               (ngModelChange)="totalAmountChanged($event)"
+                               (ngModelChange)="totalAmountChanged()"
+                               [readonly]="totalAmountDisabled"
                                [ngClass]="{ 'is-invalid': submitted && f.totalAmount.invalid }">
                         <div *ngIf="submitted && f.totalAmount.errors" class="invalid-feedback">
                           <div *ngIf="f.totalAmount.errors.required">Toplam Tutar girilmelidir.</div>
+                          <div *ngIf="f.totalAmount.errors.min">Toplam Tutar 0 olamaz.</div>
                         </div>
                       </div>
                     </div>
@@ -96,10 +98,12 @@
                         <label for="numberOfTransaction">İşlem Adedi</label>
                         <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
                                formControlName="numberOfTransaction" onlyNumber
-                               (ngModelChange)="numberOfTransactionChanged($event)"
+                               (ngModelChange)="numberOfTransactionChanged()"
+                               [readonly]="numberOfTransactionDisabled"
                                [ngClass]="{ 'is-invalid': submitted && f.numberOfTransaction.invalid }">
                         <div *ngIf="submitted && f.numberOfTransaction.errors" class="invalid-feedback">
                           <div *ngIf="f.numberOfTransaction.errors.required">İşlem Adedi girilmelidir.</div>
+                          <div *ngIf="f.numberOfTransaction.errors.min">İşlem Adedi 0 olamaz.</div>
                         </div>
                       </div>
                     </div>

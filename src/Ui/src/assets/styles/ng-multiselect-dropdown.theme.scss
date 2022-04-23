@@ -1,20 +1,37 @@
 $base-color: #0099d7;
 $disable-background-color: #e9ecef;
 
+.is-invalid > .multiselect-dropdown .dropdown-btn {
+  border-color: red !important;
+}
+
 .multiselect-dropdown {
   position: relative;
   width: 100%;
   font-size: inherit;
   font-family: inherit;
 
+  .dropdown-multiselect__caret {
+    margin-top: 4px !important;
+  }
+
+  h5 {
+    font-size: 15px;
+    font-weight: 450;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
   .dropdown-btn {
     display: inline-block;
-    border: 1px solid #adadad;
+    border: 1px solid #ced4da !important;
     width: 100%;
-    padding: 6px 12px;
+    padding: 5px 12px !important;
     margin-bottom: 0;
     font-weight: normal;
-    line-height: 1.52857143;
+    line-height: 2 !important;
     text-align: left;
     vertical-align: middle;
     cursor: pointer;
@@ -74,7 +91,7 @@ $disable-background-color: #e9ecef;
   border: 1px solid #ccc;
   border-radius: 3px;
   background: #fff;
-  margin-top: 10px;
+  margin-top: 5px !important;
   box-shadow: 0px 1px 5px #959595;
 
   ul {
@@ -117,14 +134,17 @@ $disable-background-color: #e9ecef;
   position: absolute;
   width: 1px;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:focus + div:before,
 .multiselect-item-checkbox input[type='checkbox']:hover + div:before {
   border-color: $base-color;
   background-color: #f2f2f2;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:active + div:before {
   transition-duration: 0s;
 }
+
 .multiselect-item-checkbox input[type='checkbox'] + div {
   position: relative;
   padding-left: 2em;
@@ -134,6 +154,7 @@ $disable-background-color: #e9ecef;
   margin: 0px;
   color: #000;
 }
+
 .multiselect-item-checkbox input[type='checkbox'] + div:before {
   box-sizing: content-box;
   content: '';
@@ -148,6 +169,7 @@ $disable-background-color: #e9ecef;
   text-align: center;
   transition: all 0.4s ease;
 }
+
 .multiselect-item-checkbox input[type='checkbox'] + div:after {
   box-sizing: content-box;
   content: '';
@@ -162,16 +184,20 @@ $disable-background-color: #e9ecef;
   transform-origin: 50%;
   transition: transform 200ms ease-out;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:disabled + div:before {
   border-color: #cccccc;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:disabled:focus + div:before
 .multiselect-item-checkbox input[type='checkbox']:disabled:hover + div:before {
   background-color: inherit;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:disabled:checked + div:before {
   background-color: #cccccc;
 }
+
 .multiselect-item-checkbox input[type='checkbox'] + div:after {
   background-color: transparent;
   top: 50%;
@@ -185,15 +211,18 @@ $disable-background-color: #e9ecef;
   border-image: none;
   transform: rotate(-45deg) scale(0);
 }
+
 .multiselect-item-checkbox input[type='checkbox']:checked + div:after {
   content: '';
   transform: rotate(-45deg) scale(1);
   transition: transform 200ms ease-out;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:checked + div:before {
   animation: borderscale 200ms ease-in;
   background: $base-color;
 }
+
 .multiselect-item-checkbox input[type='checkbox']:checked + div:after {
   transform: rotate(-45deg) scale(1);
 }

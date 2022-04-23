@@ -10,6 +10,7 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {NgxSmartModalService} from 'ngx-smart-modal';
 import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
 import {FormChange} from "../../../models/form-change";
+import {UtilityService} from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-campaign-limits',
@@ -25,6 +26,8 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
   formChangeState = false;
 
   formGroup: FormGroup;
+
+  dropdownSettings = this.utilityService.dropdownSettings;
 
   campaignList: DropdownListModel[];
   achievementFrequencyList: DropdownListModel[];
@@ -42,6 +45,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private modalService: NgxSmartModalService,
+              private utilityService: UtilityService,
               private toastrHandleService: ToastrHandleService,
               private campaignLimitsService: CampaignLimitsService,
               private router: Router,
@@ -102,7 +106,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
       this.formGroup.patchValue({maxTopLimitRate: null});
       this.f.maxTopLimitRate.clearValidators();
     } else {
-      this.f.maxTopLimitRate.setValidators(Validators.required);
+      this.f.maxTopLimitRate.setValidators([Validators.required, Validators.max(100)]);
 
       this.formGroup.patchValue({
         currencyId: null,
@@ -148,7 +152,9 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
     }
     requestModel.name = formGroup.name;
     requestModel.isActive = formGroup.isActive;
-    requestModel.campaignIds = formGroup.campaignIds;
+    requestModel.campaignIds = formGroup.campaignIds.map(x => {
+      return parseInt(x.id);
+    });
     requestModel.achievementFrequencyId = formGroup.achievementFrequencyId;
     requestModel.type = formGroup.type;
     requestModel.maxTopLimitUtilization = parseInt(formGroup.maxTopLimitUtilization);
@@ -215,9 +221,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
             if (res.data.campaignTopLimit) {
               this.populateForm(res.data.campaignTopLimit);
               this.formGroup.patchValue({
-                campaignIds: res.data.campaignTopLimit.campaigns.map(x => {
-                  return x.id
-                })
+                campaignIds: res.data.campaignTopLimit.campaigns
               });
               this.typeChanged();
             }

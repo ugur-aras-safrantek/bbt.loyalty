@@ -183,25 +183,12 @@ export class CampaignDefinitionService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  getCampaignDefinitionGainsGetInsertForm(campaignId: any) {
-    let params = new HttpParams();
-    params = params.append('campaignId', campaignId);
-
-    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsGetInsertForm}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
-  }
-
-  getCampaignDefinitionGain(campaignId: any) {
+  campaignDefinitionGainsGetUpdateForm(campaignId: any) {
     let params = new HttpParams();
     params = params.append('campaignId', campaignId);
 
     const url = `${this.baseUrl}/${ApiPaths.CampaignGainsGetUpdateForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
-  }
-
-  campaignDefinitionGainsAdd(data: CampaignDefinitionGainsAddUpdateRequestModel) {
-    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsAdd}`;
-    return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
   campaignDefinitionGainsUpdate(data: CampaignDefinitionGainsAddUpdateRequestModel) {

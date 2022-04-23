@@ -270,9 +270,10 @@ export class CampaignTargetsAddRequestModel implements ICampaignTargetsAddReques
   targetList?: any[];
 }
 
-interface ICampaignDefinitionGainsAddUpdateRequestModel {
+interface ICampaignDefinitionGainModel {
+  id: any;
+  fakeId: any;
   campaignId?: any;
-  campaignChannelCodeList?: []
   type?: any;
   achievementTypeId?: any;
   actionOptionId?: any;
@@ -287,9 +288,10 @@ interface ICampaignDefinitionGainsAddUpdateRequestModel {
   maxUtilization?: any;
 }
 
-export class CampaignDefinitionGainsAddUpdateRequestModel implements ICampaignDefinitionGainsAddUpdateRequestModel {
+export class CampaignDefinitionGainModel implements ICampaignDefinitionGainModel {
+  id: any;
+  fakeId: any;
   campaignId?: any;
-  campaignChannelCodeList?: []
   type?: any;
   achievementTypeId?: any;
   actionOptionId?: any;
@@ -302,5 +304,15 @@ export class CampaignDefinitionGainsAddUpdateRequestModel implements ICampaignDe
   amount?: any;
   rate?: any;
   maxUtilization?: any;
+}
+
+interface ICampaignDefinitionGainsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignAchievementList?: ICampaignDefinitionGainModel[];
+}
+
+export class CampaignDefinitionGainsAddUpdateRequestModel implements ICampaignDefinitionGainsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignAchievementList?: CampaignDefinitionGainModel[];
 }
 

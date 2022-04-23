@@ -16,10 +16,10 @@
     <div class="preview-container mt-5">
       <div class="row">
         <div class="col-8 mx-auto">
-          <div class="campaign-image" *ngIf="campaign.campaignDetail?.campaignListImageUrl">
-            <img src="{{campaign.campaignDetail?.campaignListImageUrl}}" alt="">
+          <div class="campaign-image" *ngIf="campaign.campaignDetail?.campaignDetailImageUrl">
+            <img src="{{campaign.campaignDetail?.campaignDetailImageUrl}}" alt="">
           </div>
-          <h3 class="campaign-title text-center" [ngClass]="{'my-4':campaign.campaignDetail?.campaignListImageUrl}">
+          <h3 class="campaign-title text-center" [ngClass]="{'my-4':campaign.campaignDetail?.campaignDetailImageUrl}">
             {{campaign.titleTr}}
           </h3>
           <div class="row">

@@ -39,13 +39,15 @@
               </div>
             </div>
             <div class="form-group mt-3">
-              <label for="campaignIds">Kampanyalar</label>
-              <select name="campaignIds" id="campaignIds" class="form-select"
-                      formControlName="campaignIds" multiple
-                      [ngClass]="{ 'is-invalid': submitted && f.campaignIds.invalid }">
-                <option *ngFor="let i of campaignList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
+              <label>Kampanyalar</label>
+              <ng-multiselect-dropdown
+                      [class]="{ 'is-invalid': submitted && f.campaignIds.invalid }"
+                      [placeholder]="'Seçiniz...'"
+                      [settings]="dropdownSettings"
+                      [data]="campaignList"
+                      formControlName="campaignIds"
+              >
+              </ng-multiselect-dropdown>
               <div *ngIf="submitted && f.campaignIds.errors" class="invalid-feedback">
                 <div *ngIf="f.campaignIds.errors.required || f.campaignIds.errors.minlength">
                   En az 2 Kampanya seçilmelidir.
@@ -109,9 +111,10 @@
               <input type="text" class="form-control"
                      [ngClass]="{ 'is-invalid': submitted && f.maxTopLimitRate.invalid }"
                      name="maxTopLimitRate" id="maxTopLimitRate" formControlName="maxTopLimitRate"
-                     currencyMask [options]="{ min: 0, max: 100 }">
+                     currencyMask [options]="{ min: 0, max: 999 }">
               <div *ngIf="submitted && f.maxTopLimitRate.errors" class="invalid-feedback">
                 <div *ngIf="f.maxTopLimitRate.errors.required">Çatı Oranı girilmelidir.</div>
+                <div *ngIf="f.maxTopLimitRate.errors.max">Çatı Oranı 100’ün üzerinde bir değer girilemez.</div>
               </div>
             </div>
             <div class="form-group mt-3">

@@ -15,17 +15,20 @@
       <h1>Yeni Hedef Ekle</h1>
       <hr class="blue">
       <form class="form-group mt-3" [formGroup]="formGroup">
-        <label for="targets">Hedef Tanım İsmi</label>
-        <select class="form-select mt-1" name="targets" id="targets" formControlName="targets" multiple
-                [ngClass]="{ 'is-invalid': submitted && f.targets.invalid }">
-          <option *ngFor="let i of addTargetList"
-                  [value]="i.id">{{i.name}}</option>
-        </select>
+        <label>Hedef Tanım İsmi</label>
+        <ng-multiselect-dropdown
+                [class]="{ 'is-invalid': submitted && f.targets.invalid }"
+                [placeholder]="'Seçiniz...'"
+                [settings]="dropdownSettings"
+                [data]="addTargetList"
+                formControlName="targets"
+        >
+        </ng-multiselect-dropdown>
         <div *ngIf="submitted && f.targets.errors" class="invalid-feedback">
           <div *ngIf="f.targets.errors.required">Hedef Tanımı seçilmelidir.</div>
         </div>
       </form>
-      <div class="mt-2 d-flex justify-content-center">
+      <div class="mt-5 d-flex justify-content-center">
         <button class="btn btn-orange px-5" type="button" (click)="save()">Ekle</button>
       </div>
     </ngx-smart-modal>
