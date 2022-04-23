@@ -6,6 +6,6 @@ namespace Bbt.Campaign.Public.Models.CampaignAchievement
     public class CampaignAchievementInsertRequest
     {
         public int CampaignId { get; set; }
-        public List<CampaignAchievementDto> CampaignAchievementList { get; set; }       
+        public List<CampaignAchievementFormDto> CampaignAchievementList { get; set; }       
     }
 }

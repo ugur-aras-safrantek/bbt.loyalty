@@ -45,7 +45,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             {
                 CampaignAchievementEntity entity = new CampaignAchievementEntity();
 
-                entity.CampaignId = x.CampaignId;
+                entity.CampaignId = request.CampaignId;
                 entity.CurrencyId = x.CurrencyId;
                 entity.Amount = x.Amount;
                 entity.Rate = x.Rate;
