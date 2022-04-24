@@ -8,6 +8,7 @@ import {Subject, takeUntil} from "rxjs";
 import {UtilityService} from "./utility.service";
 import {
   CampaignDefinitionAddRequestModel,
+  CampaignDefinitionGainChannelsAddUpdateRequestModel,
   CampaignDefinitionGainsAddUpdateRequestModel,
   CampaignDefinitionListRequestModel,
   CampaignDefinitionUpdateRequestModel,
@@ -27,7 +28,8 @@ export class CampaignDefinitionService {
     {id: 1, title: 'Kampanya Tanımı', isActive: true, passed: false, route: 'definition'},
     {id: 2, title: 'Kampanya Kuralları', isActive: false, passed: false, route: 'rules'},
     {id: 3, title: 'Hedef Seçimi', isActive: false, passed: false, route: 'target-selection'},
-    {id: 4, title: 'Kampanya Kazanımlar', isActive: false, passed: false, route: 'gains'},
+    {id: 4, title: 'Kazanım Kanalı', isActive: false, passed: false, route: 'gain-channels'},
+    {id: 5, title: 'Kampanya Kazanımlar', isActive: false, passed: false, route: 'gains'},
   ];
 
   repostData = {
@@ -181,6 +183,19 @@ export class CampaignDefinitionService {
 
     const url = `${this.baseUrl}/${ApiPaths.CampaignTargetsGetUpdateForm}`;
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
+  campaignDefinitionGainChannelsGetUpdateForm(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainChannelsGetUpdateForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
+  campaignDefinitionGainChannelsUpdate(data: CampaignDefinitionGainChannelsAddUpdateRequestModel) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainChannelsUpdate}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
   campaignDefinitionGainsGetUpdateForm(campaignId: any) {

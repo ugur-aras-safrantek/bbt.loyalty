@@ -19,6 +19,8 @@ export enum ApiPaths {
   CampaignTargetsUpdate = 'CampaignTarget/update',
   CampaignTargetsGetUpdateForm = 'CampaignTarget/get-update-form',
   CampaignTargetsGetInsertForm = 'CampaignTarget/get-insert-form',
+  CampaignGainChannelsGetUpdateForm = 'CampaignChannelCode/get-update-form',
+  CampaignGainChannelsUpdate = 'CampaignChannelCode/update',
   CampaignGainsGetUpdateForm = 'CampainAchievement/get-update-form',
   CampaignGainsUpdate = 'CampainAchievement/update',
 

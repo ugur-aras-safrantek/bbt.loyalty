@@ -1,0 +1,33 @@
+<app-form-change-alert></app-form-change-alert>
+<app-main-content>
+  <app-step [data]="stepData" [id]="id"></app-step>
+  <div class="container">
+    <div class="box">
+      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
+      <div class="row p-4">
+        <div class="col-8 m-auto">
+          <form [formGroup]="formGroup">
+            <div class="row">
+              <div class="col form-group">
+                <label for="campaignChannelCodeList">Kazanım Kanalı</label>
+                <select class="form-select" multiple
+                        name="campaignChannelCodeList" id="campaignChannelCodeList"
+                        formControlName="campaignChannelCodeList"
+                        [ngClass]="{ 'is-invalid': submitted && f.campaignChannelCodeList.invalid }">
+                  <option *ngFor="let i of channelCodeList"
+                          [value]="i">{{i}}</option>
+                </select>
+                <div *ngIf="submitted && f.campaignChannelCodeList.errors" class="invalid-feedback">
+                  <div *ngIf="f.campaignChannelCodeList.errors.required">Kazanım Kanalı seçilmelidir.</div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
+      <button class="btn btn-orange px-5" type="button" (click)="save()">{{nextButtonText}}</button>
+    </div>
+  </div>
+</app-main-content>

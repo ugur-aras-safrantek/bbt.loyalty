@@ -68,7 +68,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
-    this.stepService.updateStep(4);
+    this.stepService.updateStep(5);
     this.stepData = this.stepService.stepData;
 
     if (this.id) {
