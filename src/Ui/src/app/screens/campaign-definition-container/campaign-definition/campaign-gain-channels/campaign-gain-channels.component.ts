@@ -100,7 +100,7 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
   }
 
   private campaignDefinitionGainChannelsGetUpdateForm() {
-    let campaignId = parseInt(this.id);
+    let campaignId = this.id ?? this.newId;
     this.campaignDefinitionService.campaignDefinitionGainChannelsGetUpdateForm(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

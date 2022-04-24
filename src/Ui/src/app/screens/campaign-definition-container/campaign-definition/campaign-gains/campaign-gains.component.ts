@@ -71,10 +71,10 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.stepService.updateStep(5);
     this.stepData = this.stepService.stepData;
 
+    this.campaignDefinitionGainsGetUpdateForm();
+
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
-
-      this.campaignDefinitionGainsGetUpdateForm();
 
       this.stepService.finish();
 
@@ -343,7 +343,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   private campaignDefinitionGainsGetUpdateForm() {
-    let campaignId = parseInt(this.id);
+    let campaignId = this.id ?? this.newId;
     this.campaignDefinitionService.campaignDefinitionGainsGetUpdateForm(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
