@@ -186,7 +186,7 @@
             <tbody>
             <tr *ngFor='let achievement of campaignAchievementList'>
               <td class="gain-channel-add-update">
-                <img class="w-75" src="/assets/img/eye.png"
+                <img src="/assets/img/eye.png"
                      (click)="showUpdateModal(achievement)">
               </td>
               <td>{{achievement.rule?.name}}</td>
@@ -194,7 +194,7 @@
               <td>{{achievement.actionOption?.name}}</td>
               <td>{{achievement.maxUtilization}}</td>
               <td class="gain-channel-delete">
-                <img class="w-100" src="/assets/img/cross.png"
+                <img src="/assets/img/cross.png"
                      (click)="openDeleteAlertModal(achievement)">
               </td>
             </tr>

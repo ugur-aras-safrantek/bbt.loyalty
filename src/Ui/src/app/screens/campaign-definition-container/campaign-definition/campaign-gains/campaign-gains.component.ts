@@ -34,6 +34,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   idEdited = false;
 
   campaignAchievementList: any[];
+  // allAchievementTypeList: DropdownListModel[];
   achievementTypeList: DropdownListModel[];
   actionOptionList: DropdownListModel[];
   currencyList: DropdownListModel[];
@@ -217,7 +218,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   private populateForm(data) {
     this.formGroup.patchValue({
       id: data.id,
-      fakeId: data.fakeId ?? this.utilityService.createGuid(),
+      fakeId: data.fakeId,
       type: data.type,
       achievementTypeId: data.achievementTypeId,
       actionOptionId: data.actionOptionId,
@@ -234,6 +235,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   private populateLists(data: any) {
+    // this.allAchievementTypeList = data.achievementTypes;
     this.achievementTypeList = data.achievementTypes;
     this.actionOptionList = data.actionOptions;
     this.currencyList = data.currencyList;
@@ -279,7 +281,18 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     return achievement;
   }
 
+  // private populateAchievementTypeList() {
+  //   let newList: DropdownListModel[] = new Array();
+  //   this.allAchievementTypeList.map(x => {
+  //     if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0){
+  //       newList.push(x);
+  //     }
+  //   })
+  //   return newList;
+  // }
+
   showAddModal() {
+    // this.achievementTypeList = this.populateAchievementTypeList();
     this.clearForm();
     this.typeChanged();
     this.submitted = false;
@@ -289,6 +302,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   showUpdateModal(achievement) {
+    // this.achievementTypeList = this.populateAchievementTypeList();
     this.populateForm(achievement);
     this.typeChanged();
     this.submitted = false;
@@ -351,6 +365,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.campaignAchievementList = res.data.campaignAchievementList;
+            this.campaignAchievementList.map(x => x.fakeId = this.utilityService.createGuid());
             this.campaignViewingStateActions(res.data.isInvisibleCampaign);
           } else
             this.toastrHandleService.error(res.errorMessage);
