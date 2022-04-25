@@ -34,7 +34,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   idEdited = false;
 
   campaignAchievementList: any[];
-  // allAchievementTypeList: DropdownListModel[];
+  allAchievementTypeList: DropdownListModel[];
   achievementTypeList: DropdownListModel[];
   actionOptionList: DropdownListModel[];
   currencyList: DropdownListModel[];
@@ -48,6 +48,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   deletedAchievement: any;
 
+  addButtonVisibleState = false;
   addUpdateButtonText = 'Ekle';
   nextButtonVisible = true;
   isInvisibleCampaign = false;
@@ -235,7 +236,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   private populateLists(data: any) {
-    // this.allAchievementTypeList = data.achievementTypes;
+    this.allAchievementTypeList = data.achievementTypes;
     this.achievementTypeList = data.achievementTypes;
     this.actionOptionList = data.actionOptions;
     this.currencyList = data.currencyList;
@@ -281,18 +282,30 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     return achievement;
   }
 
-  // private populateAchievementTypeList() {
-  //   let newList: DropdownListModel[] = new Array();
-  //   this.allAchievementTypeList.map(x => {
-  //     if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0){
-  //       newList.push(x);
-  //     }
-  //   })
-  //   return newList;
-  // }
+  private populateAchievementTypeList(achievement?) {
+    let newList: DropdownListModel[] = new Array();
+    if (achievement) {
+      newList.push(achievement.achievementType);
+    }
+    this.allAchievementTypeList.map(x => {
+      if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {
+        newList.push(x);
+      }
+    })
+    return newList.sort((a, b) => a.id - b.id);
+  }
+
+  private checkAddButtonVisibleState(){
+    this.addButtonVisibleState = false;
+    this.allAchievementTypeList.map(x => {
+      if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {
+        this.addButtonVisibleState = true;
+      }
+    })
+  }
 
   showAddModal() {
-    // this.achievementTypeList = this.populateAchievementTypeList();
+    this.achievementTypeList = this.populateAchievementTypeList();
     this.clearForm();
     this.typeChanged();
     this.submitted = false;
@@ -302,7 +315,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   showUpdateModal(achievement) {
-    // this.achievementTypeList = this.populateAchievementTypeList();
+    this.achievementTypeList = this.populateAchievementTypeList(achievement);
     this.populateForm(achievement);
     this.typeChanged();
     this.submitted = false;
@@ -320,6 +333,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       this.modalService.getModal('campaignGainsAddUpdateModal').close();
       this.nextButtonVisible = true;
       this.formChangeState = true;
+      this.checkAddButtonVisibleState();
     }
   }
 
@@ -350,6 +364,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.campaignAchievementList.splice(this.campaignAchievementList.findIndex(x => x == this.deletedAchievement), 1);
     this.nextButtonVisible = true;
     this.formChangeState = true;
+    this.checkAddButtonVisibleState();
   }
 
   copyCampaign(event) {
@@ -367,6 +382,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
             this.campaignAchievementList = res.data.campaignAchievementList;
             this.campaignAchievementList.map(x => x.fakeId = this.utilityService.createGuid());
             this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+            this.checkAddButtonVisibleState();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

@@ -179,7 +179,9 @@
               <th>Aksiyon</th>
               <th>Max Yararlanma</th>
               <th class="gain-channel-add-update">
-                <img src="/assets/img/plus.png" (click)="showAddModal()">
+                <img src="/assets/img/plus.png"
+                     *ngIf="addButtonVisibleState"
+                     (click)="showAddModal()">
               </th>
             </tr>
             </thead>
