@@ -66,7 +66,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-check mt-3">
+              <div class="form-check mt-3" *ngIf="contractFileUrl">
                 <input class="form-check-input" type="checkbox" id="campaignContractCheckDefault"
                        [checked]="true" disabled>
                 <label>
@@ -88,39 +88,37 @@
       <hr class="my-4">
       <h3 class="title text-purple-dark">Dönem İçi İşlemleriniz</h3>
       <b>Kampanyadan yararlanmak için {{campaign.endDate}} tarihine kadar aşağıdaki koşulu tamamlamalısınız.</b>
-      <div class="box my-5">
-        <div class="px-4">
-          <div *ngFor="let targetGroup of targetGroupList">
-            <div class="row py-3">
+      <div *ngFor="let targetGroup of targetGroupList">
+        <div class="box my-3">
+          <div class="px-4 py-2">
+            <div class="row" *ngFor="let campaignTarget of targetGroup.targetList">
+              <div class="col-auto d-flex align-items-center">
+                <i class="bi bi-square-fill text-purple"></i>
+              </div>
               <div class="col">
-                <div class="row" *ngFor="let campaignTarget of targetGroup.targetList">
-                  <div class="col-auto d-flex justify-content-center align-items-center">
-                    <i class="bi bi-square-fill text-purple"></i>
-                  </div>
-                  <div class="col">
-                    <p class="my-1">{{campaignTarget.name}}</p>
-                  </div>
-                </div>
+                <p class="my-1">{{campaignTarget.name}}</p>
               </div>
             </div>
-            <div *ngIf="targetGroup != targetGroupList[targetGroupList.length-1]">
-              <strong class="text-purple">VEYA</strong>
+          </div>
+          <div class="bg-purple px-4 py-1">
+            <div class="row">
+              <div class="col"><b>Harcama hedef: - TL</b></div>
+              <div class="col d-flex justify-content-end"><b>Kalan harcama tutarı: - TL</b></div>
             </div>
           </div>
         </div>
-        <div class="bg-purple px-4 py-1">
-          <div class="row">
-            <div class="col"><b>Harcama hedef: - TL</b></div>
-            <div class="col d-flex justify-content-end"><b>Kalan harcama tutarı: - TL</b></div>
-          </div>
+        <div *ngIf="targetGroup != targetGroupList[targetGroupList.length-1]">
+          <strong class="text-purple">VEYA</strong>
         </div>
       </div>
-      <div class="row" *ngIf="campaignAchievement && campaignAchievement.channelCodeList">
-        <div class="col-4" *ngFor="let channel of campaignAchievement.channelCodeList">
+      <div class="row" *ngIf="campaignAchievement">
+        <div class="col-4" *ngFor="let achievement of campaignAchievement">
           <div class="box mb-3 p-3 position-relative">
-            <b>{{channel}}</b>
             <p class="mb-0">
-              {{campaignAchievement.descriptionTr}}
+              <strong>{{achievement.titleTr}}</strong>
+            </p>
+            <p class="mb-0">
+              {{achievement.descriptionTr}}
             </p>
             <div class="ok">
               <i class="bi bi-arrow-right"></i>

@@ -57,7 +57,7 @@ export class CampaignPreviewComponent implements OnInit {
           if (!res.hasError && res.data) {
             this.campaign = res.data.campaign;
             this.targetGroupList = res.data.campaignTarget?.targetGroupList;
-            this.campaignAchievement = res.data.campaignAchievement;
+            this.campaignAchievement = res.data.campaignAchievementList;
             let document = res.data.contractFile?.document;
             if (document) {
               let blob = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
