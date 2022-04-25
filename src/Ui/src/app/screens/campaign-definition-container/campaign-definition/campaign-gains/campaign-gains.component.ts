@@ -177,8 +177,8 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     }
   }
 
-  finish(id) {
-    this.previewLink = `${this.previewLink}/${id}`;
+  finish() {
+    this.previewLink = `${this.previewLink}/${this.newId ?? this.id}`;
     this.buttonTypeIsContinue = true;
   }
 
@@ -387,7 +387,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.finish(res.data.campaignId);
+            this.finish();
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
