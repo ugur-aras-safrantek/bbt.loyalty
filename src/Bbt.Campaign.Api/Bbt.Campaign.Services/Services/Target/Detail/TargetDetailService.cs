@@ -245,6 +245,11 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 {
                     throw new Exception("Toplam tutar veya işlem adedi giriniz.");
                 }
+
+                if (numberOfTransaction > 0 && (request.TotalAmount ?? 0) > 0)
+                {
+                    throw new Exception("Toplam tutar ve işlem adedi aynı anda girilemez.");
+                }
             }
             else if (request.TargetSourceId == (int)TargetSourceEnum.Query)
             {

@@ -136,7 +136,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
             if (!achievementList.Any()) 
             {
-                return null;
+                return response;
             }
 
             foreach (var achievementEntity in achievementList) 

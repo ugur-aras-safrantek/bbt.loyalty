@@ -14,6 +14,8 @@ using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Bbt.Campaign.Services.Services.Campaign
 {
@@ -573,34 +575,34 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl+id.ToString());
+                    var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl + id.ToString());
                     if (response.IsSuccessStatusCode)
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
-                            //var valueDateResult = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDate);
                             string apiResponse = await response.Content.ReadAsStringAsync();
-                            getFileResponse = new GetFileResponse()
+                            var contract = JsonConvert.DeserializeObject<BurganContractDto>((JObject.Parse(apiResponse)["data"]).ToString());
+                            if(contract != null && contract.Content != null) 
                             {
-                                Document = new Public.Models.CampaignDocument.DocumentModel()
+                                var contractContent = contract.Content;
+                                getFileResponse = new GetFileResponse()
                                 {
-                                    //Data = Convert.ToBase64String(response.Content, 0, response.Content.Length),
-                                    //Data = apiResponse.con
-                                    DocumentName = id.ToString() + "-Sözleşme.html",
-                                    DocumentType = DocumentTypePublicEnum.Contract,
-                                    MimeType = MimeTypeExtensions.ToMimeType(".html")
-                                }
-                            };
+                                    Document = new Public.Models.CampaignDocument.DocumentModel()
+                                    {
+                                        //Data = Convert.ToBase64String(contractContent, 0, contractContent.Length),
+                                        Data = contractContent,
+                                        DocumentName = id.ToString() + "-Sözleşme.html",
+                                        DocumentType = DocumentTypePublicEnum.Contract,
+                                        MimeType = MimeTypeExtensions.ToMimeType(".html")
+                                    }
+                                };
+                            }
+                            else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
                         }
-                        else if(response.StatusCode == System.Net.HttpStatusCode.MethodNotAllowed) 
-                        { 
+                        else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
                         
-                        }
                     }
-                    else
-                    {
-                        throw new Exception("Servisten sözleşme bilgisi çekilemedi.");
-                    }
+                    else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
                 }
             }
 

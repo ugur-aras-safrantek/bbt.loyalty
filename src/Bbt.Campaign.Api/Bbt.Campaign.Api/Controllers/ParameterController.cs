@@ -25,17 +25,7 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _parameterService.GetActionOptionListAsync();
             return Ok(result);
         }
-        /// <summary>
-        /// Returns Branch list.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("get-branchs")]
-        public async Task<IActionResult> GetBranchList()
-        {
-            var result = await _parameterService.GetBranchListAsync();
-            return Ok(result);
-        }
+        
         /// <summary>
         /// Returns Business Line list.
         /// </summary>
@@ -192,17 +182,7 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Returns channel code list.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("get-channel-codes")]
-        public async Task<IActionResult> GetCampaignChannelListAsync()
-        {
-            var result = await _parameterService.GetCampaignChannelListAsync();
-            return Ok(result);
-        }
+        
 
         /// <summary>
         /// Returns Join participation type list.
@@ -216,6 +196,53 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Returns Branch list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-branchs")]
+        public async Task<IActionResult> GetBranchList()
+        {
+            var result = await _parameterService.GetBranchListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns channel code list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-channel-codes")]
+        public async Task<IActionResult> GetCampaignChannelListAsync()
+        {
+            var result = await _parameterService.GetCampaignChannelListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the last branch select date
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-branch-selectdate")]
+        public async Task<IActionResult> GetBranchSelectDateList()
+        {
+            var result = await _parameterService.GetBranchSelectDateListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the last channel code select date
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-channelcode-selectdate")]
+        public async Task<IActionResult> GetChannelCodeSelectDateListAsync()
+        {
+            var result = await _parameterService.GetChannelCodeSelectDateListAsync();
+            return Ok(result);
+        }
 
         /// <summary>
         /// Clears all keys on the cache.

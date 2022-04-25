@@ -5,7 +5,6 @@ using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Branch;
-using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
@@ -61,13 +60,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<BusinessLineEntity>(CacheKeys.BusinessLineList);
         }
-        //public async Task<BaseResponse<List<string>>> GetCampaignChannelListAsync()
-        //{
-        //    var result = new List<string>()
-        //    {"BATCH","BAYI","DIGER","INTERNET","PTT","REMOTE","SMS","TABLET","WEB","WEBBAYI","WEBMEVDUAT" };
-
-        //    return await BaseResponse<List<string>>.SuccessAsync(result);
-        //}
+      
         public Task<BaseResponse<List<ParameterDto>>> GetCampaignStartTermListAsync()
         {
             return GetListAsync<CampaignStartTermEntity>(CacheKeys.CampaignStartTermList);
@@ -137,196 +130,174 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<AchievementTypeEntity>(CacheKeys.AchievementType);
         }
-
-        public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
-        {
-            List<ParameterDto> result = null;
-            bool isExists = false;
-            bool isUpToDate = false;
-
-            var cacheBranchDate = await _redisDatabaseProvider.GetAsync(CacheKeys.BranchSelectDate);
-            var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.BranchList);
-
-            if (cacheBranchDate != null)
-            {
-                if (cacheBranchDate.ToString() != "null")
-                {
-                    isExists = true;
-
-                    var valueDateResult = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDate);
-
-                    isUpToDate = valueDateResult[0].Name == todayStr;
-                }
-            }
-
-            // cache te varsa ve bugun güncellenmiş ise direk getir
-            if (cache != null && cache.ToString() != "null" && isExists && isUpToDate)
-            {
-                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
-            }
-            else
-            {
-                List<ParameterDto> valueDateList = new List<ParameterDto>();
-                valueDateList.Add(new ParameterDto() { Id = 1, Name = todayStr, Code = todayStr, });
-                var valueDate = JsonConvert.SerializeObject(valueDateList);
-                await _redisDatabaseProvider.SetAsync(CacheKeys.BranchSelectDate, valueDate);
-
-                if (StaticValues.IsDevelopment)
-                {
-                    var serviceResult = new List<BranchDto>(){
-                    new BranchDto {
-                        Address = "REŞATBEY MAH. ATATÜRK CAD. KORAL APT. NO:36 SEYHAN",
-                        CityCode= "1",
-                        CityName = "ADANA",
-                        Code = "9297",
-                        FaxNo = "3223521700",
-                        Name = "ADANA",
-                        TelNo = "3223524444",
-                        TownCode = "0116",
-                        TownName = "SEYHAN"},
-                    new BranchDto{Address= "Çankaya Cad. No:8 Daire:7-8 P.K. 06680",
-                        CityCode= "6",
-                        CityName= "ANKARA",
-                        Code= "9092",
-                        FaxNo= "312 4182262",
-                        Name= "ANKARA",
-                        TelNo= "312 4187979",
-                        TownCode= "0602",
-                        TownName= "ÇANKAYA"},
-                    new BranchDto{
-                        Address= "Mustafa Kemal Mahallesi, Dumlupınar Bulvarı, B Blok No:274/7-201",
-                        CityCode= "6",
-                        CityName= "ANKARA",
-                        Code= "9560",
-                        FaxNo= "312 2856070",
-                        Name= "ANKARA PLAZA",
-                        TelNo= "312 2861900",
-                        TownCode= "0602",
-                        TownName= "ÇANKAYA"}};
-
-                    var value = JsonConvert.SerializeObject(serviceResult);
-
-                    await _redisDatabaseProvider.SetAsync(CacheKeys.BranchList, value);
-
-                    result = serviceResult.Select(x => new ParameterDto
-                    {
-                        Code = x.Code,
-                        Name = x.Name
-                    }).ToList();
-                }
-                else
-                {
-                    List<Branch> branchList = new List<Branch>();
-                    using (var httpClient = new HttpClient())
-                    {
-                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        var response = await httpClient.GetAsync(StaticValues.BranchServiceUrl);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            if (response.Content != null)
-                            {
-                                string apiResponse = await response.Content.ReadAsStringAsync();
-                                await _redisDatabaseProvider.SetAsync(CacheKeys.BranchList, apiResponse);
-                                branchList = JsonConvert.DeserializeObject<List<Branch>>(apiResponse);
-                                result = branchList.Select(x => new ParameterDto
-                                {
-                                    Code = x.Code,
-                                    Name = x.Name
-                                }).ToList();
-                            }
-                            else
-                            {
-                                throw new Exception("Şube listesi servisinden veri çekilemedi.");
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("Şube listesi servisinden veri çekilemedi.");
-                        }
-                    }
-                }
-            }
-
-            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
-        }
-
-        public async Task<BaseResponse<List<string>>> GetCampaignChannelListAsync()
-        {
-            List<string> result = null;
-            bool isExists = false;
-            bool isUpToDate = false;
-
-            var cacheChannelCodeDate = await _redisDatabaseProvider.GetAsync(CacheKeys.ChannelCodeSelectDate);
-            var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.CampaignChannelList);
-
-            if (cacheChannelCodeDate != null)
-            {
-                if (cacheChannelCodeDate.ToString() != "null")
-                {
-                    isExists = true;
-
-                    var valueDateResult = JsonConvert.DeserializeObject<List<string>>(cacheChannelCodeDate);
-
-                    isUpToDate = valueDateResult[0] == todayStr;
-                }
-            }
-
-            // cache te varsa ve bugun güncellenmiş ise direk getir
-            if (cache != null && cache.ToString() != "null" && isExists && isUpToDate)
-            {
-                result = JsonConvert.DeserializeObject<List<string>>(cache);
-            }
-            else
-            {
-                List<string> valueDateList = new List<string>();
-                valueDateList.Add(todayStr);
-                var valueDate = JsonConvert.SerializeObject(valueDateList);
-                await _redisDatabaseProvider.SetAsync(CacheKeys.ChannelCodeSelectDate, valueDate);
-
-                if (StaticValues.IsDevelopment)
-                {
-                    result = new List<string>()
-                    {"BATCH","BAYI","DIGER","INTERNET","PTT","REMOTE","SMS","TABLET","WEB","WEBBAYI","WEBMEVDUAT" };
-
-                    var value = JsonConvert.SerializeObject(result);
-
-                    await _redisDatabaseProvider.SetAsync(CacheKeys.CampaignChannelList, value);
-                }
-                else
-                {
-                    result = new List<string>();
-                    using (var httpClient = new HttpClient())
-                    {
-                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        var response = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            if (response.Content != null)
-                            {
-                                string apiResponse = await response.Content.ReadAsStringAsync();
-                                await _redisDatabaseProvider.SetAsync(CacheKeys.CampaignChannelList, apiResponse);
-                                result = JsonConvert.DeserializeObject<List<string>>(apiResponse);
-                            }
-                            else
-                            {
-                                throw new Exception("Kazanım kanalı servisinden veri çekilemedi.");
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("Kazanım kanalı servisinden veri çekilemedi.");
-                        }
-                    }
-                }
-            }
-            return await BaseResponse<List<string>>.SuccessAsync(result);
-        }
-
         public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync()
         {
             return GetListAsync<ParticipationTypeEntity>(CacheKeys.ParticipationType);
         }
+        public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
+        {
+            List<ParameterDto> result = new List<ParameterDto>();
+            var serviceResult = new List<BranchDto>();
 
+            var cacheBranchDateData = await _redisDatabaseProvider.GetAsync(CacheKeys.BranchSelectDate);
+            var cacheBranchData = await _redisDatabaseProvider.GetAsync(CacheKeys.BranchList);
+
+            if (cacheBranchDateData != null && cacheBranchData != null)
+            {
+                var cacheBranchDateList = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDateData);
+                if(cacheBranchDateList != null && cacheBranchDateList.Any() && cacheBranchDateList[0].Name == todayStr) 
+                { 
+                    var cacheBranchList = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchData);
+                    if (cacheBranchList != null && cacheBranchList.Any())
+                    {
+                        return await GetListAsync<ParameterDto>(CacheKeys.BranchList);
+                    }
+                }
+            }
+
+            await _redisDatabaseProvider.RemoveByPattern(CacheKeys.BranchList);
+            await _redisDatabaseProvider.RemoveByPattern(CacheKeys.BranchSelectDate);
+
+            //get branch list
+            if (StaticValues.IsDevelopment)
+            {
+                serviceResult = new List<BranchDto>(){
+                new BranchDto {
+                    Address = "REŞATBEY MAH. ATATÜRK CAD. KORAL APT. NO:36 SEYHAN",
+                    CityCode= "1",
+                    CityName = "ADANA",
+                    Code = "9297",
+                    FaxNo = "3223521700",
+                    Name = "ADANA",
+                    TelNo = "3223524444",
+                    TownCode = "0116",
+                    TownName = "SEYHAN"},
+                new BranchDto{Address= "Çankaya Cad. No:8 Daire:7-8 P.K. 06680",
+                    CityCode= "6",
+                    CityName= "ANKARA",
+                    Code= "9092",
+                    FaxNo= "312 4182262",
+                    Name= "ANKARA",
+                    TelNo= "312 4187979",
+                    TownCode= "0602",
+                    TownName= "ÇANKAYA"},
+                new BranchDto{
+                    Address= "Mustafa Kemal Mahallesi, Dumlupınar Bulvarı, B Blok No:274/7-201",
+                    CityCode= "6",
+                    CityName= "ANKARA",
+                    Code= "9560",
+                    FaxNo= "312 2856070",
+                    Name= "ANKARA PLAZA",
+                    TelNo= "312 2861900",
+                    TownCode= "0602",
+                    TownName= "ÇANKAYA"}};
+            }
+            else
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = await httpClient.GetAsync(StaticValues.BranchServiceUrl);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (response.Content != null)
+                        {
+                            string apiResponse = await response.Content.ReadAsStringAsync();
+                            serviceResult = JsonConvert.DeserializeObject<List<BranchDto>>((JObject.Parse(apiResponse)["data"]).ToString());
+                            if(serviceResult != null && serviceResult.Any()) { } 
+                            else{ throw new Exception("Şube listesi servisinden veri çekilemedi."); }
+                            
+                        }
+                        else { throw new Exception("Şube listesi servisinden veri çekilemedi."); }
+                    }
+                    else { throw new Exception("Şube listesi servisinden veri çekilemedi."); }
+                }
+            }
+
+            List<ParameterDto> todayDateList = new List<ParameterDto>();
+            todayDateList.Add(new ParameterDto() { Id = 1, Name = todayStr, Code = todayStr, });
+            var todayDateSerialized = JsonConvert.SerializeObject(todayDateList);
+
+            result = serviceResult.Select(x => new ParameterDto() { Id = 0, Name= x.Name, Code= x.Code}).ToList();
+            var branchListSerialized = JsonConvert.SerializeObject(result);
+            await _redisDatabaseProvider.SetAsync(CacheKeys.BranchList, branchListSerialized);
+            await _redisDatabaseProvider.SetAsync(CacheKeys.BranchSelectDate, todayDateSerialized);
+            return await GetListAsync<ParameterDto>(CacheKeys.BranchList);
+        }
+        public async Task<BaseResponse<List<string>>> GetCampaignChannelListAsync()
+        {
+            List<string> channelCodeList = new List<string>();
+
+            var channelCodeDateData = await _redisDatabaseProvider.GetAsync(CacheKeys.ChannelCodeSelectDate);
+            var channelCodeData = await _redisDatabaseProvider.GetAsync(CacheKeys.CampaignChannelList);
+
+            // cache te varsa ve bugun güncellenmiş ise direk getir
+            if (channelCodeDateData != null && channelCodeData != null)
+            {
+                var channelCodeDateList = JsonConvert.DeserializeObject<List<ParameterDto>>(channelCodeDateData);
+                if(channelCodeDateList != null && channelCodeDateList.Any() && channelCodeDateList[0].Code == todayStr) 
+                { 
+                    channelCodeList = JsonConvert.DeserializeObject<List<string>>(channelCodeData);
+                    if (channelCodeList != null && channelCodeList.Any())
+                        return await BaseResponse<List<string>>.SuccessAsync(channelCodeList);
+                }
+            }
+
+            await _redisDatabaseProvider.RemoveByPattern(CacheKeys.CampaignChannelList);
+            await _redisDatabaseProvider.RemoveByPattern(CacheKeys.ChannelCodeSelectDate);
+
+            //get data
+            if (StaticValues.IsDevelopment)
+            {
+                channelCodeList = new List<string>()
+                    {"BATCH","BAYI","DIGER","INTERNET","PTT","REMOTE","SMS","TABLET","WEB","WEBBAYI","WEBMEVDUAT" };
+            }
+            else 
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (response.Content != null)
+                        {
+                            string apiResponse = await response.Content.ReadAsStringAsync();
+                            channelCodeList = JsonConvert.DeserializeObject<List<string>>((JObject.Parse(apiResponse)["data"]).ToString());
+                            if (channelCodeList != null && channelCodeList.Any()){}
+                            else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                        }
+                        else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                    }
+                    else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                }
+            }
+
+            List<ParameterDto> todayDateList = new List<ParameterDto>();
+            todayDateList.Add(new ParameterDto() { Id = 1, Name = todayStr, Code = todayStr, });
+            var todayDateSerialized = JsonConvert.SerializeObject(todayDateList);
+
+            string channelCodeListSerialized = JsonConvert.SerializeObject(channelCodeList);
+            await _redisDatabaseProvider.SetAsync(CacheKeys.CampaignChannelList, channelCodeListSerialized);
+            await _redisDatabaseProvider.SetAsync(CacheKeys.ChannelCodeSelectDate, todayDateSerialized);
+            return await BaseResponse<List<string>>.SuccessAsync(channelCodeList);
+        }
+        public async Task<BaseResponse<List<ParameterDto>>> GetBranchSelectDateListAsync()
+        {
+            List<ParameterDto> result = new List<ParameterDto>();
+            var cacheBranchDateData = await _redisDatabaseProvider.GetAsync(CacheKeys.BranchSelectDate);
+            if (!string.IsNullOrEmpty(cacheBranchDateData))
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cacheBranchDateData);
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
+        }
+        public async Task<BaseResponse<List<ParameterDto>>> GetChannelCodeSelectDateListAsync()
+        {
+            List<ParameterDto> result = new List<ParameterDto>();
+            var channelCodeDateData = await _redisDatabaseProvider.GetAsync(CacheKeys.ChannelCodeSelectDate);
+            if (!string.IsNullOrEmpty(channelCodeDateData))
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(channelCodeDateData);
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
+        }
         public async Task<string> GetServiceData(string serviceUrl) 
         {
             string retVal = string.Empty;

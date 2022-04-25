@@ -28,6 +28,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetAchievementTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync();
 
+        public Task<BaseResponse<List<ParameterDto>>> GetBranchSelectDateListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetChannelCodeSelectDateListAsync();
+
+
         public Task<string> GetServiceData(string serviceUrl);
 
     }
