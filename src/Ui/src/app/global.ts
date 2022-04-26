@@ -3,6 +3,7 @@ export const GlobalVariable = Object.freeze({
   definition: '/campaign-definition/create/definition',
   rules: '/campaign-definition/create/rules',
   target: '/campaign-definition/create/target-selection',
+  gainChannels: '/campaign-definition/create/gain-channels',
   gains: '/campaign-definition/create/gains',
   finish: '/campaign-definition/create/finish',
   preview: '/campaign-definition/preview',

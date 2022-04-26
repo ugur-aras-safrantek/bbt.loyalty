@@ -34,6 +34,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   idEdited = false;
 
   campaignAchievementList: any[];
+  allAchievementTypeList: DropdownListModel[];
   achievementTypeList: DropdownListModel[];
   actionOptionList: DropdownListModel[];
   currencyList: DropdownListModel[];
@@ -47,6 +48,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   deletedAchievement: any;
 
+  addButtonVisibleState = false;
   addUpdateButtonText = 'Ekle';
   nextButtonVisible = true;
   isInvisibleCampaign = false;
@@ -68,13 +70,13 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     });
 
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
-    this.stepService.updateStep(4);
+    this.stepService.updateStep(5);
     this.stepData = this.stepService.stepData;
+
+    this.campaignDefinitionGainsGetUpdateForm();
 
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
-
-      this.campaignDefinitionGainsGetUpdateForm();
 
       this.stepService.finish();
 
@@ -176,8 +178,8 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     }
   }
 
-  finish(id) {
-    this.previewLink = `${this.previewLink}/${id}`;
+  finish() {
+    this.previewLink = `${this.previewLink}/${this.newId ?? this.id}`;
     this.buttonTypeIsContinue = true;
   }
 
@@ -217,7 +219,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   private populateForm(data) {
     this.formGroup.patchValue({
       id: data.id,
-      fakeId: data.fakeId ?? this.utilityService.createGuid(),
+      fakeId: data.fakeId,
       type: data.type,
       achievementTypeId: data.achievementTypeId,
       actionOptionId: data.actionOptionId,
@@ -234,6 +236,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   private populateLists(data: any) {
+    this.allAchievementTypeList = data.achievementTypes;
     this.achievementTypeList = data.achievementTypes;
     this.actionOptionList = data.actionOptions;
     this.currencyList = data.currencyList;
@@ -279,7 +282,30 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     return achievement;
   }
 
+  private populateAchievementTypeList(achievement?) {
+    let newList: DropdownListModel[] = new Array();
+    if (achievement) {
+      newList.push(achievement.achievementType);
+    }
+    this.allAchievementTypeList.map(x => {
+      if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {
+        newList.push(x);
+      }
+    })
+    return newList.sort((a, b) => a.id - b.id);
+  }
+
+  private checkAddButtonVisibleState(){
+    this.addButtonVisibleState = false;
+    this.allAchievementTypeList.map(x => {
+      if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {
+        this.addButtonVisibleState = true;
+      }
+    })
+  }
+
   showAddModal() {
+    this.achievementTypeList = this.populateAchievementTypeList();
     this.clearForm();
     this.typeChanged();
     this.submitted = false;
@@ -289,6 +315,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   showUpdateModal(achievement) {
+    this.achievementTypeList = this.populateAchievementTypeList(achievement);
     this.populateForm(achievement);
     this.typeChanged();
     this.submitted = false;
@@ -306,6 +333,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       this.modalService.getModal('campaignGainsAddUpdateModal').close();
       this.nextButtonVisible = true;
       this.formChangeState = true;
+      this.checkAddButtonVisibleState();
     }
   }
 
@@ -336,6 +364,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.campaignAchievementList.splice(this.campaignAchievementList.findIndex(x => x == this.deletedAchievement), 1);
     this.nextButtonVisible = true;
     this.formChangeState = true;
+    this.checkAddButtonVisibleState();
   }
 
   copyCampaign(event) {
@@ -343,7 +372,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   private campaignDefinitionGainsGetUpdateForm() {
-    let campaignId = parseInt(this.id);
+    let campaignId = this.id ?? this.newId;
     this.campaignDefinitionService.campaignDefinitionGainsGetUpdateForm(campaignId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -351,7 +380,9 @@ export class CampaignGainsComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.campaignAchievementList = res.data.campaignAchievementList;
+            this.campaignAchievementList.map(x => x.fakeId = this.utilityService.createGuid());
             this.campaignViewingStateActions(res.data.isInvisibleCampaign);
+            this.checkAddButtonVisibleState();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -372,7 +403,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.finish(res.data.campaignId);
+            this.finish();
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

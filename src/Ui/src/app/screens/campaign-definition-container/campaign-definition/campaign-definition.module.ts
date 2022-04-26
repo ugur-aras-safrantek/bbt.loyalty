@@ -13,6 +13,7 @@ import {AngularEditorModule} from '@kolkov/angular-editor';
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {AngularMyDatePickerModule} from 'angular-mydatepicker';
 import {FormChangeCheckGuard} from 'src/app/guards/form-change-check.guard';
+import {CampaignGainChannelsComponent} from './campaign-gain-channels/campaign-gain-channels.component';
 
 const routes: Routes = [
   {path: 'definition', component: CampaignDefinitionComponent, canDeactivate: [FormChangeCheckGuard]},
@@ -20,6 +21,8 @@ const routes: Routes = [
   {path: 'rules/:newId', component: CampaignRulesComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'target-selection', component: CampaignTargetSelectionComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'target-selection/:newId', component: CampaignTargetSelectionComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'gain-channels', component: CampaignGainChannelsComponent, canDeactivate: [FormChangeCheckGuard]},
+  {path: 'gain-channels/:newId', component: CampaignGainChannelsComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'gains', component: CampaignGainsComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'gains/:newId', component: CampaignGainsComponent, canDeactivate: [FormChangeCheckGuard]},
   {path: 'finish', component: CampaignFinishComponent},
@@ -31,6 +34,7 @@ const routes: Routes = [
     CampaignDefinitionComponent,
     CampaignRulesComponent,
     CampaignTargetSelectionComponent,
+    CampaignGainChannelsComponent,
     CampaignGainsComponent,
     CampaignFinishComponent,
   ],

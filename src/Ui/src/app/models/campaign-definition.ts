@@ -270,6 +270,16 @@ export class CampaignTargetsAddRequestModel implements ICampaignTargetsAddReques
   targetList?: any[];
 }
 
+interface ICampaignDefinitionGainChannelsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignChannelCodeList?: any[];
+}
+
+export class CampaignDefinitionGainChannelsAddUpdateRequestModel implements ICampaignDefinitionGainChannelsAddUpdateRequestModel {
+  campaignId?: any;
+  campaignChannelCodeList?: any[];
+}
+
 interface ICampaignDefinitionGainModel {
   id: any;
   fakeId: any;

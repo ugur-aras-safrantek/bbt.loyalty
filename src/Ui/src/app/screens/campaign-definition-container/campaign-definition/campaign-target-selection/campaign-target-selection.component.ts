@@ -171,7 +171,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.formChangeState = false;
-            this.router.navigate([GlobalVariable.gains, this.newId], {relativeTo: this.route});
+            this.router.navigate([GlobalVariable.gainChannels, this.newId], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
@@ -196,7 +196,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.formChangeState = false;
-            this.router.navigate([`/campaign-definition/update/${this.id}/gains`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${this.id}/gain-channels`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
