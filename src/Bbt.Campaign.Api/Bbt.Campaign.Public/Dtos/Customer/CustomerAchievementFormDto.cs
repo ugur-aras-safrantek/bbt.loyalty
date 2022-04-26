@@ -8,13 +8,13 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     public class CustomerAchievementFormDto
     {
         public int CampaignId { get; set; }
-        public decimal TotalAchievement { get; set; }
-        public string TotalAchievementStr { get; set; }
-        public bool IsInvisibleCampaign { get; set; }
         public CampaignDto Campaign { get; set; }
+        public decimal? TotalAchievement { get; set; }
+        public string? TotalAchievementStr { get; set; }
+        public decimal? PreviousMonthAchievement { get; set; }
+        public string? PreviousMonthAchievementStr { get; set; }
+        public bool IsInvisibleCampaign { get; set; }       
         public CampaignTargetDto CampaignTarget { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
-
-        //public GetFileResponse ContractFile { get; set; }
     }
 }

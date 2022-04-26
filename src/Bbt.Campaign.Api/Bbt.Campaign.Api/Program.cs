@@ -26,7 +26,7 @@ StaticValues.BranchServiceUrl = configuration["ServiceUrl:Branch"];
 StaticValues.ChannelCodeServiceUrl = configuration["ServiceUrl:ChannelCode"];
 StaticValues.ContractServiceUrl = configuration["ServiceUrl:Contract"];
 
-if (environment.IsDevelopment())
+if (StaticValues.IsDevelopment)
     Bbt.Campaign.Shared.Redis.RedisServer.StartRedis();
 
 builder.Services.AddSwaggerGen(options =>

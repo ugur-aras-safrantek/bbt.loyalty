@@ -115,6 +115,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<TopLimitEntity> TopLimits { get; set; }
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
         public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
+        public DbSet<CustomerCampaignFavoriteEntity> CustomerCampaignFavorites { get; set; }
         public DbSet<CampaignReportEntity> CampaignReports { get; set; }
         public DbSet<CampaignListEntity> CampaignList { get; set; }
         public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }

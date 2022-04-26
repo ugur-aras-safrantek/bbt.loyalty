@@ -18,9 +18,7 @@ namespace Bbt.Campaign.Public.Dtos.Target.Group
         public string? TargetAmountStr { get; set; }
         public decimal? RemainAmount { get; set; }
         public string? RemainAmountStr { get; set; }
-        public int? TargetNumberOfTransaction { get; set; }
-        public int? RemainNumberOfTransaction { get; set; }
-        public int? Percent { get; set; }
+        public int? TargetNumberOfTransaction { get; set; }        
         public List<TargetParameterDto> TargetList { get; set; }
     }
 }

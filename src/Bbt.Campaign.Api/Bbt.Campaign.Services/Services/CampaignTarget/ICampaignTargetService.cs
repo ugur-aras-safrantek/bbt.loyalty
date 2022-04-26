@@ -1,5 +1,6 @@
 ﻿using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Models.CampaignTarget;
 
 namespace Bbt.Campaign.Services.Services.CampaignTarget
@@ -13,6 +14,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public Task<BaseResponse<CampaignTargetDto>> DeleteAsync(int id);
         public Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm();
         public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId);
-        public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool removeInvisible, decimal usedAmount, int usedNumberOfTransaction);
+        public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool isRemoveInvisible);
+        public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, List<TargetParameterDto> targetSourceList);
+        public Task<CampaignTargetDto> GetCampaignTargetDtoTestCustomer(int campaignId);
     }
 }

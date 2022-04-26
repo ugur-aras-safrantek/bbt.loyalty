@@ -11,8 +11,8 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public int Id { get; set; }
         public string CustomerCode { get; set; }
         public int CampaignId { get; set; }
-        public bool IsJoin { get; set; }
-        public bool IsFavorite { get; set; }
+        public bool? IsJoin { get; set; }
+        public bool? IsFavorite { get; set; }
         public DateTime StartDate { get; set; }
     }
 }
