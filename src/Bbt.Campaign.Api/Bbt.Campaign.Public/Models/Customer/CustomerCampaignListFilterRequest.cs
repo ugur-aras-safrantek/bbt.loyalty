@@ -9,7 +9,7 @@ namespace Bbt.Campaign.Public.Models.Customer
 {
     public class CustomerCampaignListFilterRequest : PagingRequest
     {
-        public string CustomerCode { get; set; }
+        public string? CustomerCode { get; set; }
         public int PageTypeId { get; set; }
     }
 }

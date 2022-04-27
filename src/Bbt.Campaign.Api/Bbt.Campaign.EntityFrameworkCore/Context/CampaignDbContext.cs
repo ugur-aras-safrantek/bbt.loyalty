@@ -73,8 +73,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        
-        
         public DbSet<ActionOptionEntity> ActionOptions { get; set; }
         //public DbSet<BranchEntity> Branches { get; set; }
         public DbSet<BusinessLineEntity> BusinessLines { get; set; }
@@ -120,5 +118,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<CampaignListEntity> CampaignList { get; set; }
         public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }
         public DbSet<CampaignTargetListEntity> CampaignTargetList { get; set; }
+
+
+        public DbSet<CredentialTypeEntity> CredentialTypes { get; set; }
+        public DbSet<ModuleTypeEntity> ModuleTypes { get; set; }
+        public DbSet<ProcessTypeEntity> ProcessTypes { get; set; }
+        public DbSet<UserCredentialEntity> UserCredentials { get; set; }
+        public DbSet<CredentialAuthorizationEntity> CredentialAuthorizations { get; set; }
     }
 }

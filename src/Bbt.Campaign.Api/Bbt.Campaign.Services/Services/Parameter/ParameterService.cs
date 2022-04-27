@@ -55,52 +55,42 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ActionOptionEntity>(CacheKeys.ActionOptionList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetBusinessLineListAsync()
         {
             return GetListAsync<BusinessLineEntity>(CacheKeys.BusinessLineList);
-        }
-      
+        }  
         public Task<BaseResponse<List<ParameterDto>>> GetCampaignStartTermListAsync()
         {
             return GetListAsync<CampaignStartTermEntity>(CacheKeys.CampaignStartTermList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetCurrencyListAsync()
         {
             return GetListAsync<CurrencyEntity>(CacheKeys.CurrencyList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetCustomerTypeListAsync()
         {
             return GetListAsync<CustomerTypeEntity>(CacheKeys.CustomerTypeList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetJoinTypeListAsync()
         {
             return GetListAsync<JoinTypeEntity>(CacheKeys.JoinTypeList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetLanguageListAsync()
         {
             return GetListAsync<LanguageEntity>(CacheKeys.LanguageList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetSectorListAsync()
         {
             return GetListAsync<SectorEntity>(CacheKeys.SectorList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetTargetDefinitionListAsync()
         {
             return GetListAsync<TargetDefinitionEntity>(CacheKeys.TargetDefinitionList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetTargetOperationListAsync()
         {
             return GetListAsync<TargetOperationEntity>(CacheKeys.TargetOperationList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetViewOptionListAsync()
         {
             return GetListAsync<ViewOptionEntity>(CacheKeys.ViewOptionList);
@@ -109,7 +99,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ProgramTypeEntity>(CacheKeys.ProgramTypeList);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetTargetSourceListAsync()
         {
             return GetListAsync<TargetSourceEntity>(CacheKeys.TargetSourceList);
@@ -134,6 +123,19 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ParticipationTypeEntity>(CacheKeys.ParticipationType);
         }
+        public Task<BaseResponse<List<ParameterDto>>> GetCredentialTypeListAsync()
+        {
+            return GetListAsync<CredentialTypeEntity>(CacheKeys.CredentialTypeList);
+        }
+        public Task<BaseResponse<List<ParameterDto>>> GetModuleTypeListAsync()
+        {
+            return GetListAsync<ModuleTypeEntity>(CacheKeys.ModuleTypeList);
+        }
+        public Task<BaseResponse<List<ParameterDto>>> GetProcessTypeListAsync()
+        {
+            return GetListAsync<ProcessTypeEntity>(CacheKeys.ProcessTypeList);
+        }
+
         public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
         {
             List<ParameterDto> result = new List<ParameterDto>();
@@ -274,7 +276,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
 
             List<ParameterDto> todayDateList = new List<ParameterDto>();
-            todayDateList.Add(new ParameterDto() { Id = 1, Name = todayStr, Code = todayStr, });
+            todayDateList.Add(new ParameterDto() { Id = 1, Code = todayStr, Name = todayStr,  });
             var todayDateSerialized = JsonConvert.SerializeObject(todayDateList);
 
             string channelCodeListSerialized = JsonConvert.SerializeObject(channelCodeList);

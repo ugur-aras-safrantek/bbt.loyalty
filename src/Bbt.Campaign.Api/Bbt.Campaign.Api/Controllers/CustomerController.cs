@@ -50,9 +50,23 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("view-customer-min")]
-        public async Task<IActionResult> GetCustomerViewMinFormAsync(int campaignId)
+        public async Task<IActionResult> GetCustomerViewFormAsync(int campaignId)
         {
-            var result = await _customerService.GetCustomerViewMinFormAsync(campaignId, _webHostEnvironment.ContentRootPath);
+            var result = await _customerService.GetCustomerViewFormAsync(campaignId, _webHostEnvironment.ContentRootPath);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the form data for customer join page
+        /// </summary>
+        /// <param name="campaignId">Record Id of the campaign</param>
+        /// <param name="customerCode">Code of the customer</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-join-form")]
+        public async Task<IActionResult> GetCustomerJoinFormAsync(int campaignId, string customerCode)
+        {
+            var result = await _customerService.GetCustomerJoinFormAsync(campaignId, customerCode, _webHostEnvironment.ContentRootPath);
             return Ok(result);
         }
 

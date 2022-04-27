@@ -47,5 +47,18 @@
         public const string ChannelCodeSelectDate = "ChannelCodeSelectDate";
 
         public const string ParticipationType = "ParticipationType";
+
+
+
+
+        public const string CredentialTypeList = "CredentialTypeList";
+
+        public const string ModuleTypeList = "ModuleTypeList";
+
+        public const string ProcessTypeList = "ProcessTypeList";
+
+        public const string UserCredentialList = "UserCredentialList";
+
+        public const string CredentialAuthorizationList = "CredentialAuthorizationList";
     }
 }
