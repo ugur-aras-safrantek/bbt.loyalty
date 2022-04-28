@@ -237,7 +237,6 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   private populateLists(data: any) {
     this.allAchievementTypeList = data.achievementTypes;
-    this.achievementTypeList = data.achievementTypes;
     this.actionOptionList = data.actionOptions;
     this.currencyList = data.currencyList;
   }
@@ -276,23 +275,23 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   private populateTableColumn(achievement) {
     achievement.rule = achievement.type == 1 ? {id: 1, name: 'Tutar'} : {id: 2, name: 'Oran'};
-    achievement.achievementType = this.achievementTypeList.find(x => x.id == achievement.achievementTypeId);
+    achievement.achievementType = this.allAchievementTypeList.find(x => x.id == achievement.achievementTypeId);
     achievement.actionOption = this.actionOptionList.find(x => x.id == achievement.actionOptionId);
 
     return achievement;
   }
 
   private populateAchievementTypeList(achievement?) {
-    let newList: DropdownListModel[] = new Array();
+    this.achievementTypeList = [];
     if (achievement) {
-      newList.push(achievement.achievementType);
+      this.achievementTypeList.push(achievement.achievementType);
     }
     this.allAchievementTypeList.map(x => {
       if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {
-        newList.push(x);
+        this.achievementTypeList.push(x);
       }
     })
-    return newList.sort((a, b) => a.id - b.id);
+    this.achievementTypeList.sort((a, b) => a.id - b.id);
   }
 
   private checkAddButtonVisibleState(){
@@ -305,7 +304,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   showAddModal() {
-    this.achievementTypeList = this.populateAchievementTypeList();
+    this.populateAchievementTypeList();
     this.clearForm();
     this.typeChanged();
     this.submitted = false;
@@ -315,7 +314,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   }
 
   showUpdateModal(achievement) {
-    this.achievementTypeList = this.populateAchievementTypeList(achievement);
+    this.populateAchievementTypeList(achievement);
     this.populateForm(achievement);
     this.typeChanged();
     this.submitted = false;

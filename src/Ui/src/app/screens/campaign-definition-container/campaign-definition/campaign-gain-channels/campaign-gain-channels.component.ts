@@ -9,6 +9,7 @@ import {Subject, take, takeUntil} from "rxjs";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
+import {UtilityService} from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-campaign-gain-channels',
@@ -26,6 +27,8 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
   formGroup: FormGroup;
   submitted = false;
 
+  dropdownSettings = this.utilityService.dropdownSettings;
+
   channelCodeList: DropdownListModel[];
 
   id: any;
@@ -38,6 +41,7 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
+              private utilityService: UtilityService,
               private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
