@@ -4,6 +4,7 @@ using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Branch;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -123,9 +124,9 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ParticipationTypeEntity>(CacheKeys.ParticipationType);
         }
-        public Task<BaseResponse<List<ParameterDto>>> GetCredentialTypeListAsync()
+        public Task<BaseResponse<List<ParameterDto>>> GetRoleTypeListAsync()
         {
-            return GetListAsync<CredentialTypeEntity>(CacheKeys.CredentialTypeList);
+            return GetListAsync<RoleTypeEntity>(CacheKeys.RoleTypeList);
         }
         public Task<BaseResponse<List<ParameterDto>>> GetModuleTypeListAsync()
         {
@@ -135,6 +136,50 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ProcessTypeEntity>(CacheKeys.ProcessTypeList);
         }
+        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync()
+        {
+            return GetListAsync<UserRoleEntity>(CacheKeys.AllUsersRoleList);
+        }
+
+        public async Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId)
+        {
+            List<ParameterDto> result = null;
+            var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.AllUsersRoleList);
+            if (!string.IsNullOrEmpty(cache)) 
+            { 
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
+                if(result != null)
+                    result = result.Where(x=>x.Code == userId).ToList();
+            }  
+            else
+            {
+                result = _unitOfWork.GetRepository<UserRoleEntity>()
+                    .GetAll()
+                    .Where(x=>x.UserId == userId && !x.IsDeleted)
+                    .Select(x => _mapper.Map<ParameterDto>(x))
+                    .ToList();
+            }
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
+        }
+        public async Task<BaseResponse<List<RoleAuthorizationDto>>> GetRoleAuthorizationListAsync()
+        {
+            List<RoleAuthorizationDto> result = null;
+            string cacheKey = CacheKeys.RoleAuthorizationList;
+            var cache = await _redisDatabaseProvider.GetAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cache))
+                result = JsonConvert.DeserializeObject<List<RoleAuthorizationDto>>(cache);
+            else
+            {
+                result = _unitOfWork.GetRepository<RoleAuthorizationEntity>().GetAll()
+                                                    .Select(x => _mapper.Map<RoleAuthorizationDto>(x))
+                                                    .ToList();
+                var value = JsonConvert.SerializeObject(result);
+                await _redisDatabaseProvider.SetAsync(cacheKey, value);
+            }
+            return await BaseResponse<List<RoleAuthorizationDto>>.SuccessAsync(result);
+        }
+
+
 
         public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
         {

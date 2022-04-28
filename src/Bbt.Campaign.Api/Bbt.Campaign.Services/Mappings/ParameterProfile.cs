@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Public.Dtos;
+using Bbt.Campaign.Public.Dtos.Authorization;
 
 namespace Bbt.Campaign.Services.Mappings
 {
@@ -26,6 +27,12 @@ namespace Bbt.Campaign.Services.Mappings
             CreateMap<ParameterDto, TargetViewTypeEntity>().ReverseMap();
             CreateMap<ParameterDto, VerificationTimeEntity>().ReverseMap();
             CreateMap<ParameterDto, ParticipationTypeEntity>().ReverseMap();
+
+            CreateMap<ParameterDto, RoleTypeEntity>().ReverseMap();
+            CreateMap<ParameterDto, UserRoleEntity>().ReverseMap();
+            CreateMap<ParameterDto, ModuleTypeEntity>().ReverseMap();
+            CreateMap<ParameterDto, ProcessTypeEntity>().ReverseMap();
+            CreateMap<RoleAuthorizationDto, RoleAuthorizationEntity>().ReverseMap();
         }
     }
 }

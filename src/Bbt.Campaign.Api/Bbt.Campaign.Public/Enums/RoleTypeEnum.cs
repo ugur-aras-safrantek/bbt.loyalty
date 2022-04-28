@@ -2,7 +2,7 @@
 
 namespace Bbt.Campaign.Public.Enums
 {
-    public enum CredentialTypeEnum
+    public enum RoleTypeEnum
     {
         [Description("isLoyaltyCreator")]
         IsLoyaltyCreator = 1,

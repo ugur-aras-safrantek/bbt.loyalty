@@ -182,8 +182,6 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
-        
-
         /// <summary>
         /// Returns Join participation type list.
         /// </summary>
@@ -195,6 +193,82 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _parameterService.GetParticipationTypeListAsync();
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns role type list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-role-types")]
+        public async Task<IActionResult> GetRoleTypeListAsync()
+        {
+            var result = await _parameterService.GetRoleTypeListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns role module list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-module-types")]
+        public async Task<IActionResult> GetModuleTypeListAsync()
+        {
+            var result = await _parameterService.GetModuleTypeListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns role process list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-process-types")]
+        public async Task<IActionResult> GetProcessTypeListAsync()
+        {
+            var result = await _parameterService.GetProcessTypeListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the roles of the all users.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-all-users-role-list")]
+        public async Task<IActionResult> GetAllUsersRoleListAsync()
+        {
+            var result = await _parameterService.GetAllUsersRoleListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the roles of the all users.
+        /// </summary>
+        /// <param name="userId">Record Id of the user</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-single-user-role-list")]
+        public async Task<IActionResult> GetSingleUserRoleListAsync(string userId)
+        {
+            var result = await _parameterService.GetSingleUserRoleListAsync(userId);
+            return Ok(result);
+        }
+
+
+
+        /// <summary>
+        /// Returns the role authorization list.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-role-authorization-list")]
+        public async Task<IActionResult> GetRoleAuthorizationListAsync()
+        {
+            var result = await _parameterService.GetRoleAuthorizationListAsync();
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// Returns Branch list.

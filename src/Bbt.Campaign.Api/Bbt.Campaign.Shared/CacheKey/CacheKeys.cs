@@ -51,14 +51,16 @@
 
 
 
-        public const string CredentialTypeList = "CredentialTypeList";
+        public const string RoleTypeList = "RoleTypeList";
 
         public const string ModuleTypeList = "ModuleTypeList";
 
         public const string ProcessTypeList = "ProcessTypeList";
 
-        public const string UserCredentialList = "UserCredentialList";
+        public const string AllUsersRoleList = "AllUsersRoleList";
 
-        public const string CredentialAuthorizationList = "CredentialAuthorizationList";
+        //public const string SingleUserRoleList = "SingleUserRoleList";
+
+        public const string RoleAuthorizationList = "RoleAuthorizationList";
     }
 }

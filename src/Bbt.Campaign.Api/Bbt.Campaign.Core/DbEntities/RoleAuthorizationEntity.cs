@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CredentialAuthorizationEntity : AuditableEntity
+    public class RoleAuthorizationEntity : AuditableEntity
     {
-        [ForeignKey("CredentialType")]
-        public int CredentialTypeId { get; set; }
-        public CredentialTypeEntity CredentialType { get; set; }
+        [ForeignKey("RoleType")]
+        public int RoleTypeId { get; set; }
+        public RoleTypeEntity RoleType { get; set; }
 
         [ForeignKey("ModuleType")]
         public int ModuleTypeId { get; set; }

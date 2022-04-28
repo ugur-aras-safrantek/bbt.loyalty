@@ -1,6 +1,6 @@
 ﻿using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Branch;
+using Bbt.Campaign.Public.Dtos.Authorization;
 
 namespace Bbt.Campaign.Services.Services.Parameter
 {
@@ -27,11 +27,15 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetVerificationTimeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetAchievementTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetParticipationTypeListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetRoleTypeListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetModuleTypeListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetProcessTypeListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync();
+        public Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId);
+        public Task<BaseResponse<List<RoleAuthorizationDto>>> GetRoleAuthorizationListAsync();
 
         public Task<BaseResponse<List<ParameterDto>>> GetBranchSelectDateListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetChannelCodeSelectDateListAsync();
-
-
         public Task<string> GetServiceData(string serviceUrl);
 
     }

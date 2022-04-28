@@ -13,6 +13,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public int TargetGroupId { get; set; }
         public int TargetOperationId { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
         public string Name { get; set; }
         public string Title { get; set; }
         public int TargetSourceId { get; set; }

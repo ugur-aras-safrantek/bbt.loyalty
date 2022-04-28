@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class UserCredentialEntity : AuditableEntity
+    public class UserRoleEntity : AuditableEntity
     {
         [Required]
         public string UserId { get; set; }
 
-        [ForeignKey("CredentialType")]
-        public int CredentialTypeId { get; set; }
-        public CredentialTypeEntity CredentialType { get; set; }
+        [ForeignKey("RoleType")]
+        public int RoleTypeId { get; set; }
+        public RoleTypeEntity RoleType { get; set; }
     }
 }

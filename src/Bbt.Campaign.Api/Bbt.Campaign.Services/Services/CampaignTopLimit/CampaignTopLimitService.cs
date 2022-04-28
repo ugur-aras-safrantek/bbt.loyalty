@@ -2,6 +2,7 @@
 using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
+using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignDocument;
@@ -195,7 +196,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             response.CurrencyList = (await _parameterService.GetCurrencyListAsync())?.Data;
             response.AchievementFrequencyList = (await _parameterService.GetAchievementFrequencyListAsync())?.Data;
-            response.CampaignList = (await _campaignService.GetParameterListAsync())?.Data;
+            response.CampaignList = 
+                _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.IsActive && !x.IsDeleted).Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
 
         public async Task<BaseResponse<List<TopLimitDto>>> GetListAsync()

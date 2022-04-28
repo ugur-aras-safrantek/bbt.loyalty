@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CredentialTypeEntity : AuditableEntity
+    public class RoleTypeEntity : AuditableEntity
     {
         [MaxLength(100), Required]
         public string Name { get; set; }
