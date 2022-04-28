@@ -9,14 +9,15 @@
           <form [formGroup]="formGroup">
             <div class="row">
               <div class="col form-group">
-                <label for="campaignChannelCodeList">Kazanım Kanalı</label>
-                <select class="form-select" multiple
-                        name="campaignChannelCodeList" id="campaignChannelCodeList"
-                        formControlName="campaignChannelCodeList"
-                        [ngClass]="{ 'is-invalid': submitted && f.campaignChannelCodeList.invalid }">
-                  <option *ngFor="let i of channelCodeList"
-                          [value]="i">{{i}}</option>
-                </select>
+                <label>Kazanım Kanalı</label>
+                <ng-multiselect-dropdown
+                  [class]="{ 'is-invalid': submitted && f.campaignChannelCodeList.invalid }"
+                  [placeholder]="'Seçiniz...'"
+                  [settings]="dropdownSettings"
+                  [data]="channelCodeList"
+                  formControlName="campaignChannelCodeList"
+                >
+                </ng-multiselect-dropdown>
                 <div *ngIf="submitted && f.campaignChannelCodeList.errors" class="invalid-feedback">
                   <div *ngIf="f.campaignChannelCodeList.errors.required">Kazanım Kanalı seçilmelidir.</div>
                 </div>
