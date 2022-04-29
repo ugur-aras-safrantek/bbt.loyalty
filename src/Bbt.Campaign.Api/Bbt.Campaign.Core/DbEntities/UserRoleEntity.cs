@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class UserRoleEntity : AuditableEntity
+    public class UserRoleEntity 
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required]
         public string UserId { get; set; }
 

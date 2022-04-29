@@ -10,9 +10,9 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
     {
         public UserAuthorizationDto() 
         {
-            ProcessList = new List<int>();
+            AuthorizationList = new List<int>();
         }
         public int ModuleId { get; set; }
-        public List<int> ProcessList { get; set; }
+        public List<int> AuthorizationList { get; set; }
     }
 }

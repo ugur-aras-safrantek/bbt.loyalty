@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
@@ -25,10 +26,14 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
         public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request) 
         {
-            if (string.IsNullOrEmpty(request.Roles))
-                throw new Exception("Kullanıcı rollerini giriniz.");
+            if (!StaticValues.IsDevelopment) 
+            {
+                //servisten user roller çekilecek
+                string userRoles = "";
+                await UpdateUserRoles(request.UserId, userRoles);
+            }
 
-            await UpdateUserRoles(request.UserId, request.Roles);
+                
 
             List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
             //List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
@@ -61,6 +66,19 @@ namespace Bbt.Campaign.Services.Services.Authorization
             return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
         }
 
+        public async Task<BaseResponse<List<UserRoleDto>>> UpdateUserRolesDevelopmentAsync(string userId, string userRoles) 
+        {
+            if (!StaticValues.IsDevelopment)
+                throw new Exception("Bu işlem sadece development ortamı için kullanılabilir.");
+
+            await UpdateUserRoles(userId, userRoles);
+
+            List<UserRoleDto> userRoleList = new List<UserRoleDto>();
+
+            return await BaseResponse<List<UserRoleDto>>.SuccessAsync(userRoleList);
+        }
+
+
         private async Task UpdateUserRoles(string userId, string userRoles) 
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
@@ -70,24 +88,32 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             if (allUsersRoleList == null)
                 allUsersRoleList = new List<ParameterDto>();
-            
-            if (StaticValues.IsDevelopment)
-            {
 
-                List<string> userRoleStrList = userRoles.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                foreach (string roleName in userRoleStrList)
-                {
-                    var roleType = roleTypeList.Where(x => x.Name == roleName).FirstOrDefault();
-                    if (roleType != null)
-                    {
-                        userRoleList.Add(Convert.ToInt32(roleType.Code));
-                    }
-                }
-            }
-            else
-            {
+            allUsersRoleList = allUsersRoleList.Where(x => x.Code != userId).ToList();
 
+            //remove user roles in database
+            foreach (var itemRemove in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
+            {
+                await _unitOfWork.GetRepository<UserRoleEntity>().DeleteAsync(itemRemove);
             }
+
+            List<string> userRoleStrList = userRoles.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (string roleName in userRoleStrList)
+            {
+                var roleType = roleTypeList.Where(x => x.Name == roleName.Trim()).FirstOrDefault();
+                if (roleType == null)
+                    throw new Exception("Rol bilgisi hatalı.");
+
+                await _unitOfWork.GetRepository<UserRoleEntity>().AddAsync(new UserRoleEntity() 
+                { 
+                    UserId = userId,
+                    RoleTypeId = roleType.Id
+                });
+
+                allUsersRoleList.Add(new ParameterDto() { Id=1, Code=userId, Name= roleType.Id.ToString() });
+            }
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

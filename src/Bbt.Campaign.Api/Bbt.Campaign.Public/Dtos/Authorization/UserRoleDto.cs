@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Dtos.Authorization
 {
-    public class RoleAuthorizationDto
+    public class UserRoleDto
     {
+        public int Id { get; set; }
+        public string UserId { get; set; }
         public int RoleTypeId { get; set; }
-        public int ModuleTypeId { get; set; }
-        public int AuthorizationTypeId { get; set; }
     }
 }

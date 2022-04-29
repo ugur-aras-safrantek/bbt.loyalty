@@ -219,14 +219,14 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns role process list.
+        /// Returns authorization type list.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-process-types")]
-        public async Task<IActionResult> GetProcessTypeListAsync()
+        [Route("get-authorization-types")]
+        public async Task<IActionResult> GetAuthorizationTypeListAsync()
         {
-            var result = await _parameterService.GetProcessTypeListAsync();
+            var result = await _parameterService.GetAuthorizationTypeListAsync();
             return Ok(result);
         }
 

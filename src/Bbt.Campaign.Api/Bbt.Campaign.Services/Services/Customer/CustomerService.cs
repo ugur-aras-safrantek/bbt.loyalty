@@ -212,6 +212,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var campaignList = campaignQuery.Select(x => new CampaignMinDto
             {
                 Id = x.Id,
+                Name = x.Name,
                 TitleEn = x.TitleEn,
                 TitleTr = x.TitleTr,
                 CampaignListImageUrl = x.CampaignListImageUrl,
@@ -455,7 +456,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (StaticValues.IsDevelopment)
             {
                 var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                        .GetAll(x => !x.IsDeleted && x.CustomerCode == customerCode)
+                        .GetAll(x => x.CampaignId == campaignId && x.CustomerCode == customerCode && !x.IsDeleted)
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefaultAsync();
                 if (customerJoin != null)
@@ -671,6 +672,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var campaignList = campaignQuery.Select(x => new CampaignMinDto
             {
                 Id = x.Id,
+                Name = x.Name,
                 TitleEn = x.TitleEn,
                 TitleTr = x.TitleTr,
                 CampaignListImageUrl = x.CampaignListImageUrl,

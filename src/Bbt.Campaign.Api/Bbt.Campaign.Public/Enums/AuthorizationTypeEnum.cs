@@ -3,7 +3,7 @@
 
 namespace Bbt.Campaign.Public.Enums
 {
-    public enum ProcessTypeEnum
+    public enum AuthorizationTypeEnum
     {
         [Description("Yeni Kayıt")]
         Insert = 1,

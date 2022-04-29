@@ -172,34 +172,34 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new ModuleTypeEntity() { Id = 4, Name = "Report",   Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
 
-            modelBuilder.Entity<ProcessTypeEntity>().HasData(
-               new ProcessTypeEntity() { Id = 1, Name = "Insert", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new ProcessTypeEntity() { Id = 2, Name = "Update", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new ProcessTypeEntity() { Id = 3, Name = "View",   Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new ProcessTypeEntity() { Id = 4, Name = "Approve", Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            modelBuilder.Entity<AuthorizationTypeEntity>().HasData(
+               new AuthorizationTypeEntity() { Id = 1, Name = "Insert", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new AuthorizationTypeEntity() { Id = 2, Name = "Update", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new AuthorizationTypeEntity() { Id = 3, Name = "View",   Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new AuthorizationTypeEntity() { Id = 4, Name = "Approve", Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
 
             modelBuilder.Entity<RoleAuthorizationEntity>().HasData(
                //isLoyaltyCreator
-               new RoleAuthorizationEntity() { Id = 1, RoleTypeId = 1, ModuleTypeId = 1, ProcessTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 2, RoleTypeId = 1, ModuleTypeId = 1, ProcessTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 3, RoleTypeId = 1, ModuleTypeId = 2, ProcessTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 4, RoleTypeId = 1, ModuleTypeId = 2, ProcessTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 5, RoleTypeId = 1, ModuleTypeId = 3, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 6, RoleTypeId = 1, ModuleTypeId = 4, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 1, RoleTypeId = 1, ModuleTypeId = 1, AuthorizationTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 2, RoleTypeId = 1, ModuleTypeId = 1, AuthorizationTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 3, RoleTypeId = 1, ModuleTypeId = 2, AuthorizationTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 4, RoleTypeId = 1, ModuleTypeId = 2, AuthorizationTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 5, RoleTypeId = 1, ModuleTypeId = 3, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 6, RoleTypeId = 1, ModuleTypeId = 4, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                //isLoyaltyApprover
-               new RoleAuthorizationEntity() { Id = 7, RoleTypeId = 2, ModuleTypeId = 1, ProcessTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 8, RoleTypeId = 2, ModuleTypeId = 2, ProcessTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 7, RoleTypeId = 2, ModuleTypeId = 1, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 8, RoleTypeId = 2, ModuleTypeId = 2, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                //isLoyaltyReader
-               new RoleAuthorizationEntity() { Id = 9,  RoleTypeId = 3, ModuleTypeId = 1, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 10, RoleTypeId = 3, ModuleTypeId = 2, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 11, RoleTypeId = 3, ModuleTypeId = 3, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 12, RoleTypeId = 3, ModuleTypeId = 4, ProcessTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 9,  RoleTypeId = 3, ModuleTypeId = 1, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 10, RoleTypeId = 3, ModuleTypeId = 2, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 11, RoleTypeId = 3, ModuleTypeId = 3, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 12, RoleTypeId = 3, ModuleTypeId = 4, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                //isLoyaltyRuleCreator
-               new RoleAuthorizationEntity() { Id = 13, RoleTypeId = 4, ModuleTypeId = 3, ProcessTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new RoleAuthorizationEntity() { Id = 14, RoleTypeId = 4, ModuleTypeId = 3, ProcessTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 13, RoleTypeId = 4, ModuleTypeId = 3, AuthorizationTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 14, RoleTypeId = 4, ModuleTypeId = 3, AuthorizationTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                //isLoyaltyRuleApprover
-               new RoleAuthorizationEntity() { Id = 15, RoleTypeId = 5, ModuleTypeId = 3, ProcessTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+               new RoleAuthorizationEntity() { Id = 15, RoleTypeId = 5, ModuleTypeId = 3, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
         }
     }

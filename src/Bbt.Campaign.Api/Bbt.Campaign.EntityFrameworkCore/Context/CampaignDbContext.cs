@@ -122,7 +122,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
 
         public DbSet<RoleTypeEntity> RoleTypes { get; set; }
         public DbSet<ModuleTypeEntity> ModuleTypes { get; set; }
-        public DbSet<ProcessTypeEntity> ProcessTypes { get; set; }
+        public DbSet<AuthorizationTypeEntity> AuthorizationTypes { get; set; }
 
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<RoleAuthorizationEntity> RoleAuthorizations { get; set; }

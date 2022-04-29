@@ -9,5 +9,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
     public interface IAuthorizationservice
     {
         public Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request);
+
+        public Task<BaseResponse<List<UserRoleDto>>> UpdateUserRolesDevelopmentAsync(string userId,string userRoles);
     }
 }

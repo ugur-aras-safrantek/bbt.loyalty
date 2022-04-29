@@ -132,9 +132,9 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ModuleTypeEntity>(CacheKeys.ModuleTypeList);
         }
-        public Task<BaseResponse<List<ParameterDto>>> GetProcessTypeListAsync()
+        public Task<BaseResponse<List<ParameterDto>>> GetAuthorizationTypeListAsync()
         {
-            return GetListAsync<ProcessTypeEntity>(CacheKeys.ProcessTypeList);
+            return GetListAsync<AuthorizationTypeEntity>(CacheKeys.AuthorizationTypeList);
         }
         public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync()
         {
@@ -149,13 +149,13 @@ namespace Bbt.Campaign.Services.Services.Parameter
             { 
                 result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
                 if(result != null)
-                    result = result.Where(x=>x.Code == userId).ToList();
+                    result = result.Where(x => x.Code == userId).ToList();
             }  
             else
             {
                 result = _unitOfWork.GetRepository<UserRoleEntity>()
                     .GetAll()
-                    .Where(x=>x.UserId == userId && !x.IsDeleted)
+                    .Where(x=>x.UserId == userId)
                     .Select(x => _mapper.Map<ParameterDto>(x))
                     .ToList();
             }
@@ -179,7 +179,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
             return await BaseResponse<List<RoleAuthorizationDto>>.SuccessAsync(result);
         }
 
-
+        //public async Task<BaseResponse<List<ParameterDto>>> SetUserRoleAsync(string userId, int[] roleTypeList) 
+        //{
+        //    List<ParameterDto> allUsersRoleList = await GetAllUsersRoleListAsync());
+        //}
 
         public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
         {

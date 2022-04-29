@@ -9,6 +9,7 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
     public class CampaignMinDto
     {
         public int Id { get; set; }
+        public string? Name { get; set; }
         public string? TitleTr { get; set; }
         public string? TitleEn { get; set; }
         public DateTime EndDate { get; set; }

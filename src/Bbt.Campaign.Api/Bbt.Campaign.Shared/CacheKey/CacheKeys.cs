@@ -55,7 +55,7 @@
 
         public const string ModuleTypeList = "ModuleTypeList";
 
-        public const string ProcessTypeList = "ProcessTypeList";
+        public const string AuthorizationTypeList = "AuthorizationTypeList";
 
         public const string AllUsersRoleList = "AllUsersRoleList";
 

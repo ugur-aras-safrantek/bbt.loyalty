@@ -13,9 +13,9 @@ namespace Bbt.Campaign.Core.DbEntities
         public int ModuleTypeId { get; set; }
         public ModuleTypeEntity ModuleType { get; set; }
 
-        [ForeignKey("ProcessType")]
-        public int ProcessTypeId { get; set; }
-        public ProcessTypeEntity ProcessType { get; set; }
+        [ForeignKey("Authorization")]
+        public int AuthorizationTypeId { get; set; }
+        public AuthorizationTypeEntity AuthorizationType { get; set; }
 
     }
 }

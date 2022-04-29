@@ -28,5 +28,19 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(createResult);
         }
 
+        /// <summary>
+        /// Updates roles of the user on development environment
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <param name="userRoles">Roles of the user</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("update-user-roles-development")]
+        public async Task<IActionResult> UpdateUserRolesDevelopmentAsync(string userId, string userRoles)
+        {
+            var createResult = await _authorizationService.UpdateUserRolesDevelopmentAsync(userId, userRoles);
+            return Ok(createResult);
+        }
+
     }
 }
