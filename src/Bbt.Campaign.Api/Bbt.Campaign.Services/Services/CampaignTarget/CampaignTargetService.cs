@@ -306,8 +306,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
                         //remainAmount = (usedAmount > targetAmount) ? 0 : (targetAmount - usedAmount);
                     }
-                    targetGroupDto.TargetAmount = targetAmount;
-                    targetGroupDto.RemainAmount = remainAmount;
+                    //targetGroupDto.TargetAmount = targetAmount;
+                    //targetGroupDto.RemainAmount = remainAmount;
                     targetGroupDto.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
                     targetGroupDto.RemainAmountStr = Helpers.ConvertNullablePriceString(remainAmount);
                 }
@@ -372,11 +372,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
                 .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
-            campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);//removeInvisible
+            campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);
 
             if (!campaignTargetQuery.Any()) return null;
 
-            decimal usedAmount = 100;
+            decimal usedAmount = 1000;
             int usedNumberOfTransaction = 2;
 
             var campaignTargetList = CampaignTargetListData.GetCampaignTargetList(campaignTargetQuery);
@@ -403,44 +403,49 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 if (targetAmount > 0)
                 {
                     decimal remainAmount = (usedAmount > targetAmount) ? 0 : (targetAmount - usedAmount);
-                    targetGroupDto.TargetAmount = targetAmount;
-                    targetGroupDto.RemainAmount = remainAmount;
+                    //targetGroupDto.TargetAmount = targetAmount;
+                    //targetGroupDto.RemainAmount = remainAmount;
                     targetGroupDto.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
+                    targetGroupDto.TargetAmountCurrencyCode = "TRY";
                     targetGroupDto.RemainAmountStr = Helpers.ConvertNullablePriceString(remainAmount);
                 }
 
-                if (usedNumberOfTransaction > 0)
-                {
-                    int remainNumberOfTransaction = 0;
+                //if (usedNumberOfTransaction > 0)
+                //{
+                //    int remainNumberOfTransaction = 0;
 
-                    if (targetNumberOfTransaction > 0)
-                    {
-                        remainNumberOfTransaction = (usedNumberOfTransaction > targetNumberOfTransaction) ? 0 :
-                            (targetNumberOfTransaction - usedNumberOfTransaction);
+                //    if (targetNumberOfTransaction > 0)
+                //    {
+                //        remainNumberOfTransaction = (usedNumberOfTransaction > targetNumberOfTransaction) ? 0 :
+                //            (targetNumberOfTransaction - usedNumberOfTransaction);
 
-                        targetGroupDto.TargetNumberOfTransaction = targetNumberOfTransaction;
-                        //targetGroupDto.RemainNumberOfTransaction = remainNumberOfTransaction;
-                    }
-                }
+                //        //targetGroupDto.TargetNumberOfTransaction = targetNumberOfTransaction;
+                //        //targetGroupDto.RemainNumberOfTransaction = remainNumberOfTransaction;
+                //    }
+                //}
 
                 foreach (var campaignTarget in campaignTargetList.Where(x => x.TargetGroupId == targetGroupId))
                 {
                     int percent = 0;
                     decimal totalAmount = campaignTarget.TotalAmount ?? 0;
                     int numberOfTransaction = campaignTarget.NumberOfTransaction ?? 0;
+                    string usedAmountStr = string.Empty;
+                    string usedAmountCurrencyCode = null;
+                    string remainAmountStr = string.Empty;
 
-                    if (usedAmount > 0 || usedNumberOfTransaction > 0)
+                    if (totalAmount > 0)
                     {
-                        if (usedAmount > 0)
-                        {
-                            if (totalAmount > 0)
-                                percent = (usedAmount > targetAmount) ? 100 : ((int)(usedAmount / targetAmount) * 100);
-                        }
-                        else
-                        {
-                            if (numberOfTransaction > 0)
-                                percent = (usedNumberOfTransaction > numberOfTransaction) ? 100 : ((int)(usedNumberOfTransaction / numberOfTransaction) * 100);
-                        }
+                        usedAmountStr = usedAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(usedAmount);
+                        usedAmountCurrencyCode = "TRY";
+                        remainAmountStr = (usedAmount >= totalAmount) ? "0" : Helpers.ConvertNullablePriceString(totalAmount - usedAmount);
+                        percent = (usedAmount >= totalAmount) ? 100 : (int)((usedAmount / totalAmount) * 100);
+
+                    }
+                    else if (numberOfTransaction > 0)
+                    {
+                        usedAmountStr = usedNumberOfTransaction.ToString();
+                        remainAmountStr = (numberOfTransaction - usedNumberOfTransaction).ToString();
+                        percent = (usedNumberOfTransaction >= numberOfTransaction) ? 100 : (int)(((decimal)usedNumberOfTransaction / (decimal)numberOfTransaction) * 100);
                     }
 
                     targetGroupDto.TargetList.Add(
@@ -448,9 +453,10 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         {
                             Id = campaignTarget.TargetId,
                             Name = campaignTarget.Name,
-                            Code = "",
-                            UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount),
-                            UsedNumberOfTransaction = usedNumberOfTransaction == 0 ? null : usedNumberOfTransaction,
+                            TargetViewTypeId = campaignTarget.TargetViewTypeId,
+                            UsedAmountStr = usedAmountStr,
+                            usedAmountCurrencyCode = usedAmountCurrencyCode,
+                            RemainAmountStr = remainAmountStr,
                             Percent = percent
                         });
                 }

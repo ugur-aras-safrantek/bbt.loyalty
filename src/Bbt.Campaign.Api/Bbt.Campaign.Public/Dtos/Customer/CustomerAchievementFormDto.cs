@@ -8,11 +8,14 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     public class CustomerAchievementFormDto
     {
         public int CampaignId { get; set; }
+        public bool IsAchieved { get; set; }
         public CampaignDto Campaign { get; set; }
-        public decimal? TotalAchievement { get; set; }
+        public string? UsedAmountStr { get; set; }
+        public string? UsedAmountCurrencyCode { get; set; }
         public string? TotalAchievementStr { get; set; }
-        public decimal? PreviousMonthAchievement { get; set; }
+        public string? TotalAchievementCurrencyCode { get; set; }
         public string? PreviousMonthAchievementStr { get; set; }
+        public string? PreviousMonthAchievementCurrencyCode { get; set; }
         public bool IsInvisibleCampaign { get; set; }       
         public CampaignTargetDto CampaignTarget { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }

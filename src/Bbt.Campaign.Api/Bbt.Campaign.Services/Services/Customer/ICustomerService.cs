@@ -11,13 +11,14 @@ namespace Bbt.Campaign.Services.Services.Customer
 {
     public interface ICustomerService
     {
-        public Task<BaseResponse<CustomerCampaignDto>> SetJoin(string customerCode, int campaignId, bool isJoin);
-        public Task<BaseResponse<CustomerCampaignDto>> SetFavorite(string customerCode, int campaignId, bool isFavorite);
+        public Task<BaseResponse<CustomerCampaignDto>> SetJoin(SetJoinRequest request);
+        public Task<BaseResponse<CustomerCampaignDto>> SetFavorite(SetFavoriteRequest request);
         public Task<BaseResponse<CustomerCampaignDto>> DeleteAsync(int id);
         public Task<BaseResponse<CustomerCampaignDto>> GetCustomerCampaignAsync(int id);
         public Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request);
         public Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode);
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewFormAsync(int campaignId, string contentRootPath);
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerJoinFormAsync(int campaignId, string customerCode, string contentRootPath);
+        public Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode);
     }
 }

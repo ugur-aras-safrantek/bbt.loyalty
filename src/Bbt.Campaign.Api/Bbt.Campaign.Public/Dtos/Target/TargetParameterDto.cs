@@ -11,10 +11,13 @@ namespace Bbt.Campaign.Public.Dtos.Target
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-
-        public decimal? UsedAmount { get; set; }
+        public int TargetViewTypeId { get; set; }
+        //public decimal? UsedAmount { get; set; }
         public string? UsedAmountStr { get; set; }
-        public int? UsedNumberOfTransaction { get; set; }
+
+        public string?  usedAmountCurrencyCode { get; set; }
+        public string? RemainAmountStr { get; set; }
+        //public int? UsedNumberOfTransaction { get; set; }
         public int? Percent { get; set; }
     }
 }

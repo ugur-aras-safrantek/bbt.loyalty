@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     public class CustomerCampaignMinListDto
     {
         public int CampaignId { get; set; }
-        public CampaignMinDto Campaign { get; set; } 
+        public CampaignMinDto Campaign { get; set; }       
         public int? Id { get; set; }
         public string CustomerCode { get; set; }                
         public bool IsJoin { get; set; }

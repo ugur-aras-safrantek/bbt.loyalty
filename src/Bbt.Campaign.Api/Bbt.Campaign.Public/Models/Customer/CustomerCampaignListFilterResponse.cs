@@ -15,6 +15,8 @@ namespace Bbt.Campaign.Public.Models.Customer
         {
             CustomerCampaignList = new List<CustomerCampaignMinListDto>();
         }
+
+        public List<int> FavoriteList { get; set; }
         public List<CustomerCampaignMinListDto> CustomerCampaignList { get; set; }
     }
 }

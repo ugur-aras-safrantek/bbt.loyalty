@@ -8,6 +8,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     public class CustomerViewFormMinDto
     {
         public int CampaignId { get; set; }
+        public bool IsContract { get; set; }
         public bool IsInvisibleCampaign { get; set; }
         public bool IsJoin { get; set; }
         public CampaignDto Campaign { get; set; }

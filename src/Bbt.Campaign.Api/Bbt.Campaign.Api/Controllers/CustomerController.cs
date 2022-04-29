@@ -18,29 +18,25 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Adds new customer to a campaign
         /// </summary>
-        /// <param name="customerCode">Code of the customer</param>
-        /// <param name="campaignId">Id of the campaign</param>
-        /// <param name="isJoin">Is joined to campaign</param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("join")]
-        public async Task<IActionResult> SetJoin(string customerCode, int campaignId, bool isJoin)
+        public async Task<IActionResult> SetJoin(SetJoinRequest request)
         {
-            var createResult = await _customerService.SetJoin(customerCode, campaignId, isJoin);
+            var createResult = await _customerService.SetJoin(request);
             return Ok(createResult);
         }
         /// <summary>
         /// Signs the campaign as favorite for the customer
         /// </summary>
-        /// <param name="customerCode">Code of the customer</param>
-        /// <param name="campaignId">Id of the campaign</param>
-        /// <param name="isFavorite">Is favorite or not</param>
+        /// <param name="request">Code of the customer</param>
         /// <returns></returns>
         [HttpPost]
         [Route("favorite")]
-        public async Task<IActionResult> SetFavorite(string customerCode, int campaignId, bool isFavorite)
+        public async Task<IActionResult> SetFavorite(SetFavoriteRequest request)
         {
-            var createResult = await _customerService.SetFavorite(customerCode, campaignId, isFavorite);
+            var createResult = await _customerService.SetFavorite(request);
             return Ok(createResult);
         }
         /// <summary>
@@ -67,6 +63,20 @@ namespace Bbt.Campaign.Api.Controllers
         public async Task<IActionResult> GetCustomerJoinFormAsync(int campaignId, string customerCode)
         {
             var result = await _customerService.GetCustomerJoinFormAsync(campaignId, customerCode, _webHostEnvironment.ContentRootPath);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the form data for customer join success page
+        /// </summary>
+        /// <param name="campaignId">Record Id of the campaign</param>
+        /// <param name="customerCode">Code of the customer</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-join-success-form")]
+        public async Task<IActionResult> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode)
+        {
+            var result = await _customerService.GetCustomerJoinSuccessFormAsync(campaignId, customerCode);
             return Ok(result);
         }
 
