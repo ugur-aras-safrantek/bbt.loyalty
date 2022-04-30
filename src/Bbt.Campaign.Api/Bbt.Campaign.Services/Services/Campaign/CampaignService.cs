@@ -176,6 +176,22 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 .Where(x => x.Id == campaign.Id).FirstOrDefault();
             if (entity != null)
             {
+                if(entity.IsActive && !campaign.IsActive && DateTime.Parse(campaign.EndDate).AddDays(1) > DateTime.UtcNow)
+                {
+                    var campaignTopLimitList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
+                        .GetAll(x => x.CampaignId == campaign.Id && !x.IsDeleted)
+                        .ToListAsync();
+                    foreach(var campaignTopLimit in campaignTopLimitList) 
+                    {
+                        var topLimitEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(campaignTopLimit.TopLimitId);
+                        if(topLimitEntity != null) 
+                        { 
+                            if(topLimitEntity.IsActive)
+                                throw new Exception("Bu kampanya aktif bir çatı limitinde kullanılmaktadır. Pasif yapılamaz.");
+                        }
+                    }
+                }
+
                 if (entity.CampaignDetail == null)
                 {
                     entity.CampaignDetail = await _unitOfWork.GetRepository<CampaignDetailEntity>().AddAsync(new CampaignDetailEntity()
@@ -386,7 +402,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             DateTime endDate = DateTime.Parse(input.EndDate.ToString());
             DateTime now = DateTime.Parse(DateTime.Now.ToShortDateString());
 
-            if (startDate < now)
+            if (campaignId == 0 && startDate < now)
                 throw new Exception("Başlama Tarihi günün tarihinden küçük olamaz.");
             if (endDate < now)
                 throw new Exception("Bitiş Tarihi günün tarihinden küçük olamaz.");

@@ -118,9 +118,30 @@ namespace Bbt.Target.Services.Services.Target
         public async Task<BaseResponse<TargetDto>> UpdateAsync(TargetUpdateRequest Target)
         {
             await CheckValidationAsync(Target);
-            var entity = _unitOfWork.GetRepository<TargetEntity>().GetAllIncluding(x => x.TargetDetail).Where(x => x.Id == Target.Id).FirstOrDefault();
+            var entity = _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll().Where(x => x.Id == Target.Id).FirstOrDefault();
             if (entity != null)
             {
+                if(entity.IsActive && !Target.IsActive) 
+                {
+                    var campaignIdList = await _unitOfWork.GetRepository<CampaignTargetListEntity>()
+                        .GetAll(x => x.TargetId == Target.Id && !x.IsDeleted)
+                        .Select(x=>x.CampaignId)
+                        .ToListAsync();
+                    if(campaignIdList.Any()) 
+                    {
+                        foreach(int campaignId in campaignIdList) 
+                        { 
+                            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+                            if(campaignEntity != null) 
+                            { 
+                                if(campaignEntity.IsActive || campaignEntity.EndDate.AddDays(1) <= DateTime.UtcNow)
+                                    throw new Exception("Bu hedef aktif bir kampanyada kullanılmaktadır. Pasif yapılamaz.");
+                            }
+                        }
+                    }
+                }
+
                 entity.Title= Target.Title;
                 entity.Name= Target.Name;
                 entity.IsActive = Target.IsActive;
@@ -130,7 +151,7 @@ namespace Bbt.Target.Services.Services.Target
                 await _unitOfWork.SaveChangesAsync();
                 return await GetTargetAsync(Target.Id);
             }
-            return await BaseResponse<TargetDto>.FailAsync("Kampanya bulunamadı.");
+            return await BaseResponse<TargetDto>.FailAsync("Hedef bulunamadı.");
         }
 
         async Task CheckValidationAsync(TargetInsertRequest input)
