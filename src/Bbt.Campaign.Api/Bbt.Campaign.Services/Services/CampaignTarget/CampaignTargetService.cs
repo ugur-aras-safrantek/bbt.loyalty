@@ -259,8 +259,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         new TargetParameterDto
                         {
                             Id = campaignTarget.TargetId,
-                            Name = campaignTarget.Name,
+                            Name = campaignTarget.Name, 
                             Code = "",
+                            Title = campaignTarget.Title,
+                            DescriptionTr = campaignTarget.DescriptionTr,
+                            DescriptionEn = campaignTarget.DescriptionEn,
+                            TargetDetailTr = campaignTarget.TargetDetailTr,
+                            TargetDetailEn = campaignTarget.TargetDetailEn,
                         });
                 }
                 campaignTargetDto.TargetGroupList.Add(targetGroupDto);
@@ -453,11 +458,16 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         {
                             Id = campaignTarget.TargetId,
                             Name = campaignTarget.Name,
+                            Title = campaignTarget.Title,
                             TargetViewTypeId = campaignTarget.TargetViewTypeId,
                             UsedAmountStr = usedAmountStr,
                             usedAmountCurrencyCode = usedAmountCurrencyCode,
                             RemainAmountStr = remainAmountStr,
-                            Percent = percent
+                            Percent = percent,
+                            DescriptionTr = campaignTarget.DescriptionTr,
+                            DescriptionEn = campaignTarget.DescriptionEn,
+                            TargetDetailTr = campaignTarget.TargetDetailTr,
+                            TargetDetailEn = campaignTarget.TargetDetailEn,
                         });
                 }
                 campaignTargetDto.TargetGroupList.Add(targetGroupDto);

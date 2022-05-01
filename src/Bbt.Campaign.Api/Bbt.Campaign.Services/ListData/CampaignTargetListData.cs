@@ -30,6 +30,10 @@ namespace Bbt.Campaign.Services.ListData
                 NumberOfTransaction = x.NumberOfTransaction,
                 Query = x.Query,
                 Condition = x.Condition,
+                DescriptionTr = x.DescriptionTr,
+                DescriptionEn = x.DescriptionEn,
+                TargetDetailTr= x.TargetDetailTr,
+                TargetDetailEn = x.TargetDetailEn,
             }).ToList();
 
         }

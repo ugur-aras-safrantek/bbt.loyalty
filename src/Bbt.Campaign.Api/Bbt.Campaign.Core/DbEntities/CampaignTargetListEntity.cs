@@ -24,6 +24,10 @@ namespace Bbt.Campaign.Core.DbEntities
         public decimal? TotalAmount { get; set; }  
         public int? NumberOfTransaction { get; set; } 
         public string? Query { get; set; }
-        public string? Condition { get; set; } 
+        public string? Condition { get; set; }
+        public string? TargetDetailEn { get; set; }
+        public string? TargetDetailTr { get; set; }
+        public string? DescriptionEn { get; set; }
+        public string? DescriptionTr { get; set; }
     }
 }

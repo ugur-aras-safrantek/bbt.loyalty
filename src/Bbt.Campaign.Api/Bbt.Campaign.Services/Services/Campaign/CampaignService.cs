@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Bbt.Campaign.Services.Services.CampaignTopLimit;
 
 namespace Bbt.Campaign.Services.Services.Campaign
 {
@@ -25,12 +26,14 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly ICampaignTopLimitService _campaignTopLimitService;
 
-        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignTopLimitService campaignTopLimitService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _campaignTopLimitService = campaignTopLimitService;
         }
 
         public async Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign)
@@ -176,18 +179,18 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 .Where(x => x.Id == campaign.Id).FirstOrDefault();
             if (entity != null)
             {
-                if(entity.IsActive && !campaign.IsActive && DateTime.Parse(campaign.EndDate).AddDays(1) > DateTime.UtcNow)
+                if(entity.IsActive && !campaign.IsActive && DateTime.Parse(campaign.EndDate) > DateTime.UtcNow.AddDays(-1))
                 {
-                    var campaignTopLimitList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
+                    var topLimitIdList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
                         .GetAll(x => x.CampaignId == campaign.Id && !x.IsDeleted)
+                        .Select(x => x.TopLimitId)
                         .ToListAsync();
-                    foreach(var campaignTopLimit in campaignTopLimitList) 
+                    foreach(int topLimitId in topLimitIdList) 
                     {
-                        var topLimitEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(campaignTopLimit.TopLimitId);
-                        if(topLimitEntity != null) 
+                        if(await _campaignTopLimitService.IsActiveTopLimit(topLimitId)) 
                         { 
-                            if(topLimitEntity.IsActive)
-                                throw new Exception("Bu kampanya aktif bir çatı limitinde kullanılmaktadır. Pasif yapılamaz.");
+                            throw new Exception(@"Pasif hale getirilmek istenen Kampanya, Çatı Limitleri içerisinde bir 
+                                                  adet kampanya ile birlikte tanımlıdır.");
                         }
                     }
                 }
@@ -636,6 +639,16 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
             }
             return isInvisibleCampaign;
+        }
+
+        public async Task<bool> IsActiveCampaign(int campaignId) 
+        {
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı");
+            return  campaignEntity.IsActive && 
+                    campaignEntity.EndDate > DateTime.UtcNow.AddDays(-1) && 
+                    !campaignEntity.IsDeleted;
         }
 
         private async Task<List<int>> GetOrderListAsync(int maxCount) 

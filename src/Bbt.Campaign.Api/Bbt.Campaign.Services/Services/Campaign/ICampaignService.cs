@@ -1,4 +1,5 @@
-﻿using Bbt.Campaign.Public.BaseResultModels;
+﻿using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Models.Campaign;
@@ -22,5 +23,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
         public Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath);
         public Task<GetFileResponse> GetContractFile(int id, string contentRootPath);
         public Task<bool> IsInvisibleCampaign(int campaignId);
+        public Task<bool> IsActiveCampaign(int campaignId);
     }
 }

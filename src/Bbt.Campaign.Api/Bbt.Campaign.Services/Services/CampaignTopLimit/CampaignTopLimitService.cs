@@ -24,14 +24,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
 
-        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
+        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
         }
 
         public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit)
@@ -421,6 +419,14 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 }
             }
 
+        }
+
+        public async Task<bool> IsActiveTopLimit(int id) 
+        {
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(id);
+            if (entity == null)
+                throw new Exception("Çatı Limiti bulunamadı");
+            return entity.IsActive;
         }
     }
 }

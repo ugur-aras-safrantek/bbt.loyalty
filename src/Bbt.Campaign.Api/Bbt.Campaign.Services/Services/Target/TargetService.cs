@@ -10,6 +10,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Public.Models.Target;
 using Bbt.Campaign.Services.FileOperations;
+using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -22,12 +23,14 @@ namespace Bbt.Target.Services.Services.Target
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly ICampaignService _campaignService;
 
-        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _campaignService = campaignService;
         }
 
         public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target)
@@ -131,13 +134,10 @@ namespace Bbt.Target.Services.Services.Target
                     if(campaignIdList.Any()) 
                     {
                         foreach(int campaignId in campaignIdList) 
-                        { 
-                            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-                            if(campaignEntity != null) 
-                            { 
-                                if(campaignEntity.IsActive || campaignEntity.EndDate.AddDays(1) <= DateTime.UtcNow)
-                                    throw new Exception("Bu hedef aktif bir kampanyada kullanılmaktadır. Pasif yapılamaz.");
-                            }
+                        {
+                            bool isActiveCampaign = await _campaignService.IsActiveCampaign(campaignId);
+                            if (isActiveCampaign)
+                                throw new Exception("Pasif hale getirilmek istenen Hedef Tanımı, aktif bir kampanyaya bağlıdır.");
                         }
                     }
                 }
