@@ -39,6 +39,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 await UpdateUserRoles(request.UserId, userRoles);
             }
 
+            await UpdateUserProcessDate(request.UserId);
+
             List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
             if(roleAuthorizationList == null || !roleAuthorizationList.Any()) 
@@ -64,6 +66,16 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
         }
+        public async Task<BaseResponse<LogoutResponse>> LogoutAsync(LogoutRequest request) 
+        {
+            LogoutResponse response = new LogoutResponse();
+
+            await UpdateUserRoles(request.UserId, string.Empty);
+
+            return await BaseResponse<LogoutResponse>.SuccessAsync(response);
+        }
+
+
         public async Task<BaseResponse<List<ParameterDto>>> UpdateUserRolesAsync(string userId, string userRoles) 
         {
             await UpdateUserRoles(userId, userRoles);
@@ -78,13 +90,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
             List<ParameterDto> roleTypeList = (await _parameterService.GetRoleTypeListAsync()).Data;
-            List<ParameterDto> allUsersRoleList = (await _parameterService.GetAllUsersRoleListAsync())?.Data;
-            List<int> userRoleList = new List<int>();
-
-            if (allUsersRoleList == null)
-                allUsersRoleList = new List<ParameterDto>();
-
-            allUsersRoleList = allUsersRoleList.Where(x => x.Code != userId).ToList();
 
             //remove user roles in database
             foreach (var itemRemove in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
@@ -92,6 +97,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 await _unitOfWork.GetRepository<UserRoleEntity>().DeleteAsync(itemRemove);
             }
 
+            List<int> userRoleList = new List<int>();
             List<string> userRoleStrList = userRoles.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach (string roleName in userRoleStrList)
             {
@@ -105,38 +111,82 @@ namespace Bbt.Campaign.Services.Services.Authorization
                     RoleTypeId = roleType.Id
                 });
 
-                allUsersRoleList.Add(new ParameterDto() { Id=1, Code=userId, Name= roleType.Id.ToString() });
+                userRoleList.Add(roleType.Id);  
             }
 
+            //cache kullanıcı rollerinde işlem yapılıyorsa, işlemin bitmesini bekle
+            List<ParameterDto> allUsersRoleListInProgress;
+            while (true) 
+            {
+                allUsersRoleListInProgress = (await _parameterService.GetAllUsersRoleListInProgressAsync())?.Data;
+                bool inProgress = allUsersRoleListInProgress != null && allUsersRoleListInProgress.Count == 1 &&
+                    allUsersRoleListInProgress[0].Name == "1";
+                if (inProgress) 
+                { 
+                    System.Threading.Thread.Sleep(500);
+                }
+                else 
+                {
+                    allUsersRoleListInProgress = new List<ParameterDto>();
+                    allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "1", Name = "1" });
+                    await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
+                    break;
+                }
+            }
+
+            //cache kullanıcı rollerinde güncelle
+            List<ParameterDto> allUsersRoleList = (await _parameterService.GetAllUsersRoleListAsync())?.Data;
+            if (allUsersRoleList == null)
+                allUsersRoleList = new List<ParameterDto>();
+            allUsersRoleList = allUsersRoleList.Where(x => x.Code != userId).ToList();
+            foreach(int roleTypeId in userRoleList)
+                allUsersRoleList.Add(new ParameterDto() { Id = 1, Code = userId, Name = roleTypeId.ToString() });
             var cacheValue = JsonConvert.SerializeObject(allUsersRoleList);
             await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, cacheValue);
+
+            //cache kullanıcı rollerinde işlem yapılmıyor olarak güncelle
+            allUsersRoleListInProgress.Clear();
+            allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "0", Name = "0" });
+            await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
 
             await _unitOfWork.SaveChangesAsync();
         }
         public async Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request) 
         {
             CheckAuthorizationResponse response = new CheckAuthorizationResponse();
-            response.HasAuthorization = await HasAuthorization(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
+            await CheckAuthorizationAsync(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
+            response.HasAuthorization = true; 
             return await BaseResponse<CheckAuthorizationResponse>.SuccessAsync(response);
         }
-        public async Task<bool> HasAuthorization(string userId, int moduleTypeId, int authorizationTypeId)
+        public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId)
         {
-            bool retVal = false;
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
             if (roleAuthorizationList == null || !roleAuthorizationList.Any())
                 throw new Exception("Rol tanımları bulunamadı.");
 
+            // kullanıcı yetkileri
             List<ParameterDto> userRoleList = (await _parameterService.GetSingleUserRoleListAsync(userId))?.Data;
-            if (userRoleList == null)
-                return retVal;
+            if (userRoleList == null || !userRoleList.Any())
+                throw new Exception(StaticFormValues.UnAuthorizedUser);
 
-            roleAuthorizationList = roleAuthorizationList
+            //modul ve işlem bazlı sorgulama
+            List<RoleAuthorizationDto>  userRoleAuthorizationList = roleAuthorizationList
                 .Where(x => userRoleList.Any(p2 => Int32.Parse(p2.Name) == x.RoleTypeId) 
                                                 && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
                 .ToList();
-            retVal = roleAuthorizationList.Any();
+            if (!userRoleAuthorizationList.Any())
+                throw new Exception(StaticFormValues.UnAuthorizedUser);
 
-            return retVal;
+            await UpdateUserProcessDate(userId);
+        }
+        private async Task UpdateUserProcessDate(string userId) 
+        {
+            string cacheKey = string.Format(CacheKeys.UserProcessDate, userId);
+            List<ParameterDto> userProcessDateList = new List<ParameterDto>();
+            DateTime now = DateTime.Now;
+            DateTime processDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
+            userProcessDateList.Add(new ParameterDto() { Id = 1, Code = userId, Name = processDate.ToString() });
+            await _redisDatabaseProvider.SetAsync(cacheKey, JsonConvert.SerializeObject(userProcessDateList));
         }
     }
 }

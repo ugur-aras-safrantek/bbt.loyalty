@@ -141,6 +141,11 @@ namespace Bbt.Campaign.Services.Services.Parameter
             return GetListAsync<UserRoleEntity>(CacheKeys.AllUsersRoleList);
         }
 
+        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync()
+        {
+            return GetListAsync<ParameterDto>(CacheKeys.AllUsersRoleListInProgress);
+        }
+
         public async Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId)
         {
             List<ParameterDto> result = null;

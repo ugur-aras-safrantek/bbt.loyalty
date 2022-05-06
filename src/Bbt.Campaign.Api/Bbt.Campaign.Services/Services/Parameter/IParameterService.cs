@@ -31,6 +31,8 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetModuleTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetAuthorizationTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync();
+
+        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId);
         public Task<BaseResponse<List<RoleAuthorizationDto>>> GetRoleAuthorizationListAsync();
 

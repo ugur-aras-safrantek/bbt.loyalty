@@ -62,5 +62,9 @@
         //public const string SingleUserRoleList = "SingleUserRoleList";
 
         public const string RoleAuthorizationList = "RoleAuthorizationList";
+
+        public const string AllUsersRoleListInProgress = "AllUsersRoleListInProgress";
+
+        public const string UserProcessDate = "{0}_UserProcessDate";
     }
 }
