@@ -8,10 +8,6 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
 {
     public class UserAuthorizationDto
     {
-        public UserAuthorizationDto() 
-        {
-            AuthorizationList = new List<int>();
-        }
         public int ModuleId { get; set; }
         public List<int> AuthorizationList { get; set; }
     }

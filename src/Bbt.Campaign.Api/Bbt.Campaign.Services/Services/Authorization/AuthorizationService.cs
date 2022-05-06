@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Models.Authorization;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
+using Newtonsoft.Json;
 
 namespace Bbt.Campaign.Services.Services.Authorization
 {
@@ -16,12 +19,15 @@ namespace Bbt.Campaign.Services.Services.Authorization
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly IRedisDatabaseProvider _redisDatabaseProvider;
 
-        public AuthorizationService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public AuthorizationService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
+            IRedisDatabaseProvider redisDatabaseProvider)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _redisDatabaseProvider = redisDatabaseProvider;
         }
 
         public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request) 
@@ -33,52 +39,41 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 await UpdateUserRoles(request.UserId, userRoles);
             }
 
-                
-
             List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
-            //List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
-            //List<ParameterDto> roleTypeList = (await _parameterService.GetRoleTypeListAsync()).Data;
-            //List<int> userRoleList = new List<int>();
+            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+            if(roleAuthorizationList == null || !roleAuthorizationList.Any()) 
+                throw new Exception("Rol tanımları bulunamadı.");
+            List<ParameterDto> userRoleList = (await _parameterService.GetSingleUserRoleListAsync(request.UserId))?.Data; 
+            if(userRoleList == null)
+                return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
 
-
-            //if(!userRoleList.Any())
-            //    throw new Exception("Kullanıcı rollerini bulunamadı.");
-
-            //
-
-
-
-            //foreach(int roleTypeId in userRoleList) 
-            //{
-            //    List<int> moduleTypeList = roleAuthorizationList.Where(x=> x.RoleTypeId == roleTypeId)
-            //        .Select(x => x.ModuleTypeId).Distinct().ToList();
-            //    foreach (int moduleTypeId in moduleTypeList) 
-            //    {
-            //        UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
-            //        userAuthorizationDto.ModuleId = moduleTypeId;
-            //        foreach (var roleAuthorization in roleAuthorizationList.Where(x => x.RoleTypeId == roleTypeId && x.ModuleTypeId == moduleTypeId))
-            //            userAuthorizationDto.ProcessList.Add(roleAuthorization.ProcessTypeId);
-
-            //        userAuthorizationList.Add(userAuthorizationDto);
-            //    }
-            //}
+            roleAuthorizationList = roleAuthorizationList.Where(x => userRoleList.Any(p2 => Int32.Parse(p2.Name) == x.RoleTypeId)).ToList();
+            var moduleTypeList = roleAuthorizationList.Select(x=>x.ModuleTypeId).Distinct().ToList();
+            foreach(int moduleTypeId in moduleTypeList) 
+            {
+                UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
+                List<int> authorizationList = new List<int>();
+                foreach(var roleAuthorization in roleAuthorizationList.Where(x=>x.ModuleTypeId == moduleTypeId)) 
+                {
+                    authorizationList.Add(roleAuthorization.AuthorizationTypeId);
+                }
+                userAuthorizationDto.ModuleId = moduleTypeId;
+                userAuthorizationDto.AuthorizationList = authorizationList;
+                userAuthorizationList.Add(userAuthorizationDto);
+            }
 
             return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
         }
-
-        public async Task<BaseResponse<List<UserRoleDto>>> UpdateUserRolesDevelopmentAsync(string userId, string userRoles) 
+        public async Task<BaseResponse<List<ParameterDto>>> UpdateUserRolesAsync(string userId, string userRoles) 
         {
-            if (!StaticValues.IsDevelopment)
-                throw new Exception("Bu işlem sadece development ortamı için kullanılabilir.");
-
             await UpdateUserRoles(userId, userRoles);
 
-            List<UserRoleDto> userRoleList = new List<UserRoleDto>();
+            List<ParameterDto> usersRoleList = (await _parameterService.GetSingleUserRoleListAsync(userId))?.Data;
+            if (usersRoleList == null)
+                usersRoleList = new List<ParameterDto>();
 
-            return await BaseResponse<List<UserRoleDto>>.SuccessAsync(userRoleList);
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(usersRoleList);
         }
-
-
         private async Task UpdateUserRoles(string userId, string userRoles) 
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
@@ -113,7 +108,35 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 allUsersRoleList.Add(new ParameterDto() { Id=1, Code=userId, Name= roleType.Id.ToString() });
             }
 
+            var cacheValue = JsonConvert.SerializeObject(allUsersRoleList);
+            await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, cacheValue);
+
             await _unitOfWork.SaveChangesAsync();
+        }
+        public async Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request) 
+        {
+            CheckAuthorizationResponse response = new CheckAuthorizationResponse();
+            response.HasAuthorization = await HasAuthorization(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
+            return await BaseResponse<CheckAuthorizationResponse>.SuccessAsync(response);
+        }
+        public async Task<bool> HasAuthorization(string userId, int moduleTypeId, int authorizationTypeId)
+        {
+            bool retVal = false;
+            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+            if (roleAuthorizationList == null || !roleAuthorizationList.Any())
+                throw new Exception("Rol tanımları bulunamadı.");
+
+            List<ParameterDto> userRoleList = (await _parameterService.GetSingleUserRoleListAsync(userId))?.Data;
+            if (userRoleList == null)
+                return retVal;
+
+            roleAuthorizationList = roleAuthorizationList
+                .Where(x => userRoleList.Any(p2 => Int32.Parse(p2.Name) == x.RoleTypeId) 
+                                                && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
+                .ToList();
+            retVal = roleAuthorizationList.Any();
+
+            return retVal;
         }
     }
 }

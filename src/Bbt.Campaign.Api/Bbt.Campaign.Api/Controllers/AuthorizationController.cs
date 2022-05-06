@@ -29,16 +29,29 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Updates roles of the user on development environment
+        /// Checks if a user has authorization for the spesific module
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("check-authorization")]
+        public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
+        {
+            var createResult = await _authorizationService.CheckAuthorizationAsync(request);
+            return Ok(createResult);
+        }
+
+        /// <summary>
+        /// Updates roles of the user 
         /// </summary>
         /// <param name="userId">User Id</param>
         /// <param name="userRoles">Roles of the user</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("update-user-roles-development")]
-        public async Task<IActionResult> UpdateUserRolesDevelopmentAsync(string userId, string userRoles)
+        [Route("update-user-roles")]
+        public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
         {
-            var createResult = await _authorizationService.UpdateUserRolesDevelopmentAsync(userId, userRoles);
+            var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
             return Ok(createResult);
         }
 
