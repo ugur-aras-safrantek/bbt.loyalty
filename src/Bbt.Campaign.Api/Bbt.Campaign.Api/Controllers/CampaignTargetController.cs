@@ -31,24 +31,26 @@ namespace Bbt.Campaign.Api.Controllers
         /// Adds campaign targets.(Put 0 between groups)
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add(CampaignTargetInsertRequest request)
+        public async Task<IActionResult> Add(CampaignTargetInsertRequest request, string userid)
         {
-            var createResult = await _campaignTargetService.UpdateAsync(request);
+            var createResult = await _campaignTargetService.UpdateAsync(request, userid);
             return Ok(createResult);
         }
         /// <summary>
         /// Updates campaign targets
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(CampaignTargetInsertRequest request)
+        public async Task<IActionResult> Update(CampaignTargetInsertRequest request, string userid)
         {
-            var result = await _campaignTargetService.UpdateAsync(request);
+            var result = await _campaignTargetService.UpdateAsync(request, userid);
             return Ok(result);
         }
         /// <summary>
@@ -63,9 +65,7 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _campaignTargetService.DeleteAsync(id);
             return Ok(result);
         }
-        
-        
-        
+                
         /// <summary>
         /// Returns the campaign target list
         /// </summary>
@@ -94,24 +94,26 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Returns the form data for insert page
         /// </summary>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm()
+        public async Task<IActionResult> GetInsertForm(string userid)
         {
-            var result = await _campaignTargetService.GetInsertForm();
+            var result = await _campaignTargetService.GetInsertForm(userid);
             return Ok(result);
         }
         /// <summary>
         /// Returns the form data for update page
         /// </summary>
         /// <param name="campaignId"></param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId)
+        public async Task<IActionResult> GetUpdateForm(int campaignId, string userid)
         {
-            var result = await _campaignTargetService.GetUpdateForm(campaignId);
+            var result = await _campaignTargetService.GetUpdateForm(campaignId, userid);
             return Ok(result);
         }
     }

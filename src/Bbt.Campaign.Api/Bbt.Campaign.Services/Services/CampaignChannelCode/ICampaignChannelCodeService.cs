@@ -7,11 +7,12 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 {
     public interface ICampaignChannelCodeService
     {
-        public Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request);
+        public Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, string userid);
+        public Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request, string userid);
 
-        public Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId);
+        public Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, string userid);
 
-        public Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId);
+        public Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid);
 
         public Task<List<string>> GetCampaignChannelCodeList(int campaignId);
     }

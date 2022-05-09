@@ -7,12 +7,13 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 {
     public interface ICampaignAchievementService
     {
-        public Task<BaseResponse<List<CampaignAchievementDto>>> UpdateAsync(CampaignAchievementInsertRequest request);
+        public Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, string userid);
+        public Task<BaseResponse<List<CampaignAchievementDto>>> UpdateAsync(CampaignAchievementInsertRequest request, string userid);
         public Task<BaseResponse<CampaignAchievementDto>> DeleteAsync(int id);
         public Task<BaseResponse<CampaignAchievementDto>> GetCampaignAchievementAsync(int id);
         public Task<List<CampaignAchievementDto>> GetCampaignAchievementListDto(int campaignId);
-        public Task<BaseResponse<CampaignAchievementInsertFormDto>> GetInsertFormAsync(int campaignId);
+        public Task<BaseResponse<CampaignAchievementInsertFormDto>> GetInsertFormAsync(int campaignId, string userid);
         public Task<BaseResponse<List<CampaignAchievementDto>>> GetListAsync();
-        public Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId);
+        public Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid);
     }
 }

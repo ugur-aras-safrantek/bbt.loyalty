@@ -11,6 +11,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
     {
         public Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request);
         public Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request);
+        public Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId);
         public Task<BaseResponse<List<ParameterDto>>> UpdateUserRolesAsync(string userId,string userRoles);
     }
 }

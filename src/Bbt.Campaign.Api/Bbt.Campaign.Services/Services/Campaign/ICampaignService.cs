@@ -9,16 +9,16 @@ namespace Bbt.Campaign.Services.Services.Campaign
 {
     public interface ICampaignService
     {
-        public Task<BaseResponse<CampaignDto>> GetCampaignAsync(int id);
-        public Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign);
-        public Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign);
-        public Task<BaseResponse<List<CampaignDto>>> GetListAsync();
+        public Task<BaseResponse<CampaignDto>> GetCampaignAsync(int id, string userid);
+        public Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, string userid);
+        public Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid);
+        public Task<BaseResponse<List<CampaignDto>>> GetListAsync(string userid);
         public Task<BaseResponse<List<ParameterDto>>> GetParameterListAsync();
-        public Task<BaseResponse<CampaignDto>> DeleteAsync(int id);
-        public Task<BaseResponse<CampaignInsertFormDto>> GetInsertFormAsync();
-        public Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id, string contentRootPath);
-        public Task<BaseResponse<CampaignListFilterResponse>> GetByFilterAsync(CampaignListFilterRequest request);
-        public Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request);
+        public Task<BaseResponse<CampaignDto>> DeleteAsync(int id, string userid);
+        public Task<BaseResponse<CampaignInsertFormDto>> GetInsertFormAsync(string userid);
+        public Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id, string contentRootPath, string userid);
+        public Task<BaseResponse<CampaignListFilterResponse>> GetByFilterAsync(CampaignListFilterRequest request, string userid);
+        public Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request, string userid);
         public Task<CampaignDto> GetCampaignDtoAsync(int id);
         public Task<BaseResponse<GetFileResponse>> GetContractFileAsync(int id, string contentRootPath);
         public Task<GetFileResponse> GetContractFile(int id, string contentRootPath);

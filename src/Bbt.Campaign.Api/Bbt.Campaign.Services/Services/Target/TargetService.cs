@@ -10,6 +10,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Public.Models.Target;
 using Bbt.Campaign.Services.FileOperations;
+using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
@@ -24,20 +25,28 @@ namespace Bbt.Target.Services.Services.Target
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
+        private readonly IAuthorizationservice _authorizationservice;
+        private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
+        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
+            _authorizationservice = authorizationservice;
         }
 
-        public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target)
+        public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationAsync(Target);
 
             var entity = _mapper.Map<TargetEntity>(Target);
+            entity.CreatedBy = userid;
             entity.IsApproved = false;
             entity.IsDraft = true;
             entity = await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
@@ -118,8 +127,12 @@ namespace Bbt.Target.Services.Services.Target
             return await BaseResponse<List<TargetDto>>.SuccessAsync(mappedTargets);
         }
 
-        public async Task<BaseResponse<TargetDto>> UpdateAsync(TargetUpdateRequest Target)
+        public async Task<BaseResponse<TargetDto>> UpdateAsync(TargetUpdateRequest Target, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationAsync(Target);
             var entity = _unitOfWork.GetRepository<TargetEntity>()
                 .GetAll().Where(x => x.Id == Target.Id).FirstOrDefault();
@@ -145,6 +158,7 @@ namespace Bbt.Target.Services.Services.Target
                 entity.Title= Target.Title;
                 entity.Name= Target.Name;
                 entity.IsActive = Target.IsActive;
+                entity.LastModifiedBy = userid;
                 entity.IsApproved = false;
                 entity.IsDraft = true; 
                 await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(entity);
@@ -162,8 +176,12 @@ namespace Bbt.Target.Services.Services.Target
             //file eklenmeli
         }
 
-        public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request)
+        public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var response = new TargetListFilterResponse();
             try 
             {
@@ -187,8 +205,12 @@ namespace Bbt.Target.Services.Services.Target
             } 
         }
 
-        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(TargetListFilterRequest request)
+        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(TargetListFilterRequest request, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var response = new GetFileResponse();
 
             try 

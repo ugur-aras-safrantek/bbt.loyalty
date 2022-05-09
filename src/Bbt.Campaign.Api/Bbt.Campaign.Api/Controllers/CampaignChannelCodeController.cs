@@ -13,17 +13,32 @@ namespace Bbt.Campaign.Api.Controllers
         {
             _campaignChannelCodeService = campaignChannelCodeService;
         }
+        /// <summary>
+        /// Adds new campaign channel code list
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="userid">User Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("add")]
+        public async Task<IActionResult> Add(CampaignChannelCodeUpdateRequest request, string userid)
+        {
+            var result = await _campaignChannelCodeService.UpdateAsync(request, userid);
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// Updates campaign channel code list
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(CampaignChannelCodeUpdateRequest request)
+        public async Task<IActionResult> Update(CampaignChannelCodeUpdateRequest request, string userid)
         {
-            var result = await _campaignChannelCodeService.UpdateAsync(request);
+            var result = await _campaignChannelCodeService.UpdateAsync(request, userid);
             return Ok(result);
         }
 
@@ -31,12 +46,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for insert page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(int campaignId)
+        public async Task<IActionResult> GetInsertForm(int campaignId, string userid)
         {
-            var result = await _campaignChannelCodeService.GetInsertFormAsync(campaignId);
+            var result = await _campaignChannelCodeService.GetInsertFormAsync(campaignId, userid);
             return Ok(result);
         }
 
@@ -44,12 +60,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for update page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId)
+        public async Task<IActionResult> GetUpdateForm(int campaignId, string userid)
         {
-            var result = await _campaignChannelCodeService.GetUpdateFormAsync(campaignId);
+            var result = await _campaignChannelCodeService.GetUpdateFormAsync(campaignId, userid);
             return Ok(result);
         }
 

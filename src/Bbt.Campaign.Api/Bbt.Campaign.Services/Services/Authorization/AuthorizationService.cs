@@ -39,7 +39,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 await UpdateUserRoles(request.UserId, userRoles);
             }
 
-            await UpdateUserProcessDate(request.UserId);
+            //await UpdateUserProcessDate(request.UserId);
 
             List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
@@ -116,23 +116,23 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             //cache kullanıcı rollerinde işlem yapılıyorsa, işlemin bitmesini bekle
             List<ParameterDto> allUsersRoleListInProgress;
-            while (true) 
-            {
-                allUsersRoleListInProgress = (await _parameterService.GetAllUsersRoleListInProgressAsync())?.Data;
-                bool inProgress = allUsersRoleListInProgress != null && allUsersRoleListInProgress.Count == 1 &&
-                    allUsersRoleListInProgress[0].Name == "1";
-                if (inProgress) 
-                { 
-                    System.Threading.Thread.Sleep(500);
-                }
-                else 
-                {
-                    allUsersRoleListInProgress = new List<ParameterDto>();
-                    allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "1", Name = "1" });
-                    await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
-                    break;
-                }
-            }
+            //while (true) 
+            //{
+            //    allUsersRoleListInProgress = (await _parameterService.GetAllUsersRoleListInProgressAsync())?.Data;
+            //    bool inProgress = allUsersRoleListInProgress != null && allUsersRoleListInProgress.Count == 1 &&
+            //        allUsersRoleListInProgress[0].Name == "1";
+            //    if (inProgress) 
+            //    { 
+            //        System.Threading.Thread.Sleep(500);
+            //    }
+            //    else 
+            //    {
+            //        allUsersRoleListInProgress = new List<ParameterDto>();
+            //        allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "1", Name = "1" });
+            //        await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
+            //        break;
+            //    }
+            //}
 
             //cache kullanıcı rollerinde güncelle
             List<ParameterDto> allUsersRoleList = (await _parameterService.GetAllUsersRoleListAsync())?.Data;
@@ -145,9 +145,9 @@ namespace Bbt.Campaign.Services.Services.Authorization
             await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, cacheValue);
 
             //cache kullanıcı rollerinde işlem yapılmıyor olarak güncelle
-            allUsersRoleListInProgress.Clear();
-            allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "0", Name = "0" });
-            await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
+            //allUsersRoleListInProgress.Clear();
+            //allUsersRoleListInProgress.Add(new ParameterDto() { Id = 1, Code = "0", Name = "0" });
+            //await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, JsonConvert.SerializeObject(allUsersRoleListInProgress));
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -177,7 +177,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             if (!userRoleAuthorizationList.Any())
                 throw new Exception(StaticFormValues.UnAuthorizedUser);
 
-            await UpdateUserProcessDate(userId);
+            //await UpdateUserProcessDate(userId);
         }
         private async Task UpdateUserProcessDate(string userId) 
         {

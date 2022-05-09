@@ -26,17 +26,32 @@ namespace Bbt.Campaign.Api.Controllers
             var adminSektor = await _campaignAchievementService.GetCampaignAchievementAsync(id);
             return Ok(adminSektor);
         }
-       
+
+        /// <summary>
+        /// Adds new campaign Achievement
+        /// </summary>
+        /// <param name="campaignAchievement"></param>
+        /// <param name="userid">User Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("add")]
+        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement, string userid)
+        {
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, userid);
+            return Ok(result);
+        }
+
         /// <summary>
         /// Updates campaign Achievement by Id
         /// </summary>
         /// <param name="campaignAchievement"></param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement)
+        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement, string userid)
         {
-            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement);
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, userid);
             return Ok(result);
         }
         /// <summary>
@@ -68,12 +83,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for insert page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(int campaignId)
+        public async Task<IActionResult> GetInsertForm(int campaignId, string userid)
         {
-            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId);
+            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId, userid);
             return Ok(result);
         }
 
@@ -81,12 +97,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for update page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId)
+        public async Task<IActionResult> GetUpdateForm(int campaignId, string userid)
         {
-            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId);
+            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId, userid);
             return Ok(result);
         }
 

@@ -7,6 +7,7 @@ using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.File;
+using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
@@ -23,25 +24,33 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
+        private readonly IAuthorizationservice _authorizationservice;
+        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
+        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
+            _authorizationservice = authorizationservice;
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule)
+        public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationsAsync(campaignRule, false);
 
             var entity = new CampaignRuleEntity()
             {
                 CampaignId = campaignRule.CampaignId,
                 CampaignStartTermId = campaignRule.StartTermId,
-                JoinTypeId = campaignRule.JoinTypeId
-            };
+                JoinTypeId = campaignRule.JoinTypeId,
+                CreatedBy = userid,
+        };
 
             if (campaignRule.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
@@ -156,8 +165,12 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await BaseResponse<CampaignRuleDto>.SuccessAsync(mappedCampaignRuleDto);
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> UpdateAsync(AddCampaignRuleRequest campaignRule)
+        public async Task<BaseResponse<CampaignRuleDto>> UpdateAsync(AddCampaignRuleRequest campaignRule, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationsAsync(campaignRule, true);
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
@@ -169,13 +182,14 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 .FirstOrDefaultAsync();
 
             if (entity == null) 
-                return await AddAsync(campaignRule);
+                return await AddAsync(campaignRule, userid);
 
             int campaignRuleId = entity.Id;
 
 
             entity.CampaignStartTermId = campaignRule.StartTermId;
             entity.JoinTypeId = campaignRule.JoinTypeId;
+            entity.LastModifiedBy = userid;
 
             foreach (var x in entity.Branches)
             {
@@ -310,11 +324,15 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             await _unitOfWork.SaveChangesAsync();
 
-            return await GetCampaignRuleAsync(entity.Id);
+            return await GetCampaignRuleAsync(entity.Id, userid);
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> DeleteAsync(int id)
+        public async Task<BaseResponse<CampaignRuleDto>> DeleteAsync(int id, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetByIdAsync(id);
             if (entity == null)
                 return null;
@@ -322,11 +340,15 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             entity.IsDeleted = true;
             await _unitOfWork.GetRepository<CampaignRuleEntity>().UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await GetCampaignRuleAsync(entity.Id);
+            return await GetCampaignRuleAsync(entity.Id, userid);
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> GetCampaignRuleAsync(int id)
+        public async Task<BaseResponse<CampaignRuleDto>> GetCampaignRuleAsync(int id, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetByIdAsync(id);
             if (campaignRuleEntity != null)
             {
@@ -337,8 +359,12 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return null;
         }
 
-        public async Task<BaseResponse<CampaignRuleInsertFormDto>> GetInsertForm()
+        public async Task<BaseResponse<CampaignRuleInsertFormDto>> GetInsertForm(string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignRuleInsertFormDto response = new CampaignRuleInsertFormDto();
             await FillForm(response);
 
@@ -362,8 +388,12 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await BaseResponse<List<CampaignRuleDto>>.SuccessAsync(campaignRules);
         }
 
-        public async Task<BaseResponse<CampaignRuleUpdateFormDto>> GetUpdateForm(int campaignId)
+        public async Task<BaseResponse<CampaignRuleUpdateFormDto>> GetUpdateForm(int campaignId, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignRuleUpdateFormDto response = new CampaignRuleUpdateFormDto();
             
             await FillForm(response);

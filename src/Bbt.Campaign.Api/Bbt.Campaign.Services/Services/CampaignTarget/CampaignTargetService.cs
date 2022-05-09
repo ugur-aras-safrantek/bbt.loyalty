@@ -10,6 +10,7 @@ using Bbt.Campaign.Public.Dtos.Target.Group;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignTarget;
 using Bbt.Campaign.Services.ListData;
+using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -23,19 +24,45 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
+        private readonly IAuthorizationservice _authorizationservice;
+        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService)
+        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
+            _authorizationservice = authorizationservice;
         }
-
-        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request)
+        public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, string userid) 
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationsAsync(request);
 
+            await Update(request, userid);
+
+            return await this.GetListByCampaignAsync(request.CampaignId);
+        }
+
+        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, string userid)
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+            await CheckValidationsAsync(request);
+
+            await Update(request, userid);
+
+            return await this.GetListByCampaignAsync(request.CampaignId);
+        }
+
+        private async Task Update(CampaignTargetInsertRequest request, string userid) 
+        {
             foreach (var campaignTargetEntityDelete in _unitOfWork.GetRepository<CampaignTargetEntity>()
                 .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted).ToList())
             {
@@ -43,24 +70,24 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             }
 
             string targetListStr = ",";
-            foreach(int targetId in request.TargetList) 
+            foreach (int targetId in request.TargetList)
             {
-                targetListStr += targetId == 0 ? "#" : ("," + targetId.ToString()); 
+                targetListStr += targetId == 0 ? "#" : ("," + targetId.ToString());
             }
 
             string[] targetListArray = targetListStr.Split('#');
-            foreach(string targetIds in targetListArray) 
+            foreach (string targetIds in targetListArray)
             {
                 string[] targetIdsArray = targetIds.Split(',');
-                if(targetIdsArray.Length > 0) 
+                if (targetIdsArray.Length > 0)
                 {
                     TargetGroupEntity targetGroupEntity = new TargetGroupEntity();
                     targetGroupEntity.Name = "";
                     targetGroupEntity = await _unitOfWork.GetRepository<TargetGroupEntity>().AddAsync(targetGroupEntity);
 
-                    foreach(string targetId in targetIdsArray) 
+                    foreach (string targetId in targetIdsArray)
                     {
-                        if (!string.IsNullOrEmpty(targetId)) 
+                        if (!string.IsNullOrEmpty(targetId))
                         {
                             var entity = new CampaignTargetEntity()
                             {
@@ -68,17 +95,16 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                 TargetGroup = targetGroupEntity,
                                 TargetOperationId = (int)TargetOperationsEnum.And,
                                 TargetId = Convert.ToInt32(targetId),
+                                CreatedBy = userid,
                             };
                             await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(entity);
                         }
-                        
+
                     }
                 }
             }
 
             await _unitOfWork.SaveChangesAsync();
-
-            return await this.GetListByCampaignAsync(request.CampaignId);
         }
 
         async Task CheckValidationsAsync(CampaignTargetInsertRequest input) 
@@ -192,8 +218,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return null;
         }
 
-        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm()
+        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignTargetInsertFormDto response = new CampaignTargetInsertFormDto();
 
             await FillForm(response);
@@ -476,8 +506,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto;
         }
 
-        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId)
+        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignTargetUpdateFormDto response = new CampaignTargetUpdateFormDto();
 
             await FillForm(response);

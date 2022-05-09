@@ -6,6 +6,7 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Target.Detail;
+using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Cronos;
@@ -18,20 +19,28 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly IAuthorizationservice _authorizationservice;
+        private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetDetailService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public TargetDetailService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _authorizationservice = authorizationservice;
         }
-        public async Task<BaseResponse<TargetDetailDto>> AddAsync(TargetDetailInsertRequest request)
+        public async Task<BaseResponse<TargetDetailDto>> AddAsync(TargetDetailInsertRequest request, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationAsync(request);
 
             var entity = _mapper.Map<TargetDetailEntity>(request);
 
             entity = await SetChanges(entity);
+            entity.CreatedBy = userid;
 
             entity = await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(entity);
             
@@ -105,8 +114,12 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
         }
 
-        public async Task<BaseResponse<TargetDetailDto>> UpdateAsync(TargetDetailInsertRequest targetDetail)
+        public async Task<BaseResponse<TargetDetailDto>> UpdateAsync(TargetDetailInsertRequest targetDetail, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             await CheckValidationAsync(targetDetail);
 
             var entity = await _unitOfWork.GetRepository<TargetDetailEntity>()
@@ -129,6 +142,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 entity.TargetViewTypeId = targetDetail.TargetViewTypeId;
                 entity.TriggerTimeId = targetDetail.TriggerTimeId;
                 entity.VerificationTimeId = targetDetail.VerificationTimeId;
+                entity.LastModifiedBy = userid;
 
                 entity = await SetChanges(entity);
 
@@ -140,12 +154,16 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             }
             else 
             {
-                return await AddAsync(targetDetail);
+                return await AddAsync(targetDetail, userid);
             }
         }
 
-        public async Task<BaseResponse<TargetDetailInsertFormDto>> GetInsertFormAsync()
+        public async Task<BaseResponse<TargetDetailInsertFormDto>> GetInsertFormAsync(string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             TargetDetailInsertFormDto response = new TargetDetailInsertFormDto();
             await FillForm(response);
 
@@ -160,8 +178,12 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             response.VerificationTimeList = (await _parameterService.GetVerificationTimeListAsync())?.Data;
         }
 
-        public async Task<BaseResponse<TargetDetailUpdateFormDto>> GetUpdateFormAsync(int targetId)
+        public async Task<BaseResponse<TargetDetailUpdateFormDto>> GetUpdateFormAsync(int targetId, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             TargetDetailUpdateFormDto response = new TargetDetailUpdateFormDto();
 
             await FillForm(response);
