@@ -15,5 +15,6 @@ namespace Bbt.Campaign.Core.DbEntities
         [ForeignKey("RoleType")]
         public int RoleTypeId { get; set; }
         public RoleTypeEntity RoleType { get; set; }
+        public DateTime LastProcessDate { get; set; }
     }
 }

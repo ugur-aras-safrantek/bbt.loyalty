@@ -136,19 +136,38 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<AuthorizationTypeEntity>(CacheKeys.AuthorizationTypeList);
         }
-        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync()
+        public async Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync()
         {
-            return GetListAsync<UserRoleEntity>(CacheKeys.AllUsersRoleList);
+            List<ParameterDto> result = new List<ParameterDto>();
+            var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.AllUsersRoleList);
+            if (!string.IsNullOrEmpty(cache))
+            {
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
+            }
+            else
+            {
+                var userRoleList = _unitOfWork.GetRepository<UserRoleEntity>().GetAll().ToList();
+                foreach (var userRole in userRoleList)
+                    result.Add(new ParameterDto() { Id = userRole.Id, Code = userRole.UserId, Name = userRole.RoleTypeId.ToString() });
+
+                var cacheValue = JsonConvert.SerializeObject(result);
+                await _redisDatabaseProvider.SetAsync(CacheKeys.AllUsersRoleList, cacheValue);
+            }
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
 
-        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync()
+        public async Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync(string cacheKey)
         {
-            return GetListAsync<ParameterDto>(CacheKeys.AllUsersRoleListInProgress);
+            List<ParameterDto> result = null;
+            var cache = await _redisDatabaseProvider.GetAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cache))
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
+            return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
 
         public async Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId)
         {
-            List<ParameterDto> result = null;
+            List<ParameterDto> result = new List<ParameterDto>();
             var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.AllUsersRoleList);
             if (!string.IsNullOrEmpty(cache)) 
             { 
@@ -158,13 +177,45 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }  
             else
             {
-                result = _unitOfWork.GetRepository<UserRoleEntity>()
-                    .GetAll()
-                    .Where(x=>x.UserId == userId)
-                    .Select(x => _mapper.Map<ParameterDto>(x))
-                    .ToList();
+                var userRoleList = _unitOfWork.GetRepository<UserRoleEntity>().GetAll().Where(x => x.UserId == userId).ToList();
+                foreach (var userRole in userRoleList)
+                    result.Add(new ParameterDto() { Id = userRole.Id, Code = userRole.UserId, Name = userRole.RoleTypeId.ToString()});
             }
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
+        }
+
+        public async Task<BaseResponse<List<UserRoleDto>>> GetUserRoleListAsync(string userId)
+        {
+            List<UserRoleDto> result = new List<UserRoleDto>();
+            string cacheKey = string.Format(CacheKeys.UserRoleList, userId);
+            var cache = await _redisDatabaseProvider.GetAsync(cacheKey);
+            if (string.IsNullOrEmpty(cache))
+            {
+                return await SetUserRoleListAsync(userId, result);
+            }
+            else
+            {
+                result = JsonConvert.DeserializeObject<List<UserRoleDto>>(cache);
+            }
+            return await BaseResponse<List<UserRoleDto>>.SuccessAsync(result);
+        }
+
+        public async Task<BaseResponse<List<UserRoleDto>>> SetUserRoleListAsync(string userId, List<UserRoleDto> _userRoleList)
+        {
+            string cacheKey = string.Format(CacheKeys.UserRoleList, userId);
+            await _redisDatabaseProvider.RemoveAsync(cacheKey);
+            List<UserRoleDto> userRoleList = _userRoleList;
+            if(!userRoleList.Any()) 
+            {
+                userRoleList = _unitOfWork.GetRepository<UserRoleEntity>().GetAll()
+                    .Where(x => x.UserId == userId).Select(x => _mapper.Map<UserRoleDto>(x)).ToList();
+            }
+            if (userRoleList.Any()) 
+            {
+                var cacheValue = JsonConvert.SerializeObject(userRoleList);
+                await _redisDatabaseProvider.SetAsync(cacheKey, cacheValue);
+            }
+            return await BaseResponse<List<UserRoleDto>>.SuccessAsync(userRoleList);
         }
         public async Task<BaseResponse<List<RoleAuthorizationDto>>> GetRoleAuthorizationListAsync()
         {

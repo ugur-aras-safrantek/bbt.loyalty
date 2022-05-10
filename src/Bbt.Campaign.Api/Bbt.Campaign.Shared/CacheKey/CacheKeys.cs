@@ -66,5 +66,7 @@
         public const string AllUsersRoleListInProgress = "AllUsersRoleListInProgress";
 
         public const string UserProcessDate = "{0}_UserProcessDate";
+
+        public const string UserRoleList = "{0}_UserRoleList";
     }
 }

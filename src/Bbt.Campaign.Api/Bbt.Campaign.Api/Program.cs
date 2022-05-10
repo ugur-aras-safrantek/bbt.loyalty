@@ -25,6 +25,7 @@ StaticValues.IsDevelopment = configuration["IsDevelopment"] == null ? false : Co
 StaticValues.BranchServiceUrl = configuration["ServiceUrl:Branch"];
 StaticValues.ChannelCodeServiceUrl = configuration["ServiceUrl:ChannelCode"];
 StaticValues.ContractServiceUrl = configuration["ServiceUrl:Contract"];
+StaticValues.SessionTimeout = configuration["SessionTimeout"] == null ? 20 : Convert.ToInt32(configuration["SessionTimeout"]);
 
 if (StaticValues.IsDevelopment)
     Bbt.Campaign.Shared.Redis.RedisServer.StartRedis();

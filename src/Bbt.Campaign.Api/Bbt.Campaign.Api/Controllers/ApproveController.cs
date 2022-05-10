@@ -109,12 +109,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the campaign to a new campaign 
         /// </summary>
         /// <param name="campaignId">Record Id of the campaign</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-campaign")]
-        public async Task<IActionResult> CampaignCopyAsync(int campaignId)
+        public async Task<IActionResult> CampaignCopyAsync(int campaignId, string userid)
         {
-            var result = await _approvalService.CampaignCopyAsync(campaignId);
+            var result = await _approvalService.CampaignCopyAsync(campaignId, userid);
             return Ok(result);
         }
 
@@ -122,12 +123,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the top limit information to a new top limit 
         /// </summary>
         /// <param name="topLimitId">Record Id of the top limit </param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-top-limit")]
-        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId)
+        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId, string userid)
         {
-            var result = await _approvalService.TopLimitCopyAsync(topLimitId);
+            var result = await _approvalService.TopLimitCopyAsync(topLimitId, userid);
             return Ok(result);
         }
 
@@ -135,12 +137,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the top target to a new target
         /// </summary>
         /// <param name="targetId">Record Id of the target</param>
+        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-target")]
-        public async Task<IActionResult> TargetCopyAsync(int targetId)
+        public async Task<IActionResult> TargetCopyAsync(int targetId, string userid)
         {
-            var result = await _approvalService.TargetCopyAsync(targetId);
+            var result = await _approvalService.TargetCopyAsync(targetId, userid);
             return Ok(result);
         }
     }

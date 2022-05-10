@@ -14,6 +14,7 @@ using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
+using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
@@ -31,9 +32,13 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly ICampaignService _campaignService;
         private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
+        private readonly IAuthorizationservice _authorizationservice;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignTargetService campaignTargetService)
+            ICampaignService campaignService, 
+            ICampaignRuleService campaignRuleService, 
+            ICampaignTargetService campaignTargetService,
+            IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -41,6 +46,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             _campaignService = campaignService;
             _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
+            _authorizationservice = authorizationservice;
         }
 
         #region campaign
@@ -1214,8 +1220,13 @@ namespace Bbt.Campaign.Services.Services.Approval
         #region copy
 
         //taslak bir kampanya oluşturur
-        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int refId)
+        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int refId, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == refId && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
@@ -1267,8 +1278,13 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
-        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId)
+        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var topLimitDraftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                                                           .GetAll(x => x.Id == refId && x.IsDeleted == false)
                                                           .Include(x => x.TopLimitCampaigns.Where(x=>!x.IsDeleted))
@@ -1309,8 +1325,13 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedTopLimit);
         }
 
-        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId) 
+        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId, string userid) 
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            int moduleTypeId = (int)ModuleTypeEnum.Target;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var targetDraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
                                                               .GetAll(x => x.Id == refId && x.IsDeleted == false)
                                                               .Include(x=>x.TargetDetail)

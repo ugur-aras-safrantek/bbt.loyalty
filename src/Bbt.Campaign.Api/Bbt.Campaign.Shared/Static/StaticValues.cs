@@ -14,5 +14,6 @@
         public static string ChannelCodeServiceUrl { get; set; }
 
         public static string ContractServiceUrl { get; set; }
+        public static int SessionTimeout { get; set; }
     }
 }

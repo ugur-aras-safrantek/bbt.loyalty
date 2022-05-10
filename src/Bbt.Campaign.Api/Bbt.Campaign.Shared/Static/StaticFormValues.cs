@@ -8,6 +8,8 @@ namespace Bbt.Campaign.Shared.Static
 {
     public static class StaticFormValues
     {
-        public static string UnAuthorizedUser = "Kullanıcın bu işlem için yetkisi yoktur.";
+        public static string UnAuthorizedUserAlert = "Kullanıcın bu işlem için yetkisi yoktur.";
+
+        public static string SessionTimeoutAlert = "Oturum kapanmıştır. Lütfen yeniden giriş yapınız.";
     }
 }

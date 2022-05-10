@@ -11,5 +11,6 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
         public int Id { get; set; }
         public string UserId { get; set; }
         public int RoleTypeId { get; set; }
+        public DateTime LastProcessDate { get; set; }
     }
 }

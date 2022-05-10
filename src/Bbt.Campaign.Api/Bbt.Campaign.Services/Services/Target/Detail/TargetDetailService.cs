@@ -83,7 +83,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             return await BaseResponse<TargetDetailDto>.FailAsync("Kampanya bulunamadı.");
         }
 
-        public Task<BaseResponse<TargetDetailListFilterResponse>> GetByFilterAsync(TargetDetailListFilterRequest request)
+        public Task<BaseResponse<TargetDetailListFilterResponse>> GetByFilterAsync(TargetDetailListFilterRequest request, string userid)
         {
             throw new NotImplementedException();
         }

@@ -31,7 +31,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IAuthorizationservice _authorizationservice;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignTopLimitService campaignTopLimitService, IAuthorizationservice authorizationservice)
+        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            ICampaignTopLimitService campaignTopLimitService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

@@ -20,8 +20,8 @@ namespace Bbt.Campaign.Services.Services.Approval
         public Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id);
         public Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int id);
         public Task<BaseResponse<CampaignViewFormDto>> GetCampaignViewFormAsync(int campaignId);
-        public Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId);
-        public Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int topLimitId);
-        public Task<BaseResponse<TargetDto>> TargetCopyAsync(int targetId);
+        public Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId, string userid);
+        public Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int topLimitId, string userid);
+        public Task<BaseResponse<TargetDto>> TargetCopyAsync(int targetId, string userid);
     }
 }
