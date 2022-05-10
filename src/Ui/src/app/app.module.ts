@@ -10,6 +10,8 @@ import {LoginComponent} from "./screens/login/login.component";
 import {DefaultLayoutComponent} from "./layouts/default-layout/default-layout.component";
 import {HeaderComponent} from "./components/header/header.component";
 import {HttpClientModule} from "@angular/common/http";
+import {FormsModule} from "@angular/forms";
+import {SharedModule} from "./modules/shared.module";
 
 registerLocaleData(localeTR);
 
@@ -29,10 +31,13 @@ registerLocaleData(localeTR);
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
     }),
+    FormsModule,
+    SharedModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'tr-TR'}],
   exports: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 }
