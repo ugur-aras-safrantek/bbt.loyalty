@@ -7,6 +7,8 @@ import {saveAs} from 'file-saver';
 import {TargetDefinitionService} from "../../../services/target-definition.service";
 import {TargetDefinitionListRequestModel} from "../../../models/target-definition";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {LoginService} from 'src/app/services/login.service';
+import {UserAuthorizationsModel} from "../../../models/login.model";
 
 @Component({
   selector: 'app-target-definition-list',
@@ -16,6 +18,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 export class TargetDefinitionListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: UserAuthorizationsModel;
 
   columns = [
     {columnName: 'Hedef Tanımı Adı', propertyName: 'name', isBoolean: false, sortDir: null},
@@ -38,9 +42,11 @@ export class TargetDefinitionListComponent implements OnInit {
   };
 
   constructor(private targetDefinitionService: TargetDefinitionService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations();
   }
 
   ngOnInit(): void {

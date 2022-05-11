@@ -7,6 +7,8 @@ import {CampaignLimitsService} from "../../../services/campaign-limits.service";
 import {CampaignLimitsListRequestModel} from 'src/app/models/campaign-limits';
 import {saveAs} from 'file-saver';
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {UserAuthorizationsModel} from "../../../models/login.model";
+import {LoginService} from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-campaign-limits-list',
@@ -16,6 +18,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 export class CampaignLimitsListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: UserAuthorizationsModel;
 
   columns = [
     {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false, sortDir: null},
@@ -45,9 +49,11 @@ export class CampaignLimitsListComponent implements OnInit {
   };
 
   constructor(private campaignLimitsService: CampaignLimitsService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations();
   }
 
   ngOnInit(): void {

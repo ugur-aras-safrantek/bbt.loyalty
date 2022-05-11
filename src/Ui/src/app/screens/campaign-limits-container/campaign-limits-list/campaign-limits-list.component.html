@@ -1,4 +1,5 @@
-<app-main-content blockTitle="Kampanya Çatı Limitleri" route="../create/limit" newButtonText="Yeni Çatı Limiti">
+<app-main-content blockTitle="Kampanya Çatı Limitleri" route="../create/limit" newButtonText="Yeni Çatı Limiti"
+                  [createAuthorization]="currentUserAuthorizations.campaignLimitsModuleAuthorizations?.create || false">
   <app-list (getListEvent)="campaignLimitsListGetByFilter()"
             (downloadExcelFileEvent)="campaignLimitsListGetByFilterExcelFile()">
     <div filterForm class="p-4">
