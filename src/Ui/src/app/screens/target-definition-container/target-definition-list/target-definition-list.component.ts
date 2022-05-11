@@ -19,7 +19,7 @@ import {UserAuthorizationsModel} from "../../../models/login.model";
 export class TargetDefinitionListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  currentUserAuthorizations: UserAuthorizationsModel;
+  currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
 
   columns = [
     {columnName: 'Hedef Tanımı Adı', propertyName: 'name', isBoolean: false, sortDir: null},

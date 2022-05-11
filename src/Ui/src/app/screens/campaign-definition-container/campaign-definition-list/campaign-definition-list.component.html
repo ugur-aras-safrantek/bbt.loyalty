@@ -1,5 +1,5 @@
 <app-main-content blockTitle="Kampanya Tanımı" route="../create/definition" newButtonText="Yeni Kampanya"
-                  [createAuthorization]="currentUserAuthorizations.campaignDefinitionModuleAuthorizations?.create || false">
+                  [createAuthorization]="currentUserAuthorizations.campaignDefinitionModuleAuthorizations.create">
   <app-list (getListEvent)="campaignDefinitionListGetByFilter()"
             (downloadExcelFileEvent)="campaignDefinitionListGetByFilterExcelFile()">
     <div filterForm class="p-4">

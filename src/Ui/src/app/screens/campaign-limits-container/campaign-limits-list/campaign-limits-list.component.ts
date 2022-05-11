@@ -19,7 +19,7 @@ import {LoginService} from 'src/app/services/login.service';
 export class CampaignLimitsListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  currentUserAuthorizations: UserAuthorizationsModel;
+  currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
 
   columns = [
     {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false, sortDir: null},

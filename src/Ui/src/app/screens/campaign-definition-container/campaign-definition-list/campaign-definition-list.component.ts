@@ -20,7 +20,7 @@ import {LoginService} from 'src/app/services/login.service';
 export class CampaignDefinitionListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
-  currentUserAuthorizations: UserAuthorizationsModel;
+  currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
 
   dpOptions: IAngularMyDpOptions = {
     dateRange: false,

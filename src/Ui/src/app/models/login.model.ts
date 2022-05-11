@@ -14,10 +14,10 @@ export interface IAuthorizationModel {
 }
 
 export class AuthorizationModel implements IAuthorizationModel {
-  view: boolean;
-  create: boolean;
-  update: boolean;
-  approve: boolean;
+  view: boolean = false;
+  create: boolean = false;
+  update: boolean = false;
+  approve: boolean = false;
 }
 
 export interface IUserAuthorizationsModel {
@@ -28,8 +28,8 @@ export interface IUserAuthorizationsModel {
 }
 
 export class UserAuthorizationsModel implements IUserAuthorizationsModel {
-  campaignDefinitionModuleAuthorizations: AuthorizationModel;
-  campaignLimitsModuleAuthorizations: AuthorizationModel;
-  targetDefinitionModuleAuthorizations: AuthorizationModel;
-  reportsModuleAuthorizations: AuthorizationModel;
+  campaignDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
+  campaignLimitsModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
+  targetDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
+  reportsModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
 }

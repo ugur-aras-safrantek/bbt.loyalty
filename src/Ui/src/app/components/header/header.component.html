@@ -12,25 +12,33 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent" [attr.aria-expanded]="!isCollapsed"
            [ngClass]="{show: isCollapsed}">
         <ul class="navbar-nav mb-2 mb-lg-0" (click)="isCollapsed = !isCollapsed">
-          <li class="nav-item" *ngIf="currentUserAuthorizations.campaignDefinitionModuleAuthorizations?.view">
-            <a [routerLink]="['campaign-definition']" class="nav-link" aria-current="page" routerLinkActive="active">
-              Kampanya Tanımı
-            </a>
+          <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view">
+              <a [routerLink]="['campaign-definition']" class="nav-link" aria-current="page" routerLinkActive="active">
+                Kampanya Tanımı
+              </a>
+            </app-auth-check>
           </li>
-          <li class="nav-item" *ngIf="currentUserAuthorizations.campaignLimitsModuleAuthorizations?.view">
-            <a [routerLink]="['campaign-limits']" class="nav-link" routerLinkActive="active">
-              Kampanya Çatı Limitleri
-            </a>
+          <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.campaignLimitsModuleAuthorizations.view">
+              <a [routerLink]="['campaign-limits']" class="nav-link" routerLinkActive="active">
+                Kampanya Çatı Limitleri
+              </a>
+            </app-auth-check>
           </li>
-          <li class="nav-item" *ngIf="currentUserAuthorizations.targetDefinitionModuleAuthorizations?.view">
-            <a [routerLink]="['target-definition']" class="nav-link" routerLinkActive="active">
-              Hedef Tanımı
-            </a>
+          <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.targetDefinitionModuleAuthorizations.view">
+              <a [routerLink]="['target-definition']" class="nav-link" routerLinkActive="active">
+                Hedef Tanımı
+              </a>
+            </app-auth-check>
           </li>
-          <li class="nav-item" *ngIf="currentUserAuthorizations.reportsModuleAuthorizations?.view">
-            <a [routerLink]="['']" class="nav-link">
-              Raporlar
-            </a>
+          <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.reportsModuleAuthorizations.view">
+              <a [routerLink]="['']" class="nav-link">
+                Raporlar
+              </a>
+            </app-auth-check>
           </li>
         </ul>
         <div class="sign-out">

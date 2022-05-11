@@ -13,7 +13,7 @@ import {UserAuthorizationsModel} from "../../models/login.model";
 export class HeaderComponent implements OnInit {
   isCollapsed = false;
 
-  currentUserAuthorizations: UserAuthorizationsModel;
+  currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
 
   constructor(private route: ActivatedRoute,
               private router: Router,

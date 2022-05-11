@@ -1,5 +1,5 @@
 <app-main-content blockTitle="Hedef Tanımı" route="../create/definition" newButtonText="Yeni Hedef Tanımı"
-                  [createAuthorization]="currentUserAuthorizations.targetDefinitionModuleAuthorizations?.create || false">
+                  [createAuthorization]="currentUserAuthorizations.targetDefinitionModuleAuthorizations.create">
   <app-list (getListEvent)="targetDefinitionListGetByFilter()"
             (downloadExcelFileEvent)="targetDefinitionListGetByFilterExcelFile()">
     <div filterForm class="p-4">
