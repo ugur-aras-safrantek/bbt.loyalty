@@ -13,33 +13,30 @@ export class LoginService {
   private baseUrl = environment.baseUrl;
 
   private currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
-  private isLogin: boolean = false;
 
   constructor(private httpClient: HttpClient) {
   }
 
   getUserLoginInfo() {
-    return this.isLogin;
+    return JSON.parse(localStorage.getItem('isLogin') || 'false');
   }
 
   getCurrentUserAuthorizations() {
-    // this.currentUserAuthorizations = JSON.parse(localStorage.getItem('currentUserAuthorizations') || '{}');
-    return this.currentUserAuthorizations;
+    return JSON.parse(localStorage.getItem('currentUserAuthorizations') || '{}');
   }
 
   setCurrentUserAuthorizations(userData: any[]) {
-    this.isLogin = true;
     this.currentUserAuthorizations = new UserAuthorizationsModel();
     userData.map(x => {
       this.setAuthorization(x);
     })
     localStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
+    localStorage.setItem('isLogin', 'true');
   }
 
   logout() {
-    this.isLogin = false;
-    this.currentUserAuthorizations = new UserAuthorizationsModel();
     localStorage.removeItem('currentUserAuthorizations');
+    localStorage.removeItem('isLogin');
   }
 
   login(data: LoginRequestModel) {
