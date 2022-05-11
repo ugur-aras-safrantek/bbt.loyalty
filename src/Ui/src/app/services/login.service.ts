@@ -23,6 +23,8 @@ export class LoginService {
   }
 
   setCurrentUserAuthorizations(userData: any[]) {
+    this.currentUserAuthorizations = new UserAuthorizationsModel();
+    this.currentUserAuthorizations.isLogin = true;
     userData.map(x => {
       this.setAuthorization(x);
     })

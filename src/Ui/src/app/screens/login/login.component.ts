@@ -15,11 +15,13 @@ export class LoginComponent implements OnInit {
 
   submitted = false;
   userId = '';
+  returnUrl: string = '';
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private toastrHandleService: ToastrHandleService,
               private loginService: LoginService) {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '';
   }
 
   ngOnInit(): void {
@@ -40,7 +42,7 @@ export class LoginComponent implements OnInit {
             if (!res.hasError && res.data) {
               if (res.data.length > 0) {
                 this.loginService.setCurrentUserAuthorizations(res.data);
-                this.router.navigate(['']);
+                this.router.navigate([this.returnUrl]);
               } else {
                 this.toastrHandleService.warning("Kullanıcı bulunamadı");
               }

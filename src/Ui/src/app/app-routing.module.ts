@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from "./screens/login/login.component";
 import {DefaultLayoutComponent} from "./layouts/default-layout/default-layout.component";
+import {AuthGuard} from './helpers/auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: 'campaign-definition', pathMatch: 'full'},
@@ -20,7 +21,8 @@ const routes: Routes = [
         path: 'target-definition',
         loadChildren: () => import('./screens/target-definition-container/target-definition-container.module').then(m => m.TargetDefinitionContainerModule)
       }
-    ]
+    ],
+    canActivate: [AuthGuard]
   },
   {
     path: 'login', component: LoginComponent
