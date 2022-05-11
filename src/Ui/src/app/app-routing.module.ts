@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from "./screens/login/login.component";
 import {DefaultLayoutComponent} from "./layouts/default-layout/default-layout.component";
-import {AuthGuard} from './helpers/auth.guard';
+import {AuthGuard} from './guards/auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: 'campaign-definition', pathMatch: 'full'},

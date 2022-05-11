@@ -21,7 +21,6 @@ export class AuthorizationModel implements IAuthorizationModel {
 }
 
 export interface IUserAuthorizationsModel {
-  isLogin: boolean;
   campaignDefinitionModuleAuthorizations: IAuthorizationModel;
   campaignLimitsModuleAuthorizations: IAuthorizationModel;
   targetDefinitionModuleAuthorizations: IAuthorizationModel;
@@ -29,7 +28,6 @@ export interface IUserAuthorizationsModel {
 }
 
 export class UserAuthorizationsModel implements IUserAuthorizationsModel {
-  isLogin: boolean = false;
   campaignDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
   campaignLimitsModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
   targetDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
