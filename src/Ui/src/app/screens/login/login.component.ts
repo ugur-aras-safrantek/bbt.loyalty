@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Subject, takeUntil} from 'rxjs';
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {LoginService} from "../../services/login.service";
+import {UserAuthorizationsModel} from "../../models/login.model";
 
 @Component({
   selector: 'app-login',
@@ -42,7 +43,7 @@ export class LoginComponent implements OnInit {
             if (!res.hasError && res.data) {
               if (res.data.length > 0) {
                 this.loginService.setCurrentUserAuthorizations(res.data);
-                this.router.navigate([this.returnUrl]);
+                this.router.navigate([this.setRoute()]);
               } else {
                 this.toastrHandleService.warning("Kullanıcı bulunamadı");
               }
@@ -55,5 +56,22 @@ export class LoginComponent implements OnInit {
           }
         });
     }
+  }
+
+  private setRoute() {
+    if (this.returnUrl == '') {
+      let currentUserAuthorizations: UserAuthorizationsModel = this.loginService.getCurrentUserAuthorizations();
+
+      if (currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view) {
+        this.returnUrl = '/campaign-definition';
+      } else if (currentUserAuthorizations.campaignLimitsModuleAuthorizations.view) {
+        this.returnUrl = '/campaign-limits';
+      } else if (currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
+        this.returnUrl = '/target-definition';
+      } else {
+        this.toastrHandleService.warning("Ekranları görüntüleme yetkiniz bulunmamaktadır.");
+      }
+    }
+    return this.returnUrl;
   }
 }
