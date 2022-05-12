@@ -11,6 +11,8 @@ import {NgxSmartModalService} from 'ngx-smart-modal';
 import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
 import {FormChange} from "../../../models/form-change";
 import {UtilityService} from 'src/app/services/utility.service';
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-limits',
@@ -20,6 +22,8 @@ import {UtilityService} from 'src/app/services/utility.service';
 
 export class CampaignLimitsComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -41,15 +45,19 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
   alertModalText = '';
 
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private modalService: NgxSmartModalService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private campaignLimitsService: CampaignLimitsService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignLimitsModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
     });
@@ -70,13 +78,24 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
       maxTopLimitUtilization: '',
     });
 
-    if (this.id) {
-      this.campaignLimitsService.repostData.id = this.id;
-      this.stepService.finish();
-      this.getLimitDetail();
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.campaignLimitsService.repostData.id = this.id;
+        this.stepService.finish();
+        this.getLimitDetail();
+      } else {
+        this.campaignLimitGetInsertForm();
+        this.formChangeState = true;
+      }
     } else {
-      this.campaignLimitGetInsertForm();
-      this.formChangeState = true;
+      this.setAuthorization(false);
+    }
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
     }
   }
 
@@ -201,6 +220,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
+            this.setAuthorization(this.currentUserAuthorizations.create);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -232,6 +252,7 @@ export class CampaignLimitsComponent implements OnInit, FormChange {
                 this.formChangeState = true;
                 this.nextButtonVisible = true;
               });
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

@@ -18,7 +18,9 @@
   <app-step [data]="stepData" [id]="id"></app-step>
   <div class="container">
     <div class="box">
-      <app-repost *ngIf="id" [repostData]="repostData"
+      <app-repost *ngIf="id"
+                  [repostData]="repostData"
+                  [authority]="currentUserAuthorizations"
                   (copyItemEvent)="copyTarget($event)"
                   (previewItemEvent)="previewTarget($event)"></app-repost>
       <form [formGroup]="formGroup">
@@ -266,7 +268,9 @@
       </form>
     </div>
     <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
-      <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+      <app-auth-check [authorization]="nextButtonAuthority">
+        <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+      </app-auth-check>
     </div>
   </div>
 </app-main-content>
