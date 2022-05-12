@@ -126,6 +126,7 @@ export class TargetSourceComponent implements OnInit, FormChange {
         showToolbar: false
       };
       this.formGroup.disable();
+      this.formChangeState = false;
     }
   }
 

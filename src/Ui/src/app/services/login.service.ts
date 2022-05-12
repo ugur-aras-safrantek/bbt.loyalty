@@ -18,11 +18,11 @@ export class LoginService {
   }
 
   getUserLoginInfo() {
-    return JSON.parse(localStorage.getItem('isLogin') || 'false');
+    return JSON.parse(sessionStorage.getItem('isLogin') || 'false');
   }
 
   getCurrentUserAuthorizations() {
-    return JSON.parse(localStorage.getItem('currentUserAuthorizations') || '{}');
+    return JSON.parse(sessionStorage.getItem('currentUserAuthorizations') || '{}');
   }
 
   setCurrentUserAuthorizations(userData: any[]) {
@@ -30,13 +30,13 @@ export class LoginService {
     userData.map(x => {
       this.setAuthorization(x);
     })
-    localStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
-    localStorage.setItem('isLogin', 'true');
+    sessionStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
+    sessionStorage.setItem('isLogin', 'true');
   }
 
   logout() {
-    localStorage.removeItem('currentUserAuthorizations');
-    localStorage.removeItem('isLogin');
+    sessionStorage.removeItem('currentUserAuthorizations');
+    sessionStorage.removeItem('isLogin');
   }
 
   login(data: LoginRequestModel) {

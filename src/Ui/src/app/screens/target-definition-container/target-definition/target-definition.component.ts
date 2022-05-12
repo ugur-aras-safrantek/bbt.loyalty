@@ -89,6 +89,7 @@ export class TargetDefinitionComponent implements OnInit, FormChange {
     this.nextButtonAuthority = authority;
     if (!authority) {
       this.formGroup.disable();
+      this.formChangeState = false;
     }
   }
 

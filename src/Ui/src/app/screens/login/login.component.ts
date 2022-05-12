@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
   }
 
   private setRoute() {
-    if (this.returnUrl == '') {
+    if (this.returnUrl == '' || this.returnUrl == '/campaign-definition/list') {
       let currentUserAuthorizations: UserAuthorizationsModel = this.loginService.getCurrentUserAuthorizations();
 
       if (currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view) {
@@ -68,8 +68,6 @@ export class LoginComponent implements OnInit {
         this.returnUrl = '/campaign-limits';
       } else if (currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
         this.returnUrl = '/target-definition';
-      } else {
-        this.toastrHandleService.warning("Ekranları görüntüleme yetkiniz bulunmamaktadır.");
       }
     }
     return this.returnUrl;
