@@ -10,6 +10,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 import {UtilityService} from 'src/app/services/utility.service';
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-gain-channels',
@@ -19,6 +21,8 @@ import {UtilityService} from 'src/app/services/utility.service';
 
 export class CampaignGainChannelsComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -38,14 +42,18 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
 
   nextButtonVisible = true;
   nextButtonText = 'Devam';
+  nextButtonAuthority = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newId = paramMap.get('newId');
@@ -55,7 +63,11 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
     this.stepService.updateStep(4);
     this.stepData = this.stepService.stepData;
 
-    this.campaignDefinitionGainChannelsGetUpdateForm();
+    if (this.currentUserAuthorizations.view) {
+      this.campaignDefinitionGainChannelsGetUpdateForm();
+    } else {
+      this.setAuthorization(false);
+    }
 
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
@@ -72,6 +84,13 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
     this.formGroup = this.fb.group({
       campaignChannelCodeList: [[], Validators.required],
     });
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
+    }
   }
 
   openFormChangeAlertModal() {
@@ -122,6 +141,7 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
                 this.nextButtonVisible = true;
               });
             this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
+            this.setAuthorization(this.newId ? this.currentUserAuthorizations.create : this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

@@ -13,6 +13,8 @@ import {UtilityService} from "../../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-rules',
@@ -22,6 +24,8 @@ import {FormChangeAlertComponent} from "../../../../components/form-change-alert
 
 export class CampaignRulesComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -55,14 +59,18 @@ export class CampaignRulesComponent implements OnInit, FormChange {
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newId = paramMap.get('newId');
@@ -82,18 +90,29 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       startTermId: [null, Validators.required]
     });
 
-    if (this.id) {
-      this.campaignDefinitionService.repostData.id = this.id;
-      this.stepService.finish();
-      this.getCampaignRules();
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.campaignDefinitionService.repostData.id = this.id;
+        this.stepService.finish();
+        this.getCampaignRules();
 
-      this.nextButtonVisible = false;
-      if (this.campaignDefinitionService.isCampaignValuesChanged) {
-        this.nextButtonVisible = true;
+        this.nextButtonVisible = false;
+        if (this.campaignDefinitionService.isCampaignValuesChanged) {
+          this.nextButtonVisible = true;
+        }
+      } else {
+        this.campaignRulesGetInsertForm();
+        this.formChangeState = true;
       }
     } else {
-      this.campaignRulesGetInsertForm();
-      this.formChangeState = true;
+      this.setAuthorization(false);
+    }
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
     }
   }
 
@@ -236,6 +255,7 @@ export class CampaignRulesComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.documentName = null;
+            this.setAuthorization(this.currentUserAuthorizations.create);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -276,6 +296,7 @@ export class CampaignRulesComponent implements OnInit, FormChange {
                 this.nextButtonVisible = true;
               });
             this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

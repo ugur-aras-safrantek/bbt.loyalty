@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgxSmartModalService} from "ngx-smart-modal";
+import {AuthorizationModel} from "../../models/login.model";
 
 @Component({
   selector: 'app-repost',
@@ -10,6 +11,7 @@ import {NgxSmartModalService} from "ngx-smart-modal";
 
 export class RepostComponent implements OnInit {
   @Input('repostData') repostData: any;
+  @Input('authority') authority: AuthorizationModel;
 
   @Output() copyItemEvent = new EventEmitter<any>();
   @Output() previewItemEvent = new EventEmitter<any>();

@@ -16,6 +16,8 @@ import {UtilityService} from "../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from 'src/app/models/form-change';
 import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-definition',
@@ -25,6 +27,8 @@ import {FormChangeAlertComponent} from "../../../components/form-change-alert/fo
 
 export class CampaignDefinitionComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -63,6 +67,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   editorConfig: AngularEditorConfig = {
     editable: true
@@ -72,9 +77,12 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newId = paramMap.get('newId');
@@ -124,18 +132,33 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
       this.utilityService.EndDateGreaterThanStartDateValidator(this.formGroup)
     ]);
 
-    if (this.id) {
-      this.campaignDefinitionService.repostData.id = this.id;
-      this.stepService.finish();
-      this.CampaignDefinitionGetUpdateForm();
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.campaignDefinitionService.repostData.id = this.id;
+        this.stepService.finish();
+        this.CampaignDefinitionGetUpdateForm();
 
-      this.nextButtonVisible = false;
-      if (this.campaignDefinitionService.isCampaignValuesChanged) {
-        this.nextButtonVisible = true;
+        this.nextButtonVisible = false;
+        if (this.campaignDefinitionService.isCampaignValuesChanged) {
+          this.nextButtonVisible = true;
+        }
+      } else {
+        this.campaignDefinitionGetInsertForm();
+        this.formChangeState = true;
       }
     } else {
-      this.campaignDefinitionGetInsertForm();
-      this.formChangeState = true;
+      this.setAuthorization(false);
+    }
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.editorConfig = {
+        editable: false,
+        showToolbar: false
+      };
+      this.formGroup.disable();
     }
   }
 
@@ -357,6 +380,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
+            this.setAuthorization(this.currentUserAuthorizations.create);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -388,6 +412,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
                 this.nextButtonVisible = true;
               });
             this.campaignDefinitionService.repostData.previewButtonVisible = res.data.campaign?.viewOptionId == 4 ? false : true;
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

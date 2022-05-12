@@ -17,17 +17,18 @@
           </button>
         </div>
         <div class="col-2">
-          <button class="btn btn-outline-primary w-100"
-                  *ngIf="repostData.previewButtonVisible"
-                  (click)="preview()">
-            Görüntüle
-          </button>
+          <app-auth-check [authorization]="authority.view">
+            <button class="btn btn-outline-primary w-100"
+                    *ngIf="repostData.previewButtonVisible"
+                    (click)="preview()">
+              Görüntüle
+            </button>
+          </app-auth-check>
         </div>
         <div class="col-2">
-          <button class="btn btn-primary w-100"
-                  (click)="openCopyModal()">
-            Kopyala
-          </button>
+          <app-auth-check [authorization]="authority.create">
+            <button class="btn btn-primary w-100" (click)="openCopyModal()">Kopyala</button>
+          </app-auth-check>
         </div>
       </div>
     </div>

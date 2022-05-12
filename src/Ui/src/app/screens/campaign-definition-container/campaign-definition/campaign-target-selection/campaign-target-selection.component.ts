@@ -16,6 +16,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 import {UtilityService} from "../../../../services/utility.service";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-target-selection',
@@ -25,6 +27,8 @@ import {UtilityService} from "../../../../services/utility.service";
 
 export class CampaignTargetSelectionComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -37,6 +41,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   submitted = false;
 
@@ -53,10 +58,13 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
               private toastrHandleService: ToastrHandleService,
               private modalService: NgxSmartModalService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private fb: FormBuilder,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newId = paramMap.get('newId');
@@ -65,23 +73,35 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
     this.stepService.setSteps(this.campaignDefinitionService.stepData);
     this.stepService.updateStep(3);
     this.stepData = this.stepService.stepData;
-    if (this.id) {
-      this.campaignDefinitionService.repostData.id = this.id;
-      this.stepService.finish();
-      this.getCampaignTargets();
 
-      this.nextButtonVisible = false;
-      if (this.campaignDefinitionService.isCampaignValuesChanged) {
-        this.nextButtonVisible = true;
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.campaignDefinitionService.repostData.id = this.id;
+        this.stepService.finish();
+        this.getCampaignTargets();
+
+        this.nextButtonVisible = false;
+        if (this.campaignDefinitionService.isCampaignValuesChanged) {
+          this.nextButtonVisible = true;
+        }
+      } else {
+        this.campaignTargetsGetInsertForm();
+        this.formChangeState = true;
       }
     } else {
-      this.campaignTargetsGetInsertForm();
-      this.formChangeState = true;
+      this.setAuthorization(false);
     }
 
     this.formGroup = this.fb.group({
       targets: [[], Validators.required]
     });
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
+    }
   }
 
   openFormChangeAlertModal() {
@@ -150,6 +170,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.addTargetList = res.data.targetList;
+            this.setAuthorization(this.currentUserAuthorizations.create);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -266,6 +287,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
             this.nextButtonText = "Kaydet ve ilerle";
             this.campaignDefinitionService.repostData.previewButtonVisible = !res.data.isInvisibleCampaign;
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
