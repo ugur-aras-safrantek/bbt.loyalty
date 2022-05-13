@@ -14,7 +14,6 @@ namespace Bbt.Campaign.Services.Mappings
         public CustomerProfile() 
         { 
             CreateMap<CustomerCampaignDto, CustomerCampaignEntity>().ReverseMap();
-            CreateMap<CustomerCampaignDto, CustomerCampaignFavoriteEntity>().ReverseMap();
         }
     }
 }

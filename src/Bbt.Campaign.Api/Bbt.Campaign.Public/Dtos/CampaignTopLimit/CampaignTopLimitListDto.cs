@@ -15,6 +15,7 @@
         public bool Amount { get; set; }
         public bool Rate { get; set; }
         public bool IsActive { get; set; }
+        public string CampaignNames { get; set; }
 
     }
 }

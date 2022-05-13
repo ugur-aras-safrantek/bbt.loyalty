@@ -55,13 +55,13 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedOn = DateTime.UtcNow;
-                        entry.Entity.CreatedBy = "1";
+                        //entry.Entity.CreatedBy = "1";
                         entry.Entity.IsDeleted = false;
                         break;
 
                     case EntityState.Modified:
                         entry.Entity.LastModifiedOn = DateTime.UtcNow; 
-                        entry.Entity.LastModifiedBy = "2";
+                        //entry.Entity.LastModifiedBy = "2";
                         break;
 
                 }
@@ -74,10 +74,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         }
 
         public DbSet<ActionOptionEntity> ActionOptions { get; set; }
-        //public DbSet<BranchEntity> Branches { get; set; }
-        public DbSet<BusinessLineEntity> BusinessLines { get; set; }
-
-        //Campaign     
+        public DbSet<BusinessLineEntity> BusinessLines { get; set; }  
         public DbSet<CampaignEntity> Campaigns { get; set; }
         public DbSet<CampaignDetailEntity> CampaignDetails { get; set; }
         public DbSet<CampaignRuleEntity>  CampaignRules { get; set; }
@@ -113,17 +110,13 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<TopLimitEntity> TopLimits { get; set; }
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
         public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
-        public DbSet<CustomerCampaignFavoriteEntity> CustomerCampaignFavorites { get; set; }
         public DbSet<CampaignReportEntity> CampaignReports { get; set; }
         public DbSet<CampaignListEntity> CampaignList { get; set; }
         public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }
         public DbSet<CampaignTargetListEntity> CampaignTargetList { get; set; }
-
-
         public DbSet<RoleTypeEntity> RoleTypes { get; set; }
         public DbSet<ModuleTypeEntity> ModuleTypes { get; set; }
         public DbSet<AuthorizationTypeEntity> AuthorizationTypes { get; set; }
-
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<RoleAuthorizationEntity> RoleAuthorizations { get; set; }
     }

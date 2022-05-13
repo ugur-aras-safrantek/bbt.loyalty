@@ -14,6 +14,7 @@ namespace Bbt.Campaign.Services.Services.Report
     public interface IReportService
     {
         public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync();
+        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync();
 
         public Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request);
         //public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request);

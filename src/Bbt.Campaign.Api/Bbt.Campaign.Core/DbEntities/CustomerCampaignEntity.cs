@@ -11,11 +11,8 @@ namespace Bbt.Campaign.Core.DbEntities
         [ForeignKey("Campaign")]
         public int CampaignId { get; set; }
         public CampaignEntity Campaign { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public bool IsJoin { get; set; }
-
-        [MaxLength(250)]
-        public string? RefId { get; set; }
-        public string? ApiResponse { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

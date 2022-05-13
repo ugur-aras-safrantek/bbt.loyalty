@@ -14,6 +14,10 @@ namespace Bbt.Campaign.Api.Controllers
             _reportService = reportService;
         }
 
+        /// <summary>
+        /// Returns the form data for campaign report form
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("get-campaign-report-form")]
         public async Task<IActionResult> FillCampaignFormAsync()
@@ -27,6 +31,18 @@ namespace Bbt.Campaign.Api.Controllers
         public async Task<IActionResult> GetCampaignByFilterAsync(CampaignReportListFilterRequest request)
         {
             var result = await _reportService.GetCampaignByFilterAsync(request);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the form data for customer report form
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-customer-report-form")]
+        public async Task<IActionResult> FillCustomerFormAsync()
+        {
+            var result = await _reportService.FillCustomerFormAsync();
             return Ok(result);
         }
     }

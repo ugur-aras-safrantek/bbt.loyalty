@@ -51,49 +51,34 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
-            var entity = new CustomerCampaignEntity();
-            entity.CustomerCode = request.CustomerCode;
-            entity.CampaignId = request.CampaignId;
-            entity.IsJoin= request.IsJoin;
-            entity.StartDate = DateTime.Parse(DateTime.Now.ToShortDateString());          
-            entity.CreatedBy = request.CustomerCode;
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+               .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
+               .FirstOrDefaultAsync();
+            if (entity != null)
+            {
+                if(entity.IsJoin)
+                    throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
 
-            entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+                entity.IsJoin = request.IsJoin;
+                entity.StartDate = request.IsJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.LastModifiedBy = request.CustomerCode;
+
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
+            }
+            else
+            {
+                entity = new CustomerCampaignEntity();
+                entity.CustomerCode = request.CustomerCode;
+                entity.CampaignId = request.CampaignId;
+                entity.IsFavorite = false;
+                entity.IsJoin = request.IsJoin;
+                entity.StartDate = request.IsJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.CreatedBy = request.CustomerCode;
+
+                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+            }
 
             await _unitOfWork.SaveChangesAsync();
-
-            if (!StaticValues.IsDevelopment) 
-            {
-                string errorMessage = string.Empty;
-
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string contentValue = "";
-                    var httpContent = new StringContent(JsonConvert.SerializeObject(contentValue), Encoding.UTF8, "application/json");
-                    var httpResponse = await httpClient.PutAsync(StaticValues.ChannelCodeServiceUrl, httpContent);
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        if (httpResponse.Content != null)
-                        {
-                            string apiResponse = await httpResponse.Content.ReadAsStringAsync();
-
-                            entity.RefId = "";
-                            entity.ApiResponse = apiResponse;
-                        }
-                        else 
-                        {
-                            errorMessage = "Kampanya müşteri kaydı başarısız.";
-                            return await BaseResponse<CustomerCampaignDto>.FailAsync(errorMessage);
-                        }
-                    }
-                    else 
-                    {
-                        errorMessage = "Kampanya müşteri kaydı başarısız.";
-                        return await BaseResponse<CustomerCampaignDto>.FailAsync(errorMessage);
-                    }
-                }
-            }
 
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
 
@@ -103,49 +88,29 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
-            var entity = new CustomerCampaignFavoriteEntity();
-            entity.CustomerCode = request.CustomerCode;
-            entity.CampaignId = request.CampaignId;
-            entity.IsFavorite = request.IsFavorite;
-            entity.StartDate = DateTime.Parse(DateTime.Now.ToShortDateString());
-            entity.CreatedBy = request.CustomerCode;
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+               .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted != true)
+               .FirstOrDefaultAsync();
+            if (entity != null)
+            {
+                entity.IsFavorite = request.IsFavorite;
+                entity.LastModifiedBy = request.CustomerCode;
 
-            entity = await _unitOfWork.GetRepository<CustomerCampaignFavoriteEntity>().AddAsync(entity);
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
+            }
+            else
+            {
+                entity = new CustomerCampaignEntity();
+                entity.CustomerCode = request.CustomerCode;
+                entity.CampaignId = request.CampaignId;
+                entity.IsFavorite = request.IsFavorite; 
+                entity.IsJoin = false;
+                entity.CreatedBy = request.CustomerCode;
+
+                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+            }
 
             await _unitOfWork.SaveChangesAsync();
-
-            if (!StaticValues.IsDevelopment)
-            {
-                string errorMessage = string.Empty;
-
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string contentValue = "";
-                    var httpContent = new StringContent(JsonConvert.SerializeObject(contentValue), Encoding.UTF8, "application/json");
-                    var httpResponse = await httpClient.PutAsync(StaticValues.ChannelCodeServiceUrl, httpContent);
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        if (httpResponse.Content != null)
-                        {
-                            string apiResponse = await httpResponse.Content.ReadAsStringAsync();
-
-                            entity.RefId = "";
-                            entity.ApiResponse = apiResponse;
-                        }
-                        else
-                        {
-                            errorMessage = "Kampanya müşteri kaydı başarısız.";
-                            return await BaseResponse<CustomerCampaignDto>.FailAsync(errorMessage);
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "Kampanya müşteri kaydı başarısız.";
-                        return await BaseResponse<CustomerCampaignDto>.FailAsync(errorMessage);
-                    }
-                }
-            }
 
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
 
@@ -161,7 +126,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
             var campaignEntity = _unitOfWork.GetRepository<CampaignEntity>()
-                    .GetAll(x => x.Id == campaignId && !x.IsDeleted && x.IsActive &&x.EndDate >= today)
+                    .GetAll(x => x.Id == campaignId && !x.IsDeleted && x.IsActive && x.EndDate >= today)
                     .FirstOrDefault();
             if (campaignEntity == null)
             {
@@ -220,59 +185,9 @@ namespace Bbt.Campaign.Services.Services.Customer
                 EndDate = x.EndDate,
             }).ToList();
 
-            List<int> joinList = new List<int>();
-            List<int> favoriteList = new List<int>();
-
-            if (StaticValues.IsDevelopment) 
-            {
-                if (!string.IsNullOrEmpty(request.CustomerCode)) 
-                {
-                    var customerJoinList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                        .GetAll(x => !x.IsDeleted && x.CustomerCode == request.CustomerCode)
-                        .ToListAsync();
-                    if (customerJoinList.Any())
-                    {
-                        var distinctJoinIdList = customerJoinList.Select(x => x.CampaignId).Distinct().ToList();
-                        foreach (int campaignId in distinctJoinIdList)
-                        {
-                            var item = customerJoinList
-                                .Where(x => x.CampaignId == campaignId)
-                                .OrderByDescending(x => x.Id)
-                                .FirstOrDefault();
-                            if (item != null)
-                            {
-                                if (item.IsJoin)
-                                    joinList.Add(item.CampaignId);
-                            }
-                        }
-                    }
-
-                    var customerFavoriteList = await _unitOfWork.GetRepository<CustomerCampaignFavoriteEntity>()
-                    .GetAll(x => !x.IsDeleted && x.CustomerCode == request.CustomerCode)
-                    .ToListAsync();
-                    if (customerFavoriteList.Any())
-                    {
-                        var distinctFavoriteIdList = customerFavoriteList.Select(x => x.CampaignId).Distinct().ToList();
-                        foreach (int campaignId in distinctFavoriteIdList)
-                        {
-                            var item = customerFavoriteList
-                                .Where(x => x.CampaignId == campaignId)
-                                .OrderByDescending(x => x.Id)
-                                .FirstOrDefault();
-                            if (item != null)
-                            {
-                                if (item.IsFavorite)
-                                    favoriteList.Add(item.CampaignId);
-                            }
-                        }
-
-                    }
-                }
-            }
-            else 
-            { 
-                
-            }
+            var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => !x.IsDeleted && x.CustomerCode == (request.CustomerCode ?? string.Empty))
+                .ToListAsync();
                 
             List<CustomerCampaignMinListDto> returnList = new List<CustomerCampaignMinListDto>();
             foreach (var campaign in campaignList)
@@ -285,25 +200,12 @@ namespace Bbt.Campaign.Services.Services.Customer
                 customerCampaignListDto.IsJoin = false;
                 customerCampaignListDto.IsFavorite = false;
 
-                int customerCampaignId = 0;
-                if (joinList.Any()) 
+                var customerCampaign = customerCampaignList.Where(x => x.CampaignId == campaign.Id).FirstOrDefault();
+                if (customerCampaign != null)
                 {
-                    customerCampaignId = joinList.Where(x => x == campaign.Id).FirstOrDefault();
-                    if (customerCampaignId > 0)
-                    {
-                        customerCampaignListDto.Id = customerCampaignId;
-                        customerCampaignListDto.IsJoin = true;
-                    }
-                }
-
-                if (favoriteList.Any()) 
-                {
-                    customerCampaignId = favoriteList.Where(x => x == campaign.Id).FirstOrDefault();
-                    if (customerCampaignId > 0)
-                    {
-                        customerCampaignListDto.Id = customerCampaignId;
-                        customerCampaignListDto.IsFavorite = true;
-                    }
+                    customerCampaignListDto.Id = customerCampaign.Id;
+                    customerCampaignListDto.IsJoin = customerCampaign.IsJoin;
+                    customerCampaignListDto.IsFavorite = customerCampaign.IsFavorite;
                 }
 
                 if (campaign.EndDate > today)
@@ -335,7 +237,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             response.CustomerCampaignList = returnList;
-            response.FavoriteList = favoriteList;
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             
             return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
@@ -453,20 +354,12 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             response.IsJoin = false;
-            if (StaticValues.IsDevelopment)
-            {
-                var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                         .GetAll(x => x.CampaignId == campaignId && x.CustomerCode == customerCode && !x.IsDeleted)
-                        .OrderByDescending(x => x.Id)
                         .FirstOrDefaultAsync();
-                if (customerJoin != null)
-                {
-                    response.IsJoin = customerJoin.IsJoin;
-                }
-            }
-            else
+            if (customerJoin != null)
             {
-
+                response.IsJoin = customerJoin.IsJoin;
             }
 
             var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
@@ -482,7 +375,6 @@ namespace Bbt.Campaign.Services.Services.Customer
                 response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
             }
                 
-
             //target
 
             var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoTestCustomer(campaignId);
@@ -648,22 +540,14 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
-            if (StaticValues.IsDevelopment) 
-            {
-                var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                        .GetAll(x => !x.IsDeleted && x.CustomerCode == customerCode)
-                        .OrderByDescending(x => x.Id)
+            var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                        .GetAll(x => x.CampaignId == campaignId && x.CustomerCode == customerCode && !x.IsDeleted)
                         .FirstOrDefaultAsync();
-                if(customerJoin == null)
-                    throw new Exception("Müşteri kampanyaya katılmamış.");
+            if (customerJoin == null)
+                throw new Exception("Müşteri kampanyaya katılmamış.");
 
-                if(!customerJoin.IsJoin)
-                    throw new Exception("Müşteri kampanyaya katılmamış.");
-            }
-            else 
-            { 
-            
-            }
+            if (!customerJoin.IsJoin)
+                throw new Exception("Müşteri kampanyaya katılmamış.");
 
             var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
                 .GetAll(x => x.Id == campaignId && !x.IsDeleted);
@@ -686,7 +570,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.Campaign = campaignList[0];
 
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
-
         }
     }
 }

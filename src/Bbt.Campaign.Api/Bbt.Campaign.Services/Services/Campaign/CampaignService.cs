@@ -58,6 +58,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.IsDraft = true;
             entity.IsApproved = false;
 
+            entity.CampaignDetail.CreatedBy = userid;
+
             entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
 
             await _unitOfWork.SaveChangesAsync();
@@ -241,7 +243,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                         CampaignDetailImageUrl = campaign.CampaignDetail.CampaignDetailImageUrl,
                         CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl,
                         ContentTr = campaign.CampaignDetail.ContentTr,
-                        ContentEn = campaign.CampaignDetail.ContentEn
+                        ContentEn = campaign.CampaignDetail.ContentEn,
+                        CreatedBy = userid,
                     });
                     await _unitOfWork.SaveChangesAsync();
                 }
@@ -255,6 +258,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
                     entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
                     entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
+                    entity.CampaignDetail.LastModifiedBy = userid;
                 }
 
                 entity.ContractId = campaign.ContractId;

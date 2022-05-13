@@ -10,6 +10,6 @@ namespace Bbt.Campaign.Shared.Static
     {
         public static string UnAuthorizedUserAlert = "Kullanıcın bu işlem için yetkisi yoktur.";
 
-        public static string SessionTimeoutAlert = "Oturum kapanmıştır. Lütfen yeniden giriş yapınız.";
+        public static string SessionTimeoutAlert = "Oturum süresi dolmuştur. Kullanıcı girişi yapınız.";
     }
 }

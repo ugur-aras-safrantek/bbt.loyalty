@@ -230,5 +230,20 @@ namespace Bbt.Campaign.Services.Services.Report
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
+
+        public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync()
+        {
+            CustomerReportFormDto response = new CustomerReportFormDto();
+            await FillCustomerFormAsync(response);
+            return await BaseResponse<CustomerReportFormDto>.SuccessAsync(response);
+        }
+
+        private async Task FillCustomerFormAsync(CustomerReportFormDto response)
+        {
+            response.CampaignStartTermList = (await _parameterService.GetCampaignStartTermListAsync())?.Data;
+            response.CustomerTypeList = (await _parameterService.GetCustomerTypeListAsync())?.Data;
+            response.BusinessLineList = (await _parameterService.GetBusinessLineListAsync())?.Data;
+            response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
+        }
     }
 }
