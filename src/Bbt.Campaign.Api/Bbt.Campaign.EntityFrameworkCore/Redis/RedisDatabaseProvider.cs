@@ -11,7 +11,22 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
         public RedisDatabaseProvider(string connection)
         {
             _prefix = "CampaignApi:";
-            _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(connection);
+
+            var cluster = false;
+            if (cluster)
+            {  
+                ConfigurationOptions config = new ConfigurationOptions();
+                config.ChannelPrefix = _prefix;
+                config.EndPoints.Add("RedisEndpoint", 6379);
+                config.Password = "RedisPassword";
+                config.CommandMap = CommandMap.Create(new HashSet<string>
+               {
+                   "INFO", "CONFIG", "CLUSTER",
+                   "PING", "ECHO", "CLIENT"
+               }, available: false);
+            }
+            else
+                _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(connection);
         }
 
 

@@ -17,11 +17,11 @@
       <form class="form-group mt-3" [formGroup]="formGroup">
         <label>Hedef Tanım İsmi</label>
         <ng-multiselect-dropdown
-                [class]="{ 'is-invalid': submitted && f.targets.invalid }"
-                [placeholder]="'Seçiniz...'"
-                [settings]="dropdownSettings"
-                [data]="addTargetList"
-                formControlName="targets"
+          [class]="{ 'is-invalid': submitted && f.targets.invalid }"
+          [placeholder]="'Seçiniz...'"
+          [settings]="dropdownSettings"
+          [data]="addTargetList"
+          formControlName="targets"
         >
         </ng-multiselect-dropdown>
         <div *ngIf="submitted && f.targets.errors" class="invalid-feedback">
@@ -33,7 +33,11 @@
       </div>
     </ngx-smart-modal>
     <div class="box">
-      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyCampaign($event)"></app-repost>
+      <app-repost *ngIf="id"
+                  [repostData]="repostData"
+                  [authority]="currentUserAuthorizations"
+                  (copyItemEvent)="copyCampaign($event)">
+      </app-repost>
       <div class="col-10 m-auto pt-4 pb-4">
         <div class="row">
           <div class="col-1 pt-2">
@@ -46,7 +50,9 @@
             <strong class="color-blue">Hedef Tanım İsmi</strong>
           </div>
           <div class="col-2 d-flex justify-content-end">
-            <button class="btn btn-primary" (click)="openModal()">Yeni Hedef Ekle</button>
+            <app-auth-check [authorization]="nextButtonAuthority">
+              <button class="btn btn-primary" (click)="openModal()">Yeni Hedef Ekle</button>
+            </app-auth-check>
           </div>
         </div>
         <hr class="row mt-3 blue">
@@ -54,7 +60,9 @@
           <div class="row campaign-target-row bg-color-blue"
                *ngFor="let campaignTarget of group.targetList">
             <div class="col-1">
-              <img src="/assets/img/cross.png" (click)="openDeleteAlertModal(group.id, campaignTarget.id)">
+              <app-auth-check [authorization]="nextButtonAuthority">
+                <img src="/assets/img/cross.png" (click)="openDeleteAlertModal(group.id, campaignTarget.id)">
+              </app-auth-check>
             </div>
             <div class="col-1">VE</div>
             <div class="col-8">
@@ -74,7 +82,9 @@
       </div>
     </div>
     <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
-      <button class="btn btn-orange px-5" (click)="continue()">{{nextButtonText}}</button>
+      <app-auth-check [authorization]="nextButtonAuthority">
+        <button class="btn btn-orange px-5" (click)="continue()">{{nextButtonText}}</button>
+      </app-auth-check>
     </div>
   </div>
 </app-main-content>

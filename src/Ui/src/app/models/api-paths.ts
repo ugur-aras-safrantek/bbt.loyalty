@@ -1,4 +1,6 @@
 export enum ApiPaths {
+  Login = 'Authorization/login',
+
   GetProgramTypes = 'Parameter/get-program-types',
   GetCampaignDetail = 'Campaign/get',
   CopyCampaign = 'Approve/copy-campaign',

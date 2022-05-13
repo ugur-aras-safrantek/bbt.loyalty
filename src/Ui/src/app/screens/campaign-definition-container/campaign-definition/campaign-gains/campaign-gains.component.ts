@@ -15,6 +15,8 @@ import {NgxSmartModalService} from "ngx-smart-modal";
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
 import {UtilityService} from "../../../../services/utility.service";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-campaign-gains',
@@ -24,6 +26,8 @@ import {UtilityService} from "../../../../services/utility.service";
 
 export class CampaignGainsComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -51,6 +55,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   addButtonVisibleState = false;
   addUpdateButtonText = 'Ekle';
   nextButtonVisible = true;
+  nextButtonAuthority = false;
   isInvisibleCampaign = false;
   buttonTypeIsContinue = false;
 
@@ -60,10 +65,13 @@ export class CampaignGainsComponent implements OnInit, FormChange {
               private stepService: StepService,
               private modalService: NgxSmartModalService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private campaignDefinitionService: CampaignDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().campaignDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newId = paramMap.get('newId');
@@ -73,7 +81,11 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.stepService.updateStep(5);
     this.stepData = this.stepService.stepData;
 
-    this.campaignDefinitionGainsGetUpdateForm();
+    if (this.currentUserAuthorizations.view) {
+      this.campaignDefinitionGainsGetUpdateForm();
+    } else {
+      this.setAuthorization(false);
+    }
 
     if (this.id) {
       this.campaignDefinitionService.repostData.id = this.id;
@@ -104,6 +116,14 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       rate: null,
       maxUtilization: '',
     });
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
+      this.formChangeState = false;
+    }
   }
 
   openFormChangeAlertModal() {
@@ -382,6 +402,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
             this.campaignAchievementList.map(x => x.fakeId = this.utilityService.createGuid());
             this.campaignViewingStateActions(res.data.isInvisibleCampaign);
             this.checkAddButtonVisibleState();
+            this.setAuthorization(this.newId ? this.currentUserAuthorizations.create : this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

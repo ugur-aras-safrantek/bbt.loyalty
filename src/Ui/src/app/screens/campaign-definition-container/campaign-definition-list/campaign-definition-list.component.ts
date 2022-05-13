@@ -8,6 +8,8 @@ import {Subject, takeUntil} from "rxjs";
 import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
+import {UserAuthorizationsModel} from "../../../models/login.model";
+import {LoginService} from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-campaign-definition-list',
@@ -17,6 +19,8 @@ import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 
 export class CampaignDefinitionListComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: UserAuthorizationsModel = new UserAuthorizationsModel();
 
   dpOptions: IAngularMyDpOptions = {
     dateRange: false,
@@ -49,9 +53,11 @@ export class CampaignDefinitionListComponent implements OnInit {
   endDate: any;
 
   constructor(private campaignDefinitionService: CampaignDefinitionService,
+              private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations();
   }
 
   ngOnInit(): void {

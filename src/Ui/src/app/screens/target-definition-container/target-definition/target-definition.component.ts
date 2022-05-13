@@ -14,6 +14,8 @@ import {NgxSmartModalService} from "ngx-smart-modal";
 import {TargetPreviewComponent} from "./target-preview/target-preview.component";
 import {FormChange} from "../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../components/form-change-alert/form-change-alert.component";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-target-definition',
@@ -23,6 +25,8 @@ import {FormChangeAlertComponent} from "../../../components/form-change-alert/fo
 
 export class TargetDefinitionComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -39,15 +43,19 @@ export class TargetDefinitionComponent implements OnInit, FormChange {
 
   nextButtonText = 'Devam';
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
+              private loginService: LoginService,
               private modalService: NgxSmartModalService,
               private targetDefinitionService: TargetDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().targetDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
     });
@@ -63,12 +71,25 @@ export class TargetDefinitionComponent implements OnInit, FormChange {
       isActive: false
     })
 
-    if (this.id) {
-      this.targetDefinitionService.repostData.id = this.id;
-      this.stepService.finish();
-      this.getTargetDetail();
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.targetDefinitionService.repostData.id = this.id;
+        this.stepService.finish();
+        this.getTargetDetail();
+      } else {
+        this.formChangeState = true;
+        this.setAuthorization(this.currentUserAuthorizations.create);
+      }
     } else {
-      this.formChangeState = true;
+      this.setAuthorization(false);
+    }
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.formGroup.disable();
+      this.formChangeState = false;
     }
   }
 
@@ -131,6 +152,7 @@ export class TargetDefinitionComponent implements OnInit, FormChange {
                 this.nextButtonVisible = true;
               });
             this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

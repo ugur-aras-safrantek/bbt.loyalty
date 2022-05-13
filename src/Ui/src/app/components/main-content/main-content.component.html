@@ -5,7 +5,9 @@
         <div class="title text-white">{{blockTitle}}</div>
       </div>
       <div class="col-md col-sm-12" *ngIf="newButtonText">
-        <a [routerLink]="[route]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
+        <app-auth-check [authorization]="createAuthorization">
+          <a [routerLink]="[route]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
+        </app-auth-check>
       </div>
     </div>
   </div>

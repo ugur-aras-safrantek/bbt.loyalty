@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container position-relative">
       <div class="logo navbar-brand">
-        <a [routerLink]="['']"><img src="/assets/img/logo-sm.png" alt="Burgan Bank"></a>
+        <a><img src="/assets/img/logo-sm.png" alt="Burgan Bank"></a>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
               (click)="isCollapsed = !isCollapsed"
@@ -13,21 +13,36 @@
            [ngClass]="{show: isCollapsed}">
         <ul class="navbar-nav mb-2 mb-lg-0" (click)="isCollapsed = !isCollapsed">
           <li class="nav-item">
-            <a [routerLink]="['campaign-definition']" class="nav-link" aria-current="page" routerLinkActive="active">Kampanya
-              Tanımı</a>
+            <app-auth-check [authorization]="currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view">
+              <a [routerLink]="['campaign-definition']" class="nav-link" aria-current="page" routerLinkActive="active">
+                Kampanya Tanımı
+              </a>
+            </app-auth-check>
           </li>
           <li class="nav-item">
-            <a [routerLink]="['campaign-limits']" class="nav-link" routerLinkActive="active">Kampanya Çatı Limitleri</a>
+            <app-auth-check [authorization]="currentUserAuthorizations.campaignLimitsModuleAuthorizations.view">
+              <a [routerLink]="['campaign-limits']" class="nav-link" routerLinkActive="active">
+                Kampanya Çatı Limitleri
+              </a>
+            </app-auth-check>
           </li>
           <li class="nav-item">
-            <a [routerLink]="['target-definition']" class="nav-link" routerLinkActive="active">Hedef Tanımı</a>
+            <app-auth-check [authorization]="currentUserAuthorizations.targetDefinitionModuleAuthorizations.view">
+              <a [routerLink]="['target-definition']" class="nav-link" routerLinkActive="active">
+                Hedef Tanımı
+              </a>
+            </app-auth-check>
           </li>
           <li class="nav-item">
-            <a [routerLink]="['']" class="nav-link">Raporlar</a>
+            <app-auth-check [authorization]="currentUserAuthorizations.reportsModuleAuthorizations.view">
+              <a [routerLink]="['']" class="nav-link">
+                Raporlar
+              </a>
+            </app-auth-check>
           </li>
         </ul>
         <div class="sign-out">
-          <a [routerLink]="['/login']"><img src="/assets/img/sign-out.png" alt="Çıkış Yap"></a>
+          <a (click)="logout()"><img src="/assets/img/sign-out.png" alt="Çıkış Yap"></a>
         </div>
       </div>
     </div>

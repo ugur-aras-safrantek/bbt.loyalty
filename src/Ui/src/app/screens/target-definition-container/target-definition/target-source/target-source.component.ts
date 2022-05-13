@@ -12,6 +12,8 @@ import {TargetPreviewComponent} from "../target-preview/target-preview.component
 import {NgxSmartModalService} from "ngx-smart-modal";
 import {FormChange} from "../../../../models/form-change";
 import {FormChangeAlertComponent} from "../../../../components/form-change-alert/form-change-alert.component";
+import {LoginService} from 'src/app/services/login.service';
+import {AuthorizationModel} from 'src/app/models/login.model';
 
 @Component({
   selector: 'app-target-source',
@@ -21,6 +23,8 @@ import {FormChangeAlertComponent} from "../../../../components/form-change-alert
 
 export class TargetSourceComponent implements OnInit, FormChange {
   private destroy$: Subject<boolean> = new Subject<boolean>();
+
+  currentUserAuthorizations: AuthorizationModel = new AuthorizationModel();
 
   @ViewChild(FormChangeAlertComponent) formChangeAlertComponent: FormChangeAlertComponent;
   formChangeSubject: Subject<boolean> = new Subject<boolean>();
@@ -51,14 +55,18 @@ export class TargetSourceComponent implements OnInit, FormChange {
   repostData = this.targetDefinitionService.repostData;
 
   nextButtonVisible = true;
+  nextButtonAuthority = false;
 
   constructor(private fb: FormBuilder,
               private stepService: StepService,
               private toastrHandleService: ToastrHandleService,
               private modalService: NgxSmartModalService,
+              private loginService: LoginService,
               private targetDefinitionService: TargetDefinitionService,
               private router: Router,
               private route: ActivatedRoute) {
+    this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations().targetDefinitionModuleAuthorizations;
+
     this.route.paramMap.subscribe(paramMap => {
       this.id = paramMap.get('id');
       this.newTargetId = paramMap.get('newId');
@@ -68,20 +76,24 @@ export class TargetSourceComponent implements OnInit, FormChange {
     this.stepService.updateStep(2);
     this.stepData = this.stepService.stepData;
 
-    if (this.id) {
-      this.targetDefinitionService.repostData.id = this.id;
+    if (this.currentUserAuthorizations.view) {
+      if (this.id) {
+        this.targetDefinitionService.repostData.id = this.id;
 
-      this.stepService.finish();
+        this.stepService.finish();
 
-      this.nextButtonVisible = false;
-      if (this.targetDefinitionService.isTargetValuesChanged) {
-        this.nextButtonVisible = true;
+        this.nextButtonVisible = false;
+        if (this.targetDefinitionService.isTargetValuesChanged) {
+          this.nextButtonVisible = true;
+        }
+
+        this.getTargetSource();
+      } else {
+        this.targetSourceGetInsertForm();
+        this.formChangeState = true;
       }
-
-      this.getTargetSource();
     } else {
-      this.targetSourceGetInsertForm();
-      this.formChangeState = true;
+      this.setAuthorization(false);
     }
 
     this.formGroup = this.fb.group({
@@ -104,6 +116,18 @@ export class TargetSourceComponent implements OnInit, FormChange {
       descriptionTr: '',
       descriptionEn: '',
     });
+  }
+
+  private setAuthorization(authority: boolean) {
+    this.nextButtonAuthority = authority;
+    if (!authority) {
+      this.editorConfig = {
+        editable: false,
+        showToolbar: false
+      };
+      this.formGroup.disable();
+      this.formChangeState = false;
+    }
   }
 
   openFormChangeAlertModal() {
@@ -345,6 +369,7 @@ export class TargetSourceComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
+            this.setAuthorization(this.currentUserAuthorizations.create);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -374,6 +399,7 @@ export class TargetSourceComponent implements OnInit, FormChange {
                 this.nextButtonVisible = true;
               });
             this.targetDefinitionService.repostData.previewButtonVisible = res.data.targetDetail?.targetViewTypeId == 3 ? false : true;
+            this.setAuthorization(this.currentUserAuthorizations.update);
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

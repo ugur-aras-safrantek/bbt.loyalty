@@ -12,7 +12,11 @@
   <app-step [data]="stepData" [id]="id"></app-step>
   <div class="container">
     <div class="box">
-      <app-repost *ngIf="id" [repostData]="repostData" (copyItemEvent)="copyLimit($event)"></app-repost>
+      <app-repost *ngIf="id"
+                  [repostData]="repostData"
+                  [authority]="currentUserAuthorizations"
+                  (copyItemEvent)="copyLimit($event)">
+      </app-repost>
       <form [formGroup]="formGroup">
         <div class="box p-4">
           <div class="col-12 col-md-6 m-md-auto">
@@ -41,11 +45,12 @@
             <div class="form-group mt-3">
               <label>Kampanyalar</label>
               <ng-multiselect-dropdown
-                      [class]="{ 'is-invalid': submitted && f.campaignIds.invalid }"
-                      [placeholder]="'Seçiniz...'"
-                      [settings]="dropdownSettings"
-                      [data]="campaignList"
-                      formControlName="campaignIds"
+                [class]="{ 'is-invalid': submitted && f.campaignIds.invalid }"
+                [placeholder]="'Seçiniz...'"
+                [settings]="dropdownSettings"
+                [data]="campaignList"
+                [disabled]=!nextButtonAuthority
+                formControlName="campaignIds"
               >
               </ng-multiselect-dropdown>
               <div *ngIf="submitted && f.campaignIds.errors" class="invalid-feedback">
@@ -128,7 +133,9 @@
       </form>
     </div>
     <div class="d-flex justify-content-center mt-4" *ngIf="nextButtonVisible">
-      <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+      <app-auth-check [authorization]="nextButtonAuthority">
+        <button class="btn btn-orange px-5" type="button" (click)="continue()">Kaydet</button>
+      </app-auth-check>
     </div>
   </div>
 </app-main-content>

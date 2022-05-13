@@ -1,4 +1,6 @@
 export const GlobalVariable = Object.freeze({
+  login: '/login',
+
   list: '/campaign-definition/list',
   definition: '/campaign-definition/create/definition',
   rules: '/campaign-definition/create/rules',

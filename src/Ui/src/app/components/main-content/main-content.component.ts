@@ -9,6 +9,7 @@ export class MainContentComponent implements OnInit {
   @Input('blockTitle') blockTitle = '';
   @Input('route') route = '';
   @Input('newButtonText') newButtonText = '';
+  @Input('createAuthorization') createAuthorization: boolean = false;
 
   constructor() {
   }
