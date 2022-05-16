@@ -29,7 +29,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var adminSektor = await _campaignService.GetCampaignAsync(id, Request.Headers["userid"].ToString());
+            var adminSektor = await _campaignService.GetCampaignAsync(id, General.GetUserIdFromHeader(Request));
             return Ok(adminSektor);
         }
         /// <summary>
@@ -41,7 +41,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignInsertRequest campaign, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _campaignService.AddAsync(campaign, Request.Headers["userid"].ToString());
+            var createResult = await _campaignService.AddAsync(campaign, General.GetUserIdFromHeader(Request));
             return Ok(createResult);
         }
         /// <summary>
@@ -53,7 +53,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignUpdateRequest campaign, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignService.UpdateAsync(campaign, Request.Headers["userid"].ToString());
+            var result = await _campaignService.UpdateAsync(campaign, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -65,7 +65,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignService.DeleteAsync(id, Request.Headers["userid"].ToString());
+            var result = await _campaignService.DeleteAsync(id, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -87,7 +87,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignService.GetInsertFormAsync(Request.Headers["userid"].ToString());
+            var result = await _campaignService.GetInsertFormAsync(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -99,7 +99,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignService.GetUpdateFormAsync(id, _webHostEnvironment.ContentRootPath, Request.Headers["userid"].ToString());
+            var result = await _campaignService.GetUpdateFormAsync(id, _webHostEnvironment.ContentRootPath, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -111,7 +111,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            string userid = Request.Headers["userid"].ToString();
+            string userid = General.GetUserIdFromHeader(Request);
 
             var result = await _campaignService.GetByFilterAsync(request, userid);
             return Ok(result);
@@ -125,7 +125,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter-excel")]
         public async Task<IActionResult> GetByFilterExcel(CampaignListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignService.GetByFilterExcelAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignService.GetByFilterExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

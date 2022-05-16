@@ -22,9 +22,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-campaign-report-form")]
-        public async Task<IActionResult> FillCampaignFormAsync()
+        public async Task<IActionResult> FillCampaignFormAsync([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _reportService.FillCampaignFormAsync();
+            var result = await _reportService.FillCampaignFormAsync(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -37,9 +37,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaignreport-by-filter")]
         public async Task<IActionResult> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            string userid = Request.Headers["userid"].ToString();
-
-            var result = await _reportService.GetCampaignByFilterAsync(request, userid);
+            var result = await _reportService.GetCampaignByFilterAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -52,8 +50,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaignreport-by-filter-excel")]
         public async Task<IActionResult> GetByFilterExcel(CampaignReportListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var userid = Request.Headers["userid"].ToString();
-            var result = await _reportService.GetCampaignReportExcelAsync(request, userid);
+            var result = await _reportService.GetCampaignReportExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -63,9 +60,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-customer-report-form")]
-        public async Task<IActionResult> FillCustomerFormAsync()
+        public async Task<IActionResult> FillCustomerFormAsync([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _reportService.FillCustomerFormAsync();
+            var result = await _reportService.FillCustomerFormAsync(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

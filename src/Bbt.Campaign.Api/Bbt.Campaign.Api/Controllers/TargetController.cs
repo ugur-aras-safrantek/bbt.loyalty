@@ -36,7 +36,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(TargetInsertRequest Target, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _targetService.AddAsync(Target, Request.Headers["userid"].ToString());
+            var createResult = await _targetService.AddAsync(Target, General.GetUserIdFromHeader(Request));
             return Ok(createResult);
         }
         /// <summary>
@@ -48,7 +48,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(TargetUpdateRequest Target, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.UpdateAsync(Target, Request.Headers["userid"].ToString());
+            var result = await _targetService.UpdateAsync(Target, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -73,7 +73,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(TargetListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.GetByFilterAsync(request, Request.Headers["userid"].ToString());
+            var result = await _targetService.GetByFilterAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -85,7 +85,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get-list-excel")]
         public async Task<IActionResult> GetExcelAsync(TargetListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.GetExcelAsync(request, Request.Headers["userid"].ToString());
+            var result = await _targetService.GetExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

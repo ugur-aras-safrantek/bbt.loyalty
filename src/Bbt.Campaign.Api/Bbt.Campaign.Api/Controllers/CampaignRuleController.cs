@@ -25,7 +25,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var adminSektor = await _campaignRuleService.GetCampaignRuleAsync(id, Request.Headers["userid"].ToString());
+            var adminSektor = await _campaignRuleService.GetCampaignRuleAsync(id, General.GetUserIdFromHeader(Request));
             return Ok(adminSektor);
         }
         /// <summary>
@@ -39,7 +39,7 @@ namespace Bbt.Campaign.Api.Controllers
         //public async Task<IActionResult> Add([FromForm] AddCampaignRuleRequest campaignRule)
         public async Task<IActionResult> Add(AddCampaignRuleRequest campaignRule, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _campaignRuleService.AddAsync(campaignRule, Request.Headers["userid"].ToString());
+            var createResult = await _campaignRuleService.AddAsync(campaignRule, General.GetUserIdFromHeader(Request));
             return Ok(createResult);
         }
         /// <summary>
@@ -53,7 +53,7 @@ namespace Bbt.Campaign.Api.Controllers
         //public async Task<IActionResult> Update([FromForm] UpdateCampaignRuleRequest campaignRule)
         public async Task<IActionResult> Update(UpdateCampaignRuleRequest campaignRule, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignRuleService.UpdateAsync(campaignRule, Request.Headers["userid"].ToString());
+            var result = await _campaignRuleService.UpdateAsync(campaignRule, General.GetUserIdFromHeader(this.Request));
             return Ok(result);
         }
         /// <summary>
@@ -65,7 +65,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignRuleService.DeleteAsync(id, Request.Headers["userid"].ToString());
+            var result = await _campaignRuleService.DeleteAsync(id, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -99,7 +99,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignRuleService.GetUpdateForm(campaignId, Request.Headers["userid"].ToString());
+            var result = await _campaignRuleService.GetUpdateForm(campaignId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

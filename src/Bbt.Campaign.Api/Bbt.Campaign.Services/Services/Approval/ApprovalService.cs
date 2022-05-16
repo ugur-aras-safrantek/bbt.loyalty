@@ -99,13 +99,13 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            await AddCampaignDocument(refId, campaignEntity);
+            //await AddCampaignDocument(refId, campaignEntity, userid);
 
-            await AddCampaignRule(refId, campaignEntity);
+            //await AddCampaignRule(refId, campaignEntity);
 
-            await AddCampaignTarget(refId, campaignEntity);
+            //await AddCampaignTarget(refId, campaignEntity);
 
-            await AddCampaignAchievement(refId, campaignEntity);
+            //await AddCampaignAchievement(refId, campaignEntity);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -598,7 +598,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<CampaignApproveFormDto>.SuccessAsync(response);
         }
 
-        private async Task<SuccessDto> AddCampaignRule(int refId, CampaignEntity campaignEntity)
+        private async Task<SuccessDto> AddCampaignRule(int refId, CampaignEntity campaignEntity, string userid)
         {
             var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
@@ -615,7 +615,8 @@ namespace Bbt.Campaign.Services.Services.Approval
             {
                 Campaign = campaignEntity,
                 CampaignStartTermId = campaignRuleDraftEntity.CampaignStartTermId,
-                JoinTypeId = campaignRuleDraftEntity.JoinTypeId
+                JoinTypeId = campaignRuleDraftEntity.JoinTypeId,
+                CreatedBy = userid,
             };
 
             if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Branch)
@@ -628,7 +629,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                         campaignRuleEntity.Branches.Add(new CampaignRuleBranchEntity()
                         {
                             BranchCode = branch.BranchCode,
-                            BranchName = branch.BranchName
+                            BranchName = branch.BranchName,
+                            CreatedBy = userid,
                         });
                     }
                 }
@@ -642,7 +644,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                     {
                         campaignRuleEntity.CustomerTypes.Add(new CampaignRuleCustomerTypeEntity()
                         {
-                            CustomerTypeId = customerType.CustomerTypeId
+                            CustomerTypeId = customerType.CustomerTypeId,
+                            CreatedBy = userid,
                         });
                     }
                 }
@@ -656,7 +659,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                     {
                         campaignRuleEntity.BusinessLines.Add(new CampaignRuleBusinessLineEntity()
                         {
-                            BusinessLineId = businessLine.BusinessLineId
+                            BusinessLineId = businessLine.BusinessLineId,
+                            CreatedBy = userid,
                         });
                     }
                 }
@@ -669,6 +673,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     campaignRuleEntity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                     {
                         Identities = ruleIdentity.Identities,
+                        CreatedBy = userid,
                     });
                 }
             }
@@ -678,7 +683,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             return new SuccessDto() { IsSuccess = true };
         }
 
-        private async Task<SuccessDto> AddCampaignTarget(int refId, CampaignEntity campaignEntity) 
+        private async Task<SuccessDto> AddCampaignTarget(int refId, CampaignEntity campaignEntity, string userid) 
         {
             List<CampaignTargetEntity> campaignTargetDraftList = _unitOfWork.GetRepository<CampaignTargetEntity>()
                      .GetAll(x => !x.IsDeleted && x.CampaignId == refId)
@@ -695,13 +700,14 @@ namespace Bbt.Campaign.Services.Services.Approval
                 campaignTargetEntity.TargetId = campaignTargetDraftEntity.TargetId;
                 campaignTargetEntity.TargetGroupId = campaignTargetDraftEntity.TargetGroupId;
                 campaignTargetEntity.TargetOperationId = campaignTargetDraftEntity.TargetOperationId;
+                campaignTargetEntity.CreatedBy = userid;
                 await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetEntity);
             }
 
             return new SuccessDto() { IsSuccess = true };
         }
 
-        private async Task<SuccessDto> AddCampaignDocument(int refId, CampaignEntity campaignEntity) 
+        private async Task<SuccessDto> AddCampaignDocument(int refId, CampaignEntity campaignEntity, string userid) 
         {
             var documents = _unitOfWork.GetRepository<CampaignDocumentEntity>()
                 .GetAll(x => x.CampaignId == refId && !x.IsDeleted);
@@ -713,14 +719,15 @@ namespace Bbt.Campaign.Services.Services.Approval
                     Content = x.Content,
                     DocumentName = x.DocumentName,
                     DocumentType = x.DocumentType,
-                    MimeType = x.MimeType
+                    MimeType = x.MimeType,
+                    CreatedBy = userid,
                 });
             }
 
             return new SuccessDto() { IsSuccess = true };
         }
 
-        private async Task<SuccessDto> AddCampaignChannelCode(int refId, CampaignEntity campaignEntity) 
+        private async Task<SuccessDto> AddCampaignChannelCode(int refId, CampaignEntity campaignEntity, string userid) 
         {
             var campaignChannelCodes = _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
                 .GetAll(x => x.CampaignId == refId && !x.IsDeleted);
@@ -732,6 +739,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 {
                     Campaign = campaignEntity,
                     ChannelCode = x.ChannelCode,
+                    CreatedBy = userid,
                 });
             }
 
@@ -740,7 +748,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
     
 
-        private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity) 
+        private async Task<SuccessDto> AddCampaignAchievement(int refId, CampaignEntity campaignEntity, string userid) 
         {
             var achievementDraftList = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == refId && x.IsDeleted != true)
@@ -754,6 +762,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
                 campaignAchievementEntity.Id = 0;
                 campaignAchievementEntity.Campaign = campaignEntity;
+                campaignAchievementEntity.CreatedBy = userid;
 
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
 
@@ -1245,25 +1254,27 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignEntity.IsApproved = false;
             campaignEntity.IsDraft = true;
             campaignEntity.RefId = null;
+            campaignEntity.CreatedBy = userid;
 
             //campaign detail
             var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
             var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
             campaignDetailEntity.Id = 0;
+            campaignDetailEntity.CreatedBy = userid;
 
             campaignEntity.CampaignDetail = campaignDetailEntity;
 
             campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            await AddCampaignRule(refId, campaignEntity);
+            await AddCampaignRule(refId, campaignEntity, userid);
             
-            await AddCampaignDocument(refId, campaignEntity);
+            await AddCampaignDocument(refId, campaignEntity, userid);
 
-            await AddCampaignTarget(refId, campaignEntity);
+            await AddCampaignTarget(refId, campaignEntity, userid);
 
-            await AddCampaignChannelCode(refId, campaignEntity);
+            await AddCampaignChannelCode(refId, campaignEntity, userid);
 
-            await AddCampaignAchievement(refId, campaignEntity);
+            await AddCampaignAchievement(refId, campaignEntity, userid);
 
             await _unitOfWork.SaveChangesAsync();
             
@@ -1306,6 +1317,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             topLimitEntity.IsApproved = false;
             topLimitEntity.IsDraft = true;
             topLimitEntity.RefId = null;
+            topLimitEntity.CreatedBy = userid;
 
             topLimitEntity.TopLimitCampaigns = new List<CampaignTopLimitEntity>();
             foreach (var campaign in topLimitDraftEntity.TopLimitCampaigns)
@@ -1313,6 +1325,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 topLimitEntity.TopLimitCampaigns.Add(new CampaignTopLimitEntity()
                 {
                     CampaignId = campaign.CampaignId,
+                    CreatedBy = userid,
                 });
             }
 
@@ -1346,11 +1359,11 @@ namespace Bbt.Campaign.Services.Services.Approval
             var targetDto = _mapper.Map<TargetDto>(targetDraftEntity);
             targetDto.Id = 0;
             var targetEntity = _mapper.Map<TargetEntity>(targetDto);
-            //targetEntity.Id = 0;
             targetEntity.Name = targetDraftEntity.Name + "-Copy";
             targetEntity.IsApproved = false;
             targetEntity.IsDraft = true;
             targetEntity.RefId = null;
+            targetEntity.CreatedBy = userid;
             targetEntity.TargetDetail = null;
 
              await _unitOfWork.GetRepository<TargetEntity>().AddAsync(targetEntity);
@@ -1360,15 +1373,11 @@ namespace Bbt.Campaign.Services.Services.Approval
                 var targetDetailDto = _mapper.Map<TargetDetailDto>(targetDraftEntity.TargetDetail);
                 targetDetailDto.Id = 0;
                 var targetDetailEntity = _mapper.Map<TargetDetailEntity>(targetDetailDto);
-                //targetDetailEntity.Id = 0;
                 targetDetailEntity.Target = targetEntity;
+                targetDetailEntity.CreatedBy = userid;
 
                 await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(targetDetailEntity);
-
-                //targetEntity.TargetDetail = targetDetailEntity;
             }
-            
-           
 
             await _unitOfWork.SaveChangesAsync();
 

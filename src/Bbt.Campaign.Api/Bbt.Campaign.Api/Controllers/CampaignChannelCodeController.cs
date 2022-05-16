@@ -23,7 +23,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignChannelCodeUpdateRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignChannelCodeService.UpdateAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignChannelCodeService.UpdateAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -37,7 +37,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignChannelCodeUpdateRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignChannelCodeService.UpdateAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignChannelCodeService.UpdateAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -50,7 +50,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignChannelCodeService.GetInsertFormAsync(campaignId, Request.Headers["userid"].ToString());
+            var result = await _campaignChannelCodeService.GetInsertFormAsync(campaignId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -63,7 +63,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignChannelCodeService.GetUpdateFormAsync(campaignId, Request.Headers["userid"].ToString());
+            var result = await _campaignChannelCodeService.GetUpdateFormAsync(campaignId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

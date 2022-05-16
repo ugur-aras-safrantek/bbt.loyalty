@@ -36,7 +36,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignTopLimitInsertRequest campaignTopLimit, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _campaignTopLimitService.AddAsync(campaignTopLimit, Request.Headers["userid"].ToString());
+            var createResult = await _campaignTopLimitService.AddAsync(campaignTopLimit, General.GetUserIdFromHeader(Request));
             return Ok(createResult);
         }
         /// <summary>
@@ -48,7 +48,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignTopLimitUpdateRequest campaignTopLimit, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTopLimitService.UpdateAsync(campaignTopLimit, Request.Headers["userid"].ToString());
+            var result = await _campaignTopLimitService.UpdateAsync(campaignTopLimit, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -82,7 +82,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTopLimitService.GetInsertForm(Request.Headers["userid"].ToString());
+            var result = await _campaignTopLimitService.GetInsertForm(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -94,7 +94,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTopLimitService.GetUpdateForm(id, Request.Headers["userid"].ToString());
+            var result = await _campaignTopLimitService.GetUpdateForm(id, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -117,7 +117,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignTopLimitListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId) 
         {
-            var result = await _campaignTopLimitService.GetByFilterAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignTopLimitService.GetByFilterAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -130,7 +130,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter-excel")]
         public async Task<IActionResult> GetExcelAsync(CampaignTopLimitListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTopLimitService.GetExcelAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignTopLimitService.GetExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 

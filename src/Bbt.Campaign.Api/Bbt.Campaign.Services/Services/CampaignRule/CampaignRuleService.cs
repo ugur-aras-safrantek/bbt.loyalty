@@ -191,7 +191,6 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 return await AddAsync(campaignRule, userid);
 
             int campaignRuleId = entity.Id;
-            string createdBy = entity.CreatedBy;
 
             entity.CampaignStartTermId = campaignRule.StartTermId;
             entity.JoinTypeId = campaignRule.JoinTypeId;
@@ -229,7 +228,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     {
                         Identities = campaignRule.Identity.Trim(),
                         CampaignRule = entity,
-                        CreatedBy = createdBy,
+                        CreatedBy = userid,
                         LastModifiedBy = userid,
                     };
 
@@ -248,7 +247,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
                         Content = bytesList,
                         DocumentName = campaignRule.Identity,
-                        CreatedBy = createdBy,
+                        CreatedBy = userid,
                         LastModifiedBy = userid,
                     });
 
@@ -276,7 +275,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                             { 
                                 Identities = identity,
                                 CampaignRuleId = campaignRuleId,
-                                CreatedBy = createdBy,
+                                CreatedBy = userid,
                                 LastModifiedBy = userid,
                             };
 
@@ -295,7 +294,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         {
                             CampaignRuleId = campaignRuleId,
                             BusinessLineId = x,
-                            CreatedBy = createdBy,
+                            CreatedBy = userid,
                             LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
@@ -313,7 +312,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                             CampaignRuleId = campaignRuleId,
                             BranchCode = x,
                             BranchName = "",
-                            CreatedBy = createdBy,
+                            CreatedBy = userid,
                             LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
@@ -330,7 +329,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         {
                             CampaignRuleId = campaignRuleId,
                             CustomerTypeId = x,
-                            CreatedBy = createdBy,
+                            CreatedBy = userid,
                             LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);

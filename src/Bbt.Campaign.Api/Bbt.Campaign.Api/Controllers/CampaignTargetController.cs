@@ -37,7 +37,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignTargetInsertRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _campaignTargetService.UpdateAsync(request, Request.Headers["userid"].ToString());
+            var createResult = await _campaignTargetService.UpdateAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(createResult);
         }
         /// <summary>
@@ -49,7 +49,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignTargetInsertRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTargetService.UpdateAsync(request, Request.Headers["userid"].ToString());
+            var result = await _campaignTargetService.UpdateAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>
@@ -110,7 +110,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTargetService.GetUpdateForm(campaignId, Request.Headers["userid"].ToString());
+            var result = await _campaignTargetService.GetUpdateForm(campaignId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
     }

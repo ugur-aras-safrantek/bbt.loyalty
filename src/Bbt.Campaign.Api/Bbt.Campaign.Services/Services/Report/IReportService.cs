@@ -13,8 +13,8 @@ namespace Bbt.Campaign.Services.Services.Report
 {
     public interface IReportService
     {
-        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync();
-        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync();
+        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(string userid);
+        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(string userid);
         public Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, string userid);
         public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request, string userid);
     }

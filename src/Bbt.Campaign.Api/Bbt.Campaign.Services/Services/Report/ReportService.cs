@@ -13,7 +13,7 @@ using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using Microsoft.EntityFrameworkCore;
+using Bbt.Campaign.Services.Services.Authorization;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -22,12 +22,15 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
+        private readonly IAuthorizationservice _authorizationservice;
+        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
+        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
+            _authorizationservice = authorizationservice;
         }
 
         private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportListFilterRequest request) 
@@ -133,6 +136,10 @@ namespace Bbt.Campaign.Services.Services.Report
 
         public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
 
             Helpers.ListByFilterCheckValidation(request);
@@ -184,6 +191,10 @@ namespace Bbt.Campaign.Services.Services.Report
 
         public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             GetFileResponse response = new GetFileResponse();
 
             Helpers.ListByFilterCheckValidation(request);
@@ -238,8 +249,12 @@ namespace Bbt.Campaign.Services.Services.Report
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync()
+        public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CampaignReportFormDto response = new CampaignReportFormDto();
             await FillCampaignFormAsync(response);
             return await BaseResponse<CampaignReportFormDto>.SuccessAsync(response);
@@ -255,8 +270,12 @@ namespace Bbt.Campaign.Services.Services.Report
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
 
-        public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync()
+        public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             CustomerReportFormDto response = new CustomerReportFormDto();
             await FillCustomerFormAsync(response);
             return await BaseResponse<CustomerReportFormDto>.SuccessAsync(response);

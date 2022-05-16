@@ -115,7 +115,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-campaign")]
         public async Task<IActionResult> CampaignCopyAsync(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.CampaignCopyAsync(campaignId, Request.Headers["userid"].ToString());
+            var result = await _approvalService.CampaignCopyAsync(campaignId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -128,7 +128,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-top-limit")]
         public async Task<IActionResult> TopLimitCopyAsync(int topLimitId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.TopLimitCopyAsync(topLimitId, Request.Headers["userid"].ToString());
+            var result = await _approvalService.TopLimitCopyAsync(topLimitId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -141,7 +141,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-target")]
         public async Task<IActionResult> TargetCopyAsync(int targetId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.TargetCopyAsync(targetId, Request.Headers["userid"].ToString());
+            var result = await _approvalService.TargetCopyAsync(targetId, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
     }
