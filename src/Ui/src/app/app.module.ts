@@ -9,9 +9,10 @@ import {AppComponent} from './app.component';
 import {LoginComponent} from "./screens/login/login.component";
 import {DefaultLayoutComponent} from "./layouts/default-layout/default-layout.component";
 import {HeaderComponent} from "./components/header/header.component";
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import {SharedModule} from "./modules/shared.module";
+import {HttpHeadersInterceptor} from "./helpers/http-headers.interceptor";
 
 registerLocaleData(localeTR);
 
@@ -34,7 +35,10 @@ registerLocaleData(localeTR);
     FormsModule,
     SharedModule,
   ],
-  providers: [{provide: LOCALE_ID, useValue: 'tr-TR'}],
+  providers: [
+    {provide: LOCALE_ID, useValue: 'tr-TR'},
+    {provide: HTTP_INTERCEPTORS, useClass: HttpHeadersInterceptor, multi: true},
+  ],
   exports: [],
   bootstrap: [AppComponent]
 })
