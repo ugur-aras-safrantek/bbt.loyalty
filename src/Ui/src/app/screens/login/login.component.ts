@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
           next: res => {
             if (!res.hasError && res.data) {
               if (res.data.length > 0) {
-                this.loginService.setCurrentUserAuthorizations(res.data);
+                this.loginService.setCurrentUserAuthorizations(this.userId, res.data);
                 this.router.navigate([this.setRoute()]);
               } else {
                 this.toastrHandleService.warning("Kullanıcı bulunamadı");

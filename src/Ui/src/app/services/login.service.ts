@@ -17,6 +17,10 @@ export class LoginService {
   constructor(private httpClient: HttpClient) {
   }
 
+  getUserId() {
+    return JSON.parse(sessionStorage.getItem('userId') || '');
+  }
+
   getUserLoginInfo() {
     return JSON.parse(sessionStorage.getItem('isLogin') || 'false');
   }
@@ -25,18 +29,20 @@ export class LoginService {
     return JSON.parse(sessionStorage.getItem('currentUserAuthorizations') || '{}');
   }
 
-  setCurrentUserAuthorizations(userData: any[]) {
+  setCurrentUserAuthorizations(userId: any, userData: any[]) {
     this.currentUserAuthorizations = new UserAuthorizationsModel();
     userData.map(x => {
       this.setAuthorization(x);
     })
-    sessionStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
     sessionStorage.setItem('isLogin', 'true');
+    sessionStorage.setItem('userId', JSON.stringify(userId));
+    sessionStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
   }
 
   logout() {
-    sessionStorage.removeItem('currentUserAuthorizations');
     sessionStorage.removeItem('isLogin');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('currentUserAuthorizations');
   }
 
   login(data: LoginRequestModel) {
