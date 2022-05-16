@@ -59,6 +59,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                     entity.TopLimitCampaigns.Add(new CampaignTopLimitEntity()
                     {
                         CampaignId = x,
+                        CreatedBy = userid,
                     });
                 });
             }
@@ -115,7 +116,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(new CampaignTopLimitEntity()
                 {
                     CampaignId = campaignId,
-                    TopLimitId = request.Id
+                    TopLimitId = request.Id,
+                    CreatedBy = userid,
                 });
             }
 

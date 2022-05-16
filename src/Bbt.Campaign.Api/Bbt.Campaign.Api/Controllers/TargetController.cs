@@ -2,6 +2,7 @@
 using Bbt.Campaign.Public.Models.Target;
 using Bbt.Target.Services.Services.Target;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Target.Api.Controllers
 {
@@ -30,26 +31,24 @@ namespace Bbt.Target.Api.Controllers
         /// Adds new target
         /// </summary>
         /// <param name="Target"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add(TargetInsertRequest Target, string userid)
+        public async Task<IActionResult> Add(TargetInsertRequest Target, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _targetService.AddAsync(Target, userid);
+            var createResult = await _targetService.AddAsync(Target, Request.Headers["userid"].ToString());
             return Ok(createResult);
         }
         /// <summary>
         /// Updates target by Id
         /// </summary>
         /// <param name="Target"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(TargetUpdateRequest Target, string userid)
+        public async Task<IActionResult> Update(TargetUpdateRequest Target, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.UpdateAsync(Target, userid);
+            var result = await _targetService.UpdateAsync(Target, Request.Headers["userid"].ToString());
             return Ok(result);
         }
         /// <summary>
@@ -69,26 +68,24 @@ namespace Bbt.Target.Api.Controllers
         /// Returns the target list by selected filter options
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("get-by-filter")]
-        public async Task<IActionResult> GetByFilter(TargetListFilterRequest request, string userid)
+        public async Task<IActionResult> GetByFilter(TargetListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.GetByFilterAsync(request, userid);
+            var result = await _targetService.GetByFilterAsync(request, Request.Headers["userid"].ToString());
             return Ok(result);
         }
         /// <summary>
         /// Returns the target list by selected filter options
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("get-list-excel")]
-        public async Task<IActionResult> GetExcelAsync(TargetListFilterRequest request, string userid)
+        public async Task<IActionResult> GetExcelAsync(TargetListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetService.GetExcelAsync(request, userid);
+            var result = await _targetService.GetExcelAsync(request, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 

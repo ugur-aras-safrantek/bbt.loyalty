@@ -60,6 +60,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                     {
                         Identities = campaignRule.Identity.Trim(),
+                        CreatedBy = userid,
                     });
                 }
                 else if (campaignRule.File != null)
@@ -74,7 +75,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
                         MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
                         Content = bytesList,
-                        DocumentName = campaignRule.Identity
+                        DocumentName = campaignRule.Identity,
+                        CreatedBy = userid,
                     });
 
                     using (var excelWorkbook = new XLWorkbook(memoryStream))
@@ -102,6 +104,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                             entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                             {
                                 Identities = identity,
+                                CreatedBy = userid,
                             });
                         }
                     }
@@ -120,7 +123,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     {
                         entity.BusinessLines.Add(new CampaignRuleBusinessLineEntity()
                         {
-                            BusinessLineId = x
+                            BusinessLineId = x,
+                            CreatedBy = userid,
                         });
                     });
                 }
@@ -135,7 +139,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         entity.Branches.Add(new CampaignRuleBranchEntity()
                         {
                             BranchCode = x,
-                            BranchName = ""
+                            BranchName = "",
+                            CreatedBy = userid,
                         });
                     });
                 }
@@ -150,7 +155,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
                         entity.CustomerTypes.Add(new CampaignRuleCustomerTypeEntity()
                         {
-                            CustomerTypeId = x
+                            CustomerTypeId = x,
+                            CreatedBy = userid,
                         });
                     });
                 }
@@ -158,7 +164,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                              
             entity = await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(entity);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(); 
 
             var mappedCampaignRuleDto = _mapper.Map<CampaignRuleDto>(entity);
 
@@ -185,7 +191,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 return await AddAsync(campaignRule, userid);
 
             int campaignRuleId = entity.Id;
-
+            string createdBy = entity.CreatedBy;
 
             entity.CampaignStartTermId = campaignRule.StartTermId;
             entity.JoinTypeId = campaignRule.JoinTypeId;
@@ -223,6 +229,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     {
                         Identities = campaignRule.Identity.Trim(),
                         CampaignRule = entity,
+                        CreatedBy = createdBy,
+                        LastModifiedBy = userid,
                     };
 
                     await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
@@ -239,7 +247,9 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
                         MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
                         Content = bytesList,
-                        DocumentName = campaignRule.Identity
+                        DocumentName = campaignRule.Identity,
+                        CreatedBy = createdBy,
+                        LastModifiedBy = userid,
                     });
 
 
@@ -266,6 +276,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                             { 
                                 Identities = identity,
                                 CampaignRuleId = campaignRuleId,
+                                CreatedBy = createdBy,
+                                LastModifiedBy = userid,
                             };
 
                             await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
@@ -283,6 +295,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         {
                             CampaignRuleId = campaignRuleId,
                             BusinessLineId = x,
+                            CreatedBy = createdBy,
+                            LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
                     });
@@ -298,7 +312,9 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         {
                             CampaignRuleId = campaignRuleId,
                             BranchCode = x,
-                            BranchName = ""
+                            BranchName = "",
+                            CreatedBy = createdBy,
+                            LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
                     });
@@ -314,6 +330,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         {
                             CampaignRuleId = campaignRuleId,
                             CustomerTypeId = x,
+                            CreatedBy = createdBy,
+                            LastModifiedBy = userid,
                         };
                         _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
                     });

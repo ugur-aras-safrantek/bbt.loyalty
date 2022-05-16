@@ -2,6 +2,7 @@
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
@@ -31,13 +32,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Adds new campaign Achievement
         /// </summary>
         /// <param name="campaignAchievement"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement, string userid)
+        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, userid);
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -45,13 +45,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Updates campaign Achievement by Id
         /// </summary>
         /// <param name="campaignAchievement"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement, string userid)
+        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, userid);
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, Request.Headers["userid"].ToString());
             return Ok(result);
         }
         /// <summary>
@@ -83,13 +82,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for insert page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(int campaignId, string userid)
+        public async Task<IActionResult> GetInsertForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId, userid);
+            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -97,13 +95,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for update page
         /// </summary>
         /// <param name="campaignId">Record Id of the capaign</param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId, string userid)
+        public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId, userid);
+            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 

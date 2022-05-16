@@ -83,6 +83,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 {
                     TargetGroupEntity targetGroupEntity = new TargetGroupEntity();
                     targetGroupEntity.Name = "";
+                    targetGroupEntity.CreatedBy = userid;
                     targetGroupEntity = await _unitOfWork.GetRepository<TargetGroupEntity>().AddAsync(targetGroupEntity);
 
                     foreach (string targetId in targetIdsArray)

@@ -61,8 +61,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
             if (request.ProgramTypeId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
-            if (request.AchievementTypeId.HasValue)
-                campaignQuery = campaignQuery.Where(x => x.AchievementTypeId == request.AchievementTypeId.Value);
+            if (!string.IsNullOrEmpty(request.AchievementTypeId))
+                campaignQuery = campaignQuery.Where(x => x.AchievementTypeId.Contains(request.AchievementTypeId));
             if (request.JoinTypeId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.JoinTypeId == request.JoinTypeId.Value);
             if (request.SectorId.HasValue)
@@ -78,26 +78,60 @@ namespace Bbt.Campaign.Services.Services.Report
                     request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
 
                 bool isDescending = request.SortDir?.ToLower() == "desc";
-                if (request.SortBy.Equals("Code"))
+
+                switch (request.SortBy) 
                 {
-                    if (isDescending)
-                        campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
-                    else
-                        campaignQuery = campaignQuery.OrderBy(x => x.Id);
-                }
-                else
-                {
-                    if (isDescending)
-                        campaignQuery = campaignQuery.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null));
-                    else
-                        campaignQuery = campaignQuery.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null));
+                    case "Name":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Name) : campaignQuery.OrderBy(x => x.Name);
+                            break;
+                    case "Code":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Id) : campaignQuery.OrderBy(x => x.Id);
+                        break;
+                    case "ContractId":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.ContractId) : campaignQuery.OrderBy(x => x.ContractId);
+                        break;
+                    case "ViewOptionName":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.ViewOptionName) : campaignQuery.OrderBy(x => x.ViewOptionName);
+                        break;
+                    case "StartDate":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.StartDate) : campaignQuery.OrderBy(x => x.StartDate);
+                        break;
+                    case "EndDate":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.EndDate) : campaignQuery.OrderBy(x => x.EndDate);
+                        break;
+                    case "IsActive":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.IsActive) : campaignQuery.OrderBy(x => x.IsActive);
+                        break;
+                    case "IsBundle":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.IsBundle) : campaignQuery.OrderBy(x => x.IsBundle);
+                        break;
+                    case "Order":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Order) : campaignQuery.OrderBy(x => x.Order);
+                        break;
+                    case "ProgramTypeName":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.ProgramTypeName) : campaignQuery.OrderBy(x => x.ProgramTypeName);
+                        break;
+                    case "AchievementTypeName":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.AchievementTypeName) : campaignQuery.OrderBy(x => x.AchievementTypeName);
+                        break;
+                    case "JoinTypeName":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.JoinTypeName) : campaignQuery.OrderBy(x => x.JoinTypeName);
+                        break;
+                    case "SectorName":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.SectorName) : campaignQuery.OrderBy(x => x.SectorName);
+                        break;
+                    case "CustomerCount":
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.CustomerCount) : campaignQuery.OrderBy(x => x.CustomerCount);
+                        break;
+                    default: 
+                        break;
                 }
             }
 
             return campaignQuery;          
         }
 
-        public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request)
+        public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, string userid)
         {
             CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
 
@@ -122,15 +156,25 @@ namespace Bbt.Campaign.Services.Services.Report
                 EndDate = x.EndDate,
                 StartDateStr = x.StartDate.ToShortDateString(),
                 EndDateStr = x.EndDate.ToShortDateString(),
+                IsContract = x.IsContract,
                 ContractId = x.ContractId,
                 IsActive = x.IsActive,
                 IsBundle = x.IsBundle,
+                Order = x.Order,
+                SectorId = x.SectorId,
                 SectorName = x.SectorName,
+                ViewOptionId = x.ViewOptionId,
                 ViewOptionName = x.ViewOptionName,
+                ProgramTypeId = x.ProgramTypeId,
                 ProgramTypeName = x.ProgramTypeName,
+                AchievementTypeId = x.AchievementTypeId,
                 AchievementTypeName = x.AchievementTypeName,
+                AchievementAmount = x.AchievementAmount,
+                AchievementRate = x.AchievementRate,
+                TopLimitName = x.TopLimitName,
+                CustomerCount = x.CustomerCount ?? 0,
+                JoinTypeId = x.JoinTypeId,
                 JoinTypeName = x.JoinTypeName
-
             }).ToList();
 
             response.ResponseList = campaignList;
@@ -138,81 +182,61 @@ namespace Bbt.Campaign.Services.Services.Report
             return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response);
         }
 
-        //public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request) 
-        //{
-        //    GetFileResponse response = new GetFileResponse();
+        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request, string userid)
+        {
+            GetFileResponse response = new GetFileResponse();
 
-        //    //Core.Helper.Helpers.ListByFilterCheckValidation(request);
+            Helpers.ListByFilterCheckValidation(request);
 
-        //    //var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => !x.IsDeleted);
+            IQueryable<CampaignReportEntity> campaignQuery = await GetCampaignQueryAsync(request);
 
-        //    //if (request.IsBundle.HasValue)
-        //    //    campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
-        //    //if (!string.IsNullOrEmpty(request.CampaignCode) && !string.IsNullOrWhiteSpace(request.CampaignCode))
-        //    //{
-        //    //    int campaignId = -1;
-        //    //    try
-        //    //    {
-        //    //        campaignId = int.Parse(request.CampaignCode);
-        //    //    }
-        //    //    catch (Exception ex){}
-        //    //    campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
-        //    //}
+            if (campaignQuery.Count() == 0)
+                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Kampanya bulunamadı");
 
-        //    //if (!string.IsNullOrEmpty(request.CampaignName) && !string.IsNullOrWhiteSpace(request.CampaignName))
-        //    //    campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.CampaignName));
-        //    //if (request.ContractId.HasValue)
-        //    //    campaignQuery = campaignQuery.Where(x => x.ContractId == request.ContractId.Value);
-        //    //if (request.IsActive.HasValue)
-        //    //    campaignQuery = campaignQuery.Where(x => x.IsActive == request.IsActive.Value);
-        //    //if (request.ProgramTypeId.HasValue)
-        //    //    campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
-        //    //if (!string.IsNullOrEmpty(request.StartDate) && !string.IsNullOrWhiteSpace(request.StartDate))
-        //    //    campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));
-        //    //if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
-        //    //    campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
-        //    //if (request.IsApproved.HasValue)
-        //    //    campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
+            var campaignList = campaignQuery.Select(x => new CampaignReportListDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code = x.Id.ToString(),
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                StartDateStr = x.StartDate.ToShortDateString(),
+                EndDateStr = x.EndDate.ToShortDateString(),
+                IsContract = x.IsContract,
+                ContractId = x.ContractId,
+                IsActive = x.IsActive,
+                IsBundle = x.IsBundle,
+                Order = x.Order,
+                SectorId = x.SectorId,
+                SectorName = x.SectorName,
+                ViewOptionId = x.ViewOptionId,
+                ViewOptionName = x.ViewOptionName,
+                ProgramTypeId = x.ProgramTypeId,
+                ProgramTypeName = x.ProgramTypeName,
+                AchievementTypeId = x.AchievementTypeId,
+                AchievementTypeName = x.AchievementTypeName,
+                AchievementAmount = x.AchievementAmount,
+                AchievementRate = x.AchievementRate,
+                TopLimitName = x.TopLimitName,
+                CustomerCount = x.CustomerCount ?? 0,
+                JoinTypeId = x.JoinTypeId,
+                JoinTypeName = x.JoinTypeName
+            }).ToList();
 
-        //    //campaignQuery = campaignQuery.OrderByDescending(x => x.Id);
+            byte[] data = ListFileOperations.GetCampaignReportListExcel(campaignList);
 
-
-        //    campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
-        //    var totalItems = campaignQuery.Count();
-        //    if (totalItems == 0)
-        //    {
-        //        return await BaseResponse<GetFileResponse>.SuccessAsync(response);
-        //    }
-
-        //    campaignQuery = campaignQuery.OrderByDescending(x => x.CreatedOn);
-
-        //    var campaignList = campaignQuery.Select(x => new CampaignListDto
-        //    {
-        //        Id = x.Id,
-        //        Code = x.Id.ToString(),
-        //        StartDate = DateTime.Parse(x.StartDate.ToShortDateString()),
-        //        EndDate = DateTime.Parse(x.EndDate.ToShortDateString()),
-        //        ContractId = x.ContractId,
-        //        IsActive = x.IsActive,
-        //        IsBundle = x.IsBundle,
-        //        ProgramType = x.ProgramType.Name,
-        //        Name = x.Name
-        //    }).ToList();
-
-        //    byte[] data = ListFileOperations.GetCampaignListExcel(campaignList);
-
-        //    response = new GetFileResponse()
-        //    {
-        //        Document = new Public.Models.CampaignDocument.DocumentModel()
-        //        {
-        //            Data = Convert.ToBase64String(data, 0, data.Length),
-        //            DocumentName = "Kampanya Listesi.xlsx",
-        //            DocumentType = DocumentTypePublicEnum.ExcelReport,
-        //            MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
-        //        }
-        //    };
-        //    return await BaseResponse<GetFileResponse>.SuccessAsync(response);
-        //}
+            response = new GetFileResponse()
+            {
+                Document = new Public.Models.CampaignDocument.DocumentModel()
+                {
+                    Data = Convert.ToBase64String(data, 0, data.Length),
+                    DocumentName = "Kampanya Listesi.xlsx",
+                    DocumentType = DocumentTypePublicEnum.ExcelReport,
+                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                }
+            };
+            return await BaseResponse<GetFileResponse>.SuccessAsync(response);
+        }
 
         public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync()
         {

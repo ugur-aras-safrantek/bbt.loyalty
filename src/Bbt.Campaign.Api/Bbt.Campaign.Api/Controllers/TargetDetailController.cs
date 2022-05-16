@@ -2,6 +2,7 @@
 using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Target.Detail;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
@@ -43,13 +44,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Adds new target detail
         /// </summary>
         /// <param name="TargetDetail"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add(TargetDetailInsertRequest TargetDetail, string userid)
+        public async Task<IActionResult> Add(TargetDetailInsertRequest TargetDetail, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var createResult = await _targetDetailService.AddAsync(TargetDetail, userid);
+            var createResult = await _targetDetailService.AddAsync(TargetDetail, Request.Headers["userid"].ToString());
             return Ok(createResult);
         }
         /// <summary>
@@ -59,9 +59,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(TargetDetailUpdateRequest TargetDetail, string userid)
+        public async Task<IActionResult> Update(TargetDetailUpdateRequest TargetDetail, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetDetailService.UpdateAsync(TargetDetail, userid);
+            var result = await _targetDetailService.UpdateAsync(TargetDetail, Request.Headers["userid"].ToString());
             return Ok(result);
         }
         /// <summary>
@@ -80,13 +80,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Returns the form data for insert page
         /// </summary>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(string userid)
+        public async Task<IActionResult> GetInsertForm([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetDetailService.GetInsertFormAsync(userid);
+            var result = await _targetDetailService.GetInsertFormAsync(Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -94,13 +93,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the form data for update page
         /// </summary>
         /// <param name="targetId"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int targetId, string userid)
+        public async Task<IActionResult> GetUpdateForm(int targetId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetDetailService.GetUpdateFormAsync(targetId, userid);
+            var result = await _targetDetailService.GetUpdateFormAsync(targetId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -110,13 +108,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Returns the target detail list by selected filter options
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpPost]
         [Route("get-by-filter")]
-        public async Task<IActionResult> GetByFilter(TargetDetailListFilterRequest request, string userid)
+        public async Task<IActionResult> GetByFilter(TargetDetailListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _targetDetailService.GetByFilterAsync(request, userid);
+            var result = await _targetDetailService.GetByFilterAsync(request, Request.Headers["userid"].ToString());
             return Ok(result);
         }
     }

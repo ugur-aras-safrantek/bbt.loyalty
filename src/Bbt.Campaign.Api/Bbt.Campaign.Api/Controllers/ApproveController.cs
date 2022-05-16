@@ -1,6 +1,7 @@
 ﻿using Bbt.Campaign.Api.Base;
 using Bbt.Campaign.Services.Services.Approval;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
@@ -109,13 +110,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the campaign to a new campaign 
         /// </summary>
         /// <param name="campaignId">Record Id of the campaign</param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-campaign")]
-        public async Task<IActionResult> CampaignCopyAsync(int campaignId, string userid)
+        public async Task<IActionResult> CampaignCopyAsync(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.CampaignCopyAsync(campaignId, userid);
+            var result = await _approvalService.CampaignCopyAsync(campaignId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -123,13 +123,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the top limit information to a new top limit 
         /// </summary>
         /// <param name="topLimitId">Record Id of the top limit </param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-top-limit")]
-        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId, string userid)
+        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.TopLimitCopyAsync(topLimitId, userid);
+            var result = await _approvalService.TopLimitCopyAsync(topLimitId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
 
@@ -137,13 +136,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// Copy the top target to a new target
         /// </summary>
         /// <param name="targetId">Record Id of the target</param>
-        /// <param name="userid">User Id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("copy-target")]
-        public async Task<IActionResult> TargetCopyAsync(int targetId, string userid)
+        public async Task<IActionResult> TargetCopyAsync(int targetId, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.TargetCopyAsync(targetId, userid);
+            var result = await _approvalService.TargetCopyAsync(targetId, Request.Headers["userid"].ToString());
             return Ok(result);
         }
     }

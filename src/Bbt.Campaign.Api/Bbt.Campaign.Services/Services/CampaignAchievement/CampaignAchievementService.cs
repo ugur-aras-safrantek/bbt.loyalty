@@ -94,6 +94,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 entity.TitleTr = x.TitleTr;
                 entity.TitleEn = x.TitleEn;
                 entity.Type = x.Type == (int)AchievementType.Amount ? AchievementType.Amount : AchievementType.Rate;
+                entity.CreatedBy = userid;
 
                 #region defaults
 
