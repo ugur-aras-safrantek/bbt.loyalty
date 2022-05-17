@@ -35,9 +35,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-campaignreport-by-filter")]
-        public async Task<IActionResult> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCampaignReportByFilterAsync(CampaignReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _reportService.GetCampaignByFilterAsync(request, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCampaignReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
 
@@ -48,7 +48,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-campaignreport-by-filter-excel")]
-        public async Task<IActionResult> GetByFilterExcel(CampaignReportListFilterRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetByFilterExcel(CampaignReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
             var result = await _reportService.GetCampaignReportExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
@@ -65,6 +65,19 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _reportService.FillCustomerFormAsync(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns the customer report data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        //[HttpPost]
+        //[Route("get-customernreport-by-filter")]
+        //public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        //{
+        //    var result = await _reportService.GetCustomerReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
+        //    return Ok(result);
+        //}
 
 
 

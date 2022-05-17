@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Models.Report
 {
-    public class CampaignReportListFilterResponse : PagingResponse
+    public class CampaignReportResponse : PagingResponse
     {
-        public CampaignReportListFilterResponse()
+        public CampaignReportResponse()
         {
-            ResponseList = new List<CampaignReportListDto>();
+            CampaignList = new List<CampaignReportListDto>();
         }
-        public List<CampaignReportListDto> ResponseList { get; set; }
+        public List<CampaignReportListDto> CampaignList { get; set; }
     }
 }

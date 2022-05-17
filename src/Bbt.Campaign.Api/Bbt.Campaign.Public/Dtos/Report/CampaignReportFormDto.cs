@@ -12,9 +12,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public List<ParameterDto> ViewOptionList { get; set; }
         public List<ParameterDto> ActionOptionList { get; set; }
         public List<ParameterDto> ProgramTypeList { get; set; }
-
         public List<ParameterDto> JoinTypeList { get; set; }
-
         public List<ParameterDto> AchievementTypes { get; set; }
     }
 }

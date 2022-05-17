@@ -33,7 +33,7 @@ namespace Bbt.Campaign.Services.Services.Report
             _authorizationservice = authorizationservice;
         }
 
-        private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportListFilterRequest request) 
+        private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportRequest request) 
         {
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
 
@@ -64,8 +64,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
             if (request.ProgramTypeId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.ProgramTypeId == request.ProgramTypeId.Value);
-            if (!string.IsNullOrEmpty(request.AchievementTypeId))
-                campaignQuery = campaignQuery.Where(x => x.AchievementTypeId.Contains(request.AchievementTypeId));
+            if (request.AchievementTypeId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.AchievementTypeId.Contains(request.AchievementTypeId.ToString()));
             if (request.JoinTypeId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.JoinTypeId == request.JoinTypeId.Value);
             if (request.SectorId.HasValue)
@@ -134,20 +134,20 @@ namespace Bbt.Campaign.Services.Services.Report
             return campaignQuery;          
         }
 
-        public async Task<BaseResponse<CampaignReportListFilterResponse>> GetCampaignByFilterAsync(CampaignReportListFilterRequest request, string userid)
+        public async Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
             await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
-            CampaignReportListFilterResponse response = new CampaignReportListFilterResponse();
+            CampaignReportResponse response = new CampaignReportResponse();
 
             Helpers.ListByFilterCheckValidation(request);
 
             IQueryable<CampaignReportEntity> campaignQuery = await GetCampaignQueryAsync(request);
 
             if (campaignQuery.Count() == 0)
-                return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+                return await BaseResponse<CampaignReportResponse>.SuccessAsync(response, "Kampanya bulunamadı");
 
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
@@ -184,12 +184,12 @@ namespace Bbt.Campaign.Services.Services.Report
                 JoinTypeName = x.JoinTypeName
             }).ToList();
 
-            response.ResponseList = campaignList;
+            response.CampaignList = campaignList;
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
-            return await BaseResponse<CampaignReportListFilterResponse>.SuccessAsync(response);
+            return await BaseResponse<CampaignReportResponse>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportListFilterRequest request, string userid)
+        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -287,6 +287,148 @@ namespace Bbt.Campaign.Services.Services.Report
             response.CustomerTypeList = (await _parameterService.GetCustomerTypeListAsync())?.Data;
             response.BusinessLineList = (await _parameterService.GetBusinessLineListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
+        }
+
+        private async Task<IQueryable<CustomerReportEntity>> GetCustomerQueryAsync(CustomerReportRequest request)
+        {
+            var query = _unitOfWork.GetRepository<CustomerReportEntity>().GetAll();
+
+            if (!string.IsNullOrEmpty(request.CustomerCode))
+                query = query.Where(x => x.CustomerCode.Contains(request.CustomerCode));
+            if (!string.IsNullOrEmpty(request.CustomerIdentifier))
+                query = query.Where(x => x.CustomerIdentifier.Contains(request.CustomerIdentifier));
+            if (request.CustomerTypeId.HasValue)
+                query = query.Where(x => x.CustomerTypeId != null && x.CustomerTypeId.Contains(request.CustomerTypeId.ToString()));
+            if (request.CampaignStartTermId.HasValue)
+                query = query.Where(x => x.CampaignStartTermId != null &&  x.CampaignStartTermId.Contains(request.CampaignStartTermId.ToString()));
+            if (!string.IsNullOrEmpty(request.BranchCode))
+                query = query.Where(x => x.BranchCode != null &&  x.BranchCode.Contains(request.BranchCode));
+            if (request.AchievementTypeId.HasValue)
+                query = query.Where(x => x.AchievementTypeId != null && x.AchievementTypeId.Contains(request.AchievementTypeId.ToString()));
+            if (request.BusinessLineId.HasValue)
+                query = query.Where(x => x.BusinessLineId != null && x.BusinessLineId.Contains(request.BusinessLineId.ToString()));
+            if (request.IsActive.HasValue)
+                query = query.Where(x => x.IsActive == request.IsActive.Value);
+            if (request.IsBundle.HasValue)
+                query = query.Where(x => x.IsBundle == request.IsBundle.Value);
+
+
+            if (string.IsNullOrEmpty(request.SortBy))
+            {
+                query = query.OrderByDescending(x => x.Id);
+            }
+            else
+            {
+                if (request.SortBy.EndsWith("Str"))
+                    request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                bool isDescending = request.SortDir?.ToLower() == "desc";
+
+                switch (request.SortBy)
+                {
+                    case "CustomerCode":
+                        query = isDescending ? query.OrderByDescending(x => x.CustomerCode) : query.OrderBy(x => x.CustomerCode);
+                        break;
+                    //case "CustomerIdentifier":
+                    //    query = isDescending ? query.OrderByDescending(x => x.CustomerIdentifier) : query.OrderBy(x => x.CustomerIdentifier);
+                    //    break;
+                    case "CustomerTypeName":
+                        query = isDescending ? query.OrderByDescending(x => x.CustomerTypeName) : query.OrderBy(x => x.CustomerTypeName);
+                        break;
+                    case "AchievementTypeName":
+                        query = isDescending ? query.OrderByDescending(x => x.AchievementTypeName) : query.OrderBy(x => x.AchievementTypeName);
+                        break;
+                    case "CampaignStartTermName":
+                        query = isDescending ? query.OrderByDescending(x => x.CampaignStartTermName) : query.OrderBy(x => x.CampaignStartTermName);
+                        break;
+                    case "BranchName":
+                        query = isDescending ? query.OrderByDescending(x => x.BranchName) : query.OrderBy(x => x.BranchName);
+                        break;
+                    case "BusinessLineName":
+                        query = isDescending ? query.OrderByDescending(x => x.BusinessLineName) : query.OrderBy(x => x.BusinessLineName);
+                        break;
+                    //case "AchievementDate":
+                    //    query = isDescending ? query.OrderByDescending(x => x.AchievementDate) : query.OrderBy(x => x.AchievementDate);
+                    //    break;
+                    case "CampaignCode":
+                        query = isDescending ? query.OrderByDescending(x => x.CampaignCode) : query.OrderBy(x => x.CampaignCode);
+                        break;
+                    case "CampaignName":
+                        query = isDescending ? query.OrderByDescending(x => x.CampaignName) : query.OrderBy(x => x.CampaignName);
+                        break;
+                    case "IsActive":
+                        query = isDescending ? query.OrderByDescending(x => x.IsActive) : query.OrderBy(x => x.IsActive);
+                        break;
+                    case "IsBundle":
+                        query = isDescending ? query.OrderByDescending(x => x.IsBundle) : query.OrderBy(x => x.IsBundle);
+                        break;
+                    case "IsContinuingCampaign":
+                        query = isDescending ? query.OrderByDescending(x => x.IsContinuingCampaign) : query.OrderBy(x => x.IsContinuingCampaign);
+                        break;
+                    case "JoinDate":
+                        query = isDescending ? query.OrderByDescending(x => x.JoinDate) : query.OrderBy(x => x.JoinDate);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return query;
+        }
+
+        public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid)
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+            CustomerReportResponse response = new CustomerReportResponse();
+
+            Helpers.ListByFilterCheckValidation(request);
+
+            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
+
+            if (query.Count() == 0)
+                return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Kampanya bulunamadı");
+
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = query.Count();
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var customerCampaignList = query.Select(x => new CustomerReportListDto
+            {
+                Id = x.Id,
+                //Name = x.Name,
+                //Code = x.Id.ToString(),
+                //StartDate = x.StartDate,
+                //EndDate = x.EndDate,
+                //StartDateStr = x.StartDate.ToShortDateString(),
+                //EndDateStr = x.EndDate.ToShortDateString(),
+                //IsContract = x.IsContract,
+                //ContractId = x.ContractId,
+                //IsActive = x.IsActive,
+                //IsBundle = x.IsBundle,
+                //Order = x.Order,
+                //SectorId = x.SectorId,
+                //SectorName = x.SectorName,
+                //ViewOptionId = x.ViewOptionId,
+                //ViewOptionName = x.ViewOptionName,
+                //ProgramTypeId = x.ProgramTypeId,
+                //ProgramTypeName = x.ProgramTypeName,
+                //AchievementTypeId = x.AchievementTypeId,
+                //AchievementTypeName = x.AchievementTypeName,
+                //AchievementAmount = x.AchievementAmount,
+                //AchievementRate = x.AchievementRate,
+                //TopLimitName = x.TopLimitName,
+                //CustomerCount = x.CustomerCount ?? 0,
+                JoinTypeId = x.JoinTypeId,
+                JoinTypeName = x.JoinTypeName
+            }).ToList();
+
+            response.CustomerCampaignList = customerCampaignList;
+            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+            return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
+
         }
     }
 }
