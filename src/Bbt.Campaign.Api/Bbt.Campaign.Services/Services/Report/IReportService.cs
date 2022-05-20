@@ -17,5 +17,7 @@ namespace Bbt.Campaign.Services.Services.Report
         public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(string userid);
         public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, string userid);
         public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, string userid);
+        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid);
+        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, string userid);
     }
 }

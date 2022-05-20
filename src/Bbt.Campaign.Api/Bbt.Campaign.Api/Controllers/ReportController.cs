@@ -47,7 +47,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("get-campaignreport-by-filter-excel")]
+        [Route("get-campaign-report-by-filter-excel")]
         public async Task<IActionResult> GetByFilterExcel(CampaignReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
             var result = await _reportService.GetCampaignReportExcelAsync(request, General.GetUserIdFromHeader(Request));
@@ -67,24 +67,30 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the customer report data by selected filter options
+        /// Returns the campaign report data by selected filter options
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        //[HttpPost]
-        //[Route("get-customernreport-by-filter")]
-        //public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
-        //{
-        //    var result = await _reportService.GetCustomerReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
-        //    return Ok(result);
-        //}
-
-
-
         [HttpPost]
-        public IActionResult Test([FromHeader(Name = "UserId")][Required] string requiredHeader)
+        [Route("get-customer-report-by-filter")]
+        public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
         {
-            return Ok();
+            var result = await _reportService.GetCustomerReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Returns the customer report excel file data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-customer-report-by-filter-excel")]
+        public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _reportService.GetCustomerReportExcelAsync(request, General.GetUserIdFromHeader(Request));
+            return Ok(result);
         }
     }
 }

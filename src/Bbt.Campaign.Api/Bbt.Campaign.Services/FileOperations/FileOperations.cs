@@ -10,9 +10,11 @@ namespace Bbt.Campaign.Services.FileOperations
             worksheet.Range($"{column}1").Style.Font.Bold = true;
             worksheet.Range($"{column}1").Style.Fill.SetBackgroundColor(XLColor.FromArgb(234, 157, 147));
             worksheet.Column($"{column}").Width = width;
-            worksheet.Range($"{column}1").Value = headerValue;
-            worksheet.Range($"{column}1").Style.Alignment.WrapText = true;
+            worksheet.Range($"{column}1").Value = headerValue; 
+            worksheet.Range($"{column}1").Style.Alignment.SetWrapText(true);
             worksheet.Range($"{column}1").Style.Alignment.Vertical = (XLAlignmentVerticalValues.Center);
+
+            worksheet.Columns().AdjustToContents();
         }
     }
 }

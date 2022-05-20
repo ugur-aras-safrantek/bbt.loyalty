@@ -32,7 +32,6 @@ namespace Bbt.Campaign.Services.Services.Report
             _parameterService = parameterService;
             _authorizationservice = authorizationservice;
         }
-
         private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportRequest request) 
         {
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
@@ -133,7 +132,40 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return campaignQuery;          
         }
+        private List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query) 
+        {
+            var campaignList = query.Select(x => new CampaignReportListDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code = x.Id.ToString(),
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                StartDateStr = x.StartDate.ToShortDateString(),
+                EndDateStr = x.EndDate.ToShortDateString(),
+                IsContract = x.IsContract,
+                ContractId = x.ContractId,
+                IsActive = x.IsActive,
+                IsBundle = x.IsBundle,
+                Order = x.Order,
+                SectorId = x.SectorId,
+                SectorName = x.SectorName,
+                ViewOptionId = x.ViewOptionId,
+                ViewOptionName = x.ViewOptionName,
+                ProgramTypeId = x.ProgramTypeId,
+                ProgramTypeName = x.ProgramTypeName,
+                AchievementTypeId = x.AchievementTypeId,
+                AchievementTypeName = x.AchievementTypeName,
+                AchievementAmount = x.AchievementAmount,
+                AchievementRate = x.AchievementRate,
+                TopLimitName = x.TopLimitName,
+                CustomerCount = x.CustomerCount ?? 0,
+                JoinTypeId = x.JoinTypeId,
+                JoinTypeName = x.JoinTypeName
+            }).ToList();
 
+            return campaignList;
+        }
         public async Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -154,41 +186,12 @@ namespace Bbt.Campaign.Services.Services.Report
             var totalItems = campaignQuery.Count();
             campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            var campaignList = campaignQuery.Select(x => new CampaignReportListDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Code = x.Id.ToString(),
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                StartDateStr = x.StartDate.ToShortDateString(),
-                EndDateStr = x.EndDate.ToShortDateString(),
-                IsContract = x.IsContract,
-                ContractId = x.ContractId,
-                IsActive = x.IsActive,
-                IsBundle = x.IsBundle,
-                Order = x.Order,
-                SectorId = x.SectorId,
-                SectorName = x.SectorName,
-                ViewOptionId = x.ViewOptionId,
-                ViewOptionName = x.ViewOptionName,
-                ProgramTypeId = x.ProgramTypeId,
-                ProgramTypeName = x.ProgramTypeName,
-                AchievementTypeId = x.AchievementTypeId,
-                AchievementTypeName = x.AchievementTypeName,
-                AchievementAmount = x.AchievementAmount,
-                AchievementRate = x.AchievementRate,
-                TopLimitName = x.TopLimitName,
-                CustomerCount = x.CustomerCount ?? 0,
-                JoinTypeId = x.JoinTypeId,
-                JoinTypeName = x.JoinTypeName
-            }).ToList();
+            var campaignList = ConvertCampaignReportList(campaignQuery);
 
             response.CampaignList = campaignList;
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CampaignReportResponse>.SuccessAsync(response);
         }
-
         public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -204,37 +207,9 @@ namespace Bbt.Campaign.Services.Services.Report
             if (campaignQuery.Count() == 0)
                 return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Kampanya bulunamadı");
 
-            var campaignList = campaignQuery.Select(x => new CampaignReportListDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Code = x.Id.ToString(),
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                StartDateStr = x.StartDate.ToShortDateString(),
-                EndDateStr = x.EndDate.ToShortDateString(),
-                IsContract = x.IsContract,
-                ContractId = x.ContractId,
-                IsActive = x.IsActive,
-                IsBundle = x.IsBundle,
-                Order = x.Order,
-                SectorId = x.SectorId,
-                SectorName = x.SectorName,
-                ViewOptionId = x.ViewOptionId,
-                ViewOptionName = x.ViewOptionName,
-                ProgramTypeId = x.ProgramTypeId,
-                ProgramTypeName = x.ProgramTypeName,
-                AchievementTypeId = x.AchievementTypeId,
-                AchievementTypeName = x.AchievementTypeName,
-                AchievementAmount = x.AchievementAmount,
-                AchievementRate = x.AchievementRate,
-                TopLimitName = x.TopLimitName,
-                CustomerCount = x.CustomerCount ?? 0,
-                JoinTypeId = x.JoinTypeId,
-                JoinTypeName = x.JoinTypeName
-            }).ToList();
+            var campaignList = ConvertCampaignReportList(campaignQuery);
 
-            byte[] data = ListFileOperations.GetCampaignReportListExcel(campaignList);
+            byte[] data = ReportFileOperations.GetCampaignReportListExcel(campaignList);
 
             response = new GetFileResponse()
             {
@@ -246,9 +221,9 @@ namespace Bbt.Campaign.Services.Services.Report
                     MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
                 }
             };
+            
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
-
         public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -259,7 +234,6 @@ namespace Bbt.Campaign.Services.Services.Report
             await FillCampaignFormAsync(response);
             return await BaseResponse<CampaignReportFormDto>.SuccessAsync(response);
         }
-
         private async Task FillCampaignFormAsync(CampaignReportFormDto response)
         {
             response.ActionOptionList = (await _parameterService.GetActionOptionListAsync())?.Data;
@@ -269,7 +243,6 @@ namespace Bbt.Campaign.Services.Services.Report
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
-
         public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -280,15 +253,70 @@ namespace Bbt.Campaign.Services.Services.Report
             await FillCustomerFormAsync(response);
             return await BaseResponse<CustomerReportFormDto>.SuccessAsync(response);
         }
-
         private async Task FillCustomerFormAsync(CustomerReportFormDto response)
         {
             response.CampaignStartTermList = (await _parameterService.GetCampaignStartTermListAsync())?.Data;
             response.CustomerTypeList = (await _parameterService.GetCustomerTypeListAsync())?.Data;
             response.BusinessLineList = (await _parameterService.GetBusinessLineListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
-        }
+        }       
+        public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid)
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+            CustomerReportResponse response = new CustomerReportResponse();
+
+            Helpers.ListByFilterCheckValidation(request);
+
+            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
+
+            if (query.Count() == 0)
+                return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = query.Count();
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var customerCampaignList = await this.ConvertCustomerReportList(query);
+
+            response.CustomerCampaignList = customerCampaignList;
+            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+            return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
+        }
+        public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, string userid) 
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+            GetFileResponse response = new GetFileResponse();
+
+            Helpers.ListByFilterCheckValidation(request);
+
+            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
+
+            if (query.Count() == 0)
+                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı.");
+
+            var customerCampaignList = await this.ConvertCustomerReportList(query);
+
+            byte[] data = ReportFileOperations.GetCustomerReportListExcel(customerCampaignList);
+
+            response = new GetFileResponse()
+            {
+                Document = new Public.Models.CampaignDocument.DocumentModel()
+                {
+                    Data = Convert.ToBase64String(data, 0, data.Length),
+                    DocumentName = "Müşteri Listesi.xlsx",
+                    DocumentType = DocumentTypePublicEnum.ExcelReport,
+                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                }
+            };
+            return await BaseResponse<GetFileResponse>.SuccessAsync(response);
+        }
         private async Task<IQueryable<CustomerReportEntity>> GetCustomerQueryAsync(CustomerReportRequest request)
         {
             var query = _unitOfWork.GetRepository<CustomerReportEntity>().GetAll();
@@ -300,9 +328,9 @@ namespace Bbt.Campaign.Services.Services.Report
             if (request.CustomerTypeId.HasValue)
                 query = query.Where(x => x.CustomerTypeId != null && x.CustomerTypeId.Contains(request.CustomerTypeId.ToString()));
             if (request.CampaignStartTermId.HasValue)
-                query = query.Where(x => x.CampaignStartTermId != null &&  x.CampaignStartTermId.Contains(request.CampaignStartTermId.ToString()));
+                query = query.Where(x => x.CampaignStartTermId == request.CampaignStartTermId);
             if (!string.IsNullOrEmpty(request.BranchCode))
-                query = query.Where(x => x.BranchCode != null &&  x.BranchCode.Contains(request.BranchCode));
+                query = query.Where(x => x.BranchCode != null && x.BranchCode.Contains(request.BranchCode));
             if (request.AchievementTypeId.HasValue)
                 query = query.Where(x => x.AchievementTypeId != null && x.AchievementTypeId.Contains(request.AchievementTypeId.ToString()));
             if (request.BusinessLineId.HasValue)
@@ -311,7 +339,6 @@ namespace Bbt.Campaign.Services.Services.Report
                 query = query.Where(x => x.IsActive == request.IsActive.Value);
             if (request.IsBundle.HasValue)
                 query = query.Where(x => x.IsBundle == request.IsBundle.Value);
-
 
             if (string.IsNullOrEmpty(request.SortBy))
             {
@@ -374,61 +401,64 @@ namespace Bbt.Campaign.Services.Services.Report
             }
             return query;
         }
-
-        public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid)
+        private async Task<List<CustomerReportListDto>> ConvertCustomerReportList(IQueryable<CustomerReportEntity> query) 
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
-
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-
-            CustomerReportResponse response = new CustomerReportResponse();
-
-            Helpers.ListByFilterCheckValidation(request);
-
-            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
-
-            if (query.Count() == 0)
-                return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Kampanya bulunamadı");
-
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = query.Count();
-            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
             var customerCampaignList = query.Select(x => new CustomerReportListDto
             {
                 Id = x.Id,
-                //Name = x.Name,
-                //Code = x.Id.ToString(),
-                //StartDate = x.StartDate,
-                //EndDate = x.EndDate,
-                //StartDateStr = x.StartDate.ToShortDateString(),
-                //EndDateStr = x.EndDate.ToShortDateString(),
-                //IsContract = x.IsContract,
-                //ContractId = x.ContractId,
-                //IsActive = x.IsActive,
-                //IsBundle = x.IsBundle,
-                //Order = x.Order,
-                //SectorId = x.SectorId,
-                //SectorName = x.SectorName,
-                //ViewOptionId = x.ViewOptionId,
-                //ViewOptionName = x.ViewOptionName,
-                //ProgramTypeId = x.ProgramTypeId,
-                //ProgramTypeName = x.ProgramTypeName,
-                //AchievementTypeId = x.AchievementTypeId,
-                //AchievementTypeName = x.AchievementTypeName,
-                //AchievementAmount = x.AchievementAmount,
-                //AchievementRate = x.AchievementRate,
-                //TopLimitName = x.TopLimitName,
-                //CustomerCount = x.CustomerCount ?? 0,
+                CustomerCode = x.CustomerCode,
+                CustomerIdentifier = x.CustomerIdentifier,
+                JoinDate = x.JoinDate,
+                JoinDateStr = x.JoinDateStr,
+                CampaignId = x.CampaignId,
+                CampaignCode = x.CampaignCode,
+                CampaignName = x.CampaignName,
+                IsContinuingCampaign = x.IsContinuingCampaign == 1 ? true : false,
+                CampaignStartDate = x.CampaignStartDate,
+                CampaignStartDateStr = x.CampaignStartDateStr,
+                IsActive = x.IsActive,
+                IsBundle = x.IsBundle,
                 JoinTypeId = x.JoinTypeId,
-                JoinTypeName = x.JoinTypeName
+                JoinTypeName = x.JoinTypeName,
+                CustomerTypeId = x.CustomerTypeId,
+                CustomerTypeName = x.CustomerTypeName,
+                CampaignStartTermId = x.CampaignStartTermId,
+                CampaignStartTermName = x.CampaignStartTermName,
+                BusinessLineId = x.BusinessLineId,
+                BusinessLineName = x.BusinessLineName,
+                BranchCode = x.BranchCode,
+                BranchName = x.BranchName,
+                AchievementTypeId = x.AchievementTypeId,
+                AchievementTypeName = x.AchievementTypeName,
             }).ToList();
 
-            response.CustomerCampaignList = customerCampaignList;
-            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
-            return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
-
+            var branchList = (await _parameterService.GetBranchListAsync())?.Data;
+            foreach (var customerCampaign in customerCampaignList) 
+            { 
+                if(customerCampaign.JoinTypeId == (int)JoinTypeEnum.Branch) 
+                {
+                    if (!string.IsNullOrEmpty(customerCampaign.CampaignCode)) 
+                    {
+                        string branchName = string.Empty;
+                        string[] branchCodeArray = customerCampaign.BranchCode.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                        foreach(string branchCode in branchCodeArray) 
+                        { 
+                            var branch = branchList.Where(x=>x.Code == branchCode).FirstOrDefault();
+                            if(branch != null) 
+                            {
+                                branchName += "," + branchCode + " - " + branch.Name;
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(branchName)) 
+                        {
+                            branchName = branchName.Remove(0, 1);
+                            customerCampaign.BranchName = branchName;
+                        }
+                    }
+                }
+            }
+            
+            return customerCampaignList;
         }
     }
 }

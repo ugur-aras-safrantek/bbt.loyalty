@@ -395,8 +395,6 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             response.BranchList = (await _parameterService.GetBranchListAsync())?.Data;
             response.CustomerTypeList = (await _parameterService.GetCustomerTypeListAsync())?.Data;
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
-
-            
         }
 
         public async Task<BaseResponse<List<CampaignRuleDto>>> GetListAsync()
