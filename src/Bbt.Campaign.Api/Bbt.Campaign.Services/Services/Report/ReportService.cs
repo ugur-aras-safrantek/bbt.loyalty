@@ -14,6 +14,9 @@ using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Services.Services.Authorization;
+using Bbt.Campaign.Shared.Static;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -459,6 +462,63 @@ namespace Bbt.Campaign.Services.Services.Report
             }
             
             return customerCampaignList;
+        }
+        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int id, string userid) 
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+
+            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+            CustomerReportDetailDto response = new CustomerReportDetailDto();
+            CustomerReportDetailEntity customerReportDetailEntity = new CustomerReportDetailEntity();
+            CustomerReportDetailDto customerReportDetailDto = new CustomerReportDetailDto();
+            var query = _unitOfWork.GetRepository<CustomerReportEntity>().GetAll().Where(x => x.Id == id);
+            if (query.Count() == 0)
+                return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+            var customerCampaignList = await this.ConvertCustomerReportList(query);
+            var customerCampaign = customerCampaignList.FirstOrDefault();
+
+            if (StaticValues.IsDevelopment) 
+            {
+                customerReportDetailEntity.CampaignCode = customerCampaign.CampaignCode;
+                customerReportDetailEntity.CampaignName = customerCampaign.CampaignName;
+                customerReportDetailEntity.IsActive = customerCampaign.IsActive;
+                customerReportDetailEntity.IsBundle = customerCampaign.IsBundle;
+                customerReportDetailEntity.CustomerNumber = customerCampaign.CustomerCode;
+                customerReportDetailEntity.CustomerId = "12345678910";
+                customerReportDetailEntity.CustomerType = customerCampaign.CustomerTypeName;
+                customerReportDetailEntity.BranchCode = customerCampaign.BranchCode;
+                customerReportDetailEntity.BusinessLine = customerCampaign.BusinessLineName;
+                customerReportDetailEntity.EarningType = customerCampaign.AchievementTypeName;
+                customerReportDetailEntity.CustomerJoinDate = customerCampaign.JoinDate.ToShortDateString();
+                customerReportDetailEntity.EarningAmount = 30;
+                customerReportDetailEntity.EarningRate = null;
+                customerReportDetailEntity.IsEarningUsed = true;
+                customerReportDetailEntity.CampaignStartDate = customerCampaign.CampaignStartDate.ToShortDateString();
+                customerReportDetailDto =_mapper.Map<CustomerReportDetailDto>(customerReportDetailEntity);
+            }
+            else 
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var serviceResponse = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
+                    if (serviceResponse.IsSuccessStatusCode)
+                    {
+                        if (serviceResponse.Content != null)
+                        {
+                            //string apiResponse = await serviceResponse.Content.ReadAsStringAsync();
+                            //channelCodeList = JsonConvert.DeserializeObject<List<string>>((JObject.Parse(apiResponse)["data"]).ToString());
+                            //if (channelCodeList != null && channelCodeList.Any()) { }
+                            //else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                        }
+                        else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                    }
+                    else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                }
+
+            }
+            return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response);
         }
     }
 }

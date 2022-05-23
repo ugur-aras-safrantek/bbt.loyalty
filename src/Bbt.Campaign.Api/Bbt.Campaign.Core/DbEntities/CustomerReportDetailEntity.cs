@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bbt.Campaign.Public.Dtos.Report
+namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CustomerReportDetailDto
+    public class CustomerReportDetailEntity
     {
         public string? CampaignCode { get; set; } //"campaignCode": "1",
         public string? CampaignName { get; set; }  //"campaignName": "Demo",

@@ -72,7 +72,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             //    : await base.SaveChangesAsync(_authenticatedUser.UserId);
             return await base.SaveChangesAsync(cancellationToken);
         }
-
         public DbSet<ActionOptionEntity> ActionOptions { get; set; }
         public DbSet<BusinessLineEntity> BusinessLines { get; set; }  
         public DbSet<CampaignEntity> Campaigns { get; set; }
@@ -111,8 +110,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<ParticipationTypeEntity> ParticipationTypes { get; set; }
         public DbSet<CustomerCampaignEntity> CustomerCampaigns { get; set; }
         public DbSet<CampaignReportEntity> CampaignReports { get; set; }
-
-
         public DbSet<CampaignListEntity> CampaignList { get; set; }
         public DbSet<CampaignDetailListEntity> CampaignDetailList { get; set; }
         public DbSet<CampaignTargetListEntity> CampaignTargetList { get; set; }
@@ -121,7 +118,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<AuthorizationTypeEntity> AuthorizationTypes { get; set; }
         public DbSet<UserRoleEntity> UserRoles { get; set; }
         public DbSet<RoleAuthorizationEntity> RoleAuthorizations { get; set; }
-
         public DbSet<CustomerReportEntity> CustomerReports { get; set; }
+        public DbSet<ConstantsEntity> ServiceConstants { get; set; }
     }
 }

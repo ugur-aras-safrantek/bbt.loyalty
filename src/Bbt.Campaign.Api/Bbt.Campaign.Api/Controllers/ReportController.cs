@@ -92,5 +92,17 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _reportService.GetCustomerReportExcelAsync(request, General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns the campaign information by Id
+        /// </summary>
+        /// <param name="id">Record Id of the report line</param>
+        [HttpGet]
+        [Route("get-customer-report-detail/{id}")]
+        public async Task<IActionResult> GetCustomerReportDetailAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _reportService.GetCustomerReportDetailAsync(id, General.GetUserIdFromHeader(Request));
+            return Ok(result);
+        }
     }
 }

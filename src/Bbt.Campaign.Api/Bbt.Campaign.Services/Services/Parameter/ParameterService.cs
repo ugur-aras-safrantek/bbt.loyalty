@@ -234,12 +234,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<RoleAuthorizationDto>>.SuccessAsync(result);
         }
-
-        //public async Task<BaseResponse<List<ParameterDto>>> SetUserRoleAsync(string userId, int[] roleTypeList) 
-        //{
-        //    List<ParameterDto> allUsersRoleList = await GetAllUsersRoleListAsync());
-        //}
-
         public async Task<BaseResponse<List<ParameterDto>>> GetBranchListAsync()
         {
             List<ParameterDto> result = new List<ParameterDto>();
@@ -404,6 +398,12 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 result = JsonConvert.DeserializeObject<List<ParameterDto>>(channelCodeDateData);
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
+
+        public Task<BaseResponse<List<ParameterDto>>> GetServiceConstantListAsync()
+        {
+            return GetListAsync<ConstantsEntity>(CacheKeys.ServiceConstantList);
+        }
+
         public async Task<string> GetServiceData(string serviceUrl) 
         {
             string retVal = string.Empty;

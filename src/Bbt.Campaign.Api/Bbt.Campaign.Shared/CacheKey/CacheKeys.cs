@@ -48,9 +48,6 @@
 
         public const string ParticipationType = "ParticipationType";
 
-
-
-
         public const string RoleTypeList = "RoleTypeList";
 
         public const string ModuleTypeList = "ModuleTypeList";
@@ -59,8 +56,6 @@
 
         public const string AllUsersRoleList = "AllUsersRoleList";
 
-        //public const string SingleUserRoleList = "SingleUserRoleList";
-
         public const string RoleAuthorizationList = "RoleAuthorizationList";
 
         public const string AllUsersRoleListInProgress = "AllUsersRoleListInProgress";
@@ -68,5 +63,7 @@
         public const string UserProcessDate = "{0}_UserProcessDate";
 
         public const string UserRoleList = "{0}_UserRoleList";
+
+        public const string ServiceConstantList = "ServiceConstantList";
     }
 }

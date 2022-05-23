@@ -362,7 +362,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             foreach(var topLimit in topLimitList) 
             {
                 string campaignNames = string.Empty;
-                foreach(var campaignTopLimit in campaignTopLimitList) 
+                foreach(var campaignTopLimit in campaignTopLimitList.Where(x => x.TopLimitId == topLimit.Id)) 
                 {
                     campaignNames += string.Concat(",", campaignTopLimit.Name);
                 }
