@@ -490,12 +490,18 @@ namespace Bbt.Campaign.Services.Services.Report
                 customerReportDetailEntity.BranchCode = customerCampaign.BranchCode;
                 customerReportDetailEntity.BusinessLine = customerCampaign.BusinessLineName;
                 customerReportDetailEntity.EarningType = customerCampaign.AchievementTypeName;
-                customerReportDetailEntity.CustomerJoinDate = customerCampaign.JoinDate.ToShortDateString();
+                customerReportDetailEntity.CustomerJoinDate = customerCampaign.JoinDate;
+                customerReportDetailEntity.CustomerJoinDateStr = customerCampaign.JoinDate.ToShortDateString().Replace('.', '-');
                 customerReportDetailEntity.EarningAmount = 30;
+                customerReportDetailEntity.EarningAmountStr = Helpers.ConvertNullablePriceString(customerReportDetailEntity.EarningAmount);
                 customerReportDetailEntity.EarningRate = null;
+                customerReportDetailEntity.EarningRateStr = Helpers.ConvertNullablePriceString(customerReportDetailEntity.EarningRate);
                 customerReportDetailEntity.IsEarningUsed = true;
-                customerReportDetailEntity.CampaignStartDate = customerCampaign.CampaignStartDate.ToShortDateString();
-                customerReportDetailDto =_mapper.Map<CustomerReportDetailDto>(customerReportDetailEntity);
+                customerReportDetailEntity.EarningUsedDate = DateTime.Parse("2022-05-18T00:00:00");
+                customerReportDetailEntity.EarningUsedDateStr = customerReportDetailEntity.EarningUsedDate?.ToShortDateString().Replace('.', '-');
+                customerReportDetailEntity.CampaignStartDate = customerCampaign.CampaignStartDate;
+                customerReportDetailEntity.CampaignStartDateStr = customerCampaign.CampaignStartDate.ToShortDateString().Replace('.', '-'); 
+                response = _mapper.Map<CustomerReportDetailDto>(customerReportDetailEntity);
             }
             else 
             {

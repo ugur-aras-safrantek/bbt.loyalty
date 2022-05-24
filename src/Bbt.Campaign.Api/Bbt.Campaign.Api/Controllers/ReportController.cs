@@ -96,7 +96,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Returns the campaign information by Id
         /// </summary>
-        /// <param name="id">Record Id of the report line</param>
+        /// <param name="id">Record Id of the line</param>
         [HttpGet]
         [Route("get-customer-report-detail/{id}")]
         public async Task<IActionResult> GetCustomerReportDetailAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
