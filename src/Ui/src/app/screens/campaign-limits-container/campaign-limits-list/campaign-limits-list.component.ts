@@ -23,6 +23,7 @@ export class CampaignLimitsListComponent implements OnInit {
 
   columns = [
     {columnName: 'Çatı Limiti Adı', propertyName: 'name', isBoolean: false, sortDir: null},
+    {columnName: 'Kampanya Adı', propertyName: 'campaignNames', isBoolean: false, sortDir: null},
     {columnName: 'Kazanım Sıklığı', propertyName: 'achievementFrequency', isBoolean: false, sortDir: null},
     {columnName: 'Para Birimi', propertyName: 'currency', isBoolean: false, sortDir: null},
     {columnName: 'Çatı Max Tutar', propertyName: 'maxTopLimitAmountStr', isBoolean: false, sortDir: null},
