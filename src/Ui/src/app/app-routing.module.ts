@@ -27,7 +27,13 @@ const routes: Routes = [
         loadChildren: () => import('./screens/target-definition-container/target-definition-container.module').then(m => m.TargetDefinitionContainerModule),
         data: {module: 'target-definition', moduleName: 'Hedef Tanımı'},
         canActivate: [AuthorityGuard]
-      }
+      },
+      {
+        path: 'reports',
+        loadChildren: () => import('./screens/reports/reports.module').then(m => m.ReportsModule),
+        data: {module: 'reports', moduleName: 'Raporlar'},
+        canActivate: [AuthorityGuard]
+      },
     ],
     canActivate: [AuthGuard]
   },

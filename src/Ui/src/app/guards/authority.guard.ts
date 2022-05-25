@@ -42,6 +42,10 @@ export class AuthorityGuard implements CanActivate {
         hasAuthority = currentUserAuthorizations.targetDefinitionModuleAuthorizations.view;
         break;
       }
+      case 'reports': {
+        hasAuthority = currentUserAuthorizations.reportsModuleAuthorizations.view;
+        break;
+      }
     }
 
     if (!hasAuthority) {
@@ -54,7 +58,8 @@ export class AuthorityGuard implements CanActivate {
   private hasAnyAuthority(currentUserAuthorizations: UserAuthorizationsModel) {
     if (currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view ||
       currentUserAuthorizations.campaignLimitsModuleAuthorizations.view ||
-      currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
+      currentUserAuthorizations.targetDefinitionModuleAuthorizations.view ||
+      currentUserAuthorizations.reportsModuleAuthorizations.view) {
       return true;
     } else {
       return false;

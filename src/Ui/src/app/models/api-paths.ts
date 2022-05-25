@@ -48,4 +48,12 @@ export enum ApiPaths {
   TargetSourceGetUpdateForm = 'TargetDetail/get-update-form',
   TargetSourceAdd = 'TargetDetail/add',
   TargetSourceUpdate = 'TargetDetail/update',
+
+  CampaignReportFilterForm = 'Report/get-campaign-report-form',
+  CampaignReportGetByFilter = 'Report/get-campaignreport-by-filter',
+  CampaignReportGetByFilterExcelFile = 'Report/get-campaign-report-by-filter-excel',
+  CustomerReportFilterForm = 'Report/get-customer-report-form',
+  CustomerReportGetByFilter = 'Report/get-customer-report-by-filter',
+  CustomerReportGetByFilterExcelFile = 'Report/get-customer-report-by-filter-excel',
+  CustomerDetail = 'Report/get-customer-report-detail',
 }

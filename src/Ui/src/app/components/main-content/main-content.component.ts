@@ -10,6 +10,7 @@ export class MainContentComponent implements OnInit {
   @Input('route') route = '';
   @Input('newButtonText') newButtonText = '';
   @Input('createAuthorization') createAuthorization: boolean = false;
+  @Input('isReportsPage') isReportsPage: boolean = false;
 
   constructor() {
   }

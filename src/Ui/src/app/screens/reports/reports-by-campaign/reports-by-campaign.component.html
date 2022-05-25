@@ -1,0 +1,138 @@
+<app-main-content [isReportsPage]="true">
+  <app-list (getListEvent)="campaignReportGetByFilter()"
+            (downloadExcelFileEvent)="campaignReportGetByFilterExcelFile()">
+    <div filterForm class="p-4">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Kampanya Kodu</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.code" onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Kampanya Adı</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.name">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="viewOptionId">Görüntüleme</label>
+            <select name="viewOptionId" id="viewOptionId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.viewOptionId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of viewOptionList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group calendar">
+            <label>Başlama Tarihi</label>
+            <input class="form-control form-control-sm pl-32px" name="startDate" id="startDate"
+                   angular-mydatepicker
+                   #startDateDp="angular-mydatepicker"
+                   [options]="dpOptions" [locale]="locale"
+                   [(ngModel)]="startDate"
+                   (click)="startDateDp.toggleCalendar()"/>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group calendar">
+            <label>Bitiş Tarihi</label>
+            <input class="form-control form-control-sm pl-32px" name="endDate" id="endDate"
+                   angular-mydatepicker
+                   #endDateDp="angular-mydatepicker"
+                   [options]="dpOptions" [locale]="locale"
+                   [(ngModel)]="endDate"
+                   (click)="endDateDp.toggleCalendar()"/>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="isActive">Aktif</label>
+                <select name="isActive" id="isActive" class="form-select form-select-sm"
+                        [(ngModel)]="filterForm.isActive">
+                  <option [ngValue]="null">Tümü</option>
+                  <option [ngValue]="true">Evet</option>
+                  <option [ngValue]="false">Hayır</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="isBundle">Birleştirilebilir</label>
+                <select name="isBundle" id="isBundle" class="form-select form-select-sm"
+                        [(ngModel)]="filterForm.isBundle">
+                  <option [ngValue]="null">Tümü</option>
+                  <option [ngValue]="true">Evet</option>
+                  <option [ngValue]="false">Hayır</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="programTypeId">Program Tipi</label>
+            <select name="programTypeId" id="programTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.programTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of programTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="achievementTypeId">Kazanım Tipi</label>
+            <select name="achievementTypeId" id="achievementTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.achievementTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of achievementTypes"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="joinTypeId">Dahil Olma Şekli</label>
+            <select name="joinTypeId" id="joinTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.joinTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of joinTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="sectorId">Sektör</label>
+            <select name="sectorId" id="sectorId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.sectorId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of sectorList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="row mt-3">
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col pt-3">
+          <button class="btn btn-sm btn-outline-primary w-100" (click)="clear()">Temizle</button>
+        </div>
+        <div class="col pt-3">
+          <button class="btn btn-sm btn-primary w-100" (click)="campaignReportGetByFilter()">Getir</button>
+        </div>
+      </div>
+    </div>
+  </app-list>
+</app-main-content>
