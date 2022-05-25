@@ -13,6 +13,7 @@ using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
+using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Services.Services.Draft
 {
-    public class DraftService
+    public class DraftService : IDraftService, IScopedService
     {
 
         private readonly IUnitOfWork _unitOfWork;
@@ -34,19 +35,16 @@ namespace Bbt.Campaign.Services.Services.Draft
         private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
 
-        public DraftService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
-            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignTargetService campaignTargetService)
+        public DraftService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
-            _campaignRuleService = campaignRuleService;
-            _campaignTargetService = campaignTargetService;
         }
-        public async Task<Dictionary<string, int>> CreateCampaignDraft(
+        public async Task<int> CreateCampaignDraft(
             int campaignId,
             int campaignPageId,
+            string userid,
             CampaignUpdateRequest campaignUpdateRequest, 
             AddCampaignRuleRequest addCampaignRuleRequest, 
             CampaignTargetInsertRequest campaignTargetInsertRequest, 
@@ -55,15 +53,60 @@ namespace Bbt.Campaign.Services.Services.Draft
         {
             Dictionary<string, int> returnList = new Dictionary<string, int>();
 
-            CampaignEntity campaignEntity = await AddCampaign(campaignId, campaignPageId, campaignUpdateRequest);
-            
-            CampaignRuleEntity campaignRuleEntity = await AddCampaignRule(campaignId, campaignPageId, campaignEntity, addCampaignRuleRequest);
+            //campaign
+            CampaignEntity campaignEntity;
+            CampaignDetailEntity campaignDetailEntity;
+            CampaignDto campaignDto;
+            CampaignDetailDto campaignDetailDto;
+            if (campaignPageId == (int)CampaignPagesEnum.Campaign)
+            {
+                campaignDto = _mapper.Map<CampaignDto>(campaignUpdateRequest);
+                campaignDto.Id = 0;
+                campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
 
+                campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignUpdateRequest.CampaignDetail);
+                campaignDetailDto.Id = 0;
+                campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
+                campaignEntity.CampaignDetail = campaignDetailEntity;
+            }
+            else
+            {
+                var campaignReferenceEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                    .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                    .Include(x => x.CampaignDetail)
+                    .FirstOrDefaultAsync();
+                if (campaignReferenceEntity == null)
+                    throw new Exception("Kampanya bulunamadı.");
 
+                campaignDto = _mapper.Map<CampaignDto>(campaignReferenceEntity);
+                campaignDto.Id = 0;
+                campaignDto.Code = string.Empty;
+                campaignDto.IsApproved = false;
+                campaignDto.IsDraft = true;
+                campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
 
+                //campaign detail
+                campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignReferenceEntity.CampaignDetail);
+                campaignDetailDto.Id= 0;
+                campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
+                campaignEntity.CampaignDetail = campaignDetailEntity;
+            }
 
+            campaignEntity = await SetCampaignDefaults(campaignEntity);
 
-            return returnList;
+            campaignEntity.CreatedBy = userid;
+            campaignEntity.LastModifiedBy = null;
+            campaignEntity.LastModifiedOn = null;
+
+            campaignDetailEntity.CreatedBy = userid;
+            campaignDetailEntity.LastModifiedBy = null;
+            campaignDetailEntity.LastModifiedOn = null;
+
+            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
+
+            //CampaignRuleEntity campaignRuleEntity = await AddCampaignRule(campaignId, campaignPageId, campaignEntity, addCampaignRuleRequest);
+
+            return campaignEntity.Id;
         }
 
         private async Task<CampaignEntity> AddCampaign(int refCampaignId, int campaignPageId, CampaignUpdateRequest request) 
@@ -78,9 +121,9 @@ namespace Bbt.Campaign.Services.Services.Draft
             else
             {
                 var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refCampaignId && !x.IsDeleted)
-                .Include(x => x.CampaignDetail)
-                .FirstOrDefaultAsync();
+                    .GetAll(x => x.Id == refCampaignId && !x.IsDeleted)
+                    .Include(x => x.CampaignDetail)
+                    .FirstOrDefaultAsync();
                 if (campaignDraftEntity == null)
                     throw new Exception("Kampanya bulunamadı.");
 
@@ -289,8 +332,6 @@ namespace Bbt.Campaign.Services.Services.Draft
                     }
                 }
             }
-            
-
             await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
 
             return campaignRuleEntity;
@@ -361,5 +402,12 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return entity;
         }
+    
+        //public async Task<CampaignEntity> SetCampaignRowValues() 
+        //{ 
+            
+        //}
+    
+    
     }
 }

@@ -94,7 +94,7 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the campaign information by Id
+        /// Returns the report detail information by Id
         /// </summary>
         /// <param name="id">Record Id of the line</param>
         [HttpGet]

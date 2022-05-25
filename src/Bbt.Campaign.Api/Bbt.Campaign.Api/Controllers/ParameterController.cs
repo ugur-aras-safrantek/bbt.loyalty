@@ -319,14 +319,14 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Clears all keys on the cache.
+        /// Returns the last channel code select date
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("redis-clear")]
-        public async Task<IActionResult> ClearCacheRedis()
+        [Route("get-service-constant-list")]
+        public async Task<IActionResult> GetServiceConstantListAsync()
         {
-            var result = await _cacheService.ClearCacheRedis();
+            var result = await _parameterService.GetServiceConstantListAsync();
             return Ok(result);
         }
 
@@ -337,7 +337,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-service-data")]
-        public async Task<IActionResult> GetServiceData( string url)
+        public async Task<IActionResult> GetServiceData(string url)
         {
             var result = await _parameterService.GetServiceData(url);
             return Ok(result);

@@ -24,23 +24,23 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
+        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationservice;
         }
 
         public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(campaignRule, false);
 
@@ -175,7 +175,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(campaignRule, true);
 
@@ -348,7 +348,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetByIdAsync(id);
             if (entity == null)
@@ -364,7 +364,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetByIdAsync(id);
             if (campaignRuleEntity != null)
@@ -380,7 +380,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignRuleInsertFormDto response = new CampaignRuleInsertFormDto();
             await FillForm(response);
@@ -407,7 +407,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignRuleUpdateFormDto response = new CampaignRuleUpdateFormDto();
             

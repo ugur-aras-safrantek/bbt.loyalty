@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,5 +30,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? EarningUsedDateStr { get; set; }
         public DateTime? CampaignStartDate { get; set; }  //"campaignStartDate": "2022-05-01T00:00:00" 
         public string? CampaignStartDateStr { get; set; }
+        public CampaignTargetDto CampaignTarget { get; set; }
     }
 }

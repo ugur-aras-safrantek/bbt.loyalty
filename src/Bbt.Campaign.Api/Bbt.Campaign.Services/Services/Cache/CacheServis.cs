@@ -18,20 +18,8 @@ namespace Bbt.Campaign.Services.Services.Cache
             _memoryCache = memoryCache;
         }
 
-        //public async Task ClearCacheRedis(string token)
-        //{
-        //    PropertyInfo prop = _memoryCache.GetType().GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Public);
-        //    object innerCache = prop.GetValue(_memoryCache);
-        //    MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
-        //    clearMethod.Invoke(innerCache, null);
-
-        //    await _redisDatabaseProvider.FlushDatabase();
-        //}
-
-        public async Task<BaseResponse<RedisClearDto>> ClearCacheRedis()
+        public async Task<bool> ClearCache()
         {
-            RedisClearDto response = new RedisClearDto(); 
-
             PropertyInfo prop = _memoryCache.GetType().GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Public);
             object innerCache = prop.GetValue(_memoryCache);
             MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
@@ -39,9 +27,17 @@ namespace Bbt.Campaign.Services.Services.Cache
 
             await _redisDatabaseProvider.FlushDatabase();
 
-            response.IsSuccess = true;
+            return true;
+        }
 
-            return await BaseResponse<RedisClearDto>.SuccessAsync(response);
+        public Task<bool> RemoveAsync(string cacheKey) 
+        { 
+            return _redisDatabaseProvider.RemoveAsync(cacheKey);
+        }
+
+        public Task<bool> RemoveByPatternAsync(string cacheKey)
+        {
+            return _redisDatabaseProvider.RemoveByPattern(cacheKey);
         }
 
         //public bool Exists(string key)

@@ -21,23 +21,23 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
+        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationservice;
         }
 
         public async Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
@@ -54,7 +54,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
             
@@ -214,7 +214,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementInsertFormDto response = new CampaignAchievementInsertFormDto();
             
@@ -242,7 +242,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementUpdateFormDto response = new CampaignAchievementUpdateFormDto();
             await FillForm(response, campaignId);            

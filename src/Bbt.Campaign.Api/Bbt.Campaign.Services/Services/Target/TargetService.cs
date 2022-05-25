@@ -25,23 +25,23 @@ namespace Bbt.Target.Services.Services.Target
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationservice authorizationservice)
+        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationservice;
         }
 
         public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(Target);
 
@@ -131,7 +131,7 @@ namespace Bbt.Target.Services.Services.Target
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(Target);
             var entity = _unitOfWork.GetRepository<TargetEntity>()
@@ -180,7 +180,7 @@ namespace Bbt.Target.Services.Services.Target
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var response = new TargetListFilterResponse();
             try 
@@ -209,7 +209,7 @@ namespace Bbt.Target.Services.Services.Target
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var response = new GetFileResponse();
 

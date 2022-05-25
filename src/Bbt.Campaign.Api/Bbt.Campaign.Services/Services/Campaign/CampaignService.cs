@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Bbt.Campaign.Services.Services.CampaignTopLimit;
 using Bbt.Campaign.Services.Services.Authorization;
+using Bbt.Campaign.Services.Services.Draft;
 
 namespace Bbt.Campaign.Services.Services.Campaign
 {
@@ -28,24 +29,27 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly ICampaignTopLimitService _campaignTopLimitService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+        private static int campaignPageId = (int) CampaignPagesEnum.Campaign;
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignTopLimitService campaignTopLimitService, IAuthorizationservice authorizationservice)
+            ICampaignTopLimitService campaignTopLimitService, IAuthorizationService authorizationService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignTopLimitService = campaignTopLimitService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationService;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(campaign, 0);
 
@@ -71,7 +75,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(id);
             if (entity != null)
@@ -87,7 +91,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
             
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             //var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
             //    .GetAll(x => x.Id == id && !x.IsDeleted)
@@ -135,7 +139,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignInsertFormDto response = new CampaignInsertFormDto();
             await FillFormAsync(response);
@@ -146,7 +150,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var mappedCampaigns = _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => !x.IsDeleted)
@@ -165,7 +169,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignUpdateFormDto response = new CampaignUpdateFormDto();
             await FillFormAsync(response);
@@ -206,10 +210,13 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(campaign, campaign.Id);
-            
+
+            //await _draftService.CreateCampaignDraft(campaign.Id, campaignPageId, userid, campaign, null, null, null);
+
+
             var entity = _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAllIncluding(x => x.CampaignDetail)
                 .Where(x => x.Id == campaign.Id).FirstOrDefault();
@@ -480,7 +487,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignListFilterResponse response = new CampaignListFilterResponse();
             List<CampaignListDto> campaignList = await this.GetFilteredCampaignList(request);
@@ -499,7 +506,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             GetFileResponse response = new GetFileResponse();
             List<CampaignListDto> campaignList = await this.GetFilteredCampaignList(request);

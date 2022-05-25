@@ -32,13 +32,13 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly ICampaignService _campaignService;
         private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignService campaignService, 
             ICampaignRuleService campaignRuleService, 
             ICampaignTargetService campaignTargetService,
-            IAuthorizationservice authorizationservice)
+            IAuthorizationService authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -46,7 +46,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             _campaignService = campaignService;
             _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationservice;
         }
 
         #region campaign
@@ -1234,7 +1234,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == refId && !x.IsDeleted)
@@ -1294,7 +1294,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var topLimitDraftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                                                           .GetAll(x => x.Id == refId && x.IsDeleted == false)
@@ -1343,7 +1343,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var targetDraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
                                                               .GetAll(x => x.Id == refId && x.IsDeleted == false)
