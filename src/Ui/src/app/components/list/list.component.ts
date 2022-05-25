@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ListService} from "../../services/list.service";
-import {Subject, takeUntil} from "rxjs";
+import {Subject} from "rxjs";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-list',
@@ -13,8 +14,11 @@ export class ListComponent implements OnInit {
 
   @Output() getListEvent = new EventEmitter();
   @Output() downloadExcelFileEvent = new EventEmitter();
+  @Output() showDetailEvent = new EventEmitter();
 
-  constructor(public listService: ListService) {
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              public listService: ListService) {
   }
 
   ngOnInit(): void {
@@ -31,6 +35,14 @@ export class ListComponent implements OnInit {
 
   downloadExcelFile() {
     this.downloadExcelFileEvent.emit();
+  }
+
+  rowClick(row) {
+    if (row.routerLink) {
+      this.router.navigate([row.routerLink], {relativeTo: this.route});
+    } else {
+      this.showDetailEvent.emit(row);
+    }
   }
 
   columnSortDirChange(column) {

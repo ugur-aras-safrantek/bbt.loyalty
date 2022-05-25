@@ -7,6 +7,7 @@ import {ToastrHandleService} from "../../../services/toastr-handle.service";
 import {UtilityService} from "../../../services/utility.service";
 import {ListService} from "../../../services/list.service";
 import {CustomerReportRequestModel} from "../../../models/reports";
+import {NgxSmartModalService} from "ngx-smart-modal";
 
 @Component({
   selector: 'app-reports-by-customer',
@@ -22,7 +23,6 @@ export class ReportsByCustomerComponent implements OnInit {
     {columnName: 'Kampanya Adı', propertyName: 'campaignName', isBoolean: false, sortDir: null},
     {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null},
     {columnName: 'Birleştirilebilir', propertyName: 'isBundle', isBoolean: true, sortDir: null},
-    {columnName: 'Kampanya Yürürlükte mi?', propertyName: 'isContinuingCampaign', isBoolean: false, sortDir: null},
     {columnName: 'Kampanyaya Katıldığı Tarih', propertyName: 'joinDateStr', isBoolean: false, sortDir: null},
     {columnName: 'Müşteri No', propertyName: 'customerCode', isBoolean: false, sortDir: null},
     {columnName: 'TCKN', propertyName: 'customerIdentifier', isBoolean: false, sortDir: null},
@@ -32,6 +32,8 @@ export class ReportsByCustomerComponent implements OnInit {
   campaignStartTermList: DropdownListModel[];
   achievementTypes: DropdownListModel[];
   businessLineList: DropdownListModel[];
+
+  customerDetailTargetGroupList: any[] = [];
 
   filterForm = {
     customerCode: '',
@@ -45,6 +47,7 @@ export class ReportsByCustomerComponent implements OnInit {
   };
 
   constructor(private reportsService: ReportsService,
+              private modalService: NgxSmartModalService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
@@ -156,6 +159,24 @@ export class ReportsByCustomerComponent implements OnInit {
             this.campaignStartTermList = res.data.campaignStartTermList;
             this.achievementTypes = res.data.achievementTypes;
             this.businessLineList = res.data.businessLineList;
+          } else
+            this.toastrHandleService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
+  showDetail(event){
+    this.reportsService.getCustomerDetail(event.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data?.campaignTarget) {
+            this.customerDetailTargetGroupList = res.data.campaignTarget.targetGroupList;
+            this.modalService.getModal('customerReportModal').open();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

@@ -46,10 +46,7 @@ export class ReportsService {
   }
 
   getCustomerDetail(id: any) {
-    let params = new HttpParams();
-    params = params.append('id', id);
-
-    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${id}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url);
   }
 }
