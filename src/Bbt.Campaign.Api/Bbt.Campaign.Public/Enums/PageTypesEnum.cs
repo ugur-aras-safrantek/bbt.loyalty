@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Enums
 {
-    public enum CampaignPagesEnum
+    public enum PageTypesEnum
     {
         [Description("Campaign")]
         Campaign = 1,

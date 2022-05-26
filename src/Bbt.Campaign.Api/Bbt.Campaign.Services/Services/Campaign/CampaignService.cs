@@ -32,7 +32,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-        private static int campaignPageId = (int) CampaignPagesEnum.Campaign;
+        private static int campaignPageId = (int) PageTypesEnum.Campaign;
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignTopLimitService campaignTopLimitService, IAuthorizationService authorizationService, IDraftService draftService)
@@ -55,7 +55,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             var entity = _mapper.Map<CampaignEntity>(campaign);
 
-            entity = await SetDefaults(entity);
+            //entity = await SetDefaults(entity);
+            entity = await _draftService.SetCampaignDefaults(entity);
 
             entity.Code = string.Empty;
             entity.CreatedBy = userid;
@@ -290,7 +291,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.ParticipationTypeId = campaign.ParticipationTypeId;
                 entity.LastModifiedBy = userid;
 
-                entity = await SetDefaults(entity);
+                //entity = await SetDefaults(entity);
+                entity = await _draftService.SetCampaignDefaults(entity);
 
                 await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(entity);
                 await _unitOfWork.SaveChangesAsync();
@@ -300,58 +302,58 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<CampaignDto>.FailAsync("Kampanya bulunamadı.");
         }
 
-        private async Task<CampaignEntity> SetDefaults(CampaignEntity entity)
-        {
-            if (entity.ProgramTypeId == (int)ProgramTypeEnum.Loyalty) 
-            {
-                entity.ViewOptionId = null;
-                entity.SectorId = null;
-            }
+        //private async Task<CampaignEntity> SetDefaults(CampaignEntity entity)
+        //{
+        //    if (entity.ProgramTypeId == (int)ProgramTypeEnum.Loyalty) 
+        //    {
+        //        entity.ViewOptionId = null;
+        //        entity.SectorId = null;
+        //    }
 
-            if(entity.ViewOptionId == (int)ViewOptionsEnum.InvisibleCampaign) 
-            {
-                entity.TitleTr = null; //Başlık(Türkçe)
-                entity.TitleEn = null;
+        //    if(entity.ViewOptionId == (int)ViewOptionsEnum.InvisibleCampaign) 
+        //    {
+        //        entity.TitleTr = null; //Başlık(Türkçe)
+        //        entity.TitleEn = null;
             
-                 //İçerik
-                entity.CampaignDetail.ContentTr = null;
-                entity.CampaignDetail.ContentEn = null;
+        //         //İçerik
+        //        entity.CampaignDetail.ContentTr = null;
+        //        entity.CampaignDetail.ContentEn = null;
                 
-                //detay
-                entity.CampaignDetail.DetailTr = null;
-                entity.CampaignDetail.DetailEn = null;
+        //        //detay
+        //        entity.CampaignDetail.DetailTr = null;
+        //        entity.CampaignDetail.DetailEn = null;
 
-                //liste ve detay görseli
-                entity.CampaignDetail.CampaignListImageUrl = null;
-                entity.CampaignDetail.CampaignDetailImageUrl = null;
-            }
+        //        //liste ve detay görseli
+        //        entity.CampaignDetail.CampaignListImageUrl = null;
+        //        entity.CampaignDetail.CampaignDetailImageUrl = null;
+        //    }
 
-            //ContentTr boş ise, ContentEn boştur
-            if (string.IsNullOrWhiteSpace(entity.CampaignDetail.ContentTr) || string.IsNullOrEmpty(entity.CampaignDetail.ContentTr)) 
-            {
-                entity.CampaignDetail.ContentTr = null;
-                entity.CampaignDetail.ContentEn = null;
-            }
+        //    //ContentTr boş ise, ContentEn boştur
+        //    if (string.IsNullOrWhiteSpace(entity.CampaignDetail.ContentTr) || string.IsNullOrEmpty(entity.CampaignDetail.ContentTr)) 
+        //    {
+        //        entity.CampaignDetail.ContentTr = null;
+        //        entity.CampaignDetail.ContentEn = null;
+        //    }
 
-            if (string.IsNullOrWhiteSpace(entity.CampaignDetail.DetailTr) || string.IsNullOrEmpty(entity.CampaignDetail.DetailTr)) 
-            {
-                entity.CampaignDetail.DetailEn = null;
-                entity.CampaignDetail.DetailTr = null;
-            }
+        //    if (string.IsNullOrWhiteSpace(entity.CampaignDetail.DetailTr) || string.IsNullOrEmpty(entity.CampaignDetail.DetailTr)) 
+        //    {
+        //        entity.CampaignDetail.DetailEn = null;
+        //        entity.CampaignDetail.DetailTr = null;
+        //    }
 
-            if (entity.IsBundle || !entity.IsActive)
-                entity.Order = null;
+        //    if (entity.IsBundle || !entity.IsActive)
+        //        entity.Order = null;
 
-            if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignListImageUrl) || 
-                string.IsNullOrEmpty(entity.CampaignDetail.CampaignListImageUrl))
-                entity.CampaignDetail.CampaignListImageUrl = StaticValues.CampaignListImageUrlDefault;
+        //    if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignListImageUrl) || 
+        //        string.IsNullOrEmpty(entity.CampaignDetail.CampaignListImageUrl))
+        //        entity.CampaignDetail.CampaignListImageUrl = StaticValues.CampaignListImageUrlDefault;
 
-            if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignDetailImageUrl) ||
-                string.IsNullOrEmpty(entity.CampaignDetail.CampaignDetailImageUrl))
-                entity.CampaignDetail.CampaignDetailImageUrl = StaticValues.CampaignDetailImageUrlDefault;
+        //    if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignDetailImageUrl) ||
+        //        string.IsNullOrEmpty(entity.CampaignDetail.CampaignDetailImageUrl))
+        //        entity.CampaignDetail.CampaignDetailImageUrl = StaticValues.CampaignDetailImageUrlDefault;
 
-            return entity;
-        }
+        //    return entity;
+        //}
 
         async Task CheckValidationAsync(CampaignInsertRequest input, int campaignId)
         {

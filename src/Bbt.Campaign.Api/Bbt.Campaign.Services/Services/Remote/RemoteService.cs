@@ -15,7 +15,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         {
             _parameterService = parameterService;
         }
-        public async Task<List<string>> GetCampaignChannelList() 
+        public async Task<List<string>> GetChannelList() 
         {
             List<string> channelCodeList = new List<string>();
             using (var httpClient = new HttpClient())

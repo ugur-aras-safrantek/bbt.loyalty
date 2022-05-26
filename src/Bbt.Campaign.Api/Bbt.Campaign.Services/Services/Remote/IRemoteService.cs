@@ -8,6 +8,6 @@ namespace Bbt.Campaign.Services.Services.Remote
 {
     public interface IRemoteService
     {
-        public Task<List<string>> GetCampaignChannelList();
+        public Task<List<string>> GetChannelList();
     }
 }

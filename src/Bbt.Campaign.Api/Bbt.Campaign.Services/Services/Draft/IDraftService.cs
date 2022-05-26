@@ -1,4 +1,5 @@
-﻿using Bbt.Campaign.Public.Dtos;
+﻿using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
@@ -18,5 +19,6 @@ namespace Bbt.Campaign.Services.Services.Draft
             CampaignTargetInsertRequest campaignTargetInsertRequest,
             CampaignAchievementInsertRequest campaignAchievementInsertRequest
             );
+        public Task<CampaignEntity> SetCampaignDefaults(CampaignEntity entity);
     }
 }

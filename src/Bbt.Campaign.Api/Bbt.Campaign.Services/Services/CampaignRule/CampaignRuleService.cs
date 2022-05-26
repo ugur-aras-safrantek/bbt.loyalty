@@ -9,6 +9,7 @@ using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -25,15 +26,19 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+        private static int pageTypeId = (int)PageTypesEnum.CampaignRule;
 
-        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
+        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService
+            , ICampaignService campaignService, IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule, string userid)
@@ -50,7 +55,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 CampaignStartTermId = campaignRule.StartTermId,
                 JoinTypeId = campaignRule.JoinTypeId,
                 CreatedBy = userid,
-        };
+            };
 
             if (campaignRule.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
@@ -178,6 +183,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(campaignRule, true);
+
+            await _draftService.CreateCampaignDraft(campaignRule.CampaignId, pageTypeId, userid, null, campaignRule, null, null);
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignRule.CampaignId && x.IsDeleted != true)
