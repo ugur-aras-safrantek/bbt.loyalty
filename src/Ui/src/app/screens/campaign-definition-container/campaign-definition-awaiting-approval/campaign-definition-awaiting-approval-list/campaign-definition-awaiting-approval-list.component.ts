@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
 import {UserAuthorizationsModel} from "../../../../models/login.model";
 import {IAngularMyDpOptions} from "angular-mydatepicker";
@@ -177,7 +177,7 @@ export class CampaignDefinitionAwaitingApprovalListComponent implements OnInit {
 
   setRouterLinks(responseList) {
     responseList.map(res => {
-      res.routerLink = `../update/${res.id}/definition`;
+      res.routerLink = `../detail/${res.id}`;
     });
     return responseList;
   }

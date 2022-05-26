@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Subject, takeUntil} from "rxjs";
 import {UserAuthorizationsModel} from "../../../../models/login.model";
 import {DropdownListModel} from "../../../../models/dropdown-list.model";
@@ -174,7 +174,7 @@ export class CampaignLimitsAwaitingApprovalListComponent implements OnInit {
 
   setRouterLinks(responseList) {
     responseList.map(res => {
-      res.routerLink = `../update/${res.id}/limit`;
+      res.routerLink = `../detail/${res.id}`;
     });
     return responseList;
   }

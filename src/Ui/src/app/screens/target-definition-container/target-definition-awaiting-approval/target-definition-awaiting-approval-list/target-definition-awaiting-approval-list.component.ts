@@ -179,7 +179,7 @@ export class TargetDefinitionAwaitingApprovalListComponent implements OnInit {
 
   setRouterLinks(responseList) {
     responseList.map(res => {
-      res.routerLink = `../update/${res.id}/definition`;
+      res.routerLink = `../detail/${res.id}`;
     });
     return responseList;
   }
