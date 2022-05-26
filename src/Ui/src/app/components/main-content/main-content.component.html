@@ -1,12 +1,26 @@
 <div id="mainContent">
-  <div class="container" *ngIf="blockTitle">
-    <div class="row">
+  <div class="container">
+    <div class="row" *ngIf="blockTitle">
       <div class="col-md col-sm-12">
         <div class="title text-white">{{blockTitle}}</div>
       </div>
       <div class="col-md col-sm-12" *ngIf="newButtonText">
-        <app-auth-check [authorization]="createAuthorization">
-          <a [routerLink]="[route]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
+        <app-auth-check [authorization]="authorization.create">
+          <a [routerLink]="[createRoute]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
+        </app-auth-check>
+        <app-auth-check [authorization]="authorization.approve">
+          <a [routerLink]="[awaitingApprovalListRoute]" class="btn btn-orange me-2 px-5 float-end">Onay Bekleyenler</a>
+        </app-auth-check>
+      </div>
+    </div>
+    <div class="row" *ngIf="isAwaitingApprovalListPage">
+      <div class="col-md col-sm-12 approve-ok">
+        <a class="bi bi-chevron-left" [routerLink]="returnListRoute"></a>
+        <div class="title text-white">Onay Bekleyenler</div>
+      </div>
+      <div class="col-md col-sm-12" *ngIf="newButtonText">
+        <app-auth-check [authorization]="authorization.create">
+          <a [routerLink]="[createRoute]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
         </app-auth-check>
       </div>
     </div>
