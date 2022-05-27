@@ -28,6 +28,8 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IAuthorizationservice _authorizationservice;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
+
+
         public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationservice authorizationservice)
         {
             _unitOfWork = unitOfWork;
