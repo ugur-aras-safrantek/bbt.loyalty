@@ -8,10 +8,12 @@ using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Group;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignTarget;
 using Bbt.Campaign.Services.ListData;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
@@ -25,15 +27,18 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
+        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            ICampaignService campaignService, IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
         public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, string userid) 
         {
@@ -55,6 +60,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(request);
+
+            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+                request.CampaignId = request.CampaignId;
+            }
 
             await Update(request, userid);
 
@@ -516,7 +528,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
             await FillForm(response);
 
-            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
+            CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(campaignId);
+            response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
+            response.IsInvisibleCampaign = campaignProperty.IsInvisibleCampaign;
 
             response.CampaignTargetList = (await GetListByCampaignAsync(campaignId))?.Data;
 

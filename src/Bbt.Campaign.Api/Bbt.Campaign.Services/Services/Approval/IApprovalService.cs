@@ -13,9 +13,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 {
     public interface IApprovalService
     {
-        public Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id);
-        //public Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id);
-        //public Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id);
+        public Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid);
         public Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id);
         public Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id);
         public Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int id);

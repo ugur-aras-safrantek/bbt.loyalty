@@ -15,5 +15,6 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
         public Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid);
 
         public Task<List<string>> GetCampaignChannelCodeList(int campaignId);
+        public Task<string> GetCampaignChannelCodesAsString(int campaignId);
     }
 }

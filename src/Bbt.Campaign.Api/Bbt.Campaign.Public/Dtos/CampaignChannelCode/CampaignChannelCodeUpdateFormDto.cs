@@ -8,6 +8,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignChannelCode
 {
     public class CampaignChannelCodeUpdateFormDto : CampaignChannelCodeInsertFormDto
     {
-        public List<string> CampaignChannelCodeList { get; set; }
+        public List<string> CampaignChannelCodeList { get; set; }       
     }
 }

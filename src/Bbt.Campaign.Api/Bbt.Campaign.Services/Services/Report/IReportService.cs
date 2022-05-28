@@ -1,4 +1,5 @@
-﻿using Bbt.Campaign.Public.BaseResultModels;
+﻿using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.File;
@@ -20,5 +21,6 @@ namespace Bbt.Campaign.Services.Services.Report
         public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid);
         public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, string userid);
         public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int campaignId, string userid);
+        public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
     }
 }

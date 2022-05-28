@@ -142,7 +142,7 @@ namespace Bbt.Target.Services.Services.Target
                 {
                     var campaignIdList = await _unitOfWork.GetRepository<CampaignTargetListEntity>()
                         .GetAll(x => x.TargetId == Target.Id && !x.IsDeleted)
-                        .Select(x=>x.CampaignId)
+                        .Select(x => x.CampaignId)
                         .ToListAsync();
                     if(campaignIdList.Any()) 
                     {

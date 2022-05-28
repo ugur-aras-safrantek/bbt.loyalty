@@ -6,9 +6,11 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +22,17 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
+        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, string userid)
@@ -57,12 +59,16 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
-            
+
+            //int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            //{
+            //    request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+            //}
+
             await Update(request, userid);
 
-            List<CampaignAchievementDto> response = new List<CampaignAchievementDto>();
-
-            response = await GetCampaignAchievementListDto(request.CampaignId);
+            List<CampaignAchievementDto> response = await GetCampaignAchievementListDto(request.CampaignId);
 
             return await BaseResponse<List<CampaignAchievementDto>>.SuccessAsync(response);
         }
@@ -229,7 +235,9 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
             response.ActionOptions = (await _parameterService.GetActionOptionListAsync())?.Data;
 
-            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
+            CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(campaignId);
+            response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
+            response.IsInvisibleCampaign = campaignProperty.IsInvisibleCampaign;
         }
 
         public async Task<BaseResponse<List<CampaignAchievementDto>>> GetListAsync()
@@ -251,7 +259,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<CampaignAchievementUpdateFormDto>.SuccessAsync(response);
         }
 
-        async Task CheckValidationAsync(CampaignAchievementInsertRequest request)
+        public async Task CheckValidationAsync(CampaignAchievementInsertRequest request)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                     .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted)

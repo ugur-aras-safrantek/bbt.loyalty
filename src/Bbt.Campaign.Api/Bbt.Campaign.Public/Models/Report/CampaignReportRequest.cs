@@ -17,5 +17,6 @@ namespace Bbt.Campaign.Public.Models.Report
         public int? ProgramTypeId { get; set; }
         public int? AchievementTypeId { get; set; }//kazanım tipi
         public int? JoinTypeId { get; set; } //rule - Dahil Olma Şekli
+        public int? StatusId { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     public class CampaignAchievementInsertFormDto
     {
         public bool IsInvisibleCampaign { get; set; }
+        public bool IsUpdatableCampaign { get; set; }
         public List<ParameterDto> ActionOptions { get; set; }
         public List<ParameterDto> AchievementTypes { get; set; }
         public List<ParameterDto> CurrencyList { get; set; }

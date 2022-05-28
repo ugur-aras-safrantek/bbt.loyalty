@@ -7,5 +7,7 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
         public CampaignDto Campaign { get; set; }
 
         public GetFileResponse ContractFile { get; set; }
+
+        public bool IsUpdatableCampaign { get; set; }
     }
 }

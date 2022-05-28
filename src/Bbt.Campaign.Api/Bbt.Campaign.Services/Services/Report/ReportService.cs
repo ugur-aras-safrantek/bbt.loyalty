@@ -43,19 +43,8 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
 
-            if (!string.IsNullOrEmpty(request.Code))
-            {
-                int campaignId = -1;
-                try
-                {
-                    campaignId = int.Parse(request.Code);
-                }
-                catch (Exception ex)
-                {
-
-                }
-                campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
-            }
+            if (!string.IsNullOrEmpty(request.Code) && !string.IsNullOrWhiteSpace(request.Code))
+                campaignQuery = campaignQuery.Where(x => x.Code.Contains(request.Code));
             if (!string.IsNullOrEmpty(request.Name))
                 campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.Name));
             if (request.ViewOptionId.HasValue)
@@ -139,7 +128,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return campaignQuery;          
         }
-        private List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query) 
+        public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query) 
         {
             var campaignList = query.Select(x => new CampaignReportListDto
             {

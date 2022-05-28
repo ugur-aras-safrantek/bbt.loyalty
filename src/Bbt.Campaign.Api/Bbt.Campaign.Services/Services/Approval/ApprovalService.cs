@@ -10,15 +10,19 @@ using Bbt.Campaign.Public.Dtos.CampaignDetail;
 using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
+using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
+using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.CampaignChannelCode;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Services.Services.Report;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,90 +35,87 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly ICampaignRuleService _campaignRuleService;
+        private readonly ICampaignChannelCodeService _campaignChannelCodeService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IReportService _reportService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignService campaignService, 
-            ICampaignRuleService campaignRuleService, 
-            ICampaignTargetService campaignTargetService,
-            IAuthorizationService authorizationservice)
+            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignChannelCodeService campaignChannelCodeService,
+            ICampaignTargetService campaignTargetService, IAuthorizationService authorizationservice, IReportService reportService
+            )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _campaignService = campaignService;
             _campaignRuleService = campaignRuleService;
+            _campaignChannelCodeService = campaignChannelCodeService;
             _campaignTargetService = campaignTargetService;
             _authorizationService = authorizationservice;
+            _reportService = reportService;
         }
 
         #region campaign
-        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id)
+        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => !x.IsDeleted)
+                .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove &&!x.IsDeleted)
                 .FirstOrDefaultAsync();
             if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı");
+
+            var approvedCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Code == campaignEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+
+            if (approvedCampaignEntity == null)
             {
-                return await ApproveCampaignAddAsync(id);
+                return await ApproveCampaignAddAsync(id, userid);
             }
             else 
             {
                 return await ApproveCampaignUpdateAsync(id, campaignEntity.Id);
             }
         }
-      
-        private async Task<BaseResponse<CampaignDto>> ApproveCampaignAddAsync(int refId)
+
+        public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, string userid)
         {
-            var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted)
-                .Include(x => x.CampaignDetail)
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
-            
-            if(campaignDraftEntity == null)
-                throw new Exception("Kampanya bulunamadı.");
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı");
 
-            //campaign Draft
-            //campaignDraftEntity.IsApproved = true;
-            //campaignDraftEntity.RefId = campaignDraftEntity.Id;
-
-            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
-
-            //campaign
-            var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
-            var campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
-            campaignEntity.Id = 0;
-            campaignEntity.Code = string.Empty;
-
-            //campaign detail
-            var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
-            var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
-            campaignDetailEntity.Id = 0;
-
-            campaignEntity.CampaignDetail = campaignDetailEntity;
-
-            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
-            //await AddCampaignDocument(refId, campaignEntity, userid);
-
-            //await AddCampaignRule(refId, campaignEntity);
-
-            //await AddCampaignTarget(refId, campaignEntity);
-
-            //await AddCampaignAchievement(refId, campaignEntity);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            campaignEntity.Code = campaignEntity.Id.ToString();
+            campaignEntity.StatusId = (int)StatusEnum.Draft;
+            campaignEntity.ApproveDate = DateTime.UtcNow;
+            campaignEntity.LastModifiedBy = userid;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
-
             await _unitOfWork.SaveChangesAsync();
-
             var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
+
+        private async Task<BaseResponse<CampaignDto>> ApproveCampaignAddAsync(int id, string userid)
+        {
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == id && !x.IsDeleted)
+                .Include(x => x.CampaignDetail)
+                .FirstOrDefaultAsync();
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı.");
+
+            campaignEntity.StatusId = (int)StatusEnum.Approved;
+            campaignEntity.ApproveDate = DateTime.UtcNow;
+            campaignEntity.LastModifiedBy = userid;
+
+            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
+            await _unitOfWork.SaveChangesAsync();
+            var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
+            return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
+        }
+
 
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignUpdateAsync(int refId, int campaignId) 
         {
@@ -357,9 +358,23 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
-        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int refId) 
+        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId) 
         {
             CampaignApproveFormDto response = new CampaignApproveFormDto();
+
+            var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == draftId && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (campaignDraftEntity == null)
+                throw new Exception("Kampanya bulunamadı");
+
+            var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll().Where(x =>x.Id == draftId);
+            var campaignDraft = _reportService.ConvertCampaignReportList(campaignQuery)[0];
+            response.CampaignDraft = campaignDraft;
+
+
+            response.CampaignChannelCodeListDraft = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
+
 
             //var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
             //    .GetAllIncluding(x => x.CampaignDetail)

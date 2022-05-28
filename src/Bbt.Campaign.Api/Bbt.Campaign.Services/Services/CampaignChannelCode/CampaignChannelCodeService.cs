@@ -4,9 +4,11 @@ using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.CampaignChannelCode;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignChannelCode;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
@@ -18,17 +20,18 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignChannelCodeService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
+        public CampaignChannelCodeService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, string userid)
@@ -58,6 +61,13 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             await CheckValidationAsync(request);
 
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
+
+            //int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            //{
+            //    request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+            //    response.CampaignId = request.CampaignId;
+            //}
 
             await Update(request, userid);
 
@@ -119,14 +129,21 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
                 .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
                 .Select(x => x.ChannelCode)
                 .ToListAsync();
-
-
         }
+
+        public async Task<string> GetCampaignChannelCodesAsString(int campaignId) 
+        {
+            var campaignChannelCodeList = await GetCampaignChannelCodeList(campaignId);
+            return string.Join(",", campaignChannelCodeList);
+        }
+
         private async Task FillForm(CampaignChannelCodeInsertFormDto response, int campaignId)
         {
             response.ChannelCodeList = (await _parameterService.GetCampaignChannelListAsync())?.Data;
 
-            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
+            CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(campaignId);
+            response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
+            response.IsInvisibleCampaign = campaignProperty.IsInvisibleCampaign;
         }
         async Task CheckValidationAsync(CampaignChannelCodeUpdateRequest request) 
         {

@@ -29,19 +29,15 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignTopLimitService _campaignTopLimitService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-        private static int campaignPageId = (int) PageTypesEnum.Campaign;
 
-        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignTopLimitService campaignTopLimitService, IAuthorizationService authorizationService, IDraftService draftService)
+        public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignTopLimitService = campaignTopLimitService;
             _authorizationService = authorizationService;
             _draftService = draftService;
         }
@@ -53,8 +49,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             await CheckValidationAsync(campaign, 0);
             
             var entity = _mapper.Map<CampaignEntity>(campaign);
-            //entity = await SetDefaults(entity);
-            entity = _draftService.SetCampaignDefaults(entity);
+            entity = await SetDefaults(entity);
             entity.StatusId = (int)StatusEnum.Draft;
             entity.Code = Helpers.CreateCampaignCode();
             entity.CreatedBy = userid;
@@ -77,8 +72,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await CheckValidationAsync(campaign, campaign.Id);
 
-            
-
             var entity = _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAllIncluding(x => x.CampaignDetail)
                 .Where(x => x.Id == campaign.Id).FirstOrDefault();
@@ -86,29 +79,32 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if(entity == null)
                 return await BaseResponse<CampaignDto>.FailAsync("Kampanya bulunamadı.");
 
-            //TO DO
             if (entity.IsActive && !campaign.IsActive && DateTime.Parse(campaign.EndDate) > DateTime.UtcNow.AddDays(-1))
             {
-                var topLimitIdList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
-                    .GetAll(x => x.CampaignId == campaign.Id && !x.IsDeleted)
-                    .Select(x => x.TopLimitId)
-                    .ToListAsync();
-                foreach (int topLimitId in topLimitIdList)
+                var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+                    .Where(x => !x.IsDeleted && x.Code == entity.Code && x.StatusId == (int)StatusEnum.Approved)
+                    .FirstOrDefault();
+                if(approvedCampaign != null) 
                 {
-                    if (await _campaignTopLimitService.IsActiveTopLimit(topLimitId))
-                    {
-                        throw new Exception(@"Pasif hale getirilmek istenen Kampanya, Çatı Limitleri içerisinde bir 
-                                                adet kampanya ile birlikte tanımlıdır.");
-                    }
+                    var topLimitIdList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
+                        .GetAllIncluding(x => x.TopLimit)
+                        .Where(x => x.CampaignId == approvedCampaign.Id && !x.IsDeleted && x.TopLimit.IsActive)
+                        .Select(x => x.TopLimitId)
+                        .ToListAsync();
+                    if (!topLimitIdList.Contains(approvedCampaign.Id))
+                        throw new Exception(@"Pasif hale getirilmek istenen Kampanya, Çatı Limitleri içerisinde bir adet kampanya ile birlikte tanımlıdır.");
                 }
             }
 
-            int processTypeId = await _draftService.GetProcessType(campaign.Id);
-            if(processTypeId == (int)ProcessTypesEnum.CreateDraft) 
-            {
-                int id = await _draftService.CreateCampaignDraft(campaign.Id, campaignPageId, userid, campaign, null, null, null, null);
-                return await GetCampaignAsync(id, userid);
-            }
+            //int processTypeId = await _draftService.GetProcessType(campaign.Id);
+            //if(processTypeId == (int)ProcessTypesEnum.CreateDraft) 
+            //{
+            //    int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid);
+            //    entity = _unitOfWork.GetRepository<CampaignEntity>()
+            //        .GetAllIncluding(x => x.CampaignDetail)
+            //        .Where(x => x.Id == id)
+            //        .FirstOrDefault();
+            //}
 
             entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
             entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
@@ -139,11 +135,28 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.ParticipationTypeId = campaign.ParticipationTypeId;
             entity.LastModifiedBy = userid;
 
-            entity = _draftService.SetCampaignDefaults(entity);
+            entity = await SetDefaults(entity);
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
             return await GetCampaignAsync(campaign.Id, userid);
+        }
+
+        public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, string userid) 
+        {
+            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(id);
+            if (entity == null)
+                throw new Exception("Kampanya bulunamadı.");
+            if (entity.StatusId != (int)StatusEnum.Approved)
+                throw new Exception("Kampanya uygun statüde değil.");
+
+            int campaignId = await _draftService.CreateCampaignDraftAsync(id, userid);
+            return await GetCampaignAsync(campaignId, userid);
+        }
+
+        public async Task<BaseResponse<CampaignDto>> CopyAsync(int id, string userid)
+        {
+            return await _draftService.CreateCampaignCopyAsync(id, userid);
         }
 
         public async Task<BaseResponse<CampaignDto>> DeleteAsync(int id, string userid)
@@ -192,7 +205,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
             var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
             mappedCampaign.StartDate = campaignEntity.StartDate.ToShortDateString().Replace('.', '-');
             mappedCampaign.EndDate = campaignEntity.EndDate.ToShortDateString().Replace('.', '-');
-            mappedCampaign.Code = mappedCampaign.Id.ToString();
 
             return  mappedCampaign;
         }
@@ -254,6 +266,9 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             if(response.Campaign.IsContract && (response.Campaign.ContractId ?? 0) > 0)
                 response.ContractFile = await GetContractFile(response.Campaign.ContractId ?? 0, contentRootPath);
+
+            CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(id);
+            response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
 
             return await BaseResponse<CampaignUpdateFormDto>.SuccessAsync(response);
         }
@@ -504,23 +519,12 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             Core.Helper.Helpers.ListByFilterCheckValidation(request);
 
-            var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.StatusId == request.StatusId && !x.IsDeleted);
+            var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => !x.IsDeleted);
 
             if (request.IsBundle.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.IsBundle == request.IsBundle.Value);
             if (!string.IsNullOrEmpty(request.Code) && !string.IsNullOrWhiteSpace(request.Code)) 
-            {
-                int campaignId = -1;
-                try 
-                { 
-                    campaignId = int.Parse(request.Code);
-                }
-                catch (Exception ex) 
-                { 
-                
-                }
-                campaignQuery = campaignQuery.Where(x => x.Id == campaignId);
-            } 
+                campaignQuery = campaignQuery.Where(x => x.Code.Contains(request.Code));
             if (!string.IsNullOrEmpty(request.Name) && !string.IsNullOrWhiteSpace(request.Name))
                 campaignQuery = campaignQuery.Where(x => x.Name.Contains(request.Name));
             if (request.ContractId.HasValue)
@@ -533,10 +537,15 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));              
             if (!string.IsNullOrEmpty(request.EndDate) && !string.IsNullOrWhiteSpace(request.EndDate))
                 campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
-            //if (request.IsDraft.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsDraft == request.IsDraft.Value);
-            //if (request.IsApproved.HasValue)
-            //    campaignQuery = campaignQuery.Where(x => x.IsApproved == request.IsApproved.Value);
+            switch (request.StatusId) 
+            {
+                case (int)StatusEnum.History:
+                    campaignQuery = campaignQuery.Where(x => x.StatusId == (int)StatusEnum.History || x.StatusId == (int)StatusEnum.Approved);
+                    break;
+                default:
+                    campaignQuery = campaignQuery.Where(x => x.StatusId == request.StatusId);
+                    break;
+            }
 
             var campaignList = campaignQuery.Select(x => new CampaignListDto
             {
@@ -652,17 +661,17 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
         }
         
-        public async Task<bool> IsInvisibleCampaign(int campaignId) 
-        {
-            bool isInvisibleCampaign = false;
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            }
-            return isInvisibleCampaign;
-        }
+        //public async Task<bool> IsInvisibleCampaign(int campaignId) 
+        //{
+        //    bool isInvisibleCampaign = false;
+        //    var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+        //    if (campaignEntity != null)
+        //    {
+        //        int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+        //        isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+        //    }
+        //    return isInvisibleCampaign;
+        //}
 
         public async Task<bool> IsActiveCampaign(int campaignId) 
         {

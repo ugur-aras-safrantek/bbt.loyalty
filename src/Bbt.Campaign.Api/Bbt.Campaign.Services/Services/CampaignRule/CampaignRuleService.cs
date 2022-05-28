@@ -5,6 +5,7 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Services.Services.Authorization;
@@ -28,7 +29,6 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-        private static int pageTypeId = (int)PageTypesEnum.CampaignRule;
 
         public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService
             , ICampaignService campaignService, IAuthorizationService authorizationservice, IDraftService draftService)
@@ -184,7 +184,11 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             await CheckValidationsAsync(campaignRule, true);
 
-            //await _draftService.CreateCampaignDraft(campaignRule.CampaignId, pageTypeId, userid, null, campaignRule, null, null);
+            //int processTypeId = await _draftService.GetProcessType(campaignRule.CampaignId);
+            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            //{
+            //    campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid);
+            //}
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignRule.CampaignId && x.IsDeleted != true)
@@ -420,7 +424,9 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             
             await FillForm(response);
 
-            response.IsInvisibleCampaign = await _campaignService.IsInvisibleCampaign(campaignId);
+            CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(campaignId);
+            response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
+            response.IsInvisibleCampaign = campaignProperty.IsInvisibleCampaign;
 
             var campaignRuleDto = await GetCampaignRuleDto(campaignId);
 
