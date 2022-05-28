@@ -184,7 +184,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             await CheckValidationsAsync(campaignRule, true);
 
-            await _draftService.CreateCampaignDraft(campaignRule.CampaignId, pageTypeId, userid, null, campaignRule, null, null);
+            //await _draftService.CreateCampaignDraft(campaignRule.CampaignId, pageTypeId, userid, null, campaignRule, null, null);
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignRule.CampaignId && x.IsDeleted != true)

@@ -65,5 +65,7 @@
         public const string UserRoleList = "{0}_UserRoleList";
 
         public const string ServiceConstantList = "ServiceConstantList";
+
+        public const string StatusList = "StatusList";
     }
 }

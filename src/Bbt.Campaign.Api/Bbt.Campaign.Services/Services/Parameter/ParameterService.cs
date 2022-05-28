@@ -398,6 +398,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
         {
             return GetListAsync<ConstantsEntity>(CacheKeys.ServiceConstantList);
         }
+        public Task<BaseResponse<List<ParameterDto>>> GetStatusListAsync()
+        {
+            return GetListAsync<StatusEntity>(CacheKeys.StatusList);
+        }
         public async Task<string> GetServiceData(string serviceUrl) 
         {
             string retVal = string.Empty;

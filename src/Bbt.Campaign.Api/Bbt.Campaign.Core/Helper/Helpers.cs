@@ -210,6 +210,11 @@ namespace Bbt.Campaign.Core.Helper
             return input?.Replace(".", "").Replace(",", ".");
         }
 
+        public static string CreateCampaignCode() 
+        { 
+            return Guid.NewGuid().ToString().ToUpper().Replace("-", "").Substring(0, 10);
+        }
+
         #region Enum
         public static string GetEnumDescription(Enum value)
         {

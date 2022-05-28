@@ -331,6 +331,18 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
+        /// Returns the status list
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-status-list")]
+        public async Task<IActionResult> GetStatusListAsync()
+        {
+            var result = await _parameterService.GetStatusListAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Gets the service data given by the url
         /// </summary>
         /// <param name="url">Service url</param>

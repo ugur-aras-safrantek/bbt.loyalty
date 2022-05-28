@@ -35,6 +35,7 @@ namespace Bbt.Campaign.Services.Mappings
             CreateMap<ParameterDto, AuthorizationTypeEntity>().ReverseMap();
             CreateMap<RoleAuthorizationDto, RoleAuthorizationEntity>().ReverseMap();
             CreateMap<ParameterDto, ConstantsEntity>().ReverseMap();
+            CreateMap<ParameterDto, StatusEntity>().ReverseMap();
         }
     }
 }

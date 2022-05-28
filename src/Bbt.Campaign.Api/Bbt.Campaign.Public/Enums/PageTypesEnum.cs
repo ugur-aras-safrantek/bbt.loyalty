@@ -15,7 +15,9 @@ namespace Bbt.Campaign.Public.Enums
         CampaignRule = 2,
         [Description("CampaignTarget")]
         CampaignTarget = 3,
+        [Description("ChannelCode")]
+        ChannelCode = 4,
         [Description("CampaignAchievement")]
-        CampaignAchievement = 4,
+        CampaignAchievement = 5,
     }
 }

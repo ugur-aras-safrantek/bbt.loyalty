@@ -39,12 +39,10 @@ namespace Bbt.Campaign.Core.DbEntities
         [ForeignKey("ParticipationType")]
         public int ParticipationTypeId { get; set; }
         public ParticipationTypeEntity ParticipationType { get; set; }
-
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
 
         //Approve
-        public bool IsApproved { get; set; }
-        public bool IsDraft { get; set; }
-        public int? RefId { get; set; }
+        public DateTime? ApproveDate { get; set; }
+        public int StatusId { get; set; }
     }
 }

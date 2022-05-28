@@ -120,5 +120,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<RoleAuthorizationEntity> RoleAuthorizations { get; set; }
         public DbSet<CustomerReportEntity> CustomerReports { get; set; }
         public DbSet<ConstantsEntity> ServiceConstants { get; set; }
+        public DbSet<StatusEntity> Statuses { get; set; }
     }
 }

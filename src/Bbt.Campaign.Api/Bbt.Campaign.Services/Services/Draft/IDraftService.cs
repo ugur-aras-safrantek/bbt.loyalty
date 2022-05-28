@@ -1,8 +1,7 @@
 ﻿using Bbt.Campaign.Core.DbEntities;
-using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
+using Bbt.Campaign.Public.Models.CampaignChannelCode;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.CampaignTarget;
 
@@ -15,10 +14,13 @@ namespace Bbt.Campaign.Services.Services.Draft
             int campaignPageId,
             string userid,
             CampaignUpdateRequest campaignUpdateRequest,
-            AddCampaignRuleRequest addCampaignRuleRequest,
+            AddCampaignRuleRequest campaignRuleUpdateRequest,
             CampaignTargetInsertRequest campaignTargetInsertRequest,
+            CampaignChannelCodeUpdateRequest campaignChannelCodeUpdateRequest,
             CampaignAchievementInsertRequest campaignAchievementInsertRequest
             );
-        public Task<CampaignEntity> SetCampaignDefaults(CampaignEntity entity);
+        public CampaignEntity SetCampaignDefaults(CampaignEntity entity);
+        public CampaignEntity SetCampaignUpdateRequest(CampaignEntity campaignEntity, CampaignUpdateRequest campaignUpdateRequest);
+        public Task<int> GetProcessType(int canpaignId);
     }
 }

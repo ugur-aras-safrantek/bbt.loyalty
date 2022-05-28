@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Approval;
@@ -10,8 +11,10 @@ using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
+using Bbt.Campaign.Public.Models.CampaignChannelCode;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.CampaignTarget;
+using Bbt.Campaign.Public.Models.Draft;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
@@ -45,103 +48,256 @@ namespace Bbt.Campaign.Services.Services.Draft
             _mapper = mapper;
             _parameterService = parameterService;
         }
-        public async Task<int> CreateCampaignDraft(
-            int campaignId,
-            int pageTypeId,
-            string userid,
-            CampaignUpdateRequest campaignUpdateRequest, 
-            AddCampaignRuleRequest campaignRuleUpdateRequest, 
-            CampaignTargetInsertRequest campaignTargetInsertRequest, 
-            CampaignAchievementInsertRequest campaignAchievementInsertRequest
-            ) 
+        public async Task<int> CreateCampaignDraft(int campaignId, int pageTypeId, string userid, CampaignUpdateRequest campaignUpdateRequest, AddCampaignRuleRequest campaignRuleUpdateRequest, CampaignTargetInsertRequest campaignTargetInsertRequest,
+            CampaignChannelCodeUpdateRequest campaignChannelCodeUpdateRequest, CampaignAchievementInsertRequest campaignAchievementInsertRequest
+            )
         {
-            Dictionary<string, int> returnList = new Dictionary<string, int>();
+            var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+                .Where(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
+                .FirstOrDefault();
+            if (approvedCampaign == null)
+                throw new Exception("Kampanya bulunamadı");
 
-            //campaign
-            CampaignEntity campaignEntity = new CampaignEntity();
-            CampaignDetailEntity campaignDetailEntity = new CampaignDetailEntity();
-            bool isCampaignUpdate = pageTypeId == (int)PageTypesEnum.Campaign;
-            var campaignReferenceEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                    .GetAll(x => x.Id == campaignId && !x.IsDeleted)
-                    .Include(x => x.CampaignDetail)
-                    .FirstOrDefaultAsync();
-            if(campaignReferenceEntity == null) 
-            { 
-                if(pageTypeId != (int)PageTypesEnum.Campaign)
-                    throw new Exception("Kampanya bulunamadı.");
-            }
-
-            //campaign detail
-            campaignDetailEntity.DetailEn = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.DetailEn : campaignReferenceEntity.CampaignDetail.DetailEn;
-            campaignDetailEntity.DetailTr = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.DetailTr : campaignReferenceEntity.CampaignDetail.DetailTr;
-            campaignDetailEntity.SummaryEn = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.SummaryEn : campaignReferenceEntity.CampaignDetail.SummaryEn;
-            campaignDetailEntity.SummaryTr = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.SummaryTr : campaignReferenceEntity.CampaignDetail.SummaryTr;
-            campaignDetailEntity.CampaignDetailImageUrl = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.CampaignDetailImageUrl : campaignReferenceEntity.CampaignDetail.CampaignDetailImageUrl;
-            campaignDetailEntity.CampaignListImageUrl = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.CampaignListImageUrl : campaignReferenceEntity.CampaignDetail.CampaignListImageUrl;
-            campaignDetailEntity.ContentTr = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.ContentTr : campaignReferenceEntity.CampaignDetail.ContentTr;
-            campaignDetailEntity.ContentEn = isCampaignUpdate ? campaignUpdateRequest.CampaignDetail.ContentEn : campaignReferenceEntity.CampaignDetail.ContentEn;
-            campaignDetailEntity.CreatedBy = userid;
-
-            campaignEntity.CampaignDetail = campaignDetailEntity;
-            campaignEntity.ContractId = isCampaignUpdate ? campaignUpdateRequest.ContractId : campaignReferenceEntity.ContractId;
-            campaignEntity.ProgramTypeId = isCampaignUpdate ? campaignUpdateRequest.ProgramTypeId : campaignReferenceEntity.ProgramTypeId;
-            campaignEntity.SectorId = isCampaignUpdate ? campaignUpdateRequest.SectorId : campaignReferenceEntity.SectorId;
-            campaignEntity.ViewOptionId = isCampaignUpdate ? campaignUpdateRequest.ViewOptionId : campaignReferenceEntity.ViewOptionId;
-            campaignEntity.IsBundle = isCampaignUpdate ? campaignUpdateRequest.IsBundle : campaignReferenceEntity.IsBundle;
-            campaignEntity.IsActive = isCampaignUpdate ? campaignUpdateRequest.IsActive : campaignReferenceEntity.IsActive;
-            campaignEntity.IsContract = isCampaignUpdate ? campaignUpdateRequest.IsContract : campaignReferenceEntity.IsContract;
-            campaignEntity.DescriptionTr = isCampaignUpdate ? campaignUpdateRequest.DescriptionTr : campaignReferenceEntity.DescriptionTr;
-            campaignEntity.DescriptionEn = isCampaignUpdate ? campaignUpdateRequest.DescriptionEn : campaignReferenceEntity.DescriptionEn;
-            campaignEntity.EndDate = isCampaignUpdate ? DateTime.Parse(campaignUpdateRequest.EndDate) : campaignReferenceEntity.EndDate;
-            campaignEntity.StartDate = isCampaignUpdate ? DateTime.Parse(campaignUpdateRequest.StartDate) : campaignReferenceEntity.StartDate;
-            campaignEntity.Name = isCampaignUpdate ? campaignUpdateRequest.Name : campaignReferenceEntity.Name;
-            campaignEntity.Order = isCampaignUpdate ? campaignUpdateRequest.Order : campaignReferenceEntity.Order;
-            campaignEntity.TitleTr = isCampaignUpdate ? campaignUpdateRequest.TitleTr : campaignReferenceEntity.TitleTr;
-            campaignEntity.TitleEn = isCampaignUpdate ? campaignUpdateRequest.TitleEn : campaignReferenceEntity.TitleEn;
-            campaignEntity.MaxNumberOfUser = isCampaignUpdate ? campaignUpdateRequest.MaxNumberOfUser : campaignReferenceEntity.MaxNumberOfUser;
-            campaignEntity.Code = isCampaignUpdate ? campaignUpdateRequest.Id.ToString() : campaignReferenceEntity.Code;
-            campaignEntity.IsDraft = true;
-            campaignEntity.IsApproved = false;
-            campaignEntity.ParticipationTypeId = isCampaignUpdate ? campaignUpdateRequest.ParticipationTypeId : campaignReferenceEntity.ParticipationTypeId;
-            campaignEntity.CreatedBy = userid;
-
-            if(isCampaignUpdate)
-                campaignEntity = await SetCampaignDefaults(campaignEntity);
-
-            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
-           
-            
-            //campaign rule
-            var campaignRuleReferenceEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
-                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
-                .Include(x => x.Branches.Where(t => t.IsDeleted != true))
-                .Include(x => x.BusinessLines.Where(t => t.IsDeleted != true))
-                .Include(x => x.CustomerTypes.Where(t => t.IsDeleted != true))
-                .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
-                .FirstOrDefaultAsync();
-            bool isRuleUpdate = pageTypeId == (int)PageTypesEnum.CampaignRule;
-            if (campaignRuleReferenceEntity == null)
+            //copy campaign
+            CampaignEntity campaignEntity;
+            if (pageTypeId == (int)PageTypesEnum.Campaign)
             {
-                if (pageTypeId != (int)PageTypesEnum.CampaignRule)
-                    throw new Exception("Kampanya kuralı bulunamadı.");
+                campaignEntity = new CampaignEntity();
+                campaignEntity = SetCampaignUpdateRequest(campaignEntity, campaignUpdateRequest);
+                campaignEntity.Code = approvedCampaign.Code;
+                campaignEntity.CampaignDetail.CreatedBy = userid;
+                campaignEntity.CreatedBy = userid;
+                campaignEntity = SetCampaignDefaults(campaignEntity);
             }
+            else
+            {
+                campaignEntity = await CopyCampaignInfo(campaignId, userid);
+            }
+            await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            CampaignRuleEntity campaignRuleEntity = new CampaignRuleEntity();
-            campaignRuleEntity.Campaign = campaignEntity;
-            campaignRuleEntity.CampaignStartTermId = isRuleUpdate ? campaignRuleUpdateRequest.StartTermId : campaignRuleReferenceEntity.CampaignStartTermId;
-            campaignRuleEntity.JoinTypeId = isRuleUpdate ? campaignRuleUpdateRequest.JoinTypeId : campaignRuleReferenceEntity.JoinTypeId;
-            campaignRuleEntity.CreatedBy = userid;
+            CampaignRuleEntity campaignRuleEntity;
+            if (pageTypeId == (int)PageTypesEnum.CampaignRule)
+            {
+                campaignRuleEntity = new CampaignRuleEntity();
 
+                campaignRuleEntity.Campaign = campaignEntity;
+                campaignRuleEntity.CampaignStartTermId = campaignRuleUpdateRequest.StartTermId;
+                campaignRuleEntity.JoinTypeId = campaignRuleUpdateRequest.JoinTypeId;
+                campaignRuleEntity.CreatedBy = userid;
+
+                if (campaignRuleUpdateRequest.JoinTypeId == (int)JoinTypeEnum.Customer)
+                {
+                    if (campaignRuleUpdateRequest.IsSingleIdentity)
+                    {
+                        var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity()
+                        {
+                            Identities = campaignRuleUpdateRequest.Identity.Trim(),
+                            CampaignRule = campaignRuleEntity,
+                            CreatedBy = userid,
+                        };
+
+                        await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
+                    }
+                    else if (campaignRuleUpdateRequest.File != null)
+                    {
+                        byte[] bytesList = System.Convert.FromBase64String(campaignRuleUpdateRequest.File);
+
+                        var memoryStream = new MemoryStream(bytesList);
+
+                        await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(new CampaignDocumentEntity()
+                        {
+                            Campaign = campaignEntity,
+                            DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
+                            MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
+                            Content = bytesList,
+                            DocumentName = campaignRuleUpdateRequest.Identity,
+                            CreatedBy = userid,
+                        });
+
+
+                        using (var excelWorkbook = new XLWorkbook(memoryStream))
+                        {
+                            var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
+
+                            //List<string> identityList = new List<string>();
+
+                            foreach (var dataRow in nonEmptyDataRows)
+                            {
+                                string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
+
+                                //if(identityList.Contains(identity))
+                                //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
+
+                                //identityList.Add(identity);
+
+                                //CheckSingleIdentiy(identity);
+                                if (!await IsValidIdentiy(identity))
+                                    continue;
+
+                                var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity()
+                                {
+                                    Identities = identity,
+                                    CampaignRule = campaignRuleEntity,
+                                    CreatedBy = userid,
+                                };
+
+                                await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
+                            }
+                        }
+                    }
+                }
+                else if (campaignRuleUpdateRequest.JoinTypeId == (int)JoinTypeEnum.BusinessLine)
+                {
+                    if (campaignRuleUpdateRequest.BusinessLines is { Count: > 0 })
+                    {
+                        campaignRuleUpdateRequest.BusinessLines.ForEach(x =>
+                        {
+                            var campaignRuleBusinessLineEntity = new CampaignRuleBusinessLineEntity()
+                            {
+                                CampaignRule = campaignRuleEntity,
+                                BusinessLineId = x,
+                                CreatedBy = userid,
+                            };
+                            _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
+                        });
+                    }
+                }
+                else if (campaignRuleUpdateRequest.JoinTypeId == (int)JoinTypeEnum.Branch)
+                {
+                    if (campaignRuleUpdateRequest.Branches.Any())
+                    {
+                        campaignRuleUpdateRequest.Branches.ForEach(x =>
+                        {
+                            var campaignRuleBranchEntity = new CampaignRuleBranchEntity()
+                            {
+                                CampaignRule = campaignRuleEntity,
+                                BranchCode = x,
+                                BranchName = "",
+                                CreatedBy = userid,
+                            };
+                            _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
+                        });
+                    }
+                }
+                else if (campaignRuleUpdateRequest.JoinTypeId == (int)JoinTypeEnum.CustomerType)
+                {
+                    if (campaignRuleUpdateRequest.CustomerTypes is { Count: > 0 })
+                    {
+                        campaignRuleUpdateRequest.CustomerTypes.ForEach(x =>
+                        {
+                            var campaignRuleCustomerTypeEntity = new CampaignRuleCustomerTypeEntity()
+                            {
+                                CampaignRule = campaignRuleEntity,
+                                CustomerTypeId = x,
+                                CreatedBy = userid,
+                                LastModifiedBy = userid,
+                            };
+                            _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
+                        });
+                    }
+                }
+
+            }
+            else
+            {
+                campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid);
+            }
+            await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
+
+            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid);
+            foreach (var campaignDocument in campaignDocumentlist)
+                await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
+
+            CampaignTargetEntity campaignTargetEntity = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid);
+            await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetEntity);
+
+            List<CampaignChannelCodeEntity> campaignChannelCodeList;
+            if (pageTypeId == (int)PageTypesEnum.ChannelCode)
+            {
+                campaignChannelCodeList = new List<CampaignChannelCodeEntity>();
+                campaignChannelCodeUpdateRequest.CampaignChannelCodeList.ForEach(x =>
+                {
+                    campaignChannelCodeList.Add(new CampaignChannelCodeEntity()
+                    {
+                        Campaign = campaignEntity,
+                        ChannelCode = x,
+                        CreatedBy = userid,
+                    });
+                });
+            }
+            else
+            {
+                campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid);
+            }
+            foreach (var campaignChannelCode in campaignChannelCodeList)
+                await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
+
+            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid);
+            if (pageTypeId == (int)PageTypesEnum.CampaignAchievement)
+            {
+                foreach (var x in campaignAchievementInsertRequest.CampaignAchievementList)
+                {
+                    CampaignAchievementEntity campaignAchievementEntity = new CampaignAchievementEntity();
+
+                    campaignAchievementEntity.Campaign = campaignEntity;
+                    campaignAchievementEntity.CurrencyId = x.CurrencyId;
+                    campaignAchievementEntity.Amount = x.Amount;
+                    campaignAchievementEntity.Rate = x.Rate;
+                    campaignAchievementEntity.MaxAmount = x.MaxAmount;
+                    campaignAchievementEntity.MaxUtilization = x.MaxUtilization;
+                    campaignAchievementEntity.AchievementTypeId = x.AchievementTypeId;
+                    campaignAchievementEntity.ActionOptionId = x.ActionOptionId;
+                    campaignAchievementEntity.DescriptionTr = x.DescriptionTr;
+                    campaignAchievementEntity.DescriptionEn = x.DescriptionEn;
+                    campaignAchievementEntity.TitleTr = x.TitleTr;
+                    campaignAchievementEntity.TitleEn = x.TitleEn;
+                    campaignAchievementEntity.Type = x.Type == (int)AchievementType.Amount ? AchievementType.Amount : AchievementType.Rate;
+                    campaignAchievementEntity.CreatedBy = userid;
+
+                    //#region defaults
+
+                    //if (entity.Type == AchievementType.Amount)
+                    //{
+                    //    entity.Rate = null;
+                    //}
+                    //else if (entity.Type == AchievementType.Rate)
+                    //{
+                    //    entity.Amount = null;
+                    //    entity.CurrencyId = null;
+                    //    entity.MaxAmount = null;
+                    //}
+
+                    //var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(entity.CampaignId);
+                    //if ((campaignEntity.ViewOptionId ?? 0))
+                    //{
+                    //    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                    //    if (viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign)
+                    //    {
+                    //        entity.DescriptionTr = null;
+                    //        entity.DescriptionEn = null;
+                    //        entity.TitleTr = null;
+                    //        entity.TitleEn = null;
+                    //    }
+                    //}
+
+                    //#endregion
+
+                    campaignAchievementList.Add(campaignAchievementEntity);
+                }
+
+            }
+            else
+            {
+                campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid);
+            }
+            foreach (var campaignAchievement in campaignAchievementList)
+                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
             try { await _unitOfWork.SaveChangesAsync(); }
-            catch(Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 string s = ex.ToString();
             }
-            
-
-            //CampaignRuleEntity campaignRuleEntity = await CreateCampaignRule(campaignId, campaignPageId, campaignEntity, CreateCampaignRuleRequest);
 
             return campaignEntity.Id;
         }
@@ -149,29 +305,34 @@ namespace Bbt.Campaign.Services.Services.Draft
 
         public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId, string userid)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
-            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            //int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
             //await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
-            CampaignEntity campaignEntity  = await CreateCampaign(campaignId, userid);
+            CampaignEntity campaignEntity = await CopyCampaignInfo(campaignId, userid);
+            campaignEntity.Name = string.Concat(campaignEntity.Name, "-Copy");
+            campaignEntity.Code = Helpers.CreateCampaignCode();
+            campaignEntity.Order = null;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            CampaignRuleEntity campaignRuleEntity = await CreateCampaignRule(campaignId, campaignEntity, userid);
+            CampaignRuleEntity campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid);
             await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
 
-            List<CampaignDocumentEntity> campaignDocumentlist = await CreateCampaignDocument(campaignId, campaignEntity, userid);
-            foreach(var campaignDocument in campaignDocumentlist)
+            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid);
+            foreach (var campaignDocument in campaignDocumentlist)
                 await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
 
-            CampaignTargetEntity campaignTargetEntity = await CreateCampaignTarget(campaignId, campaignEntity, userid);
+            CampaignTargetEntity campaignTargetEntity = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid);
             await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetEntity);
 
-            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CreateCampaignChannelCode(campaignId, campaignEntity, userid);
-            foreach(var campaignChannelCode in campaignChannelCodeList)
+            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid);
+            foreach (var campaignChannelCode in campaignChannelCodeList)
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
 
-            await CreateCampaignAchievement(campaignId, campaignEntity, userid);
+            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid);
+            foreach (var campaignAchievement in campaignAchievementList)
+                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -186,8 +347,7 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
-
-        private async Task<CampaignEntity> CreateCampaign(int campaignId, string userid) 
+        private async Task<CampaignEntity> CopyCampaignInfo(int campaignId, string userid)
         {
             CampaignEntity campaignEntity = new CampaignEntity();
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
@@ -202,12 +362,6 @@ namespace Bbt.Campaign.Services.Services.Draft
             var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
             campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
             campaignEntity.Id = 0;
-            campaignEntity.Name = campaignDraftEntity.Name + "-Copy";
-            campaignEntity.Code = string.Empty;
-            campaignEntity.Order = null;
-            campaignEntity.IsApproved = false;
-            campaignEntity.IsDraft = true;
-            campaignEntity.RefId = null;
             campaignEntity.CreatedBy = userid;
 
             //campaign detail
@@ -218,12 +372,10 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             campaignEntity.CampaignDetail = campaignDetailEntity;
 
-            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
             return campaignEntity;
 
         }
-        private async Task<CampaignRuleEntity> CreateCampaignRule(int campaignId, CampaignEntity campaignEntity, string userid)
+        private async Task<CampaignRuleEntity> CopyCampaignRuleInfo(int campaignId, CampaignEntity campaignEntity, string userid)
         {
             var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
@@ -302,11 +454,11 @@ namespace Bbt.Campaign.Services.Services.Draft
                 }
             }
 
-            
+
 
             return campaignRuleEntity;
         }
-        private async Task<List<CampaignDocumentEntity>> CreateCampaignDocument(int campaignId, CampaignEntity campaignEntity, string userid)
+        private async Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid)
         {
             List<CampaignDocumentEntity> campaignDocumentlist = new List<CampaignDocumentEntity>();
 
@@ -327,7 +479,7 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return campaignDocumentlist;
         }
-        private async Task<CampaignTargetEntity> CreateCampaignTarget(int campaignId, CampaignEntity campaignEntity, string userid)
+        private async Task<CampaignTargetEntity> CopyCampaignTargetInfo(int campaignId, CampaignEntity campaignEntity, string userid)
         {
             CampaignTargetEntity campaignTargetEntity = new CampaignTargetEntity();
             List<CampaignTargetEntity> campaignTargetDraftList = _unitOfWork.GetRepository<CampaignTargetEntity>()
@@ -350,10 +502,9 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return campaignTargetEntity;
         }
-        
-        private async Task<List<CampaignChannelCodeEntity>> CreateCampaignChannelCode(int campaignId, CampaignEntity campaignEntity, string userid)
+        private async Task<List<CampaignChannelCodeEntity>> CopyCampaignChannelCodeInfo(int campaignId, CampaignEntity campaignEntity, string userid)
         {
-            List <CampaignChannelCodeEntity> campaignChannelCodeList = new List <CampaignChannelCodeEntity>();
+            List<CampaignChannelCodeEntity> campaignChannelCodeList = new List<CampaignChannelCodeEntity>();
             var campaignChannelCodes = _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
                 .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
             if (!campaignChannelCodes.Any())
@@ -370,8 +521,10 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return campaignChannelCodeList;
         }
-        private async Task<SuccessDto> CreateCampaignAchievement(int campaignId, CampaignEntity campaignEntity, string userid)
+        private async Task<List<CampaignAchievementEntity>> CopyCampaignAchievementInfo(int campaignId, CampaignEntity campaignEntity, string userid)
         {
+            List<CampaignAchievementEntity> campaignAchievementList = new List<CampaignAchievementEntity>();
+
             var achievementDraftList = await _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
                 .ToListAsync();
@@ -385,242 +538,11 @@ namespace Bbt.Campaign.Services.Services.Draft
                 campaignAchievementEntity.Id = 0;
                 campaignAchievementEntity.Campaign = campaignEntity;
                 campaignAchievementEntity.CreatedBy = userid;
-
-                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
-
+                campaignAchievementList.Add(campaignAchievementEntity);
             }
-            return new SuccessDto() { IsSuccess = true };
+            return campaignAchievementList;
         }
 
-
-
-        private async Task<CampaignEntity> CreateCampaign(int refCampaignId, int campaignPageId, CampaignUpdateRequest request) 
-        {
-            CampaignEntity campaignEntity = new CampaignEntity();
-            if (campaignPageId == (int)PageTypesEnum.Campaign)
-            {
-                var campaignDto = _mapper.Map<CampaignDto>(request);
-                campaignDto.Id = 0;
-                campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
-            }
-            else
-            {
-                var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                    .GetAll(x => x.Id == refCampaignId && !x.IsDeleted)
-                    .Include(x => x.CampaignDetail)
-                    .FirstOrDefaultAsync();
-                if (campaignDraftEntity == null)
-                    throw new Exception("Kampanya bulunamadı.");
-
-                var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
-                campaignDto.Id = 0;
-                campaignDto.Name = campaignDraftEntity.Name;
-                campaignDto.Code = string.Empty;
-                campaignDto.Order = null;
-                campaignDto.IsApproved = false;
-                campaignDto.IsDraft = true;
-                campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
-
-                //campaign detail
-                var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
-                var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
-                campaignDetailEntity.Id = 0;
-                campaignEntity.CampaignDetail = campaignDetailEntity;
-            }
-
-            campaignEntity = await SetCampaignDefaults(campaignEntity);
-
-            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
-            return campaignEntity;
-        }
-
-        //private async Task<CampaignRuleEntity> CreateCampaignRule(int refCampaignId, int campaignPageId, CampaignEntity campaignEntity, CreateCampaignRuleRequest request)
-        //{
-        //    CampaignRuleEntity campaignRuleEntity = new CampaignRuleEntity();
-
-        //    if (campaignPageId == (int)PageTypesEnum.CampaignRule) //update sayfasından geliyorsa, requesti kopyala
-        //    {
-        //        campaignRuleEntity.Campaign = campaignEntity;
-        //        campaignRuleEntity.CampaignStartTermId = request.StartTermId;
-        //        campaignRuleEntity.JoinTypeId = request.JoinTypeId;
-
-        //        if (request.JoinTypeId == (int)JoinTypeEnum.Customer)
-        //        {
-        //            if (request.IsSingleIdentity)
-        //            {
-        //                var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity()
-        //                {
-        //                    Identities = request.Identity.Trim(),
-        //                    CampaignRule = campaignRuleEntity,
-        //                };
-
-        //                await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
-        //            }
-        //            else if (request.File != null)
-        //            {
-        //                byte[] bytesList = System.Convert.FromBase64String(request.File);
-
-        //                var memoryStream = new MemoryStream(bytesList);
-
-        //                await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(new CampaignDocumentEntity()
-        //                {
-        //                    Campaign = campaignEntity,
-        //                    DocumentType = Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN,
-        //                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx"),
-        //                    Content = bytesList,
-        //                    DocumentName = request.Identity
-        //                });
-
-
-        //                using (var excelWorkbook = new XLWorkbook(memoryStream))
-        //                {
-        //                    var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
-
-        //                    //List<string> identityList = new List<string>();
-
-        //                    foreach (var dataRow in nonEmptyDataRows)
-        //                    {
-        //                        string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
-
-        //                        //if(identityList.Contains(identity))
-        //                        //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
-
-        //                        //identityList.Add(identity);
-
-        //                        //CheckSingleIdentiy(identity);
-        //                        if (!await IsValidIdentiy(identity))
-        //                            continue;
-
-        //                        var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity()
-        //                        {
-        //                            Identities = identity,
-        //                            CampaignRule = campaignRuleEntity,
-        //                        };
-
-        //                        await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else if (request.JoinTypeId == (int)JoinTypeEnum.BusinessLine)
-        //        {
-        //            if (request.BusinessLines is { Count: > 0 })
-        //            {
-        //                request.BusinessLines.ForEach(x =>
-        //                {
-        //                    var campaignRuleBusinessLineEntity = new CampaignRuleBusinessLineEntity()
-        //                    {
-        //                        CampaignRule = campaignRuleEntity,
-        //                        BusinessLineId = x,
-        //                    };
-        //                    _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
-        //                });
-        //            }
-        //        }
-        //        else if (request.JoinTypeId == (int)JoinTypeEnum.Branch)
-        //        {
-        //            if (request.Branches.Any())
-        //            {
-        //                request.Branches.ForEach(x =>
-        //                {
-        //                    var campaignRuleBranchEntity = new CampaignRuleBranchEntity()
-        //                    {
-        //                        CampaignRule = campaignRuleEntity,
-        //                        BranchCode = x,
-        //                        BranchName = ""
-        //                    };
-        //                    _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
-        //                });
-        //            }
-        //        }
-        //        else if (request.JoinTypeId == (int)JoinTypeEnum.CustomerType)
-        //        {
-        //            if (request.CustomerTypes is { Count: > 0 })
-        //            {
-        //                request.CustomerTypes.ForEach(x =>
-        //                {
-        //                    var campaignRuleCustomerTypeEntity = new CampaignRuleCustomerTypeEntity()
-        //                    {
-        //                        CampaignRule = campaignRuleEntity,
-        //                        CustomerTypeId = x,
-        //                    };
-        //                    _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
-        //                });
-        //            }
-        //        }
-        //    }
-        //    else 
-        //    {
-        //        var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
-        //            .GetAll(x => x.CampaignId == refCampaignId && x.IsDeleted != true)
-        //            .Include(x => x.Branches.Where(t => t.IsDeleted != true))
-        //            .Include(x => x.BusinessLines.Where(t => t.IsDeleted != true))
-        //            .Include(x => x.CustomerTypes.Where(t => t.IsDeleted != true))
-        //            .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
-        //            .FirstOrDefaultAsync();
-        //        if (campaignRuleDraftEntity == null)
-        //            throw new Exception("Kampanya kuralı bulunamadı.");
-
-        //        if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Branch)
-        //        {
-        //            if (campaignRuleDraftEntity.Branches.Any())
-        //            {
-        //                campaignRuleEntity.Branches = new List<CampaignRuleBranchEntity>();
-        //                foreach (var branch in campaignRuleDraftEntity.Branches)
-        //                {
-        //                    campaignRuleEntity.Branches.Add(new CampaignRuleBranchEntity()
-        //                    {
-        //                        BranchCode = branch.BranchCode,
-        //                        BranchName = branch.BranchName
-        //                    });
-        //                }
-        //            }
-        //        }
-        //        else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.CustomerType)
-        //        {
-        //            if (campaignRuleDraftEntity.CustomerTypes.Any())
-        //            {
-        //                campaignRuleEntity.CustomerTypes = new List<CampaignRuleCustomerTypeEntity>();
-        //                foreach (var customerType in campaignRuleDraftEntity.CustomerTypes)
-        //                {
-        //                    campaignRuleEntity.CustomerTypes.Add(new CampaignRuleCustomerTypeEntity()
-        //                    {
-        //                        CustomerTypeId = customerType.CustomerTypeId
-        //                    });
-        //                }
-        //            }
-        //        }
-        //        else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.BusinessLine)
-        //        {
-        //            if (campaignRuleDraftEntity.BusinessLines.Any())
-        //            {
-        //                campaignRuleEntity.BusinessLines = new List<CampaignRuleBusinessLineEntity>();
-        //                foreach (var businessLine in campaignRuleDraftEntity.BusinessLines)
-        //                {
-        //                    campaignRuleEntity.BusinessLines.Add(new CampaignRuleBusinessLineEntity()
-        //                    {
-        //                        BusinessLineId = businessLine.BusinessLineId
-        //                    });
-        //                }
-        //            }
-        //        }
-        //        else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
-        //        {
-        //            campaignRuleEntity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
-        //            foreach (var ruleIdentity in campaignRuleDraftEntity.RuleIdentities)
-        //            {
-        //                campaignRuleEntity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
-        //                {
-        //                    Identities = ruleIdentity.Identities,
-        //                });
-        //            }
-        //        }
-        //    }
-        //    await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
-
-        //    return campaignRuleEntity;
-        //}
 
         private async Task<bool> IsValidIdentiy(string identity)
         {
@@ -635,7 +557,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             return identity.Length == 11 ? Core.Helper.Helpers.TcAuthentication(identity) : Core.Helper.Helpers.FirmaVergiKontrol(identity);
         }
 
-        public async Task<CampaignEntity> SetCampaignDefaults(CampaignEntity entity)
+        public CampaignEntity SetCampaignDefaults(CampaignEntity entity)
         {
             if (entity.ProgramTypeId == (int)ProgramTypeEnum.Loyalty)
             {
@@ -688,5 +610,63 @@ namespace Bbt.Campaign.Services.Services.Draft
             return entity;
         }
 
+        public async Task<int> GetProcessType(int canpaignId)
+        {
+            int retVal  = (int)ProcessTypesEnum.Update;
+
+            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(canpaignId);
+
+            if (entity.StatusId == (int)StatusEnum.Draft || entity.StatusId == (int)StatusEnum.Updating)
+            {
+                retVal = (int)ProcessTypesEnum.Update;
+            }
+            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
+            {
+                throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
+            }
+            else if (entity.StatusId == (int)StatusEnum.Approved)
+            {
+                var usingEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+                    .Where(x => !x.IsDeleted && x.Code == entity.Code &&
+                                (x.StatusId == (int)StatusEnum.SentToApprove || x.StatusId == (int)StatusEnum.Updating))
+                    .FirstOrDefault();
+                if (usingEntity == null) 
+                    retVal = (int)ProcessTypesEnum.CreateDraft;
+                else
+                    throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
+            }
+            return retVal;
+        }
+        public CampaignEntity SetCampaignUpdateRequest(CampaignEntity campaignEntity, CampaignUpdateRequest campaignUpdateRequest)
+        {
+            campaignEntity.CampaignDetail.DetailEn = campaignUpdateRequest.CampaignDetail.DetailEn;
+            campaignEntity.CampaignDetail.DetailTr = campaignUpdateRequest.CampaignDetail.DetailTr;
+            campaignEntity.CampaignDetail.SummaryEn = campaignUpdateRequest.CampaignDetail.SummaryEn;
+            campaignEntity.CampaignDetail.SummaryTr = campaignUpdateRequest.CampaignDetail.SummaryTr;
+            campaignEntity.CampaignDetail.CampaignDetailImageUrl = campaignUpdateRequest.CampaignDetail.CampaignDetailImageUrl;
+            campaignEntity.CampaignDetail.CampaignListImageUrl = campaignUpdateRequest.CampaignDetail.CampaignListImageUrl;
+            campaignEntity.CampaignDetail.ContentTr = campaignUpdateRequest.CampaignDetail.ContentTr;
+            campaignEntity.CampaignDetail.ContentEn = campaignUpdateRequest.CampaignDetail.ContentEn;
+
+            campaignEntity.ContractId = campaignUpdateRequest.ContractId;
+            campaignEntity.ProgramTypeId = campaignUpdateRequest.ProgramTypeId;
+            campaignEntity.SectorId = campaignUpdateRequest.SectorId;
+            campaignEntity.ViewOptionId = campaignUpdateRequest.ViewOptionId;
+            campaignEntity.IsBundle = campaignUpdateRequest.IsBundle;
+            campaignEntity.IsActive = campaignUpdateRequest.IsActive;
+            campaignEntity.IsContract = campaignUpdateRequest.IsContract;
+            campaignEntity.DescriptionTr = campaignUpdateRequest.DescriptionTr;
+            campaignEntity.DescriptionEn = campaignUpdateRequest.DescriptionEn;
+            campaignEntity.EndDate = DateTime.Parse(campaignUpdateRequest.EndDate);
+            campaignEntity.StartDate = DateTime.Parse(campaignUpdateRequest.StartDate);
+            campaignEntity.Name = campaignUpdateRequest.Name;
+            campaignEntity.Order = campaignUpdateRequest.Order;
+            campaignEntity.TitleTr = campaignUpdateRequest.TitleTr;
+            campaignEntity.TitleEn = campaignUpdateRequest.TitleEn;
+            campaignEntity.MaxNumberOfUser = campaignUpdateRequest.MaxNumberOfUser;
+            campaignEntity.ParticipationTypeId = campaignUpdateRequest.ParticipationTypeId;
+
+            return campaignEntity;
+        }
     }
 }
