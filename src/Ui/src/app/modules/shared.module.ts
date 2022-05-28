@@ -16,6 +16,7 @@ import {CurrencyMaskInputMode, NgxCurrencyModule} from "ngx-currency";
 import {SafePipe} from "../pipes/safe.pipe";
 import {FormChangeAlertComponent} from "../components/form-change-alert/form-change-alert.component";
 import {AuthCheckComponent} from "../components/auth-check/auth-check.component";
+import {ReportsPageSubHeaderComponent} from "../components/reports-page-sub-header/reports-page-sub-header.component";
 
 export const customCurrencyMaskConfig = {
   thousands: ".",
@@ -39,6 +40,7 @@ export const customCurrencyMaskConfig = {
     StepComponent,
     FinishComponent,
     ListComponent,
+    ReportsPageSubHeaderComponent,
     RepostComponent,
     FormChangeAlertComponent,
     AuthCheckComponent,
@@ -63,6 +65,7 @@ export const customCurrencyMaskConfig = {
     NgxCurrencyModule,
     FinishComponent,
     ListComponent,
+    ReportsPageSubHeaderComponent,
     RepostComponent,
     FormChangeAlertComponent,
     AuthCheckComponent,

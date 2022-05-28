@@ -13,6 +13,7 @@ import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
 import {SharedModule} from "./modules/shared.module";
 import {HttpHeadersInterceptor} from "./helpers/http-headers.interceptor";
+import {ErrorInterceptor} from "./helpers/error.interceptor";
 
 registerLocaleData(localeTR);
 
@@ -38,6 +39,7 @@ registerLocaleData(localeTR);
   providers: [
     {provide: LOCALE_ID, useValue: 'tr-TR'},
     {provide: HTTP_INTERCEPTORS, useClass: HttpHeadersInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
   ],
   exports: [],
   bootstrap: [AppComponent]

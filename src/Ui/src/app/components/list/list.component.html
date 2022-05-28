@@ -41,7 +41,7 @@
           </thead>
           <tbody>
           <tr class="cursor-pointer"
-              [routerLink]="row.routerLink"
+              (click)="rowClick(row)"
               *ngFor="let row of listService.rows">
             <td [ngClass]="column.isBoolean ? 'text-center' : ''"
                 *ngFor="let column of listService.columns">

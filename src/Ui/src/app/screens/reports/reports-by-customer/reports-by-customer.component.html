@@ -1,0 +1,126 @@
+<app-main-content [isReportsPage]="true">
+  <ngx-smart-modal #customerReportModal identifier="customerReportModal">
+    <h1>Bilgilendirme</h1>
+    <hr class="blue">
+    <div class="px-2" *ngFor="let targetGroup of customerDetailTargetGroupList; let i = index">
+      <h5 [ngStyle]="{'color': i%2 == 0 ? '#676beb' : '#00aeef'}">Koşul {{i + 1}}</h5>
+      <div class="row mb-2" *ngFor="let target of targetGroup.targetList">
+        <div class="col-auto d-flex align-items-center">
+          <i class="bi bi-square-fill" [ngStyle]="{'color': i%2 == 0 ? '#676beb' : '#00aeef'}"></i>
+        </div>
+        <div class="col">
+          <div>{{target.title}}</div>
+          <div class="fw-bold">{{target.usedAmountStr}} {{target.usedAmountCurrencyCode}}</div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <b>Koşul {{i + 1}} için harcama hedefi: {{targetGroup.targetAmountStr}} {{targetGroup.targetAmountCurrencyCode}}</b>
+      </div>
+      <div class="row">
+        <b [ngStyle]="{'color': i%2 == 0 ? '#676beb' : '#00aeef'}">
+          Kalan harcama tutarı: {{targetGroup.remainAmountStr}} {{targetGroup.targetAmountCurrencyCode}}</b>
+      </div>
+      <hr *ngIf="targetGroup != customerDetailTargetGroupList[customerDetailTargetGroupList.length-1]">
+    </div>
+    <div class="mt-4 d-flex justify-content-center">
+      <button class="btn btn-primary px-5" type="button" (click)="customerReportModal.close()">Tamam</button>
+    </div>
+  </ngx-smart-modal>
+  <app-list (getListEvent)="customerReportGetByFilter()"
+            (downloadExcelFileEvent)="customerReportGetByFilterExcelFile()"
+            (showDetailEvent)="showDetail($event)">
+    <div filterForm class="p-4">
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Müşteri No</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.customerCode"
+                   onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>TCKN</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.customerIdentifier"
+                   maxlength="11" onlyNumber>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="customerTypeId">Müşteri Tipi</label>
+            <select name="customerTypeId" id="customerTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.customerTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of customerTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="campaignStartTermId">Kampanya Başlama Dönemi</label>
+            <select name="campaignStartTermId" id="campaignStartTermId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.campaignStartTermId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of campaignStartTermList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Şube</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.branchCode" onlyNumber>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col">
+          <div class="form-group">
+            <label for="achievementTypeId">Kazanım Tipi</label>
+            <select name="achievementTypeId" id="achievementTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.achievementTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of achievementTypes"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="businessLineId">İş Kolu</label>
+            <select name="businessLineId" id="businessLineId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.businessLineId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of businessLineList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="isActive">Aktif</label>
+                <select name="isActive" id="isActive" class="form-select form-select-sm"
+                        [(ngModel)]="filterForm.isActive">
+                  <option [ngValue]="null">Tümü</option>
+                  <option [ngValue]="true">Evet</option>
+                  <option [ngValue]="false">Hayır</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+            </div>
+          </div>
+        </div>
+        <div class="col pt-3">
+          <button class="btn btn-sm btn-outline-primary w-100" (click)="clear()">Temizle</button>
+        </div>
+        <div class="col pt-3">
+          <button class="btn btn-sm btn-primary w-100" (click)="customerReportGetByFilter()">Getir</button>
+        </div>
+      </div>
+    </div>
+  </app-list>
+</app-main-content>
