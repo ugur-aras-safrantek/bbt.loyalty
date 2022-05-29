@@ -1,5 +1,4 @@
-﻿using Bbt.Campaign.Core.DbEntities;
-using Bbt.Campaign.Public.BaseResultModels;
+﻿using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Models.Campaign;

@@ -5,6 +5,8 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
 {
     public class CampaignDto
     {
+        public int Id { get; set; }
+
         [MaxLength(500), Required]
         public string Name { get; set; }
 
@@ -18,28 +20,19 @@ namespace Bbt.Campaign.Public.Dtos.Campaign
         public string EndDate { get; set; }
         public int? Order { get; set; }
         public int? MaxNumberOfUser { get; set; }
-
         public int? SectorId { get; set; }
         public SectorDto? Sector { get; set; }
-
         public int? ViewOptionId { get; set; }
         public ViewOptionDto? ViewOption { get; set; }
-
         public int ParticipationTypeId { get; set; }
         public ParameterDto ParticipationType { get; set; }
-
         public bool IsActive { get; set; }
-        public bool IsBundle { get; set; }
-        public int Id { get; set; }
+        public bool IsBundle { get; set; }       
         public bool IsContract { get; set; }
         public int? ContractId { get; set; }
         public int ProgramTypeId { get; set; }
-
-        //Approve
-        public bool IsApproved { get; set; }
-        public bool IsDraft { get; set; }
-        public int? DraftId { get; set; }
-
+        public DateTime? ApproveDate { get; set; }
+        public int StatusId { get; set; }
         public CampaignDetailDto CampaignDetail { get; set; } 
     }
 }

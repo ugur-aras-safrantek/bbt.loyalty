@@ -8,9 +8,9 @@ namespace Bbt.Campaign.Api.Controllers
 {
     public class AuthorizationController :  BaseController<AuthorizationController>
     {
-        private readonly IAuthorizationservice _authorizationService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public AuthorizationController(IAuthorizationservice authorizationService)
+        public AuthorizationController(IAuthorizationService authorizationService)
         {
             _authorizationService = authorizationService;
         }

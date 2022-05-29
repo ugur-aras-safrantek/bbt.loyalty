@@ -377,7 +377,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 
             //target
 
-            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoTestCustomer(campaignId);
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(campaignId, 0, 0);
 
             response.CampaignTarget = campaignTargetDto;
 
@@ -487,7 +487,8 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             decimal? totalAchievement = 0;
             decimal? previousMonthAchievement = 0;
-            decimal? usedAmount= 0;
+            decimal usedAmount= 0;
+            int usedNumberOfTransaction = 0;
 
             List<TargetParameterDto> targetSourceList = new List<TargetParameterDto>();
 
@@ -497,6 +498,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 totalAchievement = 190;
                 previousMonthAchievement = 120;
                 usedAmount = 1000;
+                usedNumberOfTransaction = 2;
 
                 response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
                 response.UsedAmountCurrencyCode = "TRY";
@@ -507,7 +509,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 response.TotalAchievementCurrencyCode = "TRY";
                 response.PreviousMonthAchievementCurrencyCode = "TRY";
 
-                var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoTestCustomer(campaignId);
+                var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(campaignId, usedAmount, usedNumberOfTransaction);
                 response.CampaignTarget = campaignTargetDto;
 
                 foreach(var targetGroup in campaignTargetDto.TargetGroupList) 

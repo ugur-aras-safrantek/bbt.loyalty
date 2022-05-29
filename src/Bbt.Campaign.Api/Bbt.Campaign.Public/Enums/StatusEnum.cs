@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Enums
 {
-    public enum RecordStatusEnum
+    public enum StatusEnum
     {
-        [Description("Yeni")]
-        New = 10,
         [Description("Taslak")]
-        Draft = 20,
-        [Description("Onayda Bekliyor")]
-        SentToApprove = 30,
+        Draft = 1,
+        [Description("Onaya Gönderildi")]
+        SentToApprove = 2,
+        [Description("Güncelleniyor")]
+        Updating = 3,
         [Description("Tarihçe")]
-        History = 40,
+        History = 4,
         [Description("Onaylandı")]
-        Approved = 100,
+        Approved = 10,
     }
 }

@@ -17,6 +17,7 @@ using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Shared.Static;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using Bbt.Campaign.Services.Services.CampaignTarget;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -25,15 +26,18 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly ICampaignTargetService _campaignTargetService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationservice authorizationservice)
+        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            IAuthorizationService authorizationService, ICampaignTargetService campaignTargetService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationService;
+            _campaignTargetService = campaignTargetService;
         }
         private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportRequest request) 
         {
@@ -173,7 +177,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignReportResponse response = new CampaignReportResponse();
 
@@ -199,7 +203,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             GetFileResponse response = new GetFileResponse();
 
@@ -231,7 +235,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CampaignReportFormDto response = new CampaignReportFormDto();
             await FillCampaignFormAsync(response);
@@ -250,7 +254,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CustomerReportFormDto response = new CustomerReportFormDto();
             await FillCustomerFormAsync(response);
@@ -267,7 +271,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CustomerReportResponse response = new CustomerReportResponse();
 
@@ -293,7 +297,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             GetFileResponse response = new GetFileResponse();
 
@@ -467,7 +471,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             CustomerReportDetailDto response = new CustomerReportDetailDto();
             CustomerReportDetailEntity customerReportDetailEntity = new CustomerReportDetailEntity();
@@ -477,6 +481,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response, "Uygun kayıt bulunamadı");
             var customerCampaignList = await this.ConvertCustomerReportList(query);
             var customerCampaign = customerCampaignList.FirstOrDefault();
+            decimal usedAmount = 0;
+            int usedNumberOfTransaction = 0;
 
             if (StaticValues.IsDevelopment) 
             {
@@ -502,6 +508,9 @@ namespace Bbt.Campaign.Services.Services.Report
                 customerReportDetailEntity.CampaignStartDate = customerCampaign.CampaignStartDate;
                 customerReportDetailEntity.CampaignStartDateStr = customerCampaign.CampaignStartDate.ToShortDateString().Replace('.', '-'); 
                 response = _mapper.Map<CustomerReportDetailDto>(customerReportDetailEntity);
+
+                usedAmount = 1000;
+                usedNumberOfTransaction = 2;
             }
             else 
             {
@@ -524,6 +533,10 @@ namespace Bbt.Campaign.Services.Services.Report
                 }
 
             }
+
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(customerCampaign.CampaignId, usedAmount, usedNumberOfTransaction);
+            response.CampaignTarget = campaignTargetDto;
+
             return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response);
         }
     }

@@ -16,7 +16,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(string userid);
         public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, string userid);
         public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool isRemoveInvisible);
-        public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, List<TargetParameterDto> targetSourceList);
-        public Task<CampaignTargetDto> GetCampaignTargetDtoTestCustomer(int campaignId);
+        //public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, List<TargetParameterDto> targetSourceList);
+        public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, decimal usedAmount, int usedNumberOfTransaction);
     }
 }

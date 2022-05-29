@@ -4,8 +4,6 @@ namespace Bbt.Campaign.Public.Models.Campaign
 {
     public class CampaignListFilterRequest : PagingRequest
     {
-
-
         public string? Name { get; set; }
         public string? Code { get; set; }
         public int? ContractId { get; set; }
@@ -16,6 +14,6 @@ namespace Bbt.Campaign.Public.Models.Campaign
         public string? EndDate { get; set; }
         public bool? IsApproved { get; set; }
         public bool? IsDraft { get; set; }
-
+        public int StatusId { get; set; }
     }
 }

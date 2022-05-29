@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Bbt.Campaign.Services.Services.Authorization
 {
-    public class AuthorizationService : IAuthorizationservice, IScopedService
+    public class AuthorizationService : IAuthorizationService, IScopedService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;

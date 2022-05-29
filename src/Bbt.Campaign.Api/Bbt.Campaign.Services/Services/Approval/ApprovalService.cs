@@ -32,13 +32,13 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly ICampaignService _campaignService;
         private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
-        private readonly IAuthorizationservice _authorizationservice;
+        private readonly IAuthorizationService _authorizationService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignService campaignService, 
             ICampaignRuleService campaignRuleService, 
             ICampaignTargetService campaignTargetService,
-            IAuthorizationservice authorizationservice)
+            IAuthorizationService authorizationservice)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -46,14 +46,14 @@ namespace Bbt.Campaign.Services.Services.Approval
             _campaignService = campaignService;
             _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
-            _authorizationservice = authorizationservice;
+            _authorizationService = authorizationservice;
         }
 
         #region campaign
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => (x.RefId ?? 0) == id && !x.IsDeleted)
+                .GetAll(x => !x.IsDeleted)
                 .FirstOrDefaultAsync();
             if (campaignEntity == null)
             {
@@ -68,7 +68,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         private async Task<BaseResponse<CampaignDto>> ApproveCampaignAddAsync(int refId)
         {
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
+                .GetAll(x => x.Id == refId && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
                 .FirstOrDefaultAsync();
             
@@ -76,8 +76,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Kampanya bulunamadı.");
 
             //campaign Draft
-            campaignDraftEntity.IsApproved = true;
-            campaignDraftEntity.RefId = campaignDraftEntity.Id;
+            //campaignDraftEntity.IsApproved = true;
+            //campaignDraftEntity.RefId = campaignDraftEntity.Id;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
 
@@ -86,9 +86,6 @@ namespace Bbt.Campaign.Services.Services.Approval
             var campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
             campaignEntity.Id = 0;
             campaignEntity.Code = string.Empty;
-            campaignEntity.IsApproved = true;
-            campaignEntity.IsDraft = false;
-            campaignEntity.RefId = refId;
 
             //campaign detail
             var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
@@ -122,7 +119,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignUpdateAsync(int refId, int campaignId) 
         {
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
+                .GetAll(x => x.Id == refId && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
                 .Where(x => x.Id == refId)
                 .FirstOrDefaultAsync();
@@ -134,7 +131,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
 
             //campaign Draft
-            campaignDraftEntity.IsApproved = true;
+            //campaignDraftEntity.IsApproved = true;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
 
             //campaign
@@ -153,9 +150,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignEntity.TitleTr = campaignDraftEntity.TitleTr;
             campaignEntity.TitleEn = campaignDraftEntity.TitleEn;
             campaignEntity.MaxNumberOfUser = campaignDraftEntity.MaxNumberOfUser;
-            campaignEntity.IsDraft = false;
-            campaignEntity.IsApproved = true;
-            campaignEntity.RefId = refId;
+            //campaignEntity.IsDraft = false;
+            //campaignEntity.IsApproved = true;
+            //campaignEntity.RefId = refId;
 
             //campaign detail
             var campaignDraftDetailEntity = campaignDraftEntity.CampaignDetail;
@@ -1234,7 +1231,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == refId && !x.IsDeleted)
@@ -1251,9 +1248,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignEntity.Name = campaignDraftEntity.Name + "-Copy";
             campaignEntity.Code = string.Empty;
             campaignEntity.Order = null;
-            campaignEntity.IsApproved = false;
-            campaignEntity.IsDraft = true;
-            campaignEntity.RefId = null;
+            //campaignEntity.IsApproved = false;
+            //campaignEntity.IsDraft = true;
+            //campaignEntity.RefId = null;
             campaignEntity.CreatedBy = userid;
 
             //campaign detail
@@ -1279,7 +1276,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             await _unitOfWork.SaveChangesAsync();
             
             campaignEntity.Code = campaignEntity.Id.ToString();
-            campaignEntity.RefId = campaignEntity.Id;
+            //campaignEntity.RefId = campaignEntity.Id;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
@@ -1294,7 +1291,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var topLimitDraftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                                                           .GetAll(x => x.Id == refId && x.IsDeleted == false)
@@ -1343,7 +1340,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-            await _authorizationservice.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var targetDraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
                                                               .GetAll(x => x.Id == refId && x.IsDeleted == false)

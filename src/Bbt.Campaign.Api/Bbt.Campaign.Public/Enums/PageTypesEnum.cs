@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Enums
 {
-    public enum CampaignPagesEnum
+    public enum PageTypesEnum
     {
         [Description("Campaign")]
         Campaign = 1,
@@ -15,7 +15,9 @@ namespace Bbt.Campaign.Public.Enums
         CampaignRule = 2,
         [Description("CampaignTarget")]
         CampaignTarget = 3,
+        [Description("ChannelCode")]
+        ChannelCode = 4,
         [Description("CampaignAchievement")]
-        CampaignAchievement = 4,
+        CampaignAchievement = 5,
     }
 }

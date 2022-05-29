@@ -7,7 +7,7 @@ using Bbt.Campaign.Public.Models.Authorization;
 
 namespace Bbt.Campaign.Services.Services.Authorization
 {
-    public interface IAuthorizationservice
+    public interface IAuthorizationService
     {
         public Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request);
         public Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request);

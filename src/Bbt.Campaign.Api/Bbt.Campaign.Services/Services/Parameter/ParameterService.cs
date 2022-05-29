@@ -155,7 +155,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
-
         public async Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync(string cacheKey)
         {
             List<ParameterDto> result = null;
@@ -164,7 +163,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
-
         public async Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId)
         {
             List<ParameterDto> result = new List<ParameterDto>();
@@ -183,7 +181,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
-
         public async Task<BaseResponse<List<UserRoleDto>>> GetUserRoleListAsync(string userId)
         {
             List<UserRoleDto> result = new List<UserRoleDto>();
@@ -199,7 +196,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<UserRoleDto>>.SuccessAsync(result);
         }
-
         public async Task<BaseResponse<List<UserRoleDto>>> SetUserRoleListAsync(string userId, List<UserRoleDto> _userRoleList)
         {
             string cacheKey = string.Format(CacheKeys.UserRoleList, userId);
@@ -398,12 +394,14 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 result = JsonConvert.DeserializeObject<List<ParameterDto>>(channelCodeDateData);
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
-
         public Task<BaseResponse<List<ParameterDto>>> GetServiceConstantListAsync()
         {
             return GetListAsync<ConstantsEntity>(CacheKeys.ServiceConstantList);
         }
-
+        public Task<BaseResponse<List<ParameterDto>>> GetStatusListAsync()
+        {
+            return GetListAsync<StatusEntity>(CacheKeys.StatusList);
+        }
         public async Task<string> GetServiceData(string serviceUrl) 
         {
             string retVal = string.Empty;

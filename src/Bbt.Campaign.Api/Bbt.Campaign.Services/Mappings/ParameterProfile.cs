@@ -27,7 +27,6 @@ namespace Bbt.Campaign.Services.Mappings
             CreateMap<ParameterDto, TargetViewTypeEntity>().ReverseMap();
             CreateMap<ParameterDto, VerificationTimeEntity>().ReverseMap();
             CreateMap<ParameterDto, ParticipationTypeEntity>().ReverseMap();
-
             CreateMap<ParameterDto, RoleTypeEntity>().ReverseMap();
             CreateMap<ParameterDto, UserRoleEntity>().ReverseMap();
             CreateMap<UserRoleDto, UserRoleEntity>().ReverseMap();
@@ -35,6 +34,8 @@ namespace Bbt.Campaign.Services.Mappings
             CreateMap<ParameterDto, ModuleTypeEntity>().ReverseMap();
             CreateMap<ParameterDto, AuthorizationTypeEntity>().ReverseMap();
             CreateMap<RoleAuthorizationDto, RoleAuthorizationEntity>().ReverseMap();
+            CreateMap<ParameterDto, ConstantsEntity>().ReverseMap();
+            CreateMap<ParameterDto, StatusEntity>().ReverseMap();
         }
     }
 }
