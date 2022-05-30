@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {AuthorizationModel} from "../../models/login.model";
 
 @Component({
   selector: 'app-main-content',
@@ -7,10 +8,14 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class MainContentComponent implements OnInit {
   @Input('blockTitle') blockTitle = '';
-  @Input('route') route = '';
+  @Input('createRoute') createRoute = '';
   @Input('newButtonText') newButtonText = '';
-  @Input('createAuthorization') createAuthorization: boolean = false;
+  @Input('isAwaitingApprovalListPage') isAwaitingApprovalListPage: boolean = false;
+  @Input('authorization') authorization: AuthorizationModel = new AuthorizationModel();
   @Input('isReportsPage') isReportsPage: boolean = false;
+
+  awaitingApprovalListRoute = '../awaiting-approval/list';
+  returnListRoute = './list';
 
   constructor() {
   }

@@ -17,6 +17,10 @@ const routes: Routes = [
         loadChildren: () => import('./campaign-definition-list/campaign-definition-list.module').then(m => m.CampaignDefinitionListModule)
       },
       {
+        path: 'awaiting-approval',
+        loadChildren: () => import('./campaign-definition-awaiting-approval/campaign-definition-awaiting-approval.module').then(m => m.CampaignDefinitionAwaitingApprovalModule)
+      },
+      {
         path: 'create',
         loadChildren: () => import('./campaign-definition/campaign-definition.module').then(m => m.CampaignDefinitionModule)
       },

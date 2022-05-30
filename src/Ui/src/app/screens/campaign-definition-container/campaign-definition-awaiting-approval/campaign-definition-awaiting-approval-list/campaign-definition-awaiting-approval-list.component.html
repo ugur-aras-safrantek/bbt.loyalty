@@ -1,6 +1,6 @@
-<app-main-content blockTitle="Kampanya Tanımı"
-                  createRoute="../create/definition"
+<app-main-content createRoute="/campaign-definition/create/definition"
                   newButtonText="Yeni Kampanya"
+                  [isAwaitingApprovalListPage]="true"
                   [authorization]="currentUserAuthorizations.campaignDefinitionModuleAuthorizations">
   <app-list (getListEvent)="campaignDefinitionListGetByFilter()"
             (downloadExcelFileEvent)="campaignDefinitionListGetByFilterExcelFile()">

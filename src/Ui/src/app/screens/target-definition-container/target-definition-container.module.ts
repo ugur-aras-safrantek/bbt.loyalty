@@ -13,6 +13,10 @@ const routes: Routes = [
         loadChildren: () => import('./target-definition-list/target-definition-list.module').then(m => m.TargetDefinitionListModule)
       },
       {
+        path: 'awaiting-approval',
+        loadChildren: () => import('./target-definition-awaiting-approval/target-definition-awaiting-approval.module').then(m => m.TargetDefinitionAwaitingApprovalModule)
+      },
+      {
         path: 'create',
         loadChildren: () => import('./target-definition/target-definition.module').then(m => m.TargetDefinitionModule)
       },

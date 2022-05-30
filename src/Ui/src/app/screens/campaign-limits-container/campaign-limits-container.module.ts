@@ -13,6 +13,10 @@ const routes: Routes = [
         loadChildren: () => import('./campaign-limits-list/campaign-limits-list.module').then(m => m.CampaignLimitsListModule)
       },
       {
+        path: 'awaiting-approval',
+        loadChildren: () => import('./campaign-limits-awaiting-approval/campaign-limits-awaiting-approval.module').then(m => m.CampaignLimitsAwaitingApprovalModule)
+      },
+      {
         path: 'create',
         loadChildren: () => import('./campaign-limits/campaign-limits.module').then(m => m.CampaignLimitsModule)
       },
