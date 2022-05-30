@@ -157,7 +157,9 @@ namespace Bbt.Campaign.Services.Services.Report
                 TopLimitName = x.TopLimitName,
                 CustomerCount = x.CustomerCount ?? 0,
                 JoinTypeId = x.JoinTypeId,
-                JoinTypeName = x.JoinTypeName
+                JoinTypeName = x.JoinTypeName,
+                StatusId = x.StatusId,
+                StatusName = x.StatusName,
             }).ToList();
 
             return campaignList;

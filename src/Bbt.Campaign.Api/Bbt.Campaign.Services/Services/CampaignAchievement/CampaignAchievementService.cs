@@ -75,7 +75,9 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
         private async Task Update(CampaignAchievementInsertRequest request, string userid) 
         {
-            
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(request.CampaignId);
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunmadı.");
 
             foreach (var deleteEntity in _unitOfWork.GetRepository<CampaignAchievementEntity>()
                 .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true))
@@ -83,6 +85,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(deleteEntity);
             }
 
+            
             foreach (var x in request.CampaignAchievementList)
             {
                 CampaignAchievementEntity entity = new CampaignAchievementEntity();
@@ -115,23 +118,24 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                     entity.MaxAmount = null;
                 }
 
-                var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(entity.CampaignId);
-                if (campaignEntity != null)
+
+                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                if (viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign)
                 {
-                    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                    if (viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign)
-                    {
-                        entity.DescriptionTr = null;
-                        entity.DescriptionEn = null;
-                        entity.TitleTr = null;
-                        entity.TitleEn = null;
-                    }
+                    entity.DescriptionTr = null;
+                    entity.DescriptionEn = null;
+                    entity.TitleTr = null;
+                    entity.TitleEn = null;
                 }
 
                 #endregion
 
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(entity);
             }
+
+            campaignEntity.StatusId = (int)StatusEnum.SentToApprove;
+            campaignEntity.LastModifiedBy = userid;
+            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
             await _unitOfWork.SaveChangesAsync();
 

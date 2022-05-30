@@ -61,13 +61,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
             await CheckValidationsAsync(request);
 
-            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
-            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
-            {
-                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
-                request.CampaignId = request.CampaignId;
-            }
-
             await Update(request, userid);
 
             return await this.GetListByCampaignAsync(request.CampaignId);
@@ -75,6 +68,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
         private async Task Update(CampaignTargetInsertRequest request, string userid) 
         {
+            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+            }
+
             foreach (var campaignTargetEntityDelete in _unitOfWork.GetRepository<CampaignTargetEntity>()
                 .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted).ToList())
             {

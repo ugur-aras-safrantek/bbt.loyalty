@@ -15,18 +15,17 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Approves the campaign by draft Id.
+        /// Approves the draft campaign.
         /// </summary>
         /// <param name="id">Record Id of the draft</param>
         /// <returns></returns>
-        //[HttpGet]
-        //[Route("campaign/{id}")]
-        ////[Route("get/{id}")]
-        //public async Task<IActionResult> ApproveCampaign(int id)
-        //{
-        //    var result = await _approvalService.ApproveCampaignAsync(id);
-        //    return Ok(result);
-        //}
+        [HttpGet]
+        [Route("campaign/{id}")]
+        public async Task<IActionResult> ApproveCampaign(int id, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _approvalService.ApproveCampaignAsync(id, userId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// Approves the target by draft Id.

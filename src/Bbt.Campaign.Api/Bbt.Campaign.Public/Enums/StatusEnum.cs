@@ -13,11 +13,11 @@ namespace Bbt.Campaign.Public.Enums
         Draft = 1,
         [Description("Onaya Gönderildi")]
         SentToApprove = 2,
-        [Description("Güncelleniyor")]
-        Updating = 3,
+        //[Description("Güncelleniyor")]
+        //Updating = 3,
         [Description("Tarihçe")]
-        History = 4,
+        History = 3,
         [Description("Onaylandı")]
-        Approved = 10,
+        Approved = 4,
     }
 }

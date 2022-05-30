@@ -11,6 +11,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         public Task<BaseResponse<CampaignDto>> GetCampaignAsync(int id, string userid);
         public Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, string userid);
         public Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid);
+        public Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, string userid);
         public Task<BaseResponse<List<CampaignDto>>> GetListAsync(string userid);
         public Task<BaseResponse<List<ParameterDto>>> GetParameterListAsync();
         public Task<BaseResponse<CampaignDto>> DeleteAsync(int id, string userid);

@@ -57,26 +57,28 @@ namespace Bbt.Campaign.Services.Services.Draft
                 throw new Exception("Kampanya bulunamadı");
 
             //copy campaign
-            CampaignEntity campaignEntity = await CopyCampaignInfo(campaignId, userid);
+            CampaignEntity campaignEntity = await CopyCampaignInfo(campaignId, userid, true);
             campaignEntity.Code = approvedCampaign.Code;
+            campaignEntity.StatusId = (int)StatusEnum.Draft;
+
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            CampaignRuleEntity campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid);
+            CampaignRuleEntity campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid, true);
             await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
 
-            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid);
+            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid, true);
             foreach (var campaignDocument in campaignDocumentlist)
                 await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
 
-            List<CampaignTargetEntity> campaignTargetList = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid);
+            List<CampaignTargetEntity> campaignTargetList = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid, true);
             foreach (var campaignTarget in campaignTargetList)
                 await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
 
-            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid);
+            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid, true);
             foreach (var campaignChannelCode in campaignChannelCodeList)
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
 
-            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid);
+            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, true);
             foreach (var campaignAchievement in campaignAchievementList)
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
@@ -94,28 +96,28 @@ namespace Bbt.Campaign.Services.Services.Draft
         {
             await CheckValidationCampaignCopy(campaignId, userid);
 
-            CampaignEntity campaignEntity = await CopyCampaignInfo(campaignId, userid);
+            CampaignEntity campaignEntity = await CopyCampaignInfo(campaignId, userid, false);
             campaignEntity.Name = string.Concat(campaignEntity.Name, "-Copy");
             campaignEntity.Code = Helpers.CreateCampaignCode();
             campaignEntity.Order = null;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
 
-            CampaignRuleEntity campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid);
+            CampaignRuleEntity campaignRuleEntity = await CopyCampaignRuleInfo(campaignId, campaignEntity, userid, false);
             await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
 
-            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid);
+            List<CampaignDocumentEntity> campaignDocumentlist = await CopyCampaignDocumentInfo(campaignId, campaignEntity, userid, false);
             foreach (var campaignDocument in campaignDocumentlist)
                 await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
 
-            List<CampaignTargetEntity> campaignTargetList = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid);
+            List<CampaignTargetEntity> campaignTargetList = await CopyCampaignTargetInfo(campaignId, campaignEntity, userid, false);
             foreach(var campaignTarget in campaignTargetList)
                 await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
 
-            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid);
+            List<CampaignChannelCodeEntity> campaignChannelCodeList = await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid, false);
             foreach (var campaignChannelCode in campaignChannelCodeList)
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
 
-            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid);
+            List<CampaignAchievementEntity> campaignAchievementList = await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, false);
             foreach (var campaignAchievement in campaignAchievementList)
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
@@ -179,7 +181,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         }
 
 
-        private async Task<CampaignEntity> CopyCampaignInfo(int campaignId, string userid)
+        public async Task<CampaignEntity> CopyCampaignInfo(int campaignId, string userid, bool isIncludeUpdateInfo)
         {
             CampaignEntity campaignEntity = new CampaignEntity();
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
@@ -194,21 +196,44 @@ namespace Bbt.Campaign.Services.Services.Draft
             var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
             campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
             campaignEntity.Id = 0;
-            campaignEntity.CreatedBy = userid;
+            campaignEntity.StatusId = (int)StatusEnum.Draft;
+            if (isIncludeUpdateInfo) 
+            {
+                campaignEntity.CreatedBy = campaignDraftEntity.CreatedBy;
+                campaignEntity.CreatedOn = campaignDraftEntity.CreatedOn;
+                campaignEntity.LastModifiedBy = campaignDraftEntity.LastModifiedBy;
+                campaignEntity.LastModifiedOn = campaignDraftEntity.LastModifiedOn;
+            }
+            else 
+            { 
+                campaignEntity.CreatedBy = userid;
+            }
+            
 
             //campaign detail
             var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
             var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
             campaignDetailEntity.Id = 0;
-            campaignDetailEntity.CreatedBy = userid;
+            if (isIncludeUpdateInfo)
+            {
+                campaignDetailEntity.CreatedBy = campaignDraftEntity.CreatedBy;
+                campaignDetailEntity.CreatedOn = campaignDraftEntity.CreatedOn;
+                campaignDetailEntity.LastModifiedBy = campaignDraftEntity.LastModifiedBy;
+                campaignDetailEntity.LastModifiedOn = campaignDraftEntity.LastModifiedOn;
+            }
+            else
+            {
+                campaignDetailEntity.CreatedBy = userid;
+            }
 
             campaignEntity.CampaignDetail = campaignDetailEntity;
 
             return campaignEntity;
 
         }
-        private async Task<CampaignRuleEntity> CopyCampaignRuleInfo(int campaignId, CampaignEntity campaignEntity, string userid)
+        public async Task<CampaignRuleEntity> CopyCampaignRuleInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
+            
             var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
                 .Include(x => x.Branches.Where(t => t.IsDeleted != true))
@@ -219,13 +244,21 @@ namespace Bbt.Campaign.Services.Services.Draft
             if (campaignRuleDraftEntity == null)
                 throw new Exception("Kampanya kuralı bulunamadı.");
 
-            CampaignRuleEntity campaignRuleEntity = new CampaignRuleEntity()
+            CampaignRuleEntity campaignRuleEntity = new CampaignRuleEntity();
+            campaignRuleEntity.Campaign = campaignEntity;
+            campaignRuleEntity.CampaignStartTermId = campaignRuleDraftEntity.CampaignStartTermId;
+            campaignRuleEntity.JoinTypeId = campaignRuleDraftEntity.JoinTypeId;
+            if (isIncludeUpdateInfo)
             {
-                Campaign = campaignEntity,
-                CampaignStartTermId = campaignRuleDraftEntity.CampaignStartTermId,
-                JoinTypeId = campaignRuleDraftEntity.JoinTypeId,
-                CreatedBy = userid,
-            };
+                campaignRuleEntity.CreatedBy = campaignRuleDraftEntity.CreatedBy;
+                campaignRuleEntity.CreatedOn = campaignRuleDraftEntity.CreatedOn;
+                campaignRuleEntity.LastModifiedBy = campaignRuleDraftEntity.LastModifiedBy;
+                campaignRuleEntity.LastModifiedOn = campaignRuleDraftEntity.LastModifiedOn;
+            }
+            else
+            {
+                campaignRuleEntity.CreatedBy = userid;
+            }
 
             if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Branch)
             {
@@ -238,7 +271,10 @@ namespace Bbt.Campaign.Services.Services.Draft
                         {
                             BranchCode = branch.BranchCode,
                             BranchName = branch.BranchName,
-                            CreatedBy = userid,
+                            CreatedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedBy : userid,
+                            CreatedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.MinValue,
+                            LastModifiedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedBy : null,
+                            LastModifiedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedOn : null,
                         });
                     }
                 }
@@ -253,7 +289,10 @@ namespace Bbt.Campaign.Services.Services.Draft
                         campaignRuleEntity.CustomerTypes.Add(new CampaignRuleCustomerTypeEntity()
                         {
                             CustomerTypeId = customerType.CustomerTypeId,
-                            CreatedBy = userid,
+                            CreatedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedBy : userid,
+                            CreatedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.MinValue,
+                            LastModifiedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedBy : null,
+                            LastModifiedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedOn : null,
                         });
                     }
                 }
@@ -268,7 +307,10 @@ namespace Bbt.Campaign.Services.Services.Draft
                         campaignRuleEntity.BusinessLines.Add(new CampaignRuleBusinessLineEntity()
                         {
                             BusinessLineId = businessLine.BusinessLineId,
-                            CreatedBy = userid,
+                            CreatedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedBy : userid,
+                            CreatedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.MinValue,
+                            LastModifiedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedBy : null,
+                            LastModifiedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedOn : null,
                         });
                     }
                 }
@@ -281,16 +323,17 @@ namespace Bbt.Campaign.Services.Services.Draft
                     campaignRuleEntity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
                     {
                         Identities = ruleIdentity.Identities,
-                        CreatedBy = userid,
+                        CreatedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedBy : userid,
+                        CreatedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.MinValue,
+                        LastModifiedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedBy : null,
+                        LastModifiedOn = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedOn : null,
                     });
                 }
             }
 
-
-
             return campaignRuleEntity;
         }
-        private async Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid)
+        public async Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
             List<CampaignDocumentEntity> campaignDocumentlist = new List<CampaignDocumentEntity>();
 
@@ -305,13 +348,16 @@ namespace Bbt.Campaign.Services.Services.Draft
                     DocumentName = x.DocumentName,
                     DocumentType = x.DocumentType,
                     MimeType = x.MimeType,
-                    CreatedBy = userid,
+                    CreatedBy = isIncludeUpdateInfo ? x.CreatedBy : userid,
+                    CreatedOn = isIncludeUpdateInfo ? x.CreatedOn : DateTime.MinValue,
+                    LastModifiedBy = isIncludeUpdateInfo ? x.LastModifiedBy : null,
+                    LastModifiedOn = isIncludeUpdateInfo ? x.LastModifiedOn : null,
                 });
             }
 
             return campaignDocumentlist;
         }
-        private async Task<List<CampaignTargetEntity>> CopyCampaignTargetInfo(int campaignId, CampaignEntity campaignEntity, string userid)
+        public async Task<List<CampaignTargetEntity>> CopyCampaignTargetInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
             List<CampaignTargetEntity> campaignTargetList = new List<CampaignTargetEntity>();
             List<CampaignTargetEntity> campaignTargetDraftList = _unitOfWork.GetRepository<CampaignTargetEntity>()
@@ -330,13 +376,23 @@ namespace Bbt.Campaign.Services.Services.Draft
                 campaignTargetEntity.TargetId = campaignTargetDraftEntity.TargetId;
                 campaignTargetEntity.TargetGroupId = campaignTargetDraftEntity.TargetGroupId;
                 campaignTargetEntity.TargetOperationId = campaignTargetDraftEntity.TargetOperationId;
-                campaignTargetEntity.CreatedBy = userid;
+                if (isIncludeUpdateInfo)
+                {
+                    campaignTargetEntity.CreatedBy = campaignTargetDraftEntity.CreatedBy;
+                    campaignTargetEntity.CreatedOn = campaignTargetDraftEntity.CreatedOn;
+                    campaignTargetEntity.LastModifiedBy = campaignTargetDraftEntity.LastModifiedBy;
+                    campaignTargetEntity.LastModifiedOn = campaignTargetDraftEntity.LastModifiedOn;
+                }
+                else
+                {
+                    campaignTargetEntity.CreatedBy = userid;
+                }
                 campaignTargetList.Add(campaignTargetEntity);
             }
 
             return campaignTargetList;
         }
-        private async Task<List<CampaignChannelCodeEntity>> CopyCampaignChannelCodeInfo(int campaignId, CampaignEntity campaignEntity, string userid)
+        public async Task<List<CampaignChannelCodeEntity>> CopyCampaignChannelCodeInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
             List<CampaignChannelCodeEntity> campaignChannelCodeList = new List<CampaignChannelCodeEntity>();
             var campaignChannelCodes = _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
@@ -349,13 +405,16 @@ namespace Bbt.Campaign.Services.Services.Draft
                 {
                     Campaign = campaignEntity,
                     ChannelCode = x.ChannelCode,
-                    CreatedBy = userid,
+                    CreatedBy = isIncludeUpdateInfo ? x.CreatedBy : userid,
+                    CreatedOn = isIncludeUpdateInfo ? x.CreatedOn : DateTime.MinValue,
+                    LastModifiedBy = isIncludeUpdateInfo ? x.LastModifiedBy : null,
+                    LastModifiedOn = isIncludeUpdateInfo ? x.LastModifiedOn : null,
                 });
             }
 
             return campaignChannelCodeList;
         }
-        private async Task<List<CampaignAchievementEntity>> CopyCampaignAchievementInfo(int campaignId, CampaignEntity campaignEntity, string userid)
+        public async Task<List<CampaignAchievementEntity>> CopyCampaignAchievementInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
             List<CampaignAchievementEntity> campaignAchievementList = new List<CampaignAchievementEntity>();
 
@@ -371,7 +430,17 @@ namespace Bbt.Campaign.Services.Services.Draft
                 var campaignAchievementEntity = _mapper.Map<CampaignAchievementEntity>(campaignAchievementDto);
                 campaignAchievementEntity.Id = 0;
                 campaignAchievementEntity.Campaign = campaignEntity;
-                campaignAchievementEntity.CreatedBy = userid;
+                if (isIncludeUpdateInfo)
+                {
+                    campaignAchievementEntity.CreatedBy = achievementDraftEntity.CreatedBy;
+                    campaignAchievementEntity.CreatedOn = achievementDraftEntity.CreatedOn;
+                    campaignAchievementEntity.LastModifiedBy = achievementDraftEntity.LastModifiedBy;
+                    campaignAchievementEntity.LastModifiedOn = achievementDraftEntity.LastModifiedOn;
+                }
+                else
+                {
+                    campaignAchievementEntity.CreatedBy = userid;
+                }
                 campaignAchievementList.Add(campaignAchievementEntity);
             }
             return campaignAchievementList;
@@ -394,14 +463,13 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return campaignProperty;
         }
-
         public async Task<int> GetProcessType(int canpaignId)
         {
             int retVal  = (int)ProcessTypesEnum.Update;
 
             var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(canpaignId);
 
-            if (entity.StatusId == (int)StatusEnum.Draft || entity.StatusId == (int)StatusEnum.Updating)
+            if (entity.StatusId == (int)StatusEnum.Draft)
             {
                 retVal = (int)ProcessTypesEnum.Update;
             }
@@ -411,14 +479,15 @@ namespace Bbt.Campaign.Services.Services.Draft
             }
             else if (entity.StatusId == (int)StatusEnum.Approved)
             {
-                var usingEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
-                    .Where(x => !x.IsDeleted && x.Code == entity.Code &&
-                                (x.StatusId == (int)StatusEnum.SentToApprove || x.StatusId == (int)StatusEnum.Updating))
-                    .FirstOrDefault();
-                if (usingEntity == null) 
-                    retVal = (int)ProcessTypesEnum.CreateDraft;
-                else
-                    throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
+                retVal = (int)ProcessTypesEnum.CreateDraft;
+
+                //var usingEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+                //    .Where(x => !x.IsDeleted && x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove)
+                //    .FirstOrDefault();
+                //if (usingEntity == null) 
+                //    retVal = (int)ProcessTypesEnum.CreateDraft;
+                //else
+                //    throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
             }
             return retVal;
         }

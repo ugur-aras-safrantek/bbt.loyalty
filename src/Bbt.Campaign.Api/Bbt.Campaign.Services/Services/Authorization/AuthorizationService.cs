@@ -31,12 +31,12 @@ namespace Bbt.Campaign.Services.Services.Authorization
         }
         public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request) 
         {
-            if (!StaticValues.IsDevelopment) 
-            {
-                //servisten user roller çekilecek
-                string userRoles = "";
-                await UpdateUserRoles(request.UserId, userRoles);
-            }
+            //if (!StaticValues.IsDevelopment) 
+            //{
+            //    //servisten user roller çekilecek
+            //    string userRoles = "";
+            //    await UpdateUserRoles(request.UserId, userRoles);
+            //}
 
             await UpdateUserProcessDate(request.UserId);
 

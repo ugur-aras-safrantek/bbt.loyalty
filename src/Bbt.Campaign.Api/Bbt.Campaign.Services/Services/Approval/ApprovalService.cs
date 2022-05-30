@@ -21,6 +21,7 @@ using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignChannelCode;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Report;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -38,11 +39,12 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly ICampaignChannelCodeService _campaignChannelCodeService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private readonly IReportService _reportService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignChannelCodeService campaignChannelCodeService,
-            ICampaignTargetService campaignTargetService, IAuthorizationService authorizationservice, IReportService reportService
+            ICampaignTargetService campaignTargetService, IAuthorizationService authorizationservice, IReportService reportService, IDraftService draftService
             )
         {
             _unitOfWork = unitOfWork;
@@ -54,13 +56,14 @@ namespace Bbt.Campaign.Services.Services.Approval
             _campaignTargetService = campaignTargetService;
             _authorizationService = authorizationservice;
             _reportService = reportService;
+            _draftService = draftService;
         }
 
         #region campaign
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove &&!x.IsDeleted)
+                .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
@@ -98,21 +101,54 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
 
         private async Task<BaseResponse<CampaignDto>> ApproveCampaignAddAsync(int id, string userid)
-        {
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+        { 
+            DateTime now = DateTime.UtcNow;
+            var draftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
                 .FirstOrDefaultAsync();
-            if (campaignEntity == null)
+            if (draftEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
 
-            campaignEntity.StatusId = (int)StatusEnum.Approved;
-            campaignEntity.ApproveDate = DateTime.UtcNow;
-            campaignEntity.LastModifiedBy = userid;
+            //update campaign
 
-            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
+            draftEntity.StatusId = (int)StatusEnum.Approved;
+            draftEntity.ApproveDate = now;
+            draftEntity.LastModifiedBy = userid;
+
+            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(draftEntity);
+
+            //add hisory
+            CampaignEntity historyEntity = await _draftService.CopyCampaignInfo(id, userid, true);
+            historyEntity.StatusId = draftEntity.StatusId;
+            historyEntity.Code = draftEntity.Code;
+            historyEntity.ApproveDate = draftEntity.ApproveDate;
+            historyEntity.LastModifiedBy = userid;
+            historyEntity.LastModifiedOn = now;
+            await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
+
+            CampaignRuleEntity campaignRuleEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
+            await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
+
+            List<CampaignDocumentEntity> campaignDocumentlist = await _draftService.CopyCampaignDocumentInfo(id, historyEntity, userid, true);
+            foreach (var campaignDocument in campaignDocumentlist)
+                await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
+
+            List<CampaignTargetEntity> campaignTargetList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
+            foreach (var campaignTarget in campaignTargetList)
+                await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
+
+            List<CampaignChannelCodeEntity> campaignChannelCodeList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
+            foreach (var campaignChannelCode in campaignChannelCodeList)
+                await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
+
+            List<CampaignAchievementEntity> campaignAchievementList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
+            foreach (var campaignAchievement in campaignAchievementList)
+                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
+           
             await _unitOfWork.SaveChangesAsync();
-            var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
+
+            var mappedCampaign = _mapper.Map<CampaignDto>(draftEntity);
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
@@ -1241,65 +1277,70 @@ namespace Bbt.Campaign.Services.Services.Approval
         #region copy
 
         //taslak bir kampanya oluşturur
-        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int refId, string userid)
+
+        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, string userid)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
-            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-
-            var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted)
-                .Include(x => x.CampaignDetail)
-                .FirstOrDefaultAsync();
-
-            if (campaignDraftEntity == null)
-                throw new Exception("Kampanya bulunamadı.");
-
-            //campaign
-            var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
-            var campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
-            campaignEntity.Id = 0;
-            campaignEntity.Name = campaignDraftEntity.Name + "-Copy";
-            campaignEntity.Code = string.Empty;
-            campaignEntity.Order = null;
-            //campaignEntity.IsApproved = false;
-            //campaignEntity.IsDraft = true;
-            //campaignEntity.RefId = null;
-            campaignEntity.CreatedBy = userid;
-
-            //campaign detail
-            var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
-            var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
-            campaignDetailEntity.Id = 0;
-            campaignDetailEntity.CreatedBy = userid;
-
-            campaignEntity.CampaignDetail = campaignDetailEntity;
-
-            campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
-            await AddCampaignRule(refId, campaignEntity, userid);
-            
-            await AddCampaignDocument(refId, campaignEntity, userid);
-
-            await AddCampaignTarget(refId, campaignEntity, userid);
-
-            await AddCampaignChannelCode(refId, campaignEntity, userid);
-
-            await AddCampaignAchievement(refId, campaignEntity, userid);
-
-            await _unitOfWork.SaveChangesAsync();
-            
-            campaignEntity.Code = campaignEntity.Id.ToString();
-            //campaignEntity.RefId = campaignEntity.Id;
-
-            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
-            return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
+            return await _draftService.CreateCampaignCopyAsync(id, userid);
         }
+        //public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int refId, string userid)
+        //{
+        //    int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+        //    int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+
+        //    await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
+        //    var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+        //        .GetAll(x => x.Id == refId && !x.IsDeleted)
+        //        .Include(x => x.CampaignDetail)
+        //        .FirstOrDefaultAsync();
+
+        //    if (campaignDraftEntity == null)
+        //        throw new Exception("Kampanya bulunamadı.");
+
+        //    //campaign
+        //    var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
+        //    var campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
+        //    campaignEntity.Id = 0;
+        //    campaignEntity.Name = campaignDraftEntity.Name + "-Copy";
+        //    campaignEntity.Code = string.Empty;
+        //    campaignEntity.Order = null;
+        //    //campaignEntity.IsApproved = false;
+        //    //campaignEntity.IsDraft = true;
+        //    //campaignEntity.RefId = null;
+        //    campaignEntity.CreatedBy = userid;
+
+        //    //campaign detail
+        //    var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
+        //    var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
+        //    campaignDetailEntity.Id = 0;
+        //    campaignDetailEntity.CreatedBy = userid;
+
+        //    campaignEntity.CampaignDetail = campaignDetailEntity;
+
+        //    campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
+
+        //    await AddCampaignRule(refId, campaignEntity, userid);
+            
+        //    await AddCampaignDocument(refId, campaignEntity, userid);
+
+        //    await AddCampaignTarget(refId, campaignEntity, userid);
+
+        //    await AddCampaignChannelCode(refId, campaignEntity, userid);
+
+        //    await AddCampaignAchievement(refId, campaignEntity, userid);
+
+        //    await _unitOfWork.SaveChangesAsync();
+            
+        //    campaignEntity.Code = campaignEntity.Id.ToString();
+        //    //campaignEntity.RefId = campaignEntity.Id;
+
+        //    await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
+
+        //    await _unitOfWork.SaveChangesAsync();
+
+        //    var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
+        //    return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
+        //}
 
         public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, string userid)
         {

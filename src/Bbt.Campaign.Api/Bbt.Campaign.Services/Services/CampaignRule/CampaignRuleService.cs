@@ -184,11 +184,11 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             await CheckValidationsAsync(campaignRule, true);
 
-            //int processTypeId = await _draftService.GetProcessType(campaignRule.CampaignId);
-            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
-            //{
-            //    campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid);
-            //}
+            int processTypeId = await _draftService.GetProcessType(campaignRule.CampaignId);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid);
+            }
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                 .GetAll(x => x.CampaignId == campaignRule.CampaignId && x.IsDeleted != true)

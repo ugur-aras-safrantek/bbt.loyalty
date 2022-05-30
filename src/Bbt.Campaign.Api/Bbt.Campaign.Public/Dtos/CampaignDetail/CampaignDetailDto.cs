@@ -3,8 +3,6 @@
     public class CampaignDetailDto
     {
         //detail parameters
-
-        public int Id { get; set; }
         public string? CampaignListImageUrl { get; set; }
         public string? CampaignDetailImageUrl { get; set; }
 

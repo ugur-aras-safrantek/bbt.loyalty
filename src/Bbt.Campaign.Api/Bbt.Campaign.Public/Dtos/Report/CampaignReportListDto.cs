@@ -34,5 +34,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public int? CustomerCount { get; set; }
         public int JoinTypeId { get; set; } //rule - Dahil Olma Şekli
         public string? JoinTypeName { get; set; }
+        public int StatusId { get; set; }
+        public string StatusName { get; set; }
     }
 }

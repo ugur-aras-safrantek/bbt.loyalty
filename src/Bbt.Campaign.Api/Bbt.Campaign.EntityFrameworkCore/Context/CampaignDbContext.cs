@@ -54,16 +54,14 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedOn = DateTime.UtcNow;
-                        //entry.Entity.CreatedBy = "1";
+                        if(entry.Entity.CreatedOn != DateTime.MinValue) 
+                            entry.Entity.CreatedOn = DateTime.UtcNow;
                         entry.Entity.IsDeleted = false;
                         break;
-
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedOn = DateTime.UtcNow; 
-                        //entry.Entity.LastModifiedBy = "2";
+                        if(entry.Entity.LastModifiedOn == null) 
+                            entry.Entity.LastModifiedOn = DateTime.UtcNow; 
                         break;
-
                 }
             }
 

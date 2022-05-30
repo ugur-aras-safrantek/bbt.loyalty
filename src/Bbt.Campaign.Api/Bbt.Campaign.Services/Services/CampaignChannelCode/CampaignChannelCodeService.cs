@@ -62,12 +62,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
 
-            //int processTypeId = await _draftService.GetProcessType(request.CampaignId);
-            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
-            //{
-            //    request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
-            //    response.CampaignId = request.CampaignId;
-            //}
+
 
             await Update(request, userid);
 
@@ -79,6 +74,12 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 
         private async Task Update(CampaignChannelCodeUpdateRequest request, string userid) 
         {
+            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+            }
+
             foreach (var deleteEntity in _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
                 .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true))
             {

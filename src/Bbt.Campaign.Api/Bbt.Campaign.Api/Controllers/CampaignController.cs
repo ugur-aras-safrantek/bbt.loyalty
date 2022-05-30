@@ -141,5 +141,18 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _campaignService.GetContractFileAsync(id, _webHostEnvironment.ContentRootPath);
             return Ok(result);
         }
+
+        /// <summary>
+        /// creates the draft of the campaign
+        /// </summary>
+        /// <param name="campaignId">Record Id of the campaign</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("create-draft")]
+        public async Task<IActionResult> CreateDraftAsync(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _campaignService.CreateDraftAsync(campaignId, General.GetUserIdFromHeader(Request));
+            return Ok(result);
+        }
     }
 }

@@ -96,15 +96,15 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 }
             }
 
-            //int processTypeId = await _draftService.GetProcessType(campaign.Id);
-            //if(processTypeId == (int)ProcessTypesEnum.CreateDraft) 
-            //{
-            //    int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid);
-            //    entity = _unitOfWork.GetRepository<CampaignEntity>()
-            //        .GetAllIncluding(x => x.CampaignDetail)
-            //        .Where(x => x.Id == id)
-            //        .FirstOrDefault();
-            //}
+            int processTypeId = await _draftService.GetProcessType(campaign.Id);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid);
+                entity = _unitOfWork.GetRepository<CampaignEntity>()
+                    .GetAllIncluding(x => x.CampaignDetail)
+                    .Where(x => x.Id == id)
+                    .FirstOrDefault();
+            }
 
             entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
             entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
@@ -145,10 +145,16 @@ namespace Bbt.Campaign.Services.Services.Campaign
         public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, string userid) 
         {
             var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(id);
+
             if (entity == null)
                 throw new Exception("Kampanya bulunamadı.");
             if (entity.StatusId != (int)StatusEnum.Approved)
                 throw new Exception("Kampanya uygun statüde değil.");
+            var draftEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+               .Where(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.Draft && !x.IsDeleted)
+               .FirstOrDefault();
+            if(draftEntity != null)
+                throw new Exception("Kampanya için taslak bulunmaktadır.");
 
             int campaignId = await _draftService.CreateCampaignDraftAsync(id, userid);
             return await GetCampaignAsync(campaignId, userid);

@@ -41,5 +41,8 @@ namespace Bbt.Campaign.Core.DbEntities
         public DateTime? LastModifiedOn { get; set; }
         public bool IsDeleted { get; set; }
 
+        public int StatusId { get; set; }
+        public string StatusName { get; set; }
+
     }
 }

@@ -202,11 +202,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new RoleAuthorizationEntity() { Id = 15, RoleTypeId = 5, ModuleTypeId = 3, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
             modelBuilder.Entity<StatusEntity>().HasData(
-               new StatusEntity() { Id = 1, Name = "Taslak", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new StatusEntity() { Id = 4, Name = "Onaylandı", Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new StatusEntity() { Id = 3, Name = "Tarihçe", Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                new StatusEntity() { Id = 2, Name = "Onaya Gönderildi", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new StatusEntity() { Id = 3, Name = "Güncelleniyor", Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new StatusEntity() { Id = 4, Name = "Tarihçe", Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new StatusEntity() { Id = 10, Name = "Onaylandı", Code = "10", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+               new StatusEntity() { Id = 1, Name = "Taslak", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
         }
     }

@@ -1178,9 +1178,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3628), false, null, null, "Anlık" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3630), false, null, null, "Aylık" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3632), false, null, null, "Yıllık" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2762), false, null, null, "Anlık" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2763), false, null, null, "Aylık" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2764), false, null, null, "Yıllık" }
                 });
 
             migrationBuilder.InsertData(
@@ -1188,9 +1188,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(2435), false, null, null, "Mevduat" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(2510), false, null, null, "Kredi" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(2545), false, null, null, "Cashback" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(762), false, null, null, "Mevduat" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(1259), false, null, null, "Kredi" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(1434), false, null, null, "Cashback" }
                 });
 
             migrationBuilder.InsertData(
@@ -1198,8 +1198,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(2835), false, null, null, "Ödeme Cashback" },
-                    { 2, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(2908), false, null, null, "Fatura Cashback" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2048), false, null, null, "Ödeme Cashback" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2204), false, null, null, "Fatura Cashback" }
                 });
 
             migrationBuilder.InsertData(
@@ -1207,10 +1207,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3906), false, null, null, "Insert" },
-                    { 2, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3907), false, null, null, "Update" },
-                    { 3, "3", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3908), false, null, null, "View" },
-                    { 4, "4", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3909), false, null, null, "Approve" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3044), false, null, null, "Insert" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3046), false, null, null, "Update" },
+                    { 3, "3", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3047), false, null, null, "View" },
+                    { 4, "4", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3049), false, null, null, "Approve" }
                 });
 
             migrationBuilder.InsertData(
@@ -1218,14 +1218,14 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(600), false, null, null, "Bireysel (B)" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(904), false, null, null, "Ticari (T)" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(959), false, null, null, "Dijital (X)" },
-                    { 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(995), false, null, null, "Ticari 1 (I)" },
-                    { 5, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1035), false, null, null, "Ticari 2 (P)" },
-                    { 6, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1068), false, null, null, "Ticari 3 (M)" },
-                    { 7, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1167), false, null, null, "Kurumsal (K)" },
-                    { 8, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1205), false, null, null, "Kurumsal 1 (A)" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(7653), false, null, null, "Bireysel (B)" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8045), false, null, null, "Ticari (T)" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8185), false, null, null, "Dijital (X)" },
+                    { 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8526), false, null, null, "Ticari 1 (I)" },
+                    { 5, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8680), false, null, null, "Ticari 2 (P)" },
+                    { 6, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8849), false, null, null, "Ticari 3 (M)" },
+                    { 7, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8931), false, null, null, "Kurumsal (K)" },
+                    { 8, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(8975), false, null, null, "Kurumsal 1 (A)" }
                 });
 
             migrationBuilder.InsertData(
@@ -1233,8 +1233,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3529), false, null, null, "Katılım Anında" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3533), false, null, null, "Dönem Başlangıcı" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2628), false, null, null, "Katılım Anında" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2629), false, null, null, "Dönem Başlangıcı" }
                 });
 
             migrationBuilder.InsertData(
@@ -1242,10 +1242,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "TRY", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3684), false, null, null, "TRY" },
-                    { 2, "GBP", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3685), false, null, null, "GBP" },
-                    { 3, "EUR", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3686), false, null, null, "EUR" },
-                    { 4, "USD", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3687), false, null, null, "USD" }
+                    { 1, "TRY", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2824), false, null, null, "TRY" },
+                    { 2, "GBP", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2826), false, null, null, "GBP" },
+                    { 3, "EUR", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2827), false, null, null, "EUR" },
+                    { 4, "USD", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2828), false, null, null, "USD" }
                 });
 
             migrationBuilder.InsertData(
@@ -1253,11 +1253,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1665), false, null, null, "Gerçek" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1764), false, null, null, "Tüzel" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1805), false, null, null, "Ortak" },
-                    { 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1836), false, null, null, "Reşit Olmayan" },
-                    { 5, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(1873), false, null, null, "Adi Ortaklık" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 231, DateTimeKind.Local).AddTicks(9906), false, null, null, "Gerçek" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(79), false, null, null, "Tüzel" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(157), false, null, null, "Ortak" },
+                    { 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(236), false, null, null, "Reşit Olmayan" },
+                    { 5, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(307), false, null, null, "Adi Ortaklık" }
                 });
 
             migrationBuilder.InsertData(
@@ -1265,11 +1265,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3451), false, null, null, "Tüm Müşteriler" },
-                    { 2, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3455), false, null, null, "Müşteri Özelinde" },
-                    { 3, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3456), false, null, null, "İş Kolu Özelinde" },
-                    { 4, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3457), false, null, null, "Şube Özelinde" },
-                    { 5, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3460), false, null, null, "Müşteri Tipi Özelinde" }
+                    { 1, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2549), false, null, null, "Tüm Müşteriler" },
+                    { 2, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2551), false, null, null, "Müşteri Özelinde" },
+                    { 3, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2563), false, null, null, "İş Kolu Özelinde" },
+                    { 4, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2575), false, null, null, "Şube Özelinde" },
+                    { 5, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2576), false, null, null, "Müşteri Tipi Özelinde" }
                 });
 
             migrationBuilder.InsertData(
@@ -1277,8 +1277,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "TR", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3108), false, null, null, "Türkçe" },
-                    { 2, "EN", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3109), false, null, null, "İngilizce" }
+                    { 1, "TR", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2385), false, null, null, "Türkçe" },
+                    { 2, "EN", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2386), false, null, null, "İngilizce" }
                 });
 
             migrationBuilder.InsertData(
@@ -1286,10 +1286,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3884), false, null, null, "Campaign" },
-                    { 2, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3886), false, null, null, "TopLimit" },
-                    { 3, "3", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3887), false, null, null, "Target" },
-                    { 4, "4", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3888), false, null, null, "Report" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3024), false, null, null, "Campaign" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3025), false, null, null, "TopLimit" },
+                    { 3, "3", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3027), false, null, null, "Target" },
+                    { 4, "4", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3028), false, null, null, "Report" }
                 });
 
             migrationBuilder.InsertData(
@@ -1297,9 +1297,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3845), false, null, null, "Otomatik Katılım" },
-                    { 2, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3847), false, null, null, "Müşteri Seçimi" },
-                    { 3, "3", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3848), false, null, null, "Operatör Seçimi" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2979), false, null, null, "Otomatik Katılım" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2981), false, null, null, "Müşteri Seçimi" },
+                    { 3, "3", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2983), false, null, null, "Operatör Seçimi" }
                 });
 
             migrationBuilder.InsertData(
@@ -1307,9 +1307,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3709), false, null, null, "Sadakat" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3710), false, null, null, "Kampanya" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3711), false, null, null, "Kazanım" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2853), false, null, null, "Sadakat" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2854), false, null, null, "Kampanya" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2855), false, null, null, "Kazanım" }
                 });
 
             migrationBuilder.InsertData(
@@ -1317,11 +1317,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3863), false, null, null, "isLoyaltyCreator" },
-                    { 2, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3866), false, null, null, "isLoyaltyApprover" },
-                    { 3, "3", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3867), false, null, null, "isLoyaltyReader" },
-                    { 4, "4", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3868), false, null, null, "isLoyaltyRuleCreator" },
-                    { 5, "5", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3870), false, null, null, "isLoyaltyRuleApprover" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2999), false, null, null, "isLoyaltyCreator" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3000), false, null, null, "isLoyaltyApprover" },
+                    { 3, "3", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3001), false, null, null, "isLoyaltyReader" },
+                    { 4, "4", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3002), false, null, null, "isLoyaltyRuleCreator" },
+                    { 5, "5", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3005), false, null, null, "isLoyaltyRuleApprover" }
                 });
 
             migrationBuilder.InsertData(
@@ -1329,9 +1329,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Akr", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3360), false, null, null, "Akaryakıt" },
-                    { 2, "Chl", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3364), false, null, null, "Giyim" },
-                    { 3, "Edu", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3365), false, null, null, "Eğitim" }
+                    { 1, "Akr", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2494), false, null, null, "Akaryakıt" },
+                    { 2, "Chl", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2496), false, null, null, "Giyim" },
+                    { 3, "Edu", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2497), false, null, null, "Eğitim" }
                 });
 
             migrationBuilder.InsertData(
@@ -1339,11 +1339,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3966), false, null, null, "Taslak" },
-                    { 2, "1", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3967), false, null, null, "Onaya Gönderildi" },
-                    { 3, "2", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3968), false, null, null, "Güncelleniyor" },
-                    { 4, "3", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3969), false, null, null, "Tarihçe" },
-                    { 10, "4", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3970), false, null, null, "Onaylandı" }
+                    { 1, "1", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3181), false, null, null, "Taslak" },
+                    { 2, "2", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3180), false, null, null, "Onaya Gönderildi" },
+                    { 3, "3", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3178), false, null, null, "Tarihçe" },
+                    { 4, "4", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3177), false, null, null, "Onaylandı" }
                 });
 
             migrationBuilder.InsertData(
@@ -1351,10 +1350,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3571), false, null, null, "ve" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3572), false, null, null, "veya" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3573), false, null, null, "kesişim" },
-                    { 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3574), false, null, null, "fark" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2658), false, null, null, "ve" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2659), false, null, null, "veya" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2660), false, null, null, "kesişim" },
+                    { 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2662), false, null, null, "fark" }
                 });
 
             migrationBuilder.InsertData(
@@ -1362,8 +1361,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3827), false, null, null, "Akış" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3829), false, null, null, "Sorgu" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2954), false, null, null, "Akış" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2955), false, null, null, "Sorgu" }
                 });
 
             migrationBuilder.InsertData(
@@ -1371,9 +1370,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3734), false, null, null, "Progress Bar" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3736), false, null, null, "Bilgi" },
-                    { 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3737), false, null, null, "Görüntülenmeyecek" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2877), false, null, null, "Progress Bar" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2879), false, null, null, "Bilgi" },
+                    { 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2880), false, null, null, "Görüntülenmeyecek" }
                 });
 
             migrationBuilder.InsertData(
@@ -1381,8 +1380,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3794), false, null, null, "Hedefe Ulaşıldığı Anda" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3795), false, null, null, "Tamamlandıktan Sonra" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2906), false, null, null, "Hedefe Ulaşıldığı Anda" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2907), false, null, null, "Tamamlandıktan Sonra" }
                 });
 
             migrationBuilder.InsertData(
@@ -1390,8 +1389,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3811), false, null, null, "İlk Kontrol Edildiğinde" },
-                    { 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3813), false, null, null, "Her Kontrol Edildiğinde" }
+                    { 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2931), false, null, null, "İlk Kontrol Edildiğinde" },
+                    { 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2932), false, null, null, "Her Kontrol Edildiğinde" }
                 });
 
             migrationBuilder.InsertData(
@@ -1399,10 +1398,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "SK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3417), false, null, null, "Sürekli Kampanyalar" },
-                    { 2, "DK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3419), false, null, null, "Dönemsel Kampanyalar" },
-                    { 3, "AK", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3420), false, null, null, "Genel Kampanyalar" },
-                    { 4, "NG", "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3421), false, null, null, "Görüntülenmeyecek" }
+                    { 1, "SK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2520), false, null, null, "Sürekli Kampanyalar" },
+                    { 2, "DK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2521), false, null, null, "Dönemsel Kampanyalar" },
+                    { 3, "AK", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2522), false, null, null, "Genel Kampanyalar" },
+                    { 4, "NG", "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(2524), false, null, null, "Görüntülenmeyecek" }
                 });
 
             migrationBuilder.InsertData(
@@ -1410,21 +1409,21 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "AuthorizationTypeId", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "ModuleTypeId", "RoleTypeId" },
                 values: new object[,]
                 {
-                    { 1, 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3931), false, null, null, 1, 1 },
-                    { 2, 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3933), false, null, null, 1, 1 },
-                    { 3, 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3934), false, null, null, 2, 1 },
-                    { 4, 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3935), false, null, null, 2, 1 },
-                    { 5, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3936), false, null, null, 3, 1 },
-                    { 6, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3937), false, null, null, 4, 1 },
-                    { 7, 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3938), false, null, null, 1, 2 },
-                    { 8, 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3939), false, null, null, 2, 2 },
-                    { 9, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3940), false, null, null, 1, 3 },
-                    { 10, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3941), false, null, null, 2, 3 },
-                    { 11, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3942), false, null, null, 3, 3 },
-                    { 12, 3, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3943), false, null, null, 4, 3 },
-                    { 13, 1, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3944), false, null, null, 3, 4 },
-                    { 14, 2, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3946), false, null, null, 3, 4 },
-                    { 15, 4, "1", new DateTime(2022, 5, 27, 23, 20, 16, 160, DateTimeKind.Local).AddTicks(3947), false, null, null, 3, 5 }
+                    { 1, 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3076), false, null, null, 1, 1 },
+                    { 2, 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3082), false, null, null, 1, 1 },
+                    { 3, 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3084), false, null, null, 2, 1 },
+                    { 4, 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3085), false, null, null, 2, 1 },
+                    { 5, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3087), false, null, null, 3, 1 },
+                    { 6, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3088), false, null, null, 4, 1 },
+                    { 7, 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3090), false, null, null, 1, 2 },
+                    { 8, 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3092), false, null, null, 2, 2 },
+                    { 9, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3094), false, null, null, 1, 3 },
+                    { 10, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3097), false, null, null, 2, 3 },
+                    { 11, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3098), false, null, null, 3, 3 },
+                    { 12, 3, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3099), false, null, null, 4, 3 },
+                    { 13, 1, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3101), false, null, null, 3, 4 },
+                    { 14, 2, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3102), false, null, null, 3, 4 },
+                    { 15, 4, "1", new DateTime(2022, 5, 30, 13, 8, 16, 232, DateTimeKind.Local).AddTicks(3103), false, null, null, 3, 5 }
                 });
 
             migrationBuilder.CreateIndex(
