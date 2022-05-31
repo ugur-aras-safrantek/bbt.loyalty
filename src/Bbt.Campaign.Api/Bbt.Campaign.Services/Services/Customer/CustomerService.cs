@@ -22,6 +22,7 @@ using System.Collections;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using RestSharp;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -498,23 +499,16 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 totalAchievement = 190;
                 previousMonthAchievement = 120;
-
-
                 usedAmount = 1000;
                 usedNumberOfTransaction = 2;
-
                 response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
                 response.UsedAmountCurrencyCode = "TRY";
-
                 response.TotalAchievementStr = Helpers.ConvertNullablePriceString(totalAchievement);
                 response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
-
                 response.TotalAchievementCurrencyCode = "TRY";
                 response.PreviousMonthAchievementCurrencyCode = "TRY";
-
                 var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(campaignId, usedAmount, usedNumberOfTransaction);
                 response.CampaignTarget = campaignTargetDto;
-
                 foreach(var targetGroup in campaignTargetDto.TargetGroupList) 
                 { 
                     foreach(var target in targetGroup.TargetList) 
@@ -529,41 +523,57 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else
             {
-                //TO DO : GÜNCELLENECEK
-                customerCode = "01234567890";
-
-                //GoalResultByCustomerIdAndMonthCount
                 using (var httpClient = new HttpClient())
                 {
+                    //GoalResultByCustomerIdAndMonthCount
+                    string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var goalResultByCustomerIdAndMonthCountResponse = await httpClient.GetAsync(serviceUrl);
+                    if (goalResultByCustomerIdAndMonthCountResponse.IsSuccessStatusCode)
+                    {
+                        if (goalResultByCustomerIdAndMonthCountResponse.Content != null)
+                        {
+                            string apiResponse = await goalResultByCustomerIdAndMonthCountResponse.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            {
+                                var goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse);
+                                if (goalResultByCustomerIdAndMonthCount != null)
+                                {
+                                    if (goalResultByCustomerIdAndMonthCount.Total != null)
+                                    {
+                                        response.TotalAchievementStr = Helpers.ConvertNullablePriceString(goalResultByCustomerIdAndMonthCount.Total.Amount);
+                                        response.TotalAchievementCurrencyCode = goalResultByCustomerIdAndMonthCount.Total.Currency;
+                                    }
+                                    if (goalResultByCustomerIdAndMonthCount.Months != null && goalResultByCustomerIdAndMonthCount.Months.Any())
+                                    {
+                                        int month = DateTime.Now.Month;
+                                        int year = DateTime.Now.Year;
 
+                                        if (month == 1)
+                                        {
+                                            month = 12;
+                                            year = year - 1;
+                                        }
+                                        else
+                                        {
+                                            month = month - 1;
+                                        }
 
-                    //webrequest.Headers.Add("customerId", customerCode);
-                    //webrequest.Headers.Add("monthCount", "2");
-                    //StreamReader stredr = new StreamReader(webrequest.GetResponse().GetResponseStream());
-                    //string resreponse = stredr.ReadToEnd();
-
-                    ////_client.DefaultRequestHeaders.Add("Bearer", "some token goes here");
-
-                    //string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
-                    //string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
-                    //apiAddress = apiAddress.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
-
-                    //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //var customerIdAndMonthCountResponse = await httpClient.GetAsync(serviceUrl);
-                    //if (customerIdAndMonthCountResponse.IsSuccessStatusCode)
-                    //{
-                    //    if (customerIdAndMonthCountResponse.Content != null)
-                    //    {
-                    //        string apiResponse = await customerIdAndMonthCountResponse.Content.ReadAsStringAsync();
-                    //        //channelCodeList = JsonConvert.DeserializeObject<List<string>>(apiResponse);
-                    //        //if (channelCodeList != null && channelCodeList.Any()) { }
-                    //        //else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
-                    //    }
-                    //    else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
-                    //}
-                    //else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                                        var monthAchievent = goalResultByCustomerIdAndMonthCount.Months
+                                            .Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                                        if (monthAchievent != null)
+                                        {
+                                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(monthAchievent.Amount);
+                                            response.PreviousMonthAchievementCurrencyCode = monthAchievent.Currency;
+                                        }
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                    else { throw new Exception("Müşteri kazanımları servisinden veri çekilemedi."); }
                 }
-
             }
 
             //achievement
