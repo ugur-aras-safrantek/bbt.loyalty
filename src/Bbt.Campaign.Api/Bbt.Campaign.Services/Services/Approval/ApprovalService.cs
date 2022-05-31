@@ -120,31 +120,31 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             //add hisory
             CampaignEntity historyEntity = await _draftService.CopyCampaignInfo(id, userid, true);
-            historyEntity.StatusId = draftEntity.StatusId;
+            historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = draftEntity.Code;
             historyEntity.ApproveDate = draftEntity.ApproveDate;
             historyEntity.LastModifiedBy = userid;
             historyEntity.LastModifiedOn = now;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
-            CampaignRuleEntity campaignRuleEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
-            await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleEntity);
+            CampaignRuleEntity campaignRuleHistoryEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
+            await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleHistoryEntity);
 
-            List<CampaignDocumentEntity> campaignDocumentlist = await _draftService.CopyCampaignDocumentInfo(id, historyEntity, userid, true);
-            foreach (var campaignDocument in campaignDocumentlist)
-                await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocument);
+            List<CampaignDocumentEntity> campaignDocumentHistorylist = await _draftService.CopyCampaignDocumentInfo(id, historyEntity, userid, true);
+            foreach (var campaignDocumentHistory in campaignDocumentHistorylist)
+                await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentHistory);
 
-            List<CampaignTargetEntity> campaignTargetList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
-            foreach (var campaignTarget in campaignTargetList)
-                await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
+            List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
+            foreach (var campaignTargetHistory in campaignTargetHistoryList)
+                await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetHistory);
 
-            List<CampaignChannelCodeEntity> campaignChannelCodeList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
-            foreach (var campaignChannelCode in campaignChannelCodeList)
-                await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
+            List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
+            foreach (var campaignChannelCodeHistory in campaignChannelCodeHistoryList)
+                await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCodeHistory);
 
-            List<CampaignAchievementEntity> campaignAchievementList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
-            foreach (var campaignAchievement in campaignAchievementList)
-                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
+            List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
+            foreach (var campaignAchievementHistory in campaignAchievementHistoryList)
+                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementHistory);
            
             await _unitOfWork.SaveChangesAsync();
 
@@ -166,6 +166,34 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .FirstOrDefaultAsync();
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
+
+            //add hisory
+            //CampaignEntity historyEntity = await _draftService.CopyCampaignInfo(id, userid, true);
+            //historyEntity.StatusId = (int)StatusEnum.History;
+            //historyEntity.Code = draftEntity.Code;
+            //historyEntity.ApproveDate = draftEntity.ApproveDate;
+            //historyEntity.LastModifiedBy = userid;
+            //historyEntity.LastModifiedOn = now;
+            //await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
+
+            //CampaignRuleEntity campaignRuleHistoryEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
+            //await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleHistoryEntity);
+
+            //List<CampaignDocumentEntity> campaignDocumentHistorylist = await _draftService.CopyCampaignDocumentInfo(id, historyEntity, userid, true);
+            //foreach (var campaignDocumentHistory in campaignDocumentHistorylist)
+            //    await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentHistory);
+
+            //List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
+            //foreach (var campaignTargetHistory in campaignTargetHistoryList)
+            //    await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetHistory);
+
+            //List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
+            //foreach (var campaignChannelCodeHistory in campaignChannelCodeHistoryList)
+            //    await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCodeHistory);
+
+            //List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
+            //foreach (var campaignAchievementHistory in campaignAchievementHistoryList)
+            //    await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementHistory);
 
             //campaign Draft
             //campaignDraftEntity.IsApproved = true;
