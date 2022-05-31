@@ -523,21 +523,31 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else
             {
-                using (var httpClient = new HttpClient())
+                bool isTest = false;
+                string isTestStr = await _parameterService.GetServiceConstantValue("IsTest");
+                if (!string.IsNullOrEmpty(isTestStr))
                 {
-                    //GoalResultByCustomerIdAndMonthCount
-                    string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                    isTest = Convert.ToBoolean(isTestStr);
+                }
+                string serviceUrl = string.Empty;
+                
+                #region GoalResultByCustomerIdAndMonthCount
+
+                using (var httpClient1 = new HttpClient())
+                {
+                    serviceUrl = string.Empty;
+                    serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
                     serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var goalResultByCustomerIdAndMonthCountResponse = await httpClient.GetAsync(serviceUrl);
-                    if (goalResultByCustomerIdAndMonthCountResponse.IsSuccessStatusCode)
+                    httpClient1.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var restResponse1 = await httpClient1.GetAsync(serviceUrl);
+                    if (restResponse1.IsSuccessStatusCode)
                     {
-                        if (goalResultByCustomerIdAndMonthCountResponse.Content != null)
+                        if (restResponse1.Content != null)
                         {
-                            string apiResponse = await goalResultByCustomerIdAndMonthCountResponse.Content.ReadAsStringAsync();
-                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            var apiResponse1 = await restResponse1.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse1)) 
                             {
-                                var goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse);
+                                var goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse1);
                                 if (goalResultByCustomerIdAndMonthCount != null)
                                 {
                                     if (goalResultByCustomerIdAndMonthCount.Total != null)
@@ -572,8 +582,49 @@ namespace Bbt.Campaign.Services.Services.Customer
                             } 
                         }
                     }
-                    else { throw new Exception("Müşteri kazanımları servisinden veri çekilemedi."); }
+                    else 
+                    { 
+                        throw new Exception("Müşteri kazanımları servisinden veri çekilemedi."); 
+                    }
                 }
+
+                #endregion
+
+                # region GoalResultByCustomerAndCampaing
+
+                using (var httpClient2 = new HttpClient()) 
+                {
+                    if (isTest) 
+                    {
+                        customerCode = "01234567890";
+                        campaignId = 1;
+                    }
+
+                    serviceUrl = string.Empty;
+                    serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
+                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{campaignId}", campaignId.ToString());
+                    httpClient2.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var restResponse2 = await httpClient2.GetAsync(serviceUrl);
+                    if (restResponse2.IsSuccessStatusCode) 
+                    {
+                        if (restResponse2.Content != null) 
+                        {
+                            var apiResponse2 = await restResponse2.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse2)) 
+                            {
+                                var xx = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse2);
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        throw new Exception("Müşteri hedef servisinden veri çekilemedi.");
+                    }
+                }
+
+                #endregion
             }
 
             //achievement
