@@ -354,5 +354,17 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _parameterService.GetServiceData(url);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Gets the service data given by the url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-access-token")]
+        public async Task<IActionResult> GetAccessToken()
+        {
+            var result = await _parameterService.GetAccessToken();
+            return Ok(result);
+        }
     }
 }

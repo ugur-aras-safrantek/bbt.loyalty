@@ -44,5 +44,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
         
         public Task<string> GetServiceData(string serviceUrl);
         public Task<string> GetServiceConstantValue(string code);
+
+        public Task<string> GetAccessToken();
     }
 }

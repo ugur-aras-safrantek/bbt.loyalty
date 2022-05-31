@@ -6,6 +6,7 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Branch;
+using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -292,17 +293,25 @@ namespace Bbt.Campaign.Services.Services.Parameter
             {
                 using (var httpClient = new HttpClient())
                 {
+                    string baseAddress = await GetServiceConstantValue("BaseAddress");
+                    string apiAddress = await GetServiceConstantValue("BranchInfo");
+                    string serviceUrl = string.Concat(baseAddress, apiAddress);
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = await httpClient.GetAsync(StaticValues.BranchServiceUrl);
-                    if (response.IsSuccessStatusCode)
+                    var restResponse = await httpClient.GetAsync(serviceUrl);
+                    if (restResponse.IsSuccessStatusCode)
                     {
-                        if (response.Content != null)
+                        if (restResponse.Content != null)
                         {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-                            serviceResult = JsonConvert.DeserializeObject<List<BranchDto>>((JObject.Parse(apiResponse)["data"]).ToString());
-                            if(serviceResult != null && serviceResult.Any()) { } 
-                            else{ throw new Exception("Şube listesi servisinden veri çekilemedi."); }
-                            
+                            string apiResponse = await restResponse.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            {
+                                serviceResult = JsonConvert.DeserializeObject<List<BranchDto>>(apiResponse);
+                                if (serviceResult != null && serviceResult.Any()) { }
+                                else 
+                                { 
+                                    throw new Exception("Şube listesi servisinden veri çekilemedi."); 
+                                }
+                            }
                         }
                         else { throw new Exception("Şube listesi servisinden veri çekilemedi."); }
                     }
@@ -444,6 +453,28 @@ namespace Bbt.Campaign.Services.Services.Parameter
             if (serviceConstant != null)
                 retVal = serviceConstant.Name;
             return retVal;
+        }
+
+        public async Task<string> GetAccessToken()
+        {
+            using (var client = new HttpClient())
+            {
+                string accessToken = string.Empty;
+                string baseAddress = await GetServiceConstantValue("BaseAddress");
+                string apiAddress = await GetServiceConstantValue("AccessToken");
+                client.BaseAddress = new Uri(baseAddress); 
+                var content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("client_id", await GetServiceConstantValue("client_id")),
+                    new KeyValuePair<string, string>("grant_type", await GetServiceConstantValue("grant_type")),
+                    new KeyValuePair<string, string>("client_secret", await GetServiceConstantValue("client_secret"))
+                });
+                var result = await client.PostAsync(apiAddress, content);
+                var responseContent = result.Content.ReadAsStringAsync().Result;
+                AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
+                accessToken = token.Access_token;
+                return accessToken;
+            }
         }
     }
 }

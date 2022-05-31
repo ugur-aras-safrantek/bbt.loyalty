@@ -621,37 +621,26 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
             else
             {
-                using (var httpClient = new HttpClient())
+                string accessToken = await _parameterService.GetAccessToken();
+
+
+                using (var client = new HttpClient())
                 {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = await httpClient.GetAsync(StaticValues.ContractServiceUrl + id.ToString());
-                    if (response.IsSuccessStatusCode)
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-                            var contract = JsonConvert.DeserializeObject<BurganContractDto>((JObject.Parse(apiResponse)["data"]).ToString());
-                            if(contract != null && contract.Content != null) 
-                            {
-                                var contractContent = contract.Content;
-                                getFileResponse = new GetFileResponse()
-                                {
-                                    Document = new Public.Models.CampaignDocument.DocumentModel()
-                                    {
-                                        //Data = Convert.ToBase64String(contractContent, 0, contractContent.Length),
-                                        Data = contractContent,
-                                        DocumentName = id.ToString() + "-Sözleşme.html",
-                                        DocumentType = DocumentTypePublicEnum.Contract,
-                                        MimeType = MimeTypeExtensions.ToMimeType(".html")
-                                    }
-                                };
-                            }
-                            else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
-                        }
-                        else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
-                        
-                    }
-                    else { throw new Exception("Sözleşme servisinden veri çekilemedi."); }
+                    //string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                    //string apiAddress = await _parameterService.GetServiceConstantValue("Document");
+                    //apiAddress = apiAddress.Replace("{key}", id.ToString());
+                    //client.BaseAddress = new Uri(baseAddress); 
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    //var restResponse = await client.GetAsync(apiAddress);
+                    //if (restResponse.IsSuccessStatusCode) 
+                    //{ 
+                    //    var responseContent = restResponse.Content.ReadAsStringAsync().Result;
+                    //}
+                    //else 
+                    //{ 
+                    
+                    //}
+                    
                 }
             }
 
