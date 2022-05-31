@@ -9,6 +9,7 @@ interface ICampaignDefinitionListRequestModel {
   programTypeId?: any;
   isActive?: any;
   isBundle?: any;
+  statusId?: any;
 }
 
 export class CampaignDefinitionListRequestModel implements ICampaignDefinitionListRequestModel, IPagingRequestModel {
@@ -24,6 +25,7 @@ export class CampaignDefinitionListRequestModel implements ICampaignDefinitionLi
   programTypeId?: any;
   isActive?: any;
   isBundle?: any;
+  statusId?: any;
 }
 
 interface ICampaignDefinitionAddRequestModel {
