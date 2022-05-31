@@ -15,13 +15,16 @@ namespace Bbt.Campaign.Services.Services.Remote
         {
             _parameterService = parameterService;
         }
-        public async Task<List<string>> GetChannelList() 
+        public async Task<List<string>> GetChannelCodeList() 
         {
             List<string> channelCodeList = new List<string>();
             using (var httpClient = new HttpClient())
             {
+                string baseAddress = await GetServiceConstantValue("BaseAddress");
+                string apiAddress = await GetServiceConstantValue("Document");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
+                var response = await httpClient.GetAsync(serviceUrl);
                 if (response.IsSuccessStatusCode)
                 {
                     if (response.Content != null)

@@ -6,6 +6,7 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Branch;
+using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
@@ -21,11 +22,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
         private readonly IMapper _mapper;
         private readonly IRedisDatabaseProvider _redisDatabaseProvider;
 
+
         private static string todayStr = DateTime.Now.ToString("dd-MM-yyyy");
 
-        public ParameterService(IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IRedisDatabaseProvider redisDatabaseProvider)
+        public ParameterService(IUnitOfWork unitOfWork, IMapper mapper, IRedisDatabaseProvider redisDatabaseProvider)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -352,15 +352,18 @@ namespace Bbt.Campaign.Services.Services.Parameter
             {
                 using (var httpClient = new HttpClient())
                 {
+                    string baseAddress = await GetServiceConstantValue("BaseAddress");
+                    string apiAddress = await GetServiceConstantValue("ChannelCode");
+                    string serviceUrl = string.Concat(baseAddress, apiAddress);
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = await httpClient.GetAsync(StaticValues.ChannelCodeServiceUrl);
+                    var response = await httpClient.GetAsync(serviceUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         if (response.Content != null)
                         {
                             string apiResponse = await response.Content.ReadAsStringAsync();
-                            channelCodeList = JsonConvert.DeserializeObject<List<string>>((JObject.Parse(apiResponse)["data"]).ToString());
-                            if (channelCodeList != null && channelCodeList.Any()){}
+                            channelCodeList = JsonConvert.DeserializeObject<List<string>>(apiResponse);
+                            if (channelCodeList != null && channelCodeList.Any()) { }
                             else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
                         }
                         else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
@@ -430,6 +433,16 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 }
             }
 
+            return retVal;
+        }
+
+        private async Task<string> GetServiceConstantValue(string code)
+        {
+            string retVal = string.Empty;
+            var serviceConstantList = (await GetServiceConstantListAsync())?.Data;
+            var serviceConstant = serviceConstantList?.Where(x => x.Code == code).FirstOrDefault();
+            if (serviceConstant != null)
+                retVal = serviceConstant.Name;
             return retVal;
         }
     }
