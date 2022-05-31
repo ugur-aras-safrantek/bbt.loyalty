@@ -451,7 +451,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             CampaignProperty campaignProperty = new CampaignProperty();
 
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if (campaignEntity != null)
+            if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
 
             int viewOptionId = campaignEntity.ViewOptionId ?? 0;
