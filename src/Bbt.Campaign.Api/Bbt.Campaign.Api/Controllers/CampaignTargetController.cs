@@ -96,9 +96,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(string userid)
+        public async Task<IActionResult> GetInsertForm([FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _campaignTargetService.GetInsertForm(userid);
+            var result = await _campaignTargetService.GetInsertForm(General.GetUserIdFromHeader(Request));
             return Ok(result);
         }
         /// <summary>

@@ -116,7 +116,8 @@ export class CampaignLimitsListComponent implements OnInit {
       maxTopLimitUtilization: parseInt(this.filterForm.maxTopLimitUtilization),
       maxTopLimitRate: this.filterForm.maxTopLimitRate,
       type: this.filterForm.type,
-      isActive: this.filterForm.isActive
+      isActive: this.filterForm.isActive,
+      statusId: 4,
     };
     this.campaignLimitsService.campaignLimitsListGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -149,7 +150,8 @@ export class CampaignLimitsListComponent implements OnInit {
       maxTopLimitUtilization: parseInt(this.filterForm.maxTopLimitUtilization),
       maxTopLimitRate: this.filterForm.maxTopLimitRate,
       type: this.filterForm.type,
-      isActive: this.filterForm.isActive
+      isActive: this.filterForm.isActive,
+      statusId: 4,
     };
     this.campaignLimitsService.campaignLimitsListGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))

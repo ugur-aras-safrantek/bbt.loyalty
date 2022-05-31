@@ -124,7 +124,8 @@ export class TargetDefinitionListComponent implements OnInit {
       id: parseInt(this.filterForm.id),
       targetViewTypeId: this.filterForm.targetViewTypeId,
       targetSourceId: this.filterForm.targetSourceId,
-      isActive: this.filterForm.isActive
+      isActive: this.filterForm.isActive,
+      statusId: 4,
     };
     this.targetDefinitionService.targetDefinitionListGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -154,7 +155,8 @@ export class TargetDefinitionListComponent implements OnInit {
       id: parseInt(this.filterForm.id),
       targetViewTypeId: this.filterForm.targetViewTypeId,
       targetSourceId: this.filterForm.targetSourceId,
-      isActive: this.filterForm.isActive
+      isActive: this.filterForm.isActive,
+      statusId: 4,
     };
     this.targetDefinitionService.targetDefinitionListGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))
