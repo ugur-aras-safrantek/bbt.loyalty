@@ -6,6 +6,7 @@ interface ITargetDefinitionListRequestModel {
   targetViewTypeId?: any;
   targetSourceId?: any;
   isActive?: any;
+  statusId?: any;
 }
 
 export class TargetDefinitionListRequestModel implements ITargetDefinitionListRequestModel, IPagingRequestModel {
@@ -18,6 +19,7 @@ export class TargetDefinitionListRequestModel implements ITargetDefinitionListRe
   targetViewTypeId?: any;
   targetSourceId?: any;
   isActive?: any;
+  statusId?: any;
 }
 
 interface ITargetDefinitionAddRequestModel {

@@ -102,7 +102,8 @@ export class CampaignDefinitionAwaitingApprovalListComponent implements OnInit {
       endDate: this.endDate?.singleDate?.formatted,
       programTypeId: this.filterForm.programTypeId,
       isActive: this.filterForm.isActive,
-      isBundle: this.filterForm.isBundle
+      isBundle: this.filterForm.isBundle,
+      statusId: 2,
     };
     this.campaignDefinitionService.campaignDefinitionListGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -135,7 +136,8 @@ export class CampaignDefinitionAwaitingApprovalListComponent implements OnInit {
       endDate: this.endDate?.singleDate?.formatted,
       programTypeId: this.filterForm.programTypeId,
       isActive: this.filterForm.isActive,
-      isBundle: this.filterForm.isBundle
+      isBundle: this.filterForm.isBundle,
+      statusId: 2,
     };
     this.campaignDefinitionService.campaignDefinitionListGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))

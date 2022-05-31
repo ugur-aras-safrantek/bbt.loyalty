@@ -11,6 +11,7 @@ interface ICampaignLimitsListRequestModel {
   isActive?: any;
   isApproved?: any;
   isDraft?: any;
+  statusId?: any;
 }
 
 export class CampaignLimitsListRequestModel implements ICampaignLimitsListRequestModel, IPagingRequestModel {
@@ -28,6 +29,7 @@ export class CampaignLimitsListRequestModel implements ICampaignLimitsListReques
   isActive?: any;
   isApproved?: any;
   isDraft?: any;
+  statusId?: any;
 }
 
 interface ICampaignLimitAddRequestModel {
