@@ -50,6 +50,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             
             var entity = _mapper.Map<CampaignEntity>(campaign);
             entity = await SetDefaults(entity);
+            entity.StartDate = DateTime.Parse(campaign.StartDate);
+            entity.EndDate = DateTime.Parse(campaign.EndDate);
             entity.StatusId = (int)StatusEnum.Draft;
             entity.Code = Helpers.CreateCampaignCode();
             entity.CreatedBy = userid;

@@ -436,7 +436,7 @@ namespace Bbt.Campaign.Services.Services.Parameter
             return retVal;
         }
 
-        private async Task<string> GetServiceConstantValue(string code)
+        public async Task<string> GetServiceConstantValue(string code)
         {
             string retVal = string.Empty;
             var serviceConstantList = (await GetServiceConstantListAsync())?.Data;

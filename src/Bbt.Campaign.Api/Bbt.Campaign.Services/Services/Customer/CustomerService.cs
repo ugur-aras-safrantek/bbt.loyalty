@@ -19,6 +19,7 @@ using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -462,41 +463,43 @@ namespace Bbt.Campaign.Services.Services.Customer
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
 
             //campaign
-            response.CampaignId = campaignId;
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (campaignEntity == null)
-            {
-                throw new Exception("Kampanya bulunamadı.");
-            }
+            //response.CampaignId = campaignId;
+            //var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+            //    .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+            //    .FirstOrDefaultAsync();
+            //if (campaignEntity == null)
+            //{
+            //    throw new Exception("Kampanya bulunamadı.");
+            //}
 
-            response.IsInvisibleCampaign = false;
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            }
-            var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
-            response.Campaign = campaignDto;
+            //response.IsInvisibleCampaign = false;
+            //if (campaignEntity != null)
+            //{
+            //    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+            //    response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+            //}
+            //var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
+            //response.Campaign = campaignDto;
 
-            //servisten gelecek bilgiler
+            ////servisten gelecek bilgiler
 
-            var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
-                .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
+            //var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
+            //    .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
 
             decimal? totalAchievement = 0;
             decimal? previousMonthAchievement = 0;
-            decimal usedAmount= 0;
+            decimal usedAmount = 0;
             int usedNumberOfTransaction = 0;
 
-            List<TargetParameterDto> targetSourceList = new List<TargetParameterDto>();
+            //List<TargetParameterDto> targetSourceList = new List<TargetParameterDto>();
 
             response.IsAchieved = true;
             if (StaticValues.IsDevelopment)
             {
                 totalAchievement = 190;
                 previousMonthAchievement = 120;
+
+
                 usedAmount = 1000;
                 usedNumberOfTransaction = 2;
 
@@ -526,18 +529,54 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else
             {
+                //TO DO : GÜNCELLENECEK
+                customerCode = "01234567890";
+
+                //GoalResultByCustomerIdAndMonthCount
+                using (var httpClient = new HttpClient())
+                {
+
+
+                    //webrequest.Headers.Add("customerId", customerCode);
+                    //webrequest.Headers.Add("monthCount", "2");
+                    //StreamReader stredr = new StreamReader(webrequest.GetResponse().GetResponseStream());
+                    //string resreponse = stredr.ReadToEnd();
+
+                    ////_client.DefaultRequestHeaders.Add("Bearer", "some token goes here");
+
+                    //string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                    //string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                    //apiAddress = apiAddress.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
+
+                    //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    //var customerIdAndMonthCountResponse = await httpClient.GetAsync(serviceUrl);
+                    //if (customerIdAndMonthCountResponse.IsSuccessStatusCode)
+                    //{
+                    //    if (customerIdAndMonthCountResponse.Content != null)
+                    //    {
+                    //        string apiResponse = await customerIdAndMonthCountResponse.Content.ReadAsStringAsync();
+                    //        //channelCodeList = JsonConvert.DeserializeObject<List<string>>(apiResponse);
+                    //        //if (channelCodeList != null && channelCodeList.Any()) { }
+                    //        //else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                    //    }
+                    //    else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                    //}
+                    //else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
+                }
 
             }
-
-            
-            
 
             //achievement
             var campaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(campaignId);
 
             response.CampaignAchievementList = campaignAchievementList;
 
-            return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);        }
+            return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);        
+        }
+
+
+
+
         public async Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode) 
         {
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
