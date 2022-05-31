@@ -556,7 +556,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             var campaignList = campaignQuery.Select(x => new CampaignListDto
             {
                 Id = x.Id,
-                Code = x.Id.ToString(),
+                Code = x.Code,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
                 StartDateStr = x.StartDate.ToShortDateString(),
@@ -578,20 +578,10 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
 
                 bool isDescending = request.SortDir?.ToLower() == "desc";
-                if (request.SortBy.Equals("Code")) 
-                {
-                    if (isDescending)
-                        campaignList = campaignList.OrderByDescending(x => x.Id).ToList();
-                    else
-                        campaignList = campaignList.OrderBy(x => x.Id).ToList();
-                }
-                else 
-                {
-                    if (isDescending)
-                        campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
-                    else
-                        campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
-                } 
+                if (isDescending)
+                    campaignList = campaignList.OrderByDescending(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
+                else
+                    campaignList = campaignList.OrderBy(s => s.GetType().GetProperty(request.SortBy).GetValue(s, null)).ToList();
             }
             return campaignList;
         }

@@ -83,7 +83,7 @@ namespace Bbt.Campaign.Services.Services.Report
                         campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Name) : campaignQuery.OrderBy(x => x.Name);
                             break;
                     case "Code":
-                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Id) : campaignQuery.OrderBy(x => x.Id);
+                        campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Code) : campaignQuery.OrderBy(x => x.Code);
                         break;
                     case "ContractId":
                         campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.ContractId) : campaignQuery.OrderBy(x => x.ContractId);
@@ -134,7 +134,7 @@ namespace Bbt.Campaign.Services.Services.Report
             {
                 Id = x.Id,
                 Name = x.Name,
-                Code = x.Id.ToString(),
+                Code = x.Code,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
                 StartDateStr = x.StartDate.ToShortDateString(),
