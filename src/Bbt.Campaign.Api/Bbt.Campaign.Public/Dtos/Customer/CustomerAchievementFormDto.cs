@@ -17,7 +17,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public string? PreviousMonthAchievementStr { get; set; }
         public string? PreviousMonthAchievementCurrencyCode { get; set; }
         public bool IsInvisibleCampaign { get; set; }       
-        public CampaignTargetDto CampaignTarget { get; set; }
+        public CampaignTargetDto2 CampaignTarget { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
     }
 }

@@ -215,7 +215,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             response.CurrencyList = (await _parameterService.GetCurrencyListAsync())?.Data;
             response.AchievementFrequencyList = (await _parameterService.GetAchievementFrequencyListAsync())?.Data;
             response.CampaignList = 
-                _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.IsActive && !x.IsDeleted).Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+                _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved &&  !x.IsDeleted).Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
 
         public async Task<BaseResponse<List<TopLimitDto>>> GetListAsync()

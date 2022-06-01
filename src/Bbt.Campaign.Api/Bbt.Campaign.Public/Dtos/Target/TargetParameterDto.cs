@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Public.Dtos.Target
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Code { get; set; }
+        //public string Code { get; set; }
 
         public string Title { get; set; }
         public int TargetViewTypeId { get; set; }
@@ -22,9 +22,9 @@ namespace Bbt.Campaign.Public.Dtos.Target
         //public int? UsedNumberOfTransaction { get; set; }
         public int? Percent { get; set; }
 
-        public string? TargetDetailEn { get; set; }
-        public string? TargetDetailTr { get; set; }
-        public string? DescriptionEn { get; set; }
+        //public string? TargetDetailEn { get; set; }
+        //public string? TargetDetailTr { get; set; }
+        //public string? DescriptionEn { get; set; }
         public string? DescriptionTr { get; set; }
     }
 }
