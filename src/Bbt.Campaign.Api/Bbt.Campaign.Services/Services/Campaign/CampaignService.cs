@@ -46,12 +46,11 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
+            campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
             await CheckValidationAsync(campaign, 0);
-            
             var entity = _mapper.Map<CampaignEntity>(campaign);
             entity = await SetDefaults(entity);
-            entity.StartDate = DateTime.Parse(campaign.StartDate);
-            entity.EndDate = DateTime.Parse(campaign.EndDate);
             entity.StatusId = (int)StatusEnum.Draft;
             entity.Code = Helpers.CreateCampaignCode();
             entity.CreatedBy = userid;
@@ -72,6 +71,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
+            campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
+            campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
             await CheckValidationAsync(campaign, campaign.Id);
 
             var entity = _unitOfWork.GetRepository<CampaignEntity>()
@@ -459,8 +460,18 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 if (order <= 0)
                     throw new Exception("Sıralama girilmelidir.");
 
-                var orderCampaignEntity = _unitOfWork.GetRepository<CampaignEntity>().
-                    GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order && x.EndDate >= today && x.Id != campaignId)
+                string campaignCode = string.Empty;
+                if(campaignId > 0) 
+                {
+                    var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+                    campaignCode = campaignEntity.Code;
+                }
+
+                var orderCampaignEntity = _unitOfWork.GetRepository<CampaignEntity>()
+                    .GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order 
+                        && x.EndDate >= today && x.Id != campaignId 
+                        && x.Code != campaignCode
+                        && x.StatusId == (int)StatusEnum.Approved)
                     .FirstOrDefault();
                 if (orderCampaignEntity != null) 
                 {

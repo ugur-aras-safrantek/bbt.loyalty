@@ -71,6 +71,14 @@ namespace Bbt.Campaign.Core.Helper
             return pager;
         }
 
+        public static string ConvertDotFormatDatetimeString(string dateStr) 
+        {
+            //31-05-2022  31.5.2022
+            string[] dateArray = dateStr.Split('-');
+            return int.Parse(dateArray[0]).ToString() + "." + int.Parse(dateArray[1]).ToString() 
+                + "." + int.Parse(dateArray[2]).ToString();
+        }
+
         public static string TarihDonustur(this DateTime tarih)
         {
             if (tarih != null)
