@@ -687,7 +687,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
             List<int?> usedList = _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => !x.IsDeleted && x.IsActive && x.EndDate >= today && !x.IsBundle && (x.Order ?? 0) > 0)
+                .GetAll(x => !x.IsDeleted && x.IsActive && x.EndDate >= today 
+                            && !x.IsBundle && (x.Order ?? 0) > 0 && x.StatusId == (int)StatusEnum.Approved)
                 .Select(x => x.Order)
                 .ToList();
 
