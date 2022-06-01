@@ -46,23 +46,34 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-            campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
-            campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
-            await CheckValidationAsync(campaign, 0);
-            var entity = _mapper.Map<CampaignEntity>(campaign);
-            entity = await SetDefaults(entity);
-            entity.StatusId = (int)StatusEnum.Draft;
-            entity.Code = Helpers.CreateCampaignCode();
-            entity.CreatedBy = userid;
-            entity.CampaignDetail.CreatedBy = userid;
+            try
+            {
+                campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
 
-            entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
+
+                campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
+                await CheckValidationAsync(campaign, 0);
+                var entity = _mapper.Map<CampaignEntity>(campaign);
+                entity = await SetDefaults(entity);
+                entity.StatusId = (int)StatusEnum.Draft;
+                entity.Code = Helpers.CreateCampaignCode();
+                entity.CreatedBy = userid;
+                entity.CampaignDetail.CreatedBy = userid;
+
+                entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
+                await _unitOfWork.SaveChangesAsync();
+            
 
             //entity.Code = entity.Id.ToString();
             //await _unitOfWork.SaveChangesAsync();
 
             return await GetCampaignAsync(entity.Id, userid);
+            }
+            catch(Exception ex) 
+            {
+                throw new Exception(ex.ToString());
+            }
+            return null;
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid)

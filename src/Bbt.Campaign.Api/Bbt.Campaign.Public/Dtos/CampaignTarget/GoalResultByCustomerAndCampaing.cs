@@ -12,6 +12,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public string Name { get; set; }
 
         public Detail Detail { get; set; }
+        public string Title { get; set; }
+        public int TargetGroupId { get; set; }
     }
 
     public class Detail 
@@ -21,6 +23,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public int? NumberOfTransaction { get; set; }
         public int TargetId { get; set; }
         public bool IsDeleted { get; set; }
+        public int TargetViewTypeId { get; set; }
+        public string Description { get; set; }
         public StreamResult StreamResult { get; set; }
 
     }

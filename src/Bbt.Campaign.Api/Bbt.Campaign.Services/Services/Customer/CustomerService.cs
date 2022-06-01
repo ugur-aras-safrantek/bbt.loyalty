@@ -643,23 +643,23 @@ namespace Bbt.Campaign.Services.Services.Customer
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
 
             //campaign
-            response.CampaignId = campaignId;
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (campaignEntity == null)
-            {
-                throw new Exception("Kampanya bulunamadı.");
-            }
+            //response.CampaignId = campaignId;
+            //var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+            //    .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+            //    .FirstOrDefaultAsync();
+            //if (campaignEntity == null)
+            //{
+            //    throw new Exception("Kampanya bulunamadı.");
+            //}
 
-            response.IsInvisibleCampaign = false;
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            }
-            var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
-            response.Campaign = campaignDto;
+            //response.IsInvisibleCampaign = false;
+            //if (campaignEntity != null)
+            //{
+            //    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+            //    response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+            //}
+            //var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
+            //response.Campaign = campaignDto;
 
             ////servisten gelecek bilgiler
 
@@ -745,13 +745,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             response.CampaignTarget = new CampaignTargetDto2();
             var campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode);
-            //var progressBarlist = new List<TargetParameterDto>();
-            //var informationlist = new List<TargetParameterDto>();
-            //foreach (var targetDto in campaignTargetDto2.ProgressBarlist)
-            //    progressBarlist.Add(targetDto);
-            //foreach (var targetDto in campaignTargetDto2.ProgressBarlist)
-            //    informationlist.Add(targetDto);
-
             response.CampaignTarget.ProgressBarlist = campaignTargetDto2.ProgressBarlist;
             response.CampaignTarget.Informationlist = campaignTargetDto2.Informationlist;
 
