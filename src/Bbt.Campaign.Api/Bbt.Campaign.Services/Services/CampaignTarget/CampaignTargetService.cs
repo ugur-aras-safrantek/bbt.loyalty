@@ -567,20 +567,22 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             {
                 using (var httpClient = new HttpClient())
                 {
-                    bool isTest = false;
-                    string isTestStr = await _parameterService.GetServiceConstantValue("IsTest");
-                    if (!string.IsNullOrEmpty(isTestStr))
-                    {
-                        isTest = Convert.ToBoolean(isTestStr);
-                        if (isTest)
-                        {
-                            customerCode = "01234567890";
-                            campaignId = 1;
-                        }
-                    }
+                    //bool isTest = false;
+                    //string isTestStr = await _parameterService.GetServiceConstantValue("IsTest");
+                    //if (!string.IsNullOrEmpty(isTestStr))
+                    //{
+                    //    isTest = Convert.ToBoolean(isTestStr);
+                    //    if (isTest)
+                    //    {
+                    //        customerCode = "01234567890";
+                    //        campaignId = 1;
+                    //    }
+                    //}
 
                     string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
-                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{campaignId}", campaignId.ToString());
+                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode);
+                    serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                    serviceUrl = serviceUrl.Replace("{lang}", "tr");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var restResponse = await httpClient.GetAsync(serviceUrl);
                     if (restResponse.IsSuccessStatusCode)
@@ -590,7 +592,33 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                             var apiResponse = await restResponse.Content.ReadAsStringAsync();
                             if (!string.IsNullOrEmpty(apiResponse))
                             {
-                                var xx = JsonConvert.DeserializeObject<GoalResultByCustomerAndCampaing>(apiResponse);
+                                var goalResultByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<GoalResultByCustomerAndCampaing>>(apiResponse);
+                                if(goalResultByCustomerAndCampaingList != null && goalResultByCustomerAndCampaingList.Any()) 
+                                { 
+                                    foreach(var goalResult in goalResultByCustomerAndCampaingList
+                                        .Where(x => x.CampaignId > 0 && x.Detail.IsDeleted == false && x.Detail.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible)) 
+                                    {
+                                        TargetParameterDto2 targetParameterDto2 = new TargetParameterDto2();
+                                        targetParameterDto2.Id = 0;
+                                        targetParameterDto2.Name = goalResult.Name;
+                                        targetParameterDto2.Title = goalResult.Title;
+                                        targetParameterDto2.TargetViewTypeId = goalResult.Detail.TargetViewTypeId;
+                                        targetParameterDto2.TargetGroupId = goalResult.TargetGroupId;
+                                        targetParameterDto2.TotalAmount = goalResult.Detail.TotalAmount;
+                                        targetParameterDto2.NumberOfTransaction = goalResult.Detail.NumberOfTransaction;
+                                        targetParameterDto2.UsedAmount = goalResult.Detail.StreamResult.Amount ?? 0;
+                                        targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(targetParameterDto2.UsedAmount);
+                                        targetParameterDto2.usedAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                        targetParameterDto2.RemainAmount = null;
+                                        targetParameterDto2.RemainAmountStr = null;
+                                        targetParameterDto2.Percent = 0;
+                                        targetParameterDto2.UsedNumberOfTransaction = goalResult.Detail.StreamResult.Times ?? 0;
+                                        targetParameterDto2.DescriptionTr = goalResult.Detail.Description;
+                                        targetParameterDto2.IsAchieved = false;
+                                        targetParameterDto2 = CalculateAmounts(targetParameterDto2);
+                                        targetParameterList.Add(targetParameterDto2);
+                                    }
+                                }
                             }
                         }
                     }
@@ -632,7 +660,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
             campaignTargetDto2.ProgressBarlist = progressBarlist;
             campaignTargetDto2.Informationlist = informationlist;
-
 
             return campaignTargetDto2;
         }

@@ -20,6 +20,7 @@ using Bbt.Campaign.Services.Services.CampaignTopLimit;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Core.Helper;
+using System.Globalization;
 
 namespace Bbt.Campaign.Services.Services.Campaign
 {
@@ -451,13 +452,13 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             //startdate ve enddate
-            DateTime startDate = DateTime.Parse(input.StartDate.ToString());
-            DateTime endDate = DateTime.Parse(input.EndDate.ToString());
-            DateTime now = DateTime.Parse(DateTime.Now.ToShortDateString());
+            DateTime startDate = DateTime.ParseExact(input.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime endDate = DateTime.ParseExact(input.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime previousDay  = DateTime.Now.AddDays(-1);
 
-            if (campaignId == 0 && startDate < now)
+            if (startDate < previousDay)
                 throw new Exception("Başlama Tarihi günün tarihinden küçük olamaz.");
-            if (endDate < now)
+            if (endDate < previousDay)
                 throw new Exception("Bitiş Tarihi günün tarihinden küçük olamaz.");
             if (startDate > endDate)
                 throw new Exception("Başlama Tarihi, Bitiş Tarihinden büyük olamaz”");
@@ -470,7 +471,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
                 if (order <= 0)
                     throw new Exception("Sıralama girilmelidir.");
-
                 string campaignCode = string.Empty;
                 if(campaignId > 0) 
                 {

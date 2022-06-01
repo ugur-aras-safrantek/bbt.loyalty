@@ -39,6 +39,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public string BeginDate { get; set; }
         public string EndDate { get; set; }
         public decimal? Amount { get; set; }
-        public decimal? Times { get; set; }
+        public int? Times { get; set; }
     }
 }
