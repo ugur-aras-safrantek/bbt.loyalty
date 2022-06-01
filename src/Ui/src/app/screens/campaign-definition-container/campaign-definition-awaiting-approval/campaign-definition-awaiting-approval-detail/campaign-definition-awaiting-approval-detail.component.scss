@@ -1,0 +1,38 @@
+.container {
+  margin-top: 80px;
+}
+
+.bg-header {
+  background-color: #a2e4ff !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.display {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: black;
+  opacity: 0.7;
+}
+
+.wait {
+  display: flex;
+  justify-content: center;
+  background-color: #f78d1d;
+  margin-right: 1rem;
+  padding: 0.5rem 1.5rem !important;
+  color: white;
+  border-radius: 10px;
+}
+
+h4 {
+  margin-bottom: 20px !important;
+}
+
+.history-row {
+  display: flex;
+  padding-top: 0.5rem!important;
+  padding-bottom: 0.5rem!important;
+  border-bottom: 1px solid #dee2e6!important;
+}

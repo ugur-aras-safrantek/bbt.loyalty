@@ -56,4 +56,8 @@ export enum ApiPaths {
   CustomerReportGetByFilter = 'Report/get-customer-report-by-filter',
   CustomerReportGetByFilterExcelFile = 'Report/get-customer-report-by-filter-excel',
   CustomerDetail = 'Report/get-customer-report-detail',
+
+  CampaignDefinitionApproveForm = 'Approve/get-campaign-form',
+  CampaignRuleDocumentDownload = 'Approve/document-download',
+  CampaignDefinitionApproveState = 'Approve/campaign',
 }
