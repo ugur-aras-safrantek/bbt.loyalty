@@ -638,9 +638,12 @@ namespace Bbt.Campaign.Services.Services.Customer
         //    return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);        
         //}
 
-        public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string language)
+        public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string? language)
         {
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
+
+            if (language == null)
+                language = "tr";
 
             //campaign
             response.CampaignId = campaignId;

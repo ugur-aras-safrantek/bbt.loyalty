@@ -16,7 +16,7 @@ namespace Bbt.Campaign.Services.Services.Customer
         public Task<BaseResponse<CustomerCampaignDto>> DeleteAsync(int id);
         public Task<BaseResponse<CustomerCampaignDto>> GetCustomerCampaignAsync(int id);
         public Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request);
-        public Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string language);
+        public Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string? language);
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewFormAsync(int campaignId, string contentRootPath);
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerJoinFormAsync(int campaignId, string customerCode, string contentRootPath);
         public Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode);

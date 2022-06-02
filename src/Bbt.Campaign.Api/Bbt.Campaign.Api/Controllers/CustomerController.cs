@@ -102,8 +102,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-customer-achievements")]
-        public async Task<IActionResult> GetCustomerAchievementFormAsync2(int campaignId, string customerCode, string language)
+        public async Task<IActionResult> GetCustomerAchievementFormAsync2(int campaignId, string customerCode, string? language)
         {
+            
             var result = await _customerService.GetCustomerAchievementFormAsync(campaignId, customerCode, language);
             return Ok(result);
         }
