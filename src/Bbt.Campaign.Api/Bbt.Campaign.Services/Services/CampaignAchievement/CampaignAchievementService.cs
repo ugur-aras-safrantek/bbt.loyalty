@@ -13,7 +13,10 @@ using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
+using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Bbt.Campaign.Services.Services.CampaignAchievement
 {
@@ -362,6 +365,74 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 else
                     throw new Exception("Kazanım türü (Tutar/Oran) seçilmelidir.");
             }
+        }
+
+        public async Task<List<CustomerAchievement>> GetCustomerAchievementsAsync(int campaignId, string customerCode, string lang) 
+        {
+            List<CustomerAchievement> customerAchievementList = new List<CustomerAchievement>();
+
+            if (StaticValues.IsDevelopment) 
+            {
+                var campaignAchievementList = await GetCampaignAchievementListDto(campaignId);
+                if(campaignAchievementList.Any())
+                {
+                    foreach(var x in campaignAchievementList) 
+                    {
+                        CustomerAchievement customerAchievement= new CustomerAchievement();
+                        customerAchievement.IsAchieved = false;
+                        customerAchievement.AchievementTypeName = x.AchievementType.Name;
+                        customerAchievement.Description = lang == "tr" ? x.DescriptionTr : x.DescriptionEn;
+                        customerAchievement.Title = lang == "tr" ? x.TitleTr : x.TitleEn;
+                        customerAchievement.AmountStr = x.AmountStr;
+                        customerAchievement.CurrencyCode = x.Currency?.Name;
+                        customerAchievementList.Add(customerAchievement);
+                    }
+                }
+            }
+            else 
+            {
+                using (var httpClient = new HttpClient()) 
+                {
+                    string serviceUrl = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
+                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode);
+                    serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                    serviceUrl = serviceUrl.Replace("{lang}", lang);
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var restResponse = await httpClient.GetAsync(serviceUrl);
+                    if (restResponse.IsSuccessStatusCode)
+                    {
+                        if (restResponse.Content != null)
+                        {
+                            var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse))
+                            {
+                                var earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
+                                if (earningByCustomerAndCampaingList != null && earningByCustomerAndCampaingList.Any())
+                                {
+                                    foreach (var earning in earningByCustomerAndCampaingList)
+                                    {
+                                        CustomerAchievement customerAchievement = new CustomerAchievement();
+                                        customerAchievement.IsAchieved = false;
+                                        customerAchievement.AchievementTypeName = earning.EarningType;
+                                        customerAchievement.Description = earning.AchivementDescription;
+                                        customerAchievement.Title = earning.AchivementTitle;
+                                        customerAchievement.AmountStr = Helpers.ConvertNullablePriceString(earning.Amount);
+                                        customerAchievement.CurrencyCode = earning.Currency;
+                                        customerAchievementList.Add(customerAchievement);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Müşteri kazanım servisinden hata alındı.");
+                    }
+                }
+
+
+            }
+            return customerAchievementList;
         }
     }
 }

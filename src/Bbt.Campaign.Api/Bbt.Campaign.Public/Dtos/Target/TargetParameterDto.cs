@@ -26,5 +26,6 @@ namespace Bbt.Campaign.Public.Dtos.Target
         //public string? TargetDetailTr { get; set; }
         //public string? DescriptionEn { get; set; }
         public string? DescriptionTr { get; set; }
+        public string? Description { get; set; }
     }
 }

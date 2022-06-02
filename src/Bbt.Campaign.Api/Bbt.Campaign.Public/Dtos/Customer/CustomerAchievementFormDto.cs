@@ -1,6 +1,7 @@
 ﻿using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Public.Models.File;
 
 namespace Bbt.Campaign.Public.Dtos.Customer
@@ -18,6 +19,6 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public string? PreviousMonthAchievementCurrencyCode { get; set; }
         public bool IsInvisibleCampaign { get; set; }       
         public CampaignTargetDto2 CampaignTarget { get; set; }
-        public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
+        public List<CustomerAchievement> CampaignAchievementList { get; set; }
     }
 }

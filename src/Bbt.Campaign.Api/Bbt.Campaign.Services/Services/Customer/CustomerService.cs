@@ -638,7 +638,7 @@ namespace Bbt.Campaign.Services.Services.Customer
         //    return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);        
         //}
 
-        public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode)
+        public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string language)
         {
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
 
@@ -660,11 +660,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
             response.Campaign = campaignDto;
-
-            //servisten gelecek bilgiler
-
-            //var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
-            //    .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
 
             decimal? totalAchievement = 0;
             decimal? previousMonthAchievement = 0;
@@ -740,11 +735,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                         throw new Exception("Müşteri kazanımları servisinden veri çekilemedi.");
                     }
                 }
-
             }
 
             response.CampaignTarget = new CampaignTargetDto2();
-            var campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode);
+            var campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language);
             response.CampaignTarget.ProgressBarlist = campaignTargetDto2.ProgressBarlist;
             response.CampaignTarget.Informationlist = campaignTargetDto2.Informationlist;
 
@@ -759,12 +753,17 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else
             {
-                
+                if (response.CampaignTarget.ProgressBarlist.Any()) 
+                {
+                    response.UsedAmountStr = response.CampaignTarget.ProgressBarlist[0].UsedAmountStr;
+                    response.UsedAmountCurrencyCode = response.CampaignTarget.ProgressBarlist[0].usedAmountCurrencyCode;
+                }
             }
 
             //achievement
-            var campaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(campaignId);
-
+            var campaignAchievementList = await _campaignAchievementService.GetCustomerAchievementsAsync(campaignId, customerCode, language);
+            foreach (var campaignAchievement in campaignAchievementList)
+                campaignAchievement.IsAchieved = response.IsAchieved;
             response.CampaignAchievementList = campaignAchievementList;
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);

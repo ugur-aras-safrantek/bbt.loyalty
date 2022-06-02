@@ -520,7 +520,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto;
         }
 
-        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode) 
+        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang) 
         {
             CampaignTargetDto2 campaignTargetDto2 = new CampaignTargetDto2();
             List<TargetParameterDto> progressBarlist = new List<TargetParameterDto>();
@@ -533,9 +533,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             {
                 usedAmount = 1000;
                 usedNumberOfTransaction = 2;
-                //response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
-                //response.UsedAmountCurrencyCode = "TRY";
-
                 var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
                 campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);
                 var campaignTargetList = CampaignTargetListData.GetCampaignTargetList(campaignTargetQuery);
@@ -557,7 +554,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     targetParameterDto2.RemainAmountStr = null;
                     targetParameterDto2.Percent = 0;
                     targetParameterDto2.UsedNumberOfTransaction = usedNumberOfTransaction;
-                    targetParameterDto2.DescriptionTr = campaignTarget.DescriptionTr;
+                    targetParameterDto2.Description = lang == "tr" ? campaignTarget.DescriptionTr : campaignTarget.DescriptionEn;
                     targetParameterDto2.IsAchieved = false;
                     targetParameterDto2 = CalculateAmounts(targetParameterDto2);
                     targetParameterList.Add(targetParameterDto2);
@@ -582,7 +579,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
                     serviceUrl = serviceUrl.Replace("{customerId}", customerCode);
                     serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
-                    serviceUrl = serviceUrl.Replace("{lang}", "tr");
+                    serviceUrl = serviceUrl.Replace("{lang}", lang);
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var restResponse = await httpClient.GetAsync(serviceUrl);
                     if (restResponse.IsSuccessStatusCode)
@@ -613,7 +610,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                         targetParameterDto2.RemainAmountStr = null;
                                         targetParameterDto2.Percent = 0;
                                         targetParameterDto2.UsedNumberOfTransaction = goalResult.Detail.StreamResult.Times ?? 0;
-                                        targetParameterDto2.DescriptionTr = goalResult.Detail.Description;
+                                        targetParameterDto2.Description = goalResult.Detail.Description;
                                         targetParameterDto2.IsAchieved = false;
                                         targetParameterDto2 = CalculateAmounts(targetParameterDto2);
                                         targetParameterList.Add(targetParameterDto2);
@@ -651,7 +648,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 targetParameterDto.usedAmountCurrencyCode = item.usedAmountCurrencyCode;
                 targetParameterDto.RemainAmountStr = item.RemainAmountStr;
                 targetParameterDto.Percent = item.Percent;
-                targetParameterDto.DescriptionTr = item.DescriptionTr;
+                targetParameterDto.Description = item.Description;
                 if (targetParameterDto.TargetViewTypeId == (int)TargetViewTypeEnum.ProgressBar)
                     progressBarlist.Add(targetParameterDto);
                 else if(targetParameterDto.TargetViewTypeId == (int)TargetViewTypeEnum.Information)

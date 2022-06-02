@@ -22,8 +22,7 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public int Percent { get; set; }      
         public int UsedNumberOfTransaction { get; set; }
         public int? NumberOfTransaction { get; set; }
-        public string? DescriptionTr { get; set; }
-
+        public string? Description { get; set; }
         public bool IsAchieved { get; set; }
     }
 }

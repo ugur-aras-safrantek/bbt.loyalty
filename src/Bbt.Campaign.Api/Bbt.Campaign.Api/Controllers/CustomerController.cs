@@ -94,16 +94,17 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the form data for customer view min page
+        /// Returns the form data for customer detail page
         /// </summary>
         /// <param name="campaignId">Record Id of the campaign</param>
         /// <param name="customerCode">customer tckn or code</param>
+        /// <param name="language">language (send tr for turkish)</param>
         /// <returns></returns>
         [HttpGet]
         [Route("get-customer-achievements")]
-        public async Task<IActionResult> GetCustomerAchievementFormAsync2(int campaignId, string customerCode)
+        public async Task<IActionResult> GetCustomerAchievementFormAsync2(int campaignId, string customerCode, string language)
         {
-            var result = await _customerService.GetCustomerAchievementFormAsync(campaignId, customerCode);
+            var result = await _customerService.GetCustomerAchievementFormAsync(campaignId, customerCode, language);
             return Ok(result);
         }
     }
