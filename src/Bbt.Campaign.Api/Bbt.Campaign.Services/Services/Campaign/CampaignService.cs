@@ -673,21 +673,51 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
                 using (var client = new HttpClient())
                 {
-                    //string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
-                    //string apiAddress = await _parameterService.GetServiceConstantValue("Document");
-                    //apiAddress = apiAddress.Replace("{key}", id.ToString());
-                    //client.BaseAddress = new Uri(baseAddress); 
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    //var restResponse = await client.GetAsync(apiAddress);
-                    //if (restResponse.IsSuccessStatusCode) 
-                    //{ 
-                    //    var responseContent = restResponse.Content.ReadAsStringAsync().Result;
-                    //}
-                    //else 
-                    //{ 
-                    
-                    //}
-                    
+                    string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                    string apiAddress = await _parameterService.GetServiceConstantValue("Document");
+                    apiAddress = apiAddress.Replace("{key}", id.ToString());
+                    string serviceUrl = string.Concat(baseAddress, apiAddress);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    var restResponse = await client.GetAsync(serviceUrl);
+                    if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        if (restResponse.Content != null) 
+                        {
+                            var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            {
+                                var document = JsonConvert.DeserializeObject<Document>(apiResponse);
+                                if(document != null) 
+                                { 
+                                    if(document.Content != null) 
+                                    {
+                                        getFileResponse = new GetFileResponse()
+                                        {
+                                            Document = new Public.Models.CampaignDocument.DocumentModel()
+                                            {
+                                                Data = document.Content,
+                                                DocumentName = id.ToString() + "-Sözleşme.html",
+                                                DocumentType = DocumentTypePublicEnum.Contract,
+                                                MimeType = MimeTypeExtensions.ToMimeType("text/html")
+                                            }
+                                        };
+                                    }
+                                    else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                                }
+                                else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                            }
+                            else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                        }
+                        else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                    }
+                    else if(restResponse.StatusCode.ToString() == "455")
+                    {
+                        throw new Exception("Document template not found.");
+                    }
+                    else 
+                    {
+                        throw new Exception("Sözleşme servisinden hata döndü.");
+                    }
                 }
             }
 
