@@ -73,7 +73,9 @@ namespace Bbt.Campaign.Core.Helper
 
         public static string ConvertDotFormatDatetimeString(string dateStr) 
         {
-            //9-6-2022  06/09/2022
+            //9-6-2022  06/09/2022    IFormatProvider culture = new CultureInfo("en-US");
+            //"13-06-2019 00:00:00"
+
             string[] dateArray = dateStr.Split('-');
             //string day = dateArray[0].PadLeft(2, '0');
             //string month = dateArray[1].PadLeft(2, '0');
@@ -81,7 +83,7 @@ namespace Bbt.Campaign.Core.Helper
             string month = dateArray[1].PadLeft(2, '0');
             string year = dateArray[2];
 
-            dateStr = string.Concat(month, "/", day, "/", year);
+            dateStr = string.Concat(day, "-", month, "-", year, " 00:00:00");
 
 
             //return int.Parse(dateArray[1]).ToString() + "-" + int.Parse(dateArray[0]).ToString()

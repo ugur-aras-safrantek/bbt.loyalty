@@ -26,6 +26,7 @@ using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Report;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Bbt.Campaign.Services.Services.Approval
 {
@@ -60,6 +61,19 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
 
         #region campaign
+
+
+        public DateTime ConvertWithInvariantCulture(string date, string format) 
+        {
+            return DateTime.ParseExact(date, format, CultureInfo.InvariantCulture);
+        }
+
+        public DateTime ConvertWithCulture(string date, string format, string culture)
+        {
+            IFormatProvider iFormatProvider = new CultureInfo(culture);
+            return DateTime.ParseExact(date, format, iFormatProvider);
+        }
+
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()

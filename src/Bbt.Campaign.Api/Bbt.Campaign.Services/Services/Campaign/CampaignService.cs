@@ -33,8 +33,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-        CultureInfo provider = CultureInfo.InvariantCulture;
-        private static string dateFormat = "d";
+        IFormatProvider culture = new CultureInfo("en-US");
+        //private static string dateFormat = "d";
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationService, IDraftService draftService)
         {
@@ -70,8 +70,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.IsContract = campaign.IsContract;
                 entity.DescriptionTr = campaign.DescriptionTr;
                 entity.DescriptionEn = campaign.DescriptionEn;
-                entity.EndDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.EndDate), dateFormat, provider);
-                entity.StartDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.StartDate), dateFormat, provider);
+                entity.EndDate = DateTime.ParseExact(campaign.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+                entity.StartDate = DateTime.ParseExact(campaign.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
                 entity.Name = campaign.Name;
                 entity.Order = campaign.Order;
                 entity.TitleTr = campaign.TitleTr;
@@ -79,6 +79,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
                 entity.ParticipationTypeId = campaign.ParticipationTypeId;
 
+                entity.CampaignDetail = new CampaignDetailEntity();
                 entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
                 entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
                 entity.CampaignDetail.SummaryEn = campaign.CampaignDetail.SummaryEn;
@@ -175,8 +176,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.IsContract = campaign.IsContract;
             entity.DescriptionTr = campaign.DescriptionTr;
             entity.DescriptionEn = campaign.DescriptionEn;
-            entity.EndDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.EndDate), dateFormat, provider);
-            entity.StartDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.StartDate), dateFormat, provider);
+            entity.EndDate = DateTime.ParseExact(campaign.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+            entity.StartDate = DateTime.ParseExact(campaign.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
             entity.Name = campaign.Name;
             entity.Order = campaign.Order;
             entity.TitleTr = campaign.TitleTr;
@@ -487,8 +488,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             //startdate ve enddate
-            DateTime startDate = DateTime.ParseExact(input.StartDate, dateFormat, provider);
-            DateTime endDate = DateTime.ParseExact(input.EndDate, dateFormat, provider);
+            DateTime startDate = DateTime.ParseExact(input.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+            DateTime endDate = DateTime.ParseExact(input.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
             DateTime previousDay  = DateTime.Now.AddDays(-1);
 
             if (startDate < previousDay)

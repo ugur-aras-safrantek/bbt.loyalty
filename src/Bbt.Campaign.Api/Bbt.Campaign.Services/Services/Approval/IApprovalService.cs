@@ -21,5 +21,11 @@ namespace Bbt.Campaign.Services.Services.Approval
         public Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId, string userid);
         public Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int topLimitId, string userid);
         public Task<BaseResponse<TargetDto>> TargetCopyAsync(int targetId, string userid);
+
+        public DateTime ConvertWithInvariantCulture(string date, string format);
+
+
+
+        public DateTime ConvertWithCulture(string date, string format, string culture);
     }
 }

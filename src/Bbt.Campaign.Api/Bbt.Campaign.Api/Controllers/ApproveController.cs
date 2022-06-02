@@ -14,6 +14,47 @@ namespace Bbt.Campaign.Api.Controllers
             _approvalService = approvalService;
         }
 
+
+        /// <summary>
+        /// convert
+        /// </summary>
+        /// <param name="date"></param>
+        /// /// <param name="format"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ConvertWithInvariantCulture")]
+        public async Task<IActionResult> ConvertWithInvariantCulture(string date, string format)
+        {
+            var result = _approvalService.ConvertWithInvariantCulture(date, format);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// convert
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="format"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ConvertWithCulture")]
+        public async Task<IActionResult> ConvertWithCulture(string date, string format, string culture)
+        {
+            var result = _approvalService.ConvertWithCulture(date, format, culture);
+            return Ok(result);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// Approves the draft campaign.
         /// </summary>
