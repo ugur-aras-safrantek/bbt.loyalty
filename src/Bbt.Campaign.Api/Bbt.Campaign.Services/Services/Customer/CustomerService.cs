@@ -643,25 +643,25 @@ namespace Bbt.Campaign.Services.Services.Customer
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
 
             //campaign
-            //response.CampaignId = campaignId;
-            //var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-            //    .GetAll(x => x.Id == campaignId && !x.IsDeleted)
-            //    .FirstOrDefaultAsync();
-            //if (campaignEntity == null)
-            //{
-            //    throw new Exception("Kampanya bulunamadı.");
-            //}
+            response.CampaignId = campaignId;
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (campaignEntity == null)
+            {
+                throw new Exception("Kampanya bulunamadı.");
+            }
 
-            //response.IsInvisibleCampaign = false;
-            //if (campaignEntity != null)
-            //{
-            //    int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-            //    response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            //}
-            //var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
-            //response.Campaign = campaignDto;
+            response.IsInvisibleCampaign = false;
+            if (campaignEntity != null)
+            {
+                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+            }
+            var campaignDto = await _campaignService.GetCampaignDtoAsync(campaignId);
+            response.Campaign = campaignDto;
 
-            ////servisten gelecek bilgiler
+            //servisten gelecek bilgiler
 
             //var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>()
             //    .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
