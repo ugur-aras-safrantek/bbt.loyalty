@@ -75,15 +75,17 @@ namespace Bbt.Campaign.Core.Helper
         {
             //9-6-2022  31.5.2022
             string[] dateArray = dateStr.Split('-');
-            string day = dateArray[0].PadLeft(2, '0');
-            string month = dateArray[1].PadLeft(2, '0');
+            //string day = dateArray[0].PadLeft(2, '0');
+            //string month = dateArray[1].PadLeft(2, '0');
+            string day = dateArray[0];
+            string month = dateArray[1];
             string year = dateArray[2];
 
-            dateStr = string.Concat(day, "-", month, "-", year);
+            dateStr = string.Concat(month, "/", day, "/", year);
 
 
-            //return int.Parse(dateArray[0]).ToString() + "." + int.Parse(dateArray[1]).ToString() 
-            //    + "." + int.Parse(dateArray[2]).ToString();
+            //return int.Parse(dateArray[1]).ToString() + "-" + int.Parse(dateArray[0]).ToString()
+            //    + "-" + int.Parse(dateArray[2]).ToString();
 
             //return DateTime.ParseExact(dateStr, "dd-MM-yyyy", null).ToShortDateString();
 

@@ -33,6 +33,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+        CultureInfo provider = CultureInfo.InvariantCulture;
+        private static string dateFormat = "d";
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationService, IDraftService draftService)
         {
@@ -49,10 +51,10 @@ namespace Bbt.Campaign.Services.Services.Campaign
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
             try
             {
-                campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
+            //    campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
 
 
-                campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
+            //    campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
                 await CheckValidationAsync(campaign, 0);
                 var entity = _mapper.Map<CampaignEntity>(campaign);
                 entity = await SetDefaults(entity);
@@ -452,8 +454,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             //startdate ve enddate
-            DateTime startDate = DateTime.ParseExact(input.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            DateTime endDate = DateTime.ParseExact(input.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime startDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(input.StartDate), dateFormat, provider);
+            DateTime endDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(input.EndDate), dateFormat, CultureInfo.InvariantCulture);
             DateTime previousDay  = DateTime.Now.AddDays(-1);
 
             if (startDate < previousDay)
