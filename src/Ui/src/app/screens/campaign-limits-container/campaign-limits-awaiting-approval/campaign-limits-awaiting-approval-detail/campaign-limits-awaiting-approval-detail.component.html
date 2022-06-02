@@ -1,1 +1,107 @@
-<p>campaign-limits-awaiting-approval-detail works!</p>
+<app-main-content>
+  <div class="container">
+    <div class="box">
+      <div class="bg-header">
+        <div class="row">
+          <div class="col display">
+            Görüntüle
+          </div>
+          <div class="col-auto wait">
+            Onay bekliyor
+          </div>
+        </div>
+      </div>
+      <h4 class="ps-4 my-3">Kampanya Çatı Limitleri</h4>
+      <div class="">
+        <form [formGroup]="campaignLimitsFormGroup" class="col-12 col-md-6 m-md-auto">
+          <div class="row">
+            <div class="col-8">
+              <div class="form-group">
+                <label for="name">Çatı Limiti Adı</label>
+                <input type="text" class="form-control" name="name" id="name"
+                       formControlName="name">
+              </div>
+            </div>
+            <div class="col-4 checkbox-mt d-flex justify-content-center">
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input scale-2x" type="checkbox"
+                         name="isActive" id="isActive" formControlName="isActive">
+                  <label class="form-check-label ms-2" for="isActive">Aktif</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mt-3">
+            <label for="campaignIds">Kampanyalar</label>
+            <input type="text" class="form-control" name="campaignIds" id="campaignIds"
+                   formControlName="campaignIds">
+          </div>
+          <div class="form-group mt-3">
+            <label for="achievementFrequencyId">Kazanım Sıklığı</label>
+            <input type="text" class="form-control" name="achievementFrequencyId" id="achievementFrequencyId"
+                   formControlName="achievementFrequencyId">
+          </div>
+          <div class="row my-4">
+            <div class="col pl-20px">
+              <div class="form-group">
+                <div class="form-check form-check-inline me-5">
+                  <input class="form-check-input scale-2x" type="radio"
+                         name="type" formControlName="type" id="type1" [value]="1">
+                  <label class="form-check-label ms-2" for="type1">Tutar</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input scale-2x" type="radio"
+                         name="type" formControlName="type" id="type2" [value]="2">
+                  <label class="form-check-label ms-2" for="type2">Oran</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==1">
+            <label for="currencyId">Para Birimi</label>
+            <input type="text" class="form-control" name="currencyId" id="currencyId"
+                   formControlName="currencyId">
+          </div>
+          <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==1">
+            <label for="maxTopLimitAmount">Çatı Max Tutar</label>
+            <input type="text" class="form-control" name="maxTopLimitAmount" id="maxTopLimitAmount"
+                   formControlName="maxTopLimitAmount">
+          </div>
+          <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==2">
+            <label for="maxTopLimitRate">Çatı Oranı</label>
+            <input type="text" class="form-control" name="maxTopLimitRate" id="maxTopLimitRate"
+                   formControlName="maxTopLimitRate">
+          </div>
+          <div class="form-group mt-3">
+            <label for="maxTopLimitUtilization">Çatı Max Yararlanma</label>
+            <input type="text" class="form-control" name="maxTopLimitUtilization" id="maxTopLimitUtilization"
+                   formControlName="maxTopLimitUtilization">
+          </div>
+        </form>
+      </div>
+      <div class="p-4">
+        <h4>Tarihçe</h4>
+        <div class="row fw-bold">
+          <div class="col d-flex justify-content-start">
+            İşlemi Yapan
+          </div>
+          <div class="col d-flex justify-content-end">
+            İşlem Tarihi
+          </div>
+        </div>
+        <hr class="blue mt-2 mb-0">
+        <div class="history-row" *ngFor="let item of history">
+          <div class="col d-flex justify-content-start">{{item.user}}</div>
+          <div class="col d-flex justify-content-end">{{item.date}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-5">
+      <app-auth-check [authorization]="currentUserAuthorizations.approve">
+        <button class="btn btn-danger px-5 mx-2" type="button" (click)="approveState(false)">RET</button>
+        <button class="btn btn-orange px-5 mx-2" type="button" (click)="approveState(true)">ONAYLA</button>
+      </app-auth-check>
+    </div>
+  </div>
+</app-main-content>

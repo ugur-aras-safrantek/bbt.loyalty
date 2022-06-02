@@ -34,4 +34,17 @@ export class ApproveService {
     const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionApproveState}/${state}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
   }
+
+  campaignLimitsApproveForm(id: any) {
+    let params = new HttpParams();
+    params = params.append('id', id);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignLimitsApproveForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
+
+  campaignLimitsApproveState(state: boolean) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignLimitsApproveState}/${state}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url);
+  }
 }

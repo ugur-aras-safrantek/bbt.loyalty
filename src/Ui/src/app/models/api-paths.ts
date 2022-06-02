@@ -60,4 +60,7 @@ export enum ApiPaths {
   CampaignDefinitionApproveForm = 'Approve/get-campaign-form',
   CampaignRuleDocumentDownload = 'Approve/document-download',
   CampaignDefinitionApproveState = 'Approve/campaign',
+
+  CampaignLimitsApproveForm = 'Approve/get-toplimit-approval-form',
+  CampaignLimitsApproveState = 'Approve/top-limit',
 }
