@@ -56,4 +56,14 @@ export enum ApiPaths {
   CustomerReportGetByFilter = 'Report/get-customer-report-by-filter',
   CustomerReportGetByFilterExcelFile = 'Report/get-customer-report-by-filter-excel',
   CustomerDetail = 'Report/get-customer-report-detail',
+
+  CampaignDefinitionApproveForm = 'Approve/get-campaign-form',
+  CampaignRuleDocumentDownload = 'Approve/document-download',
+  CampaignDefinitionApproveState = 'Approve/campaign',
+
+  CampaignLimitsApproveForm = 'Approve/get-toplimit-approval-form',
+  CampaignLimitsApproveState = 'Approve/top-limit',
+
+  TargetDefinitionApproveForm = 'Approve/get-target-approval-form',
+  TargetDefinitionApproveState = 'Approve/target-definition',
 }

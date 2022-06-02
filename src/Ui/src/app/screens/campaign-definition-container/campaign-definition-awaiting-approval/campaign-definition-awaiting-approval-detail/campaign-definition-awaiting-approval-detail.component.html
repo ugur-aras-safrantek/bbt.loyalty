@@ -1,1 +1,349 @@
-<p>campaign-definition-awaiting-approval-detail works!</p>
+<app-main-content>
+  <div class="container">
+    <div class="box">
+      <div class="bg-header">
+        <div class="row">
+          <div class="col display">
+            Görüntüle
+          </div>
+          <div class="col-auto wait">
+            Onay bekliyor
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="campaignDefinitionFormGroup" class="p-4">
+        <h4>Kampanya Tanımı</h4>
+        <div class="row align-items-end">
+          <div class="col">
+            <div class="row" [ngClass]="{ 'mb-3': campaignDefinitionF.isContract }">
+              <div class="col pl-20px">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input scale-2x" type="checkbox" id="isActive" name="isActive"
+                           formControlName="isActive">
+                    <label class="form-check-label ms-2" for="isActive">Aktif</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input scale-2x" type="checkbox" id="isContract" name="isContract"
+                           formControlName="isContract">
+                    <label class="form-check-label ms-2" for="isContract">
+                      Sözleşme
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row align-items-end" *ngIf="campaignDefinitionF.isContract">
+              <div class="col">
+                <div class="form-group">
+                  <label for="contractId">Sözleşme ID</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="contractId" id="contractId"
+                           formControlName="contractId">
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-secondary px-5" (click)="showDocumentFile()">Göster</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group">
+              <label for="programTypeId">Program Tipi</label>
+              <input type="text" class="form-control" name="programTypeId" id="programTypeId"
+                     formControlName="programTypeId">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="viewOptionId">Görüntüleme</label>
+              <input type="text" class="form-control" name="viewOptionId" id="viewOptionId"
+                     formControlName="viewOptionId">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group">
+              <label for="name">Kampanya Adı</label>
+              <input type="text" class="form-control" name="name" id="name"
+                     formControlName="name">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="code">Kampanya Kodu</label>
+              <input type="text" class="form-control" name="code" id="code"
+                     formControlName="code">
+            </div>
+          </div>
+        </div>
+        <div class="accordion mt-3" id="accordionSummary">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSummary">
+              <button class="accordion-button collapsed accordion-custom" type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseSummary"
+                      aria-expanded="true"
+                      aria-controls="collapseSummary">
+                Özet
+              </button>
+            </h2>
+            <div id="collapseSummary" class="accordion-collapse collapse" aria-labelledby="headingSummary"
+                 data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="summaryTr">Türkçe</label>
+                      <angular-editor [config]="editorConfig" formControlName="summaryTr" id="summaryTr"
+                                      placeholder="Özet (Türkçe)">
+                      </angular-editor>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="summaryEn">İngilizce</label>
+                      <angular-editor [config]="editorConfig" formControlName="summaryEn" id="summaryEn"
+                                      placeholder="Özet (İngilizce)">
+                      </angular-editor>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion mt-3" id="accordionContent">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingContent">
+              <button class="accordion-button collapsed accordion-custom" type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseContent"
+                      aria-expanded="true"
+                      aria-controls="collapseContent">
+                İçerik
+              </button>
+            </h2>
+            <div id="collapseContent" class="accordion-collapse collapse" aria-labelledby="headingContent"
+                 data-bs-parent="#accordionContent">
+              <div class="accordion-body">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="contentTr">Türkçe</label>
+                      <angular-editor [config]="editorConfig" formControlName="contentTr" id="contentTr"
+                                      placeholder="İçerik (Türkçe)">
+                      </angular-editor>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="contentEn">İngilizce</label>
+                      <angular-editor [config]="editorConfig" formControlName="contentEn" id="contentEn"
+                                      placeholder="İçerik (İngilizce)">
+                      </angular-editor>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group">
+              <label for="campaignListImageUrl" class="form-label">Kampanya Liste Görseli</label>
+              <input type="text" class="form-control" name="campaignListImageUrl" id="campaignListImageUrl"
+                     formControlName="campaignListImageUrl">
+            </div>
+            <a target="_blank"
+               *ngIf="campaignDefinitionF.campaignListImageDownloadUrl.value && campaignDefinitionF.campaignListImageDownloadUrl.value != ''"
+               [href]="campaignDefinitionF.campaignListImageDownloadUrl.value">
+              Görüntüle
+            </a>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="campaignDetailImageUrl" class="form-label">Kampanya Detay Görseli</label>
+              <input type="text" class="form-control" name="campaignDetailImageUrl" id="campaignDetailImageUrl"
+                     formControlName="campaignDetailImageUrl">
+            </div>
+            <a target="_blank"
+               *ngIf="campaignDefinitionF.campaignDetailImageDownloadUrl.value && campaignDefinitionF.campaignDetailImageDownloadUrl.value != ''"
+               [href]="campaignDefinitionF.campaignDetailImageDownloadUrl.value">
+              Görüntüle
+            </a>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group new-camp-calendar">
+              <label for="startDate">Başlama Tarihi</label>
+              <input type="text" class="form-control pl-32px" name="startDate" id="startDate"
+                     formControlName="startDate">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group new-camp-calendar">
+              <label for="endDate">Bitiş Tarihi</label>
+              <input type="text" class="form-control pl-32px" name="endDate" id="endDate"
+                     formControlName="endDate">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="maxNumberOfUser">Max Kullanıcı</label>
+              <input type="text" class="form-control" name="maxNumberOfUser" id="maxNumberOfUser"
+                     formControlName="maxNumberOfUser">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="order">Sıralama</label>
+              <input type="text" class="form-control" name="order" id="order"
+                     formControlName="order">
+            </div>
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="campaignRulesFormGroup" class="p-4">
+        <h4>Kampanya Kuralları</h4>
+        <div class="row">
+          <div class="col-6 form-group mt-3">
+            <label for="joinTypeId">Dahil Olma Şekli</label>
+            <input type="text" class="form-control" name="joinTypeId" id="joinTypeId"
+                   formControlName="joinTypeId">
+          </div>
+          <div class="col-6 mt-3" *ngIf="showForCustomer">
+            <div class="row align-items-end">
+              <div class="col form-group">
+                <label for="contractId">TCKN</label>
+                <input type="text" class="form-control" name="documentName" id="documentName"
+                       formControlName="documentName">
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-secondary px-5" (click)="campaignRuleDocumentDownload()">
+                  Görüntüle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 form-group mt-3" *ngIf="showBusinessLines">
+            <label for="businessLines">İş Kolu</label>
+            <input type="text" class="form-control" name="businessLines" id="businessLines"
+                   formControlName="businessLines">
+          </div>
+          <div class="col-6 form-group mt-3" *ngIf="showBranches">
+            <label for="branches">Şube</label>
+            <input type="text" class="form-control" name="branches" id="branches"
+                   formControlName="branches">
+          </div>
+          <div class="col-6 form-group mt-3" *ngIf="showCustomerTypes">
+            <label for="customerTypes">Müşteri Tipi</label>
+            <input type="text" class="form-control" name="customerTypes" id="customerTypes"
+                   formControlName="customerTypes">
+          </div>
+        </div>
+      </form>
+      <div class="p-4">
+        <h4>Hedef Seçimi</h4>
+        <div class="row pt-3 color-blue fw-bold">
+          <div class="col-1">
+            <img src="/assets/img/conjunction.png">
+          </div>
+          <div class="col-1">
+            Bağlaç
+          </div>
+          <div class="col-10">
+            Hedef Tanım İsmi
+          </div>
+        </div>
+        <hr class="blue">
+        <ng-template *ngFor="let group of campaignTargetGroups">
+          <div class="row campaign-target-row bg-color-blue"
+               *ngFor="let campaignTarget of group.targetList">
+            <div class="col-1"></div>
+            <div class="col-1">VE</div>
+            <div class="col-10">{{campaignTarget.name}}</div>
+          </div>
+          <div class="row campaign-target-row color-blue fw-bold"
+               *ngIf="group != campaignTargetGroups[campaignTargetGroups.length-1]">
+            <div class="col-1"></div>
+            <div class="col-1">
+              VEYA
+            </div>
+            <div class="col-10"></div>
+          </div>
+        </ng-template>
+      </div>
+      <form [formGroup]="campaignGainsFormGroup" class="p-4">
+        <h4>Kazanımlar</h4>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="campaignGainChannelList">Kazanım Kanalı</label>
+              <input type="text" class="form-control" name="campaignGainChannelList" id="campaignGainChannelList"
+                     formControlName="campaignGainChannelList">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <table class="table">
+              <thead class="gain-channel-table-head">
+              <tr>
+                <th>Tutar/Oran</th>
+                <th>Kazanım Tipi</th>
+                <th>Aksiyon</th>
+                <th>Max Yararlanma</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor='let achievement of campaignAchievementList'>
+                <td>{{achievement.rule?.name}}</td>
+                <td>{{achievement.achievementType?.name}}</td>
+                <td>{{achievement.actionOption?.name}}</td>
+                <td>{{achievement.maxUtilization}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+      <div class="p-4">
+        <h4>Tarihçe</h4>
+        <div class="row fw-bold">
+          <div class="col d-flex justify-content-start">
+            İşlemi Yapan
+          </div>
+          <div class="col d-flex justify-content-end">
+            İşlem Tarihi
+          </div>
+        </div>
+        <hr class="blue mt-2 mb-0">
+        <div class="history-row" *ngFor="let item of history">
+          <div class="col d-flex justify-content-start">{{item.user}}</div>
+          <div class="col d-flex justify-content-end">{{item.date}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-5">
+      <app-auth-check [authorization]="currentUserAuthorizations.approve">
+        <button class="btn btn-danger px-5 mx-2" type="button" (click)="approveState(false)">RET</button>
+        <button class="btn btn-orange px-5 mx-2" type="button" (click)="approveState(true)">ONAYLA</button>
+      </app-auth-check>
+    </div>
+  </div>
+</app-main-content>

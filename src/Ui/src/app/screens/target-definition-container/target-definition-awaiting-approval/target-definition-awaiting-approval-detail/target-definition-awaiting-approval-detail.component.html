@@ -1,1 +1,245 @@
-<p>target-definition-awaiting-approval-detail works!</p>
+<app-main-content>
+  <div class="container">
+    <div class="box">
+      <div class="bg-header">
+        <div class="row">
+          <div class="col display">
+            Görüntüle
+          </div>
+          <div class="col-auto wait">
+            Onay bekliyor
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="targetDefinitionFormGroup" class="p-4">
+        <h4>Hedef Tanımı</h4>
+        <div class="row">
+          <div class="col-2 mt-3 ms-2 d-flex justify-content-start">
+            <div class="form-group">
+              <div class="form-check">
+                <input class="form-check-input scale-2x" type="checkbox"
+                       name="isActive" id="isActive" formControlName="isActive">
+                <label class="form-check-label ms-2" for="isActive">Aktif</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col form-group">
+            <label for="name">Hedef Tanım İsmi</label>
+            <input type="text" class="form-control" name="name" id="name"
+                   formControlName="name">
+          </div>
+          <div class="col form-group">
+            <label for="title">Görüntülenecek Hedef Başlığı</label>
+            <input type="text" class="form-control" name="title" id="title"
+                   formControlName="title">
+          </div>
+        </div>
+        <div class="row mt-3" *ngIf="id">
+          <div class="col-6 form-group">
+            <label for="id">Hedef ID</label>
+            <input type="text" class="form-control" name="id" id="id"
+                   formControlName="id">
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="targetSourceFormGroup" class="p-4">
+        <h4>Hedef Kaynağı</h4>
+        <div class="form-group">
+          <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
+          <input type="text" class="form-control" name="targetViewTypeId" id="targetViewTypeId"
+                 formControlName="targetViewTypeId">
+        </div>
+        <div class="row mt-3" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value">
+          <div class="col">
+            <div class="form-group">
+              <label for="targetSourceId">Hedef Kaynağı</label>
+              <input type="text" class="form-control" name="targetSourceId" id="targetSourceId"
+                     formControlName="targetSourceId">
+            </div>
+          </div>
+          <div class="col" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==1">
+            <div class="form-group">
+              <label for="flowName">Akış İsmi</label>
+              <input type="text" class="form-control" name="flowName" id="flowName"
+                     formControlName="flowName">
+            </div>
+          </div>
+          <div class="col" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==2">
+            <div class="form-group">
+              <label for="condition">Koşul</label>
+              <input type="text" class="form-control" name="condition" id="condition"
+                     formControlName="condition">
+            </div>
+          </div>
+        </div>
+        <div *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==1">
+          <div class="row mt-3">
+            <div class="col">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="totalAmount">Toplam Tutar</label>
+                    <input type="text" class="form-control" name="totalAmount" id="totalAmount"
+                           formControlName="totalAmount">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <label for="numberOfTransaction">İşlem Adedi</label>
+                    <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
+                           formControlName="numberOfTransaction">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="flowFrequency">Akış Frekansı</label>
+                <input type="text" class="form-control" name="flowFrequency" id="flowFrequency"
+                       formControlName="flowFrequency">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <div class="form-group">
+                <label for="additionalFlowTime">Akış Ek Süresi</label>
+                <input type="text" class="form-control" name="additionalFlowTime" id="additionalFlowTime"
+                       formControlName="additionalFlowTime">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="triggerTimeId">Tetiklenme Zamanı</label>
+                <input type="text" class="form-control" name="triggerTimeId" id="triggerTimeId"
+                       formControlName="triggerTimeId">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==2">
+          <div class="row mt-3">
+            <div class="col">
+              <div class="form-group">
+                <label for="query">Sorgu</label>
+                <input type="text" class="form-control" name="query" id="query"
+                       formControlName="query">
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="verificationTimeId">Kampanya Doğrulama Zamanı</label>
+                <input type="text" class="form-control" name="verificationTimeId" id="verificationTimeId"
+                       formControlName="verificationTimeId">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="targetSourceFormGroup.get('targetSourceId')?.value && targetSourceFormGroup.get('targetViewTypeId')?.value!=3">
+          <div class="accordion mt-3" id="accordionTargetDetail">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTargetDetail">
+                <button class="accordion-button collapsed accordion-custom" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseTargetDetail"
+                        aria-expanded="true"
+                        aria-controls="collapseTargetDetail">
+                  Hedef Detay
+                </button>
+              </h2>
+              <div id="collapseTargetDetail" class="accordion-collapse collapse"
+                   aria-labelledby="headingTargetDetail"
+                   data-bs-parent="#accordionTargetDetail">
+                <div class="accordion-body">
+                  <div class="row mt-3">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="targetDetailTr">Türkçe</label>
+                        <angular-editor [config]="editorConfig"
+                                        formControlName="targetDetailTr" id="targetDetailTr"
+                                        placeholder="Hedef Detay (Türkçe)">
+                        </angular-editor>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="targetDetailEn">İngilizce</label>
+                        <angular-editor [config]="editorConfig"
+                                        formControlName="targetDetailEn" id="targetDetailEn"
+                                        placeholder="Hedef Detay (İngilizce)">
+                        </angular-editor>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="accordion mt-3" id="accordionDescription">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingDescription">
+                <button class="accordion-button collapsed accordion-custom" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDescription"
+                        aria-expanded="true"
+                        aria-controls="collapseDescription">
+                  Açıklama
+                </button>
+              </h2>
+              <div id="collapseDescription" class="accordion-collapse collapse" aria-labelledby="headingDescription"
+                   data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <div class="row mt-3">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="descriptionTr">Türkçe</label>
+                        <angular-editor [config]="editorConfig"
+                                        formControlName="descriptionTr" id="descriptionTr"
+                                        placeholder="Detay (Türkçe)">
+                        </angular-editor>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="descriptionEn">İngilizce</label>
+                        <angular-editor [config]="editorConfig"
+                                        formControlName="descriptionEn" id="descriptionEn"
+                                        placeholder="Detay (İngilizce)">
+                        </angular-editor>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="p-4">
+        <h4>Tarihçe</h4>
+        <div class="row fw-bold">
+          <div class="col d-flex justify-content-start">
+            İşlemi Yapan
+          </div>
+          <div class="col d-flex justify-content-end">
+            İşlem Tarihi
+          </div>
+        </div>
+        <hr class="blue mt-2 mb-0">
+        <div class="history-row" *ngFor="let item of history">
+          <div class="col d-flex justify-content-start">{{item.user}}</div>
+          <div class="col d-flex justify-content-end">{{item.date}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-5">
+      <app-auth-check [authorization]="currentUserAuthorizations.approve">
+        <button class="btn btn-danger px-5 mx-2" type="button" (click)="approveState(false)">RET</button>
+        <button class="btn btn-orange px-5 mx-2" type="button" (click)="approveState(true)">ONAYLA</button>
+      </app-auth-check>
+    </div>
+  </div>
+</app-main-content>
