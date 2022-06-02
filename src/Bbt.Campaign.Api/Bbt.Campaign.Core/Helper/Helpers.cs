@@ -1,12 +1,15 @@
 ﻿using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Paging;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 
 namespace Bbt.Campaign.Core.Helper
 {
     public static class Helpers
     {
+        public static string dateTimeFormat = "dd-MM-yyyy hh:mm:ss";
+
         public static PagingDto Paging(int totalItems, int currentPage, int pageSize = 10)
         {
             if (totalItems <= 0)
@@ -71,27 +74,52 @@ namespace Bbt.Campaign.Core.Helper
             return pager;
         }
 
-        public static string ConvertDotFormatDatetimeString(string dateStr) 
-        {
-            //9-6-2022  06/09/2022    IFormatProvider culture = new CultureInfo("en-US");
-            //"13-06-2019 00:00:00"
+        //public static string ConvertDotFormatDatetimeString(string dateStr) 
+        //{
+        //    //9-6-2022  06/09/2022    IFormatProvider culture = new CultureInfo("en-US");
+        //    //"13-06-2019 00:00:00"
 
-            string[] dateArray = dateStr.Split('-');
-            //string day = dateArray[0].PadLeft(2, '0');
-            //string month = dateArray[1].PadLeft(2, '0');
+        //    string[] dateArray = dateStr.Split('-');
+        //    //string day = dateArray[0].PadLeft(2, '0');
+        //    //string month = dateArray[1].PadLeft(2, '0');
+        //    string day = dateArray[0].PadLeft(2, '0');
+        //    string month = dateArray[1].PadLeft(2, '0');
+        //    string year = dateArray[2];
+
+        //    dateStr = string.Concat(day, "-", month, "-", year, " 00:00:00");
+
+
+        //    //return int.Parse(dateArray[1]).ToString() + "-" + int.Parse(dateArray[0]).ToString()
+        //    //    + "-" + int.Parse(dateArray[2]).ToString();
+
+        //    //return DateTime.ParseExact(dateStr, "dd-MM-yyyy", null).ToShortDateString();
+
+        //    return dateStr;
+        //}
+
+        //13-06-2019 formatında gelen tarihi döndürür
+        public static string ConvertBackEndDateTimeToStringForUI(DateTime inputDate) 
+        {
+            string day = inputDate.Day.ToString().PadLeft(2, '0');
+            string month = inputDate.Month.ToString().PadLeft(2, '0');
+            string year = inputDate.Year.ToString();
+            string seperator = "-";
+            string retVal = string.Concat(day, seperator, month, seperator, year);
+            return retVal;
+        }
+
+        public static DateTime ConvertUIDateTimeStringForBackEnd(string inputDate) 
+        {
+            string[] dateArray = inputDate.Split('-');
             string day = dateArray[0].PadLeft(2, '0');
             string month = dateArray[1].PadLeft(2, '0');
             string year = dateArray[2];
-
-            dateStr = string.Concat(day, "-", month, "-", year, " 00:00:00");
-
-
-            //return int.Parse(dateArray[1]).ToString() + "-" + int.Parse(dateArray[0]).ToString()
-            //    + "-" + int.Parse(dateArray[2]).ToString();
-
-            //return DateTime.ParseExact(dateStr, "dd-MM-yyyy", null).ToShortDateString();
-
-            return dateStr;
+            inputDate = string.Concat(day, "-", month, "-", year, " 00:00:00");
+            return DateTime.ParseExact(inputDate, dateTimeFormat, CultureInfo.InvariantCulture);
+        }
+        public static DateTime ConvertDateTimeToShortDate(DateTime inputDate)
+        {
+            return new DateTime(inputDate.Year, inputDate.Month, inputDate.Day);
         }
 
         public static string TarihDonustur(this DateTime tarih)

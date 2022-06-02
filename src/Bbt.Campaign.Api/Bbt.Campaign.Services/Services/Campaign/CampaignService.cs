@@ -33,8 +33,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-        IFormatProvider culture = new CultureInfo("en-US");
-        //private static string dateFormat = "d";
+
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationService, IDraftService draftService)
         {
@@ -49,68 +48,55 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-            try
-            {
-                campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
-                campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
 
-                await CheckValidationAsync(campaign, 0);
+            await CheckValidationAsync(campaign, 0);
 
+            //var entity = _mapper.Map<CampaignEntity>(campaign);
 
-                //var entity = _mapper.Map<CampaignEntity>(campaign);
+            CampaignEntity entity = new CampaignEntity();
 
-                CampaignEntity entity = new CampaignEntity();
+            entity.ContractId = campaign.ContractId;
+            entity.ProgramTypeId = campaign.ProgramTypeId;
+            entity.SectorId = campaign.SectorId;
+            entity.ViewOptionId = campaign.ViewOptionId;
+            entity.IsBundle = campaign.IsBundle;
+            entity.IsActive = campaign.IsActive;
+            entity.IsContract = campaign.IsContract;
+            entity.DescriptionTr = campaign.DescriptionTr;
+            entity.DescriptionEn = campaign.DescriptionEn;
+            entity.StartDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
+            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
+            entity.Name = campaign.Name;
+            entity.Order = campaign.Order;
+            entity.TitleTr = campaign.TitleTr;
+            entity.TitleEn = campaign.TitleEn;
+            entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
+            entity.ParticipationTypeId = campaign.ParticipationTypeId;
 
-                entity.ContractId = campaign.ContractId;
-                entity.ProgramTypeId = campaign.ProgramTypeId;
-                entity.SectorId = campaign.SectorId;
-                entity.ViewOptionId = campaign.ViewOptionId;
-                entity.IsBundle = campaign.IsBundle;
-                entity.IsActive = campaign.IsActive;
-                entity.IsContract = campaign.IsContract;
-                entity.DescriptionTr = campaign.DescriptionTr;
-                entity.DescriptionEn = campaign.DescriptionEn;
-                entity.EndDate = DateTime.ParseExact(campaign.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-                entity.StartDate = DateTime.ParseExact(campaign.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-                entity.Name = campaign.Name;
-                entity.Order = campaign.Order;
-                entity.TitleTr = campaign.TitleTr;
-                entity.TitleEn = campaign.TitleEn;
-                entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
-                entity.ParticipationTypeId = campaign.ParticipationTypeId;
+            entity.CampaignDetail = new CampaignDetailEntity();
+            entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
+            entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
+            entity.CampaignDetail.SummaryEn = campaign.CampaignDetail.SummaryEn;
+            entity.CampaignDetail.SummaryTr = campaign.CampaignDetail.SummaryTr;
+            entity.CampaignDetail.CampaignDetailImageUrl = campaign.CampaignDetail.CampaignDetailImageUrl;
+            entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
+            entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
+            entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
 
-                entity.CampaignDetail = new CampaignDetailEntity();
-                entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
-                entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
-                entity.CampaignDetail.SummaryEn = campaign.CampaignDetail.SummaryEn;
-                entity.CampaignDetail.SummaryTr = campaign.CampaignDetail.SummaryTr;
-                entity.CampaignDetail.CampaignDetailImageUrl = campaign.CampaignDetail.CampaignDetailImageUrl;
-                entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
-                entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
-                entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
+            entity = await SetDefaults(entity);
+            entity.StatusId = (int)StatusEnum.Draft;
+            entity.Code = Helpers.CreateCampaignCode();
+            entity.CreatedBy = userid;
+            entity.CampaignDetail.CreatedBy = userid;
 
-
-
-                entity = await SetDefaults(entity);
-                entity.StatusId = (int)StatusEnum.Draft;
-                entity.Code = Helpers.CreateCampaignCode();
-                entity.CreatedBy = userid;
-                entity.CampaignDetail.CreatedBy = userid;
-
-                entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
-                await _unitOfWork.SaveChangesAsync();
-            
+            entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             //entity.Code = entity.Id.ToString();
             //await _unitOfWork.SaveChangesAsync();
 
             return await GetCampaignAsync(entity.Id, userid);
-            }
-            catch(Exception ex) 
-            {
-                throw new Exception(ex.ToString());
-            }
-            return null;
+
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid)
@@ -119,8 +105,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
-            campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
-            campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
             await CheckValidationAsync(campaign, campaign.Id);
 
             var entity = _unitOfWork.GetRepository<CampaignEntity>()
@@ -176,8 +160,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.IsContract = campaign.IsContract;
             entity.DescriptionTr = campaign.DescriptionTr;
             entity.DescriptionEn = campaign.DescriptionEn;
-            entity.EndDate = DateTime.ParseExact(campaign.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-            entity.StartDate = DateTime.ParseExact(campaign.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+            entity.StartDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
+            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
             entity.Name = campaign.Name;
             entity.Order = campaign.Order;
             entity.TitleTr = campaign.TitleTr;
@@ -260,8 +244,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
-            mappedCampaign.StartDate = campaignEntity.StartDate.ToShortDateString().Replace('.', '-');
-            mappedCampaign.EndDate = campaignEntity.EndDate.ToShortDateString().Replace('.', '-');
+            mappedCampaign.StartDate = Helpers.ConvertBackEndDateTimeToStringForUI(campaignEntity.StartDate);
+            mappedCampaign.EndDate = Helpers.ConvertBackEndDateTimeToStringForUI(campaignEntity.EndDate);
 
             return  mappedCampaign;
         }
@@ -384,12 +368,17 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 entity.Order = null;
 
             if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignListImageUrl) ||
-                string.IsNullOrEmpty(entity.CampaignDetail.CampaignListImageUrl))
-                entity.CampaignDetail.CampaignListImageUrl = StaticValues.CampaignListImageUrlDefault;
-
+                string.IsNullOrEmpty(entity.CampaignDetail.CampaignListImageUrl)) 
+            { 
+                entity.CampaignDetail.CampaignListImageUrl = await _parameterService.GetServiceConstantValue("CampaignListImageUrl");
+            }
+                
             if (string.IsNullOrWhiteSpace(entity.CampaignDetail.CampaignDetailImageUrl) ||
-                string.IsNullOrEmpty(entity.CampaignDetail.CampaignDetailImageUrl))
-                entity.CampaignDetail.CampaignDetailImageUrl = StaticValues.CampaignDetailImageUrlDefault;
+                string.IsNullOrEmpty(entity.CampaignDetail.CampaignDetailImageUrl)) 
+            { 
+                entity.CampaignDetail.CampaignDetailImageUrl = await _parameterService.GetServiceConstantValue("CampaignDetailImageUrl");
+            }
+                
 
             return entity;
         }
@@ -488,8 +477,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             //startdate ve enddate
-            DateTime startDate = DateTime.ParseExact(input.StartDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
-            DateTime endDate = DateTime.ParseExact(input.EndDate, "dd-MM-yyyy hh:mm:ss", CultureInfo.InvariantCulture);
+            DateTime startDate = Helpers.ConvertUIDateTimeStringForBackEnd(input.StartDate);
+            DateTime endDate = Helpers.ConvertUIDateTimeStringForBackEnd(input.EndDate);
             DateTime previousDay  = DateTime.Now.AddDays(-1);
 
             if (startDate < previousDay)
@@ -502,7 +491,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             //sıralama: birleştirilebilir ve  değilse zorunludur
             if (!input.IsBundle && input.IsActive)
             {
-                DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+                DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
                 int order = input.Order ?? 0;
 
                 if (order <= 0)
@@ -619,8 +608,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 Code = x.Code,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
-                StartDateStr = x.StartDate.ToShortDateString(),
-                EndDateStr = x.EndDate.ToShortDateString(),
+                StartDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.StartDate),
+                EndDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.EndDate),
                 ContractId = x.ContractId,
                 IsActive = x.IsActive,
                 IsBundle = x.IsBundle,
@@ -732,7 +721,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         {
             List<int> orderList = new List<int>();
 
-            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             List<int?> usedList = _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.IsActive && x.EndDate >= today 
                             && !x.IsBundle && (x.Order ?? 0) > 0 && x.StatusId == (int)StatusEnum.Approved)

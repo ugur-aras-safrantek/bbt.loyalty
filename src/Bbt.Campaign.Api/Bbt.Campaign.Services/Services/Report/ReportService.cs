@@ -137,8 +137,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 Code = x.Code,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
-                StartDateStr = x.StartDate.ToShortDateString(),
-                EndDateStr = x.EndDate.ToShortDateString(),
+                StartDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.StartDate),
+                EndDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.EndDate),
                 IsContract = x.IsContract,
                 ContractId = x.ContractId,
                 IsActive = x.IsActive,
@@ -488,16 +488,16 @@ namespace Bbt.Campaign.Services.Services.Report
                 customerReportDetailEntity.BusinessLine = customerCampaign.BusinessLineName;
                 customerReportDetailEntity.EarningType = customerCampaign.AchievementTypeName;
                 customerReportDetailEntity.CustomerJoinDate = customerCampaign.JoinDate;
-                customerReportDetailEntity.CustomerJoinDateStr = customerCampaign.JoinDate.ToShortDateString().Replace('.', '-');
+                customerReportDetailEntity.CustomerJoinDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(customerCampaign.JoinDate);
                 customerReportDetailEntity.EarningAmount = 30;
                 customerReportDetailEntity.EarningAmountStr = Helpers.ConvertNullablePriceString(customerReportDetailEntity.EarningAmount);
                 customerReportDetailEntity.EarningRate = null;
                 customerReportDetailEntity.EarningRateStr = Helpers.ConvertNullablePriceString(customerReportDetailEntity.EarningRate);
                 customerReportDetailEntity.IsEarningUsed = true;
-                customerReportDetailEntity.EarningUsedDate = DateTime.Parse("2022-05-18T00:00:00");
-                customerReportDetailEntity.EarningUsedDateStr = customerReportDetailEntity.EarningUsedDate?.ToShortDateString().Replace('.', '-');
+                customerReportDetailEntity.EarningUsedDate = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
+                customerReportDetailEntity.EarningUsedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(DateTime.Now.AddDays(-15));
                 customerReportDetailEntity.CampaignStartDate = customerCampaign.CampaignStartDate;
-                customerReportDetailEntity.CampaignStartDateStr = customerCampaign.CampaignStartDate.ToShortDateString().Replace('.', '-'); 
+                customerReportDetailEntity.CampaignStartDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(customerCampaign.CampaignStartDate); 
                 response = _mapper.Map<CustomerReportDetailDto>(customerReportDetailEntity);
 
                 usedAmount = 1000;

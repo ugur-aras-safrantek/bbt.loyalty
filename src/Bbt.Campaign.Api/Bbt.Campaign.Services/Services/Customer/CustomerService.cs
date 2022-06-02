@@ -63,7 +63,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
 
                 entity.IsJoin = request.IsJoin;
-                entity.StartDate = request.IsJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.StartDate = request.IsJoin ? Helpers.ConvertDateTimeToShortDate(DateTime.Now) : null;
                 entity.LastModifiedBy = request.CustomerCode;
 
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
@@ -75,7 +75,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 entity.CampaignId = request.CampaignId;
                 entity.IsFavorite = false;
                 entity.IsJoin = request.IsJoin;
-                entity.StartDate = request.IsJoin ? DateTime.Parse(DateTime.Now.ToShortDateString()) : null;
+                entity.StartDate = request.IsJoin ? Helpers.ConvertDateTimeToShortDate(DateTime.Now) : null;
                 entity.CreatedBy = request.CustomerCode;
 
                 entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
@@ -127,7 +127,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if(campaignId <= 0)
                 throw new Exception("Kampanya giriniz.");
 
-            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             var campaignEntity = _unitOfWork.GetRepository<CampaignEntity>()
                     .GetAll(x => x.Id == campaignId && !x.IsDeleted && x.IsActive && x.EndDate >= today)
                     .FirstOrDefault();
@@ -166,7 +166,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             CustomerCampaignListFilterResponse response = new CustomerCampaignListFilterResponse();
-            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
 
             IQueryable<CampaignDetailListEntity> campaignQuery = await GetCampaignQueryAsync(request);
             if (campaignQuery.Count() == 0)
@@ -246,7 +246,7 @@ namespace Bbt.Campaign.Services.Services.Customer
         }
         private async Task<IQueryable<CampaignDetailListEntity>> GetCampaignQueryAsync(CustomerCampaignListFilterRequest request) 
         {
-            DateTime today = DateTime.Parse(DateTime.Now.ToShortDateString());
+            DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
                 .GetAll(x => !x.IsDeleted && x.IsActive && x.ViewOptionId != (int)ViewOptionsEnum.InvisibleCampaign);
 
