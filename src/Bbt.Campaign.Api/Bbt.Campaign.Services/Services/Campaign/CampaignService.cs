@@ -51,12 +51,45 @@ namespace Bbt.Campaign.Services.Services.Campaign
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
             try
             {
-            //    campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
+                campaign.StartDate = Helpers.ConvertDotFormatDatetimeString(campaign.StartDate);
+                campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
 
-
-            //    campaign.EndDate = Helpers.ConvertDotFormatDatetimeString(campaign.EndDate);
                 await CheckValidationAsync(campaign, 0);
-                var entity = _mapper.Map<CampaignEntity>(campaign);
+
+
+                //var entity = _mapper.Map<CampaignEntity>(campaign);
+
+                CampaignEntity entity = new CampaignEntity();
+
+                entity.ContractId = campaign.ContractId;
+                entity.ProgramTypeId = campaign.ProgramTypeId;
+                entity.SectorId = campaign.SectorId;
+                entity.ViewOptionId = campaign.ViewOptionId;
+                entity.IsBundle = campaign.IsBundle;
+                entity.IsActive = campaign.IsActive;
+                entity.IsContract = campaign.IsContract;
+                entity.DescriptionTr = campaign.DescriptionTr;
+                entity.DescriptionEn = campaign.DescriptionEn;
+                entity.EndDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.EndDate), dateFormat, provider);
+                entity.StartDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.StartDate), dateFormat, provider);
+                entity.Name = campaign.Name;
+                entity.Order = campaign.Order;
+                entity.TitleTr = campaign.TitleTr;
+                entity.TitleEn = campaign.TitleEn;
+                entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
+                entity.ParticipationTypeId = campaign.ParticipationTypeId;
+
+                entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
+                entity.CampaignDetail.DetailTr = campaign.CampaignDetail.DetailTr;
+                entity.CampaignDetail.SummaryEn = campaign.CampaignDetail.SummaryEn;
+                entity.CampaignDetail.SummaryTr = campaign.CampaignDetail.SummaryTr;
+                entity.CampaignDetail.CampaignDetailImageUrl = campaign.CampaignDetail.CampaignDetailImageUrl;
+                entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
+                entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
+                entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
+
+
+
                 entity = await SetDefaults(entity);
                 entity.StatusId = (int)StatusEnum.Draft;
                 entity.Code = Helpers.CreateCampaignCode();
@@ -142,8 +175,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.IsContract = campaign.IsContract;
             entity.DescriptionTr = campaign.DescriptionTr;
             entity.DescriptionEn = campaign.DescriptionEn;
-            entity.EndDate = DateTime.Parse(campaign.EndDate);
-            entity.StartDate = DateTime.Parse(campaign.StartDate);
+            entity.EndDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.EndDate), dateFormat, provider);
+            entity.StartDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(campaign.StartDate), dateFormat, provider);
             entity.Name = campaign.Name;
             entity.Order = campaign.Order;
             entity.TitleTr = campaign.TitleTr;
@@ -454,8 +487,8 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
 
             //startdate ve enddate
-            DateTime startDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(input.StartDate), dateFormat, provider);
-            DateTime endDate = DateTime.ParseExact(Helpers.ConvertDotFormatDatetimeString(input.EndDate), dateFormat, CultureInfo.InvariantCulture);
+            DateTime startDate = DateTime.ParseExact(input.StartDate, dateFormat, provider);
+            DateTime endDate = DateTime.ParseExact(input.EndDate, dateFormat, provider);
             DateTime previousDay  = DateTime.Now.AddDays(-1);
 
             if (startDate < previousDay)
