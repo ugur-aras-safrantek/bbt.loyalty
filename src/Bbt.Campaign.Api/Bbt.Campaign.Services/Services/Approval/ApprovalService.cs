@@ -98,6 +98,9 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, string userid)
         {
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //await _authorizationService.CheckAuthorizationAsync(userid, (int)ModuleTypeEnu, authorizationTypeId);
+
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -105,7 +108,6 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Kampanya bulunamadı");
 
             campaignEntity.StatusId = (int)StatusEnum.Draft;
-            campaignEntity.ApproveDate = DateTime.UtcNow;
             campaignEntity.LastModifiedBy = userid;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
@@ -436,22 +438,21 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
-        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId) 
+        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId, string userId) 
         {
             CampaignApproveFormDto response = new CampaignApproveFormDto();
 
-            var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == draftId && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (campaignDraftEntity == null)
-                throw new Exception("Kampanya bulunamadı");
-
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll().Where(x =>x.Id == draftId);
-            var campaignDraft = _reportService.ConvertCampaignReportList(campaignQuery)[0];
-            response.CampaignDraft = campaignDraft;
+            if (!campaignQuery.Any()) 
+            {
+                throw new Exception("Kampanya bulunamadı");
+            }
+
+            //var campaignDraft = _reportService.ConvertCampaignReportList(campaignQuery)[0];
+            response.Campaign = _reportService.ConvertCampaignReportList(campaignQuery)[0];
 
 
-            response.CampaignChannelCodeListDraft = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
+            response.CampaignChannelCodeList = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
 
 
             //var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()

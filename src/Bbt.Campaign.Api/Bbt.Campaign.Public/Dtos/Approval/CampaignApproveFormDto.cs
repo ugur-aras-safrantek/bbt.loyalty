@@ -12,20 +12,20 @@ namespace Bbt.Campaign.Public.Dtos.Approval
     public class CampaignApproveFormDto : CampaignParameterFormDto
     {
         public bool isNewRecord { get; set; }
-        public CampaignReportListDto CampaignDraft { get; set; }
-        public CampaignRuleDto CampaignRuleDraft { get; set; } 
-        public string CampaignChannelCodeListDraft { get; set; }
-        public List<CampaignAchievementDto> CampaignAchievementListDraft { get; set; }
-        public List<CampaignTargetDto> CampaignTargetListDraft { get; set; }
+        public CampaignReportListDto Campaign { get; set; }
+        public CampaignRuleDto CampaignRule { get; set; } 
+        public string CampaignChannelCodeList { get; set; }
+        public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
+        public List<CampaignTargetDto> CampaignTargetList { get; set; }
 
         
 
 
-        public CampaignDto Campaign { get; set; }
-        public CampaignDetailDto CampaignDetail { get; set; }
-        public CampaignRuleDto CampaignRule { get; set; }
-        public CampaignAchievementDto CampaignAchievement { get; set; }
-        public List<CampaignTargetDto> CampaignTargetList { get; set; }
+        //public CampaignDto Campaign { get; set; }
+        //public CampaignDetailDto CampaignDetail { get; set; }
+        //public CampaignRuleDto CampaignRule { get; set; }
+        //public CampaignAchievementDto CampaignAchievement { get; set; }
+        //public List<CampaignTargetDto> CampaignTargetList { get; set; }
 
     }
 }

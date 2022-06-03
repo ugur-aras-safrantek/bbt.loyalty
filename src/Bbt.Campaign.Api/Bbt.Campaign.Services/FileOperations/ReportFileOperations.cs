@@ -24,11 +24,18 @@ namespace Bbt.Campaign.Services.FileOperations
                 HeaderSetsListe(worksheet, "I", "Sözleşme ID", 20);
                 HeaderSetsListe(worksheet, "J", "Sektör", 20);
                 HeaderSetsListe(worksheet, "K", "Sıralama", 20);
-                HeaderSetsListe(worksheet, "L", "Katılım Sağlanma Adedi", 20);
-                HeaderSetsListe(worksheet, "M", "Kazanım Tipi", 20);
-                HeaderSetsListe(worksheet, "N", "Kazanım Tutarı", 20);
-                HeaderSetsListe(worksheet, "O", "Kazanım Oranı", 20);
-                HeaderSetsListe(worksheet, "P", "Çatı Limit", 20);
+
+                HeaderSetsListe(worksheet, "L", "Görüntüleme", 20);
+                HeaderSetsListe(worksheet, "M", "Dahil Olma Şekli", 20);
+
+
+
+
+                HeaderSetsListe(worksheet, "N", "Katılım Sağlanma Adedi", 20);
+                HeaderSetsListe(worksheet, "O", "Kazanım Tipi", 20);
+                HeaderSetsListe(worksheet, "P", "Kazanım Tutarı", 20);
+                HeaderSetsListe(worksheet, "Q", "Kazanım Oranı", 20);
+                HeaderSetsListe(worksheet, "R", "Çatı Limit", 20);
 
                 int currentRow = 1;
                 int column = 1;
@@ -88,6 +95,16 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     column++;
                     worksheet.Cell(currentRow, column).Value = campaign.Order;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = campaign.ViewOptionName;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = campaign.JoinTypeName;
                     worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 

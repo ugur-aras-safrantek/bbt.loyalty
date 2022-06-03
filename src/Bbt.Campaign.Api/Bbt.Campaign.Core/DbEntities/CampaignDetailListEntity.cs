@@ -28,11 +28,13 @@ namespace Bbt.Campaign.Core.DbEntities
         public int? ViewOptionId { get; set; }
         public int? ProgramTypeId { get; set; }
         public int? ParticipationTypeId { get; set; }
+        public int StatusId { get; set; }
 
         public string? SectorName { get; set; }
         public string? ViewOptionName { get; set; }
         public string? ProgramTypeName { get; set; }
         public string? ParticipationTypeName { get; set; }
+        public string StatusName { get; set; }
 
         //Auditable entity fields
         public string CreatedBy { get; set; }

@@ -14,57 +14,29 @@ namespace Bbt.Campaign.Api.Controllers
             _approvalService = approvalService;
         }
 
-
-        /// <summary>
-        /// convert
-        /// </summary>
-        /// <param name="date"></param>
-        /// /// <param name="format"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("ConvertWithInvariantCulture")]
-        public async Task<IActionResult> ConvertWithInvariantCulture(string date, string format)
-        {
-            var result = _approvalService.ConvertWithInvariantCulture(date, format);
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// convert
-        /// </summary>
-        /// <param name="date"></param>
-        /// <param name="format"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("ConvertWithCulture")]
-        public async Task<IActionResult> ConvertWithCulture(string date, string format, string culture)
-        {
-            var result = _approvalService.ConvertWithCulture(date, format, culture);
-            return Ok(result);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
         /// <summary>
         /// Approves the draft campaign.
         /// </summary>
-        /// <param name="id">Record Id of the draft</param>
+        /// <param name="id">Record Id of the draft campaign</param>
         /// <returns></returns>
         [HttpGet]
         [Route("campaign/{id}")]
         public async Task<IActionResult> ApproveCampaign(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
             var result = await _approvalService.ApproveCampaignAsync(id, userId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// DisApproves the draft campaign.
+        /// </summary>
+        /// <param name="id">Record Id of the draft campaign</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("campaign-disapprove/{id}")]
+        public async Task<IActionResult> DisApproveCampaign(int id, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _approvalService.DisApproveCampaignAsync(id, userId);
             return Ok(result);
         }
 
@@ -101,9 +73,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-campaign-form")]
-        public async Task<IActionResult> GetCampaignApprovalFormAsync(int id)
+        public async Task<IActionResult> GetCampaignApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.GetCampaignApprovalFormAsync(id);
+            var result = await _approvalService.GetCampaignApprovalFormAsync(id, userId);
             return Ok(result);
         }
         
@@ -112,26 +84,26 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="id">Record Id of the draft target</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("get-target-approval-form")]
-        public async Task<IActionResult> GetTargetApprovalFormAsync(int id)
-        {
-            var result = await _approvalService.GetTargetApprovalFormAsync(id);
-            return Ok(result);
-        }
+        //[HttpGet]
+        //[Route("get-target-approval-form")]
+        //public async Task<IActionResult> GetTargetApprovalFormAsync(int id)
+        //{
+        //    var result = await _approvalService.GetTargetApprovalFormAsync(id);
+        //    return Ok(result);
+        //}
 
         /// <summary>
         /// Returns the form data for top limit approval page
         /// </summary>
         /// <param name="id">Record Id of the draft top limit</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("get-toplimit-approval-form")]
-        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
-        {
-            var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
-            return Ok(result);
-        }
+        //[HttpGet]
+        //[Route("get-toplimit-approval-form")]
+        //public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
+        //{
+        //    var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
+        //    return Ok(result);
+        //}
 
         /// <summary>
         /// Returns the form data for campaign view page

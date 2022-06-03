@@ -248,7 +248,9 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
-                .GetAll(x => !x.IsDeleted && x.IsActive && x.ViewOptionId != (int)ViewOptionsEnum.InvisibleCampaign);
+                .GetAll(x => !x.IsDeleted && x.IsActive 
+                        && (x.ViewOptionId != (int)ViewOptionsEnum.InvisibleCampaign || x.ViewOptionId == null)
+                        && x.StatusId == (int)StatusEnum.Approved);
 
             if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Campaign)
                 campaignQuery = campaignQuery.Where(t => t.EndDate >= today);
