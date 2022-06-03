@@ -18,6 +18,7 @@ using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignChannelCode;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
@@ -42,10 +43,17 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private readonly IReportService _reportService;
+        private readonly ICampaignAchievementService _campaignAchievementService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignChannelCodeService campaignChannelCodeService,
-            ICampaignTargetService campaignTargetService, IAuthorizationService authorizationservice, IReportService reportService, IDraftService draftService
+            ICampaignService campaignService, 
+            ICampaignRuleService campaignRuleService, 
+            ICampaignChannelCodeService campaignChannelCodeService,
+            ICampaignTargetService campaignTargetService, 
+            IAuthorizationService authorizationservice, 
+            IReportService reportService, 
+            IDraftService draftService,
+            ICampaignAchievementService campaignAchievementService
             )
         {
             _unitOfWork = unitOfWork;
@@ -58,6 +66,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             _authorizationService = authorizationservice;
             _reportService = reportService;
             _draftService = draftService;
+            _campaignAchievementService = campaignAchievementService;
         }
 
         #region campaign
@@ -448,12 +457,10 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Kampanya bulunamadı");
             }
 
-            //var campaignDraft = _reportService.ConvertCampaignReportList(campaignQuery)[0];
             response.Campaign = _reportService.ConvertCampaignReportList(campaignQuery)[0];
-
-
+            response.CampaignTargetList = await _campaignTargetService.GetCampaignTargetDto(draftId, false);
             response.CampaignChannelCodeList = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
-
+            response.CampaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(draftId);
 
             //var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
             //    .GetAllIncluding(x => x.CampaignDetail)

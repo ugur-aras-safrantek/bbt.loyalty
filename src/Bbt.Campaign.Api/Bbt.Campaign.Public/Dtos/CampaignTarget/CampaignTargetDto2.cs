@@ -12,5 +12,9 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public bool IsAchieved { get; set; }
         public List<TargetParameterDto> ProgressBarlist { get; set; }
         public List<TargetParameterDto> Informationlist { get; set; }
+        public string? TargetAmountStr { get; set; }
+        public string? TargetAmountCurrencyCode { get; set; }
+        public string? RemainAmountStr { get; set; }
+        public string? RemainAmountCurrencyCode { get; set; }
     }
 }

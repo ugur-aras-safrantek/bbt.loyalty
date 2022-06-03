@@ -16,7 +16,7 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public CampaignRuleDto CampaignRule { get; set; } 
         public string CampaignChannelCodeList { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
-        public List<CampaignTargetDto> CampaignTargetList { get; set; }
+        public CampaignTargetDto CampaignTargetList { get; set; }
 
         
 

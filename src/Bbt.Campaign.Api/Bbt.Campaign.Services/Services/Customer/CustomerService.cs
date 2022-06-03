@@ -761,7 +761,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 if (response.CampaignTarget.ProgressBarlist.Any()) 
                 {
                     response.UsedAmountStr = response.CampaignTarget.ProgressBarlist[0].UsedAmountStr;
-                    response.UsedAmountCurrencyCode = response.CampaignTarget.ProgressBarlist[0].usedAmountCurrencyCode;
+                    response.UsedAmountCurrencyCode = response.CampaignTarget.ProgressBarlist[0].UsedAmountCurrencyCode;
                 }
             }
 
