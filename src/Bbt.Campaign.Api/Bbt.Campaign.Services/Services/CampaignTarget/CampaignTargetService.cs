@@ -308,9 +308,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                             //Code = "",
                             Title = campaignTarget.Title,
                             DescriptionTr = campaignTarget.DescriptionTr,
-                            //DescriptionEn = campaignTarget.DescriptionEn,
-                            //TargetDetailTr = campaignTarget.TargetDetailTr,
-                            //TargetDetailEn = campaignTarget.TargetDetailEn,
+                            DescriptionEn = campaignTarget.DescriptionEn,
+                            TargetDetailTr = campaignTarget.TargetDetailTr,
+                            TargetDetailEn = campaignTarget.TargetDetailEn,
                         });
                 }
                 campaignTargetDto.TargetGroupList.Add(targetGroupDto);
