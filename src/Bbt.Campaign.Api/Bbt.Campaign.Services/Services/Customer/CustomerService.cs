@@ -668,8 +668,8 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             decimal? totalAchievement = 0;
             decimal? previousMonthAchievement = 0;
-            decimal usedAmount = 0;
-            int usedNumberOfTransaction = 0;
+            //decimal usedAmount = 0;
+            //int usedNumberOfTransaction = 0;
 
 
             response.IsAchieved = false;
@@ -742,28 +742,27 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
 
-            response.CampaignTarget = new CampaignTargetDto2();
-            var campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language);
-            response.CampaignTarget.ProgressBarlist = campaignTargetDto2.ProgressBarlist;
-            response.CampaignTarget.Informationlist = campaignTargetDto2.Informationlist;
+            response.CampaignTarget =  await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language);
+            //response.CampaignTarget.ProgressBarlist = campaignTargetDto2.ProgressBarlist;
+            //response.CampaignTarget.Informationlist = campaignTargetDto2.Informationlist;
 
-            response.IsAchieved = campaignTargetDto2.IsAchieved;
+            response.IsAchieved = response.CampaignTarget.IsAchieved;
 
-            if (StaticValues.IsDevelopment)
-            {
-                usedAmount = 1000;
-                usedNumberOfTransaction = 2;
-                response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
-                response.UsedAmountCurrencyCode = "TRY";
-            }
-            else
-            {
-                if (response.CampaignTarget.ProgressBarlist.Any()) 
-                {
-                    response.UsedAmountStr = response.CampaignTarget.ProgressBarlist[0].UsedAmountStr;
-                    response.UsedAmountCurrencyCode = response.CampaignTarget.ProgressBarlist[0].UsedAmountCurrencyCode;
-                }
-            }
+            //if (StaticValues.IsDevelopment)
+            //{
+            //    usedAmount = 1000;
+            //    usedNumberOfTransaction = 2;
+            //    response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
+            //    response.UsedAmountCurrencyCode = "TRY";
+            //}
+            //else
+            //{
+            //    if (response.CampaignTarget.ProgressBarlist.Any()) 
+            //    {
+            //        response.UsedAmountStr = response.CampaignTarget.ProgressBarlist[0].UsedAmountStr;
+            //        response.UsedAmountCurrencyCode = response.CampaignTarget.ProgressBarlist[0].UsedAmountCurrencyCode;
+            //    }
+            //}
 
             //achievement
             var campaignAchievementList = await _campaignAchievementService.GetCustomerAchievementsAsync(campaignId, customerCode, language);

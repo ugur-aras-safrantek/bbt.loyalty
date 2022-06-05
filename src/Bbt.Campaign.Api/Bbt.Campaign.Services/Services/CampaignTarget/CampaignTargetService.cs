@@ -523,20 +523,21 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang) 
         {
             CampaignTargetDto2 campaignTargetDto2 = new CampaignTargetDto2();
-            List<TargetParameterDto> progressBarlist = new List<TargetParameterDto>();
-            List<TargetParameterDto> informationlist = new List<TargetParameterDto>();
+            List<TargetParameterDto2> progressBarlist = new List<TargetParameterDto2>();
+            List<TargetParameterDto2> informationlist = new List<TargetParameterDto2>();
             List<TargetParameterDto2> targetParameterList = new List<TargetParameterDto2>();
             campaignTargetDto2.IsAchieved = false;
             decimal usedAmount = 0;
+            decimal targetAmount = 0;
+            decimal remainAmount = 0;
+            int index = 0;
             int usedNumberOfTransaction = 0;
             if (StaticValues.IsDevelopment) 
             {
-                usedAmount = 1000;
-                usedNumberOfTransaction = 2;
                 var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
                 campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);
                 var campaignTargetList = CampaignTargetListData.GetCampaignTargetList(campaignTargetQuery);
-                
+
                 foreach (var campaignTarget in campaignTargetList)
                 {
                     TargetParameterDto2 targetParameterDto2 = new TargetParameterDto2();
@@ -545,53 +546,67 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     targetParameterDto2.Title = campaignTarget.Title;
                     targetParameterDto2.TargetViewTypeId = campaignTarget.TargetViewTypeId;
                     targetParameterDto2.TargetGroupId = campaignTarget.TargetGroupId;
-                    targetParameterDto2.TotalAmount = campaignTarget.TotalAmount;
-                    targetParameterDto2.NumberOfTransaction = campaignTarget.NumberOfTransaction;
+                    targetParameterDto2.TotalAmount = campaignTarget.TotalAmount ?? 0;
+                    targetParameterDto2.NumberOfTransaction = campaignTarget.NumberOfTransaction ?? 0;
 
-                    decimal targetAmount;
-                    decimal remainAmount;
-                    if ((campaignTarget.TotalAmount ?? 0) > 0) 
+                    if (campaignTarget.TotalAmount > 0) 
                     {
                         targetAmount = campaignTarget.TotalAmount ?? 0;
+
                         targetParameterDto2.TargetAmount = targetAmount;
                         targetParameterDto2.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
                         targetParameterDto2.TargetAmountCurrencyCode = "TRY";
 
+                        usedAmount = 1000;
                         targetParameterDto2.UsedAmount = usedAmount;
                         targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
                         targetParameterDto2.UsedAmountCurrencyCode = "TRY";
 
-                        //remainAmount = targetAmount > usedAmount ? (targetAmount - usedAmount) : 0;
-                        //targetParameterDto2.RemainAmount = remainAmount;
-                        //targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
-                        //targetParameterDto2.RemainAmountCurrencyCode = "TRY";
+                        remainAmount = (targetAmount > usedAmount) ? (targetAmount - usedAmount) : 0;
+                        targetParameterDto2.RemainAmount = remainAmount;
+                        targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
+                        targetParameterDto2.RemainAmountCurrencyCode = "TRY";
+
+                        targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
+                        targetParameterDto2.IsAchieved = targetParameterDto2.Percent == 100;
+
+                        if (index == 0) 
+                        {
+                            campaignTargetDto2.TargetAmountStr = targetParameterDto2.TargetAmountStr;
+                            campaignTargetDto2.TargetAmountCurrencyCode = "TRY";
+                            campaignTargetDto2.RemainAmountStr = targetParameterDto2.RemainAmountStr;
+                            campaignTargetDto2.RemainAmountCurrencyCode = "TRY";
+                        }
+                        index++;
                     }
-                    else if((campaignTarget.NumberOfTransaction ?? 0) > 0)
+                    else if(campaignTarget.NumberOfTransaction > 0)
                     {
                         targetAmount = campaignTarget.NumberOfTransaction ?? 0;
+
                         targetParameterDto2.TargetAmount = targetAmount;
                         targetParameterDto2.TargetAmountStr = campaignTarget.NumberOfTransaction.ToString();
                         targetParameterDto2.TargetAmountCurrencyCode = null;
 
+                        usedNumberOfTransaction = 2;
                         targetParameterDto2.UsedAmount = usedNumberOfTransaction;
-                        targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
+                        targetParameterDto2.UsedAmountStr = usedNumberOfTransaction.ToString(); 
                         targetParameterDto2.UsedAmountCurrencyCode = null;
 
-                        //remainAmount = targetAmount > usedAmount ? (targetAmount - usedAmount) : 0;
-                        //targetParameterDto2.RemainAmount = remainAmount;
-                        //targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : ((int)remainAmount).ToString();
-                        //targetParameterDto2.RemainAmountCurrencyCode = null;
-                    }
+                        remainAmount = targetAmount > usedAmount ? (targetAmount - usedAmount) : 0;
+                        targetParameterDto2.RemainAmount = remainAmount;
+                        targetParameterDto2.RemainAmountStr = remainAmount.ToString();
+                        targetParameterDto2.RemainAmountCurrencyCode = null;
 
-                    targetParameterDto2.RemainAmount = null;
-                    targetParameterDto2.RemainAmountStr = null;
-                    targetParameterDto2.RemainAmountCurrencyCode = null;
-                    targetParameterDto2.Percent = 0;
-                    targetParameterDto2.UsedNumberOfTransaction = usedNumberOfTransaction;
+                        targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
+                        targetParameterDto2.IsAchieved = remainAmount == 0;
+                    }
                     targetParameterDto2.Description = lang == "tr" ? campaignTarget.DescriptionTr : campaignTarget.DescriptionEn;
-                    targetParameterDto2.IsAchieved = false;
-                    targetParameterDto2 = CalculateAmounts(targetParameterDto2);
                     targetParameterList.Add(targetParameterDto2);
+
+                    if (targetParameterDto2.TargetViewTypeId == (int)TargetViewTypeEnum.ProgressBar)
+                        progressBarlist.Add(targetParameterDto2);
+                    else if (targetParameterDto2.TargetViewTypeId == (int)TargetViewTypeEnum.Information)
+                        informationlist.Add(targetParameterDto2);
                 }
             }
             else 
@@ -627,33 +642,77 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                 if(goalResultByCustomerAndCampaingList != null && goalResultByCustomerAndCampaingList.Any()) 
                                 { 
                                     foreach(var goalResult in goalResultByCustomerAndCampaingList
-                                        .Where(x => x.CampaignId > 0 && x.Detail.IsDeleted == false && x.Detail.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible)) 
+                                        .Where(x => x.CampaignId > 0 && x.Detail.IsDeleted == false 
+                                            && x.Detail.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible)) 
                                     {
+
+                                        bool isAmount = (goalResult.Detail.TotalAmount ?? 0) > 0;
+                                        bool isNumberOfTransaction = (goalResult.Detail.NumberOfTransaction ?? 0) > 0;
+
                                         TargetParameterDto2 targetParameterDto2 = new TargetParameterDto2();
                                         targetParameterDto2.Id = 0;
                                         targetParameterDto2.Name = goalResult.Name;
                                         targetParameterDto2.Title = goalResult.Title;
                                         targetParameterDto2.TargetViewTypeId = goalResult.Detail.TargetViewTypeId;
                                         targetParameterDto2.TargetGroupId = goalResult.TargetGroupId;
-                                        targetParameterDto2.TotalAmount = goalResult.Detail.TotalAmount;
-                                        targetParameterDto2.NumberOfTransaction = goalResult.Detail.NumberOfTransaction;
+                                        targetParameterDto2.TotalAmount = goalResult.Detail.TotalAmount ?? 0;
+                                        targetParameterDto2.NumberOfTransaction = goalResult.Detail.NumberOfTransaction ?? 0;
 
-                                        targetParameterDto2.TargetAmount = goalResult.Detail.TotalAmount;
-                                        targetParameterDto2.TargetAmountStr = Helpers.ConvertNullablePriceString(goalResult.Detail.TotalAmount);
-                                        targetParameterDto2.TargetAmountCurrencyCode = "TRY";
+                                        if (isAmount) 
+                                        {
+                                            targetAmount = targetParameterDto2.TotalAmount ?? 0;
+                                            targetParameterDto2.TargetAmount = targetAmount;
+                                            targetParameterDto2.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
+                                            targetParameterDto2.TargetAmountCurrencyCode = "TRY";
 
-                                        targetParameterDto2.UsedAmount = goalResult.Detail.StreamResult.Amount ?? 0;
-                                        targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(targetParameterDto2.UsedAmount);
-                                        targetParameterDto2.UsedAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
-                                        
-                                        targetParameterDto2.RemainAmount = null;
-                                        targetParameterDto2.RemainAmountStr = null;
-                                        targetParameterDto2.Percent = 0;
-                                        targetParameterDto2.UsedNumberOfTransaction = goalResult.Detail.StreamResult.Times ?? 0;
+                                            usedAmount = goalResult.Detail.StreamResult.Amount ?? 0;
+                                            targetParameterDto2.UsedAmount =  usedAmount;
+                                            targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
+                                            targetParameterDto2.UsedAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+
+                                            remainAmount = (targetAmount > usedAmount) ? (targetAmount - usedAmount) : 0;
+                                            targetParameterDto2.RemainAmount = remainAmount;
+                                            targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
+                                            targetParameterDto2.RemainAmountCurrencyCode = "TRY";
+
+                                            if (index == 0)
+                                            {
+                                                campaignTargetDto2.TargetAmountStr = targetParameterDto2.TargetAmountStr;
+                                                campaignTargetDto2.TargetAmountCurrencyCode = "TRY";
+                                                campaignTargetDto2.RemainAmountStr = targetParameterDto2.RemainAmountStr;
+                                                campaignTargetDto2.RemainAmountCurrencyCode = "TRY";
+                                            }
+                                            index++;
+                                        }
+                                        else if (isNumberOfTransaction)
+                                        {
+                                            targetAmount = targetParameterDto2.NumberOfTransaction ?? 0;
+
+                                            targetParameterDto2.TargetAmount = targetAmount;
+                                            targetParameterDto2.TargetAmountStr = targetAmount.ToString();
+                                            targetParameterDto2.TargetAmountCurrencyCode = null;
+
+                                            usedAmount = (decimal)(goalResult.Detail.StreamResult.Times ?? 0);
+                                            targetParameterDto2.UsedAmount = (int)usedAmount;
+                                            targetParameterDto2.UsedAmountStr = usedAmount.ToString();
+                                            targetParameterDto2.UsedAmountCurrencyCode = null;
+                                            targetParameterDto2.UsedNumberOfTransaction = (int)usedAmount;
+
+                                            remainAmount = targetAmount > usedAmount ? (targetAmount - usedAmount) : 0;
+                                            targetParameterDto2.RemainAmount = remainAmount;
+                                            targetParameterDto2.RemainAmountStr = ((int)remainAmount).ToString();
+                                            targetParameterDto2.RemainAmountCurrencyCode = null;
+                                        }
+
+                                        targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
+                                        targetParameterDto2.IsAchieved = targetParameterDto2.Percent == 100;
                                         targetParameterDto2.Description = goalResult.Detail.Description;
-                                        targetParameterDto2.IsAchieved = false;
-                                        targetParameterDto2 = CalculateAmounts(targetParameterDto2);
                                         targetParameterList.Add(targetParameterDto2);
+
+                                        if (targetParameterDto2.TargetViewTypeId == (int)TargetViewTypeEnum.ProgressBar)
+                                            progressBarlist.Add(targetParameterDto2);
+                                        else if (targetParameterDto2.TargetViewTypeId == (int)TargetViewTypeEnum.Information)
+                                            informationlist.Add(targetParameterDto2);
                                     }
                                 }
                             }
@@ -665,10 +724,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     }
                 }
             }
-
-            //calculate percent
-
-
 
             var targetGroupList = targetParameterList.Select(x => x.TargetGroupId).Distinct().ToList();
             foreach (int targetGroupId in targetGroupList)
@@ -683,60 +738,35 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 }
             }
 
-            foreach(var item in targetParameterList) 
-            {
-                TargetParameterDto targetParameterDto = new TargetParameterDto();
-                targetParameterDto.Id = item.Id;
-                targetParameterDto.Name = item.Name;
-                targetParameterDto.Title = item.Title;
-                targetParameterDto.TargetViewTypeId = item.TargetViewTypeId;
-
-                targetParameterDto.TargetAmountStr = item.TargetAmountStr;
-                targetParameterDto.TargetAmountCurrencyCode = item.TargetAmountCurrencyCode;
-
-                targetParameterDto.UsedAmountStr = item.UsedAmountStr;
-                targetParameterDto.UsedAmountCurrencyCode = item.UsedAmountCurrencyCode;
-                targetParameterDto.RemainAmountStr = item.RemainAmountStr;
-
-
-
-                targetParameterDto.Percent = item.Percent;
-                targetParameterDto.Description = item.Description;
-                if (targetParameterDto.TargetViewTypeId == (int)TargetViewTypeEnum.ProgressBar)
-                    progressBarlist.Add(targetParameterDto);
-                else if(targetParameterDto.TargetViewTypeId == (int)TargetViewTypeEnum.Information)
-                    informationlist.Add(targetParameterDto);
-            }
-
             campaignTargetDto2.ProgressBarlist = progressBarlist;
             campaignTargetDto2.Informationlist = informationlist;
 
             return campaignTargetDto2;
         }
 
-        private TargetParameterDto2 CalculateAmounts(TargetParameterDto2 item) 
-        {
-            decimal totalAmount = item.TotalAmount ?? 0;
-            int numberOfTransaction = item.NumberOfTransaction ?? 0;
-            decimal usedAmount = item.UsedAmount;
-            int usedNumberOfTransaction = item.UsedNumberOfTransaction;
-            if (totalAmount > 0)
-            {
-                item.UsedAmountStr = usedAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(usedAmount);
-                item.RemainAmountStr = (usedAmount >= totalAmount) ? "0" : Helpers.ConvertNullablePriceString(totalAmount - usedAmount);
-                item.Percent = (usedAmount >= totalAmount) ? 100 : (int)((usedAmount / totalAmount) * 100);
-            }
-            else if (numberOfTransaction > 0)
-            {
-                item.UsedAmountStr = item.UsedNumberOfTransaction.ToString();
-                item.RemainAmountStr = usedNumberOfTransaction > numberOfTransaction ? "0" : (numberOfTransaction - usedNumberOfTransaction).ToString();
-                item.Percent = (usedNumberOfTransaction >= numberOfTransaction) ? 100 : (int)(((decimal)usedNumberOfTransaction / (decimal)numberOfTransaction) * 100);
-                item.UsedAmountCurrencyCode = null;
-            }
-            item.IsAchieved = item.Percent == 100;
+        //private TargetParameterDto2 CalculateAmounts(TargetParameterDto2 item) 
+        //{
+        //    decimal totalAmount = item.TotalAmount ?? 0;
+        //    int numberOfTransaction = item.NumberOfTransaction ?? 0;
+        //    decimal usedAmount = item.UsedAmount;
+        //    int usedNumberOfTransaction = item.UsedNumberOfTransaction;
+        //    if (totalAmount > 0)
+        //    {
+        //        item.UsedAmountStr = usedAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(usedAmount);
+        //        item.RemainAmountStr = (usedAmount >= totalAmount) ? "0" : Helpers.ConvertNullablePriceString(totalAmount - usedAmount);
+        //        item.Percent = (usedAmount >= totalAmount) ? 100 : (int)((usedAmount / totalAmount) * 100);
+        //    }
+        //    else if (numberOfTransaction > 0)
+        //    {
+        //        item.UsedAmountStr = item.UsedNumberOfTransaction.ToString();
+        //        item.RemainAmountStr = usedNumberOfTransaction > numberOfTransaction ? "0" : (numberOfTransaction - usedNumberOfTransaction).ToString();
+        //        item.Percent = (usedNumberOfTransaction >= numberOfTransaction) ? 100 : (int)(((decimal)usedNumberOfTransaction / (decimal)numberOfTransaction) * 100);
+        //        item.UsedAmountCurrencyCode = null;
+        //    }
+        //    item.IsAchieved = item.Percent == 100;
 
-            return item;
-        }
+        //    return item;
+        //}
         public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
