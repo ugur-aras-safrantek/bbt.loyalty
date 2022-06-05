@@ -50,9 +50,9 @@ namespace Bbt.Campaign.Services.Services.Report
             if (request.ViewOptionId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.ViewOptionId == request.ViewOptionId);
             if (!string.IsNullOrEmpty(request.StartDate))
-                campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Convert.ToDateTime(request.StartDate));
+                campaignQuery = campaignQuery.Where(x => x.StartDate.Date >= Helpers.ConvertUIDateTimeStringForBackEnd(request.StartDate));
             if (!string.IsNullOrEmpty(request.EndDate))
-                campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Convert.ToDateTime(request.EndDate));
+                campaignQuery = campaignQuery.Where(x => x.EndDate.Date <= Helpers.ConvertUIDateTimeStringForBackEnd(request.EndDate));
             if (request.IsActive.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.IsActive == request.IsActive.Value);
             if (request.IsBundle.HasValue)

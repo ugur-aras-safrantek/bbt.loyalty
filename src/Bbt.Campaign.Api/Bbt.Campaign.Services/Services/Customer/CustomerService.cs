@@ -63,7 +63,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
 
                 entity.IsJoin = request.IsJoin;
-                entity.StartDate = request.IsJoin ? Helpers.ConvertDateTimeToShortDate(DateTime.Now) : null;
+                entity.StartDate = request.IsJoin ? DateTime.Now : null;
                 entity.LastModifiedBy = request.CustomerCode;
 
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);

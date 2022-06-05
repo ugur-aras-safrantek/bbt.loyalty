@@ -567,9 +567,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
                         targetParameterDto2.RemainAmountCurrencyCode = "TRY";
 
-                        targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
-                        targetParameterDto2.IsAchieved = targetParameterDto2.Percent == 100;
-
                         if (index == 0) 
                         {
                             campaignTargetDto2.TargetAmountStr = targetParameterDto2.TargetAmountStr;
@@ -596,10 +593,10 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         targetParameterDto2.RemainAmount = remainAmount;
                         targetParameterDto2.RemainAmountStr = remainAmount.ToString();
                         targetParameterDto2.RemainAmountCurrencyCode = null;
-
-                        targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
-                        targetParameterDto2.IsAchieved = remainAmount == 0;
                     }
+
+                    targetParameterDto2.Percent = remainAmount == 0 ? 100 : (int)((usedAmount / targetAmount) * 100);
+                    targetParameterDto2.IsAchieved = remainAmount == 0;
                     targetParameterDto2.Description = lang == "tr" ? campaignTarget.DescriptionTr : campaignTarget.DescriptionEn;
                     targetParameterList.Add(targetParameterDto2);
 
