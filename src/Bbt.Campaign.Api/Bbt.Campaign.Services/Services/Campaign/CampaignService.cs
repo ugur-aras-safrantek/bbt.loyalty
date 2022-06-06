@@ -65,13 +65,18 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.DescriptionTr = campaign.DescriptionTr;
             entity.DescriptionEn = campaign.DescriptionEn;
             entity.StartDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
-            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
+            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.EndDate);
             entity.Name = campaign.Name;
             entity.Order = campaign.Order;
             entity.TitleTr = campaign.TitleTr;
             entity.TitleEn = campaign.TitleEn;
             entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
             entity.ParticipationTypeId = campaign.ParticipationTypeId;
+            entity.StatusId = (int)StatusEnum.Draft;
+            entity.Code = Helpers.CreateCampaignCode();
+            entity.CreatedBy = userid;
+            entity.CreatedOn = DateTime.UtcNow;
+            entity.IsDeleted = false;
 
             entity.CampaignDetail = new CampaignDetailEntity();
             entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
@@ -82,12 +87,12 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
             entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
             entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
+            entity.CampaignDetail.CreatedBy = userid;
+            entity.CampaignDetail.CreatedOn = DateTime.UtcNow;
+            entity.CampaignDetail.IsDeleted = false;
 
             entity = await SetDefaults(entity);
-            entity.StatusId = (int)StatusEnum.Draft;
-            entity.Code = Helpers.CreateCampaignCode();
-            entity.CreatedBy = userid;
-            entity.CampaignDetail.CreatedBy = userid;
+           
 
             entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
@@ -150,6 +155,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
             entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
             entity.CampaignDetail.LastModifiedBy = userid;
+            entity.CampaignDetail.LastModifiedOn = DateTime.UtcNow;
 
             entity.ContractId = campaign.ContractId;
             entity.ProgramTypeId = campaign.ProgramTypeId;
@@ -161,13 +167,14 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.DescriptionTr = campaign.DescriptionTr;
             entity.DescriptionEn = campaign.DescriptionEn;
             entity.StartDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
-            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.StartDate);
+            entity.EndDate = Helpers.ConvertUIDateTimeStringForBackEnd(campaign.EndDate);
             entity.Name = campaign.Name;
             entity.Order = campaign.Order;
             entity.TitleTr = campaign.TitleTr;
             entity.TitleEn = campaign.TitleEn;
             entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
             entity.ParticipationTypeId = campaign.ParticipationTypeId;
+            entity.LastModifiedOn = DateTime.UtcNow;
             entity.LastModifiedBy = userid;
 
             entity = await SetDefaults(entity);

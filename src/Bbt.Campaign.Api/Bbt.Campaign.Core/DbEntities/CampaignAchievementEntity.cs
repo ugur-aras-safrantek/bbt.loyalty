@@ -6,6 +6,7 @@ namespace Bbt.Campaign.Core.DbEntities
 {
     public class CampaignAchievementEntity : AuditableEntity
     {
+
         [ForeignKey("Campaign")]
         public int CampaignId { get; set; }
         public CampaignEntity Campaign { get; set; }
@@ -26,7 +27,6 @@ namespace Bbt.Campaign.Core.DbEntities
         [ForeignKey("ActionOption")]
         public int? ActionOptionId { get; set; }
         public ActionOptionEntity? ActionOption { get; set; }
-
         public string? DescriptionTr { get; set; }
         public string? DescriptionEn { get; set; }
         public string? TitleTr { get; set; }

@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CampaignDetailEntity : AuditableEntity
+    public class CampaignDetailEntity 
     {
+        public int Id { get; set; }
+
         [ForeignKey("Campaign")]
         public int CampaignId { get; set; }
         public CampaignEntity Campaign { get; set; }
@@ -22,5 +24,12 @@ namespace Bbt.Campaign.Core.DbEntities
         public string? DetailTr { get; set; }
         [Column(TypeName = "ntext")]
         public string? DetailEn { get; set; }
+
+        
+        public string CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string? LastModifiedBy { get; set; }
+        public DateTime? LastModifiedOn { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

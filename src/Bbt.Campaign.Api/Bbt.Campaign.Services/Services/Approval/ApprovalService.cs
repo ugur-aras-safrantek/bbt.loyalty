@@ -85,14 +85,14 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+            var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
-            if (campaignEntity == null)
+            if (draftCampaignEntity == null)// 
                 throw new Exception("Kampanya bulunamadı");
 
             var approvedCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Code == campaignEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                .GetAll(x => x.Code == draftCampaignEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
                 .FirstOrDefaultAsync();
 
             if (approvedCampaignEntity == null)
@@ -101,7 +101,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             }
             else 
             {
-                return await ApproveCampaignUpdateAsync(id, campaignEntity.Id);
+                return await ApproveCampaignUpdateAsync(id, approvedCampaignEntity.Id, userid);
             }
         }
 
@@ -143,13 +143,14 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(draftEntity);
 
-            //add hisory
-            CampaignEntity historyEntity = await _draftService.CopyCampaignInfo(id, userid, true);
+            #region history
+
+            CampaignEntity historyEntity = new CampaignEntity();
+            historyEntity.CampaignDetail = new CampaignDetailEntity();
+            historyEntity = await _draftService.CopyCampaignInfo(historyEntity, id, userid, true, true);
             historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = draftEntity.Code;
             historyEntity.ApproveDate = draftEntity.ApproveDate;
-            historyEntity.LastModifiedBy = userid;
-            historyEntity.LastModifiedOn = now;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
             CampaignRuleEntity campaignRuleHistoryEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
@@ -159,18 +160,20 @@ namespace Bbt.Campaign.Services.Services.Approval
             foreach (var campaignDocumentHistory in campaignDocumentHistorylist)
                 await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentHistory);
 
-            List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
+            List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true, true);
             foreach (var campaignTargetHistory in campaignTargetHistoryList)
                 await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetHistory);
 
-            List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
+            List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true, true);
             foreach (var campaignChannelCodeHistory in campaignChannelCodeHistoryList)
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCodeHistory);
 
-            List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
+            List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true, true);
             foreach (var campaignAchievementHistory in campaignAchievementHistoryList)
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementHistory);
-           
+
+            #endregion
+
             await _unitOfWork.SaveChangesAsync();
 
             var mappedCampaign = _mapper.Map<CampaignDto>(draftEntity);
@@ -178,12 +181,11 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
 
 
-        public async Task<BaseResponse<CampaignDto>> ApproveCampaignUpdateAsync(int refId, int campaignId) 
+        public async Task<BaseResponse<CampaignDto>> ApproveCampaignUpdateAsync(int draftId, int campaignId, string userid) 
         {
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted)
+                .GetAll(x => x.Id == draftId && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
-                .Where(x => x.Id == refId)
                 .FirstOrDefaultAsync();
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == campaignId)
@@ -192,255 +194,126 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
 
-            //add hisory
-            //CampaignEntity historyEntity = await _draftService.CopyCampaignInfo(id, userid, true);
+            bool isCampaignUpdated = false;
+            bool isCampaignRuleUpdated = true;
+            bool isCampaignTargetUpdated = false;
+            bool isCampaignChannelCodeUpdated = false;
+            bool isCampaignAchievementUpdated = false;
+
+            #region Add History
+
+            //CampaignEntity historyEntity = new CampaignEntity();
+            //historyEntity.CampaignDetail = new CampaignDetailEntity();
+            //historyEntity = await _draftService.CopyCampaignInfo(historyEntity, campaignId, userid, true);
             //historyEntity.StatusId = (int)StatusEnum.History;
-            //historyEntity.Code = draftEntity.Code;
-            //historyEntity.ApproveDate = draftEntity.ApproveDate;
-            //historyEntity.LastModifiedBy = userid;
-            //historyEntity.LastModifiedOn = now;
+            //historyEntity.Code = campaignEntity.Code;
+            //historyEntity.ApproveDate = campaignEntity.ApproveDate;
             //await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
             //CampaignRuleEntity campaignRuleHistoryEntity = await _draftService.CopyCampaignRuleInfo(id, historyEntity, userid, true);
             //await _unitOfWork.GetRepository<CampaignRuleEntity>().AddAsync(campaignRuleHistoryEntity);
 
-            //List<CampaignDocumentEntity> campaignDocumentHistorylist = await _draftService.CopyCampaignDocumentInfo(id, historyEntity, userid, true);
+            //List<CampaignDocumentEntity> campaignDocumentHistorylist = await _draftService.CopyCampaignDocumentInfo(campaignId, historyEntity, userid, true);
             //foreach (var campaignDocumentHistory in campaignDocumentHistorylist)
             //    await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentHistory);
 
-            //List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(id, historyEntity, userid, true);
+            //List<CampaignTargetEntity> campaignTargetHistoryList = await _draftService.CopyCampaignTargetInfo(campaignId, historyEntity, userid, true);
             //foreach (var campaignTargetHistory in campaignTargetHistoryList)
             //    await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetHistory);
 
-            //List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true);
+            //List<CampaignChannelCodeEntity> campaignChannelCodeHistoryList = await _draftService.CopyCampaignChannelCodeInfo(campaignId, historyEntity, userid, true);
             //foreach (var campaignChannelCodeHistory in campaignChannelCodeHistoryList)
             //    await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCodeHistory);
 
-            //List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true);
+            //List<CampaignAchievementEntity> campaignAchievementHistoryList = await _draftService.CopyCampaignAchievementInfo(campaignId, historyEntity, userid, true);
             //foreach (var campaignAchievementHistory in campaignAchievementHistoryList)
             //    await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementHistory);
 
-            //campaign Draft
-            //campaignDraftEntity.IsApproved = true;
-            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
+            #endregion
 
-            //campaign
-            campaignEntity.ContractId = campaignDraftEntity.ContractId;
-            campaignEntity.ProgramTypeId = campaignDraftEntity.ProgramTypeId;
-            campaignEntity.SectorId = campaignDraftEntity.SectorId;
-            campaignEntity.ViewOptionId = campaignDraftEntity.ViewOptionId;
-            campaignEntity.IsBundle = campaignDraftEntity.IsBundle;
-            campaignEntity.IsContract = campaignDraftEntity.IsContract;
-            campaignEntity.DescriptionTr = campaignDraftEntity.DescriptionTr;
-            campaignEntity.DescriptionEn = campaignDraftEntity.DescriptionEn;
-            campaignEntity.EndDate = campaignDraftEntity.EndDate;
-            campaignEntity.StartDate = campaignDraftEntity.StartDate;
-            campaignEntity.Name = campaignDraftEntity.Name;
-            campaignEntity.Order = campaignDraftEntity.Order;
-            campaignEntity.TitleTr = campaignDraftEntity.TitleTr;
-            campaignEntity.TitleEn = campaignDraftEntity.TitleEn;
-            campaignEntity.MaxNumberOfUser = campaignDraftEntity.MaxNumberOfUser;
-            //campaignEntity.IsDraft = false;
-            //campaignEntity.IsApproved = true;
-            //campaignEntity.RefId = refId;
 
-            //campaign detail
-            var campaignDraftDetailEntity = campaignDraftEntity.CampaignDetail;
-            var campaignDetailEntity = campaignEntity.CampaignDetail;
-
-            campaignDetailEntity.DetailEn = campaignDraftDetailEntity.DetailEn;
-            campaignDetailEntity.DetailTr = campaignDraftDetailEntity.DetailTr;
-            campaignDetailEntity.SummaryEn = campaignDraftDetailEntity.SummaryEn;
-            campaignDetailEntity.SummaryTr = campaignDraftDetailEntity.SummaryTr;
-            campaignDetailEntity.CampaignDetailImageUrl = campaignDraftDetailEntity.CampaignDetailImageUrl;
-            campaignDetailEntity.CampaignListImageUrl = campaignDraftDetailEntity.CampaignListImageUrl;
-            campaignDetailEntity.ContentTr = campaignDraftDetailEntity.ContentTr;
-            campaignDetailEntity.ContentEn = campaignDraftDetailEntity.ContentEn;
-
-            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
-
-            /**/
-
-            //campaign rule
-            var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
-                .GetAll(x => x.CampaignId == refId && !x.IsDeleted)
-                .Include(x => x.Branches.Where(x => !x.IsDeleted))
-                .Include(x => x.BusinessLines.Where(x => !x.IsDeleted))
-                .Include(x => x.CustomerTypes.Where(x => !x.IsDeleted))
-                .FirstOrDefaultAsync();
-            var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
-                .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
-                .Include(x => x.Branches.Where(x => !x.IsDeleted))
-                .Include(x => x.BusinessLines.Where(x => !x.IsDeleted))
-                .Include(x => x.CustomerTypes.Where(x => !x.IsDeleted))
-                .FirstOrDefaultAsync();
-            int campaignRuleId = campaignRuleEntity.Id;
-
-            campaignRuleEntity.CampaignStartTermId = campaignRuleDraftEntity.CampaignStartTermId;
-            campaignRuleEntity.JoinTypeId = campaignRuleDraftEntity.JoinTypeId;
-
-            await _unitOfWork.GetRepository<CampaignRuleEntity>().UpdateAsync(campaignRuleEntity);
-
-            //campaign rule branches
-            foreach (var branchDeleteEntity in campaignRuleEntity.Branches)
+            if (isCampaignUpdated)
             {
-                await _unitOfWork.GetRepository<CampaignRuleBranchEntity>().DeleteAsync(branchDeleteEntity);
+                campaignEntity = await _draftService.CopyCampaignInfo(campaignEntity, draftId, userid, false, true);
+                await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
             }
-            if (campaignRuleDraftEntity.Branches.Any())
+
+            if (isCampaignRuleUpdated) 
             {
-                foreach (var branch in campaignRuleDraftEntity.Branches)
+                var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
+                    .GetAll(x => x.CampaignId == draftId && !x.IsDeleted)
+                    .Include(x=>x.RuleIdentities)
+                    .Include(x => x.Branches.Where(x => !x.IsDeleted))
+                    .Include(x => x.BusinessLines.Where(x => !x.IsDeleted))
+                    .Include(x => x.CustomerTypes.Where(x => !x.IsDeleted))
+                    .FirstOrDefaultAsync();
+                if (campaignRuleDraftEntity == null) throw new Exception("Kazanım kanalı bulunamadı");
+                var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
+                    .GetAll(x => x.CampaignId == campaignId && x.IsDeleted != true)
+                    .FirstOrDefaultAsync();
+                if (campaignRuleEntity == null) throw new Exception("Kazanım kanalı bulunamadı");
+                //delete previous data
+                foreach (var x in campaignRuleEntity.Branches)
+                    await _unitOfWork.GetRepository<CampaignRuleBranchEntity>().DeleteAsync(x);
+                foreach (var x in campaignRuleEntity.CustomerTypes)
+                    await _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().DeleteAsync(x);
+                foreach (var x in campaignRuleEntity.BusinessLines)
+                    await _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().DeleteAsync(x);
+                foreach (var x in campaignRuleEntity.RuleIdentities)
+                    await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().DeleteAsync(x);
+                campaignRuleEntity = await _draftService.CopyCampaignRuleInfo2(campaignRuleDraftEntity, campaignRuleEntity, campaignEntity, userid, true, true);
+                await _unitOfWork.GetRepository<CampaignRuleEntity>().UpdateAsync(campaignRuleEntity);
+                if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer) 
                 {
-                    var campaignRuleBranchEntity = new CampaignRuleBranchEntity()
-                    {
-                        CampaignRuleId = campaignRuleEntity.Id,
-                        BranchCode = branch.BranchCode,
-                        BranchName = ""
-                    };
-                    await _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
+                    foreach (var campaignRuleIdentityEntity in await _draftService.CopyCampaignRuleIdentites(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
+                        await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
+
+                }
+                else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.BusinessLine) 
+                {
+                    foreach (var campaignRuleBusinessLineEntity in await _draftService.CopyCampaignRuleBusiness(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
+                        await _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
+                }
+                else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Branch) 
+                {
+                    foreach (var campaignRuleBranchEntity in await _draftService.CopyCampaignRuleBranches(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
+                        await _unitOfWork.GetRepository<CampaignRuleBranchEntity>().AddAsync(campaignRuleBranchEntity);
+                }
+                else if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.CustomerType) 
+                {
+                    foreach (var campaignRuleCustomerTypeEntity in await _draftService.CopyCampaignRuleCustomerTypes(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
+                        await _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
                 }
             }
 
-            //campaign rule customerTypes
-            foreach (var customerTypeDeleteEntity in campaignRuleEntity.CustomerTypes)
+            if (isCampaignTargetUpdated) 
             {
-                await _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().DeleteAsync(customerTypeDeleteEntity);
-            }
-            if (campaignRuleDraftEntity.CustomerTypes.Any() )
-            {
-                foreach (var customerType in campaignRuleDraftEntity.CustomerTypes)
-                {
-                    var campaignRuleCustomerTypeEntity = new CampaignRuleCustomerTypeEntity()
-                    {
-                        CampaignRuleId = campaignRuleEntity.Id,
-                        CustomerTypeId = customerType.CustomerTypeId,
-                    };
-                    await _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
-                }
+                foreach (var x in _unitOfWork.GetRepository<CampaignTargetEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
+                    await _unitOfWork.GetRepository<CampaignTargetEntity>().DeleteAsync(x);
+                foreach (var campaignTarget in await _draftService.CopyCampaignTargetInfo(draftId, campaignEntity, userid, true, true))
+                    await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
             }
 
-            //BusinessLines
-            foreach (var businessLineDeleteEntity in campaignRuleEntity.BusinessLines.Where(t => !t.IsDeleted))
+            if (isCampaignChannelCodeUpdated) 
             {
-                await _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().DeleteAsync(businessLineDeleteEntity);
-            }
-            if (campaignRuleDraftEntity.BusinessLines.Any()) 
-            {
-                foreach (var businessLine in campaignRuleDraftEntity.BusinessLines)
-                {
-                    var campaignRuleBusinessLineEntity = new CampaignRuleBusinessLineEntity()
-                    {
-                        CampaignRuleId = campaignRuleEntity.Id,
-                        BusinessLineId = businessLine.BusinessLineId,
-                    };
-                    await _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().AddAsync(campaignRuleBusinessLineEntity);
-                }
+                foreach (var campaignChannelCodeDelete in _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
+                    await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().DeleteAsync(campaignChannelCodeDelete);
+                foreach (var campaignChannelCode in await _draftService.CopyCampaignChannelCodeInfo(draftId, campaignEntity, userid, true, true))
+                    await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
             }
 
-            //rule document-identities
-            var ruleDraftDocumentEntity = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
-                .GetAll(x => x.CampaignId == refId
-                            && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
-                            && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            var campaignDocumentEntity = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
-                .GetAll(x => x.CampaignId == campaignId
-                            && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
-                            && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            /*
-            bool isSingleIdentity = campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer &&
-                campaignRuleDraftEntity.RuleIdentities != null &&
-                !campaignRuleDraftEntity.RuleIdentities.IsDeleted &&
-                !string.IsNullOrEmpty(campaignRuleDraftEntity.RuleIdentities.Identities);
-            if(campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
+            if (isCampaignAchievementUpdated) 
             {
-                if (campaignRuleEntity.RuleIdentities != null)
-                {
-                    await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().DeleteAsync(campaignRuleEntity.RuleIdentities);
-                }
-                if (campaignDocumentEntity != null)
-                {
-                    await _unitOfWork.GetRepository<CampaignDocumentEntity>().DeleteAsync(campaignDocumentEntity);
-                }
-
-                if (isSingleIdentity)
-                {
-                    var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity();
-                    campaignRuleIdentityEntity.Identities = campaignRuleDraftEntity.RuleIdentities?.Identities ?? "";
-                    campaignRuleEntity.RuleIdentities = campaignRuleIdentityEntity;
-                }
-                else
-                {
-                    var ruleDraftDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
-                        .GetAll(x => x.CampaignId == campaignDraftEntity.Id
-                            && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
-                            && !x.IsDeleted)
-                        .FirstOrDefaultAsync();
-                    if (ruleDraftDocument != null)
-                    {
-                        var campaignDocumentEntityNew = new CampaignDocumentEntity();
-                        campaignDocumentEntityNew.Campaign = campaignEntity;
-                        campaignDocumentEntityNew.DocumentType = ruleDraftDocument.DocumentType;
-                        campaignDocumentEntityNew.MimeType = ruleDraftDocument.MimeType;
-                        campaignDocumentEntityNew.Content = ruleDraftDocument.Content;
-                        campaignDocumentEntityNew.DocumentName = ruleDraftDocument.DocumentName;
-                        await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentEntityNew);
-                    }
-                }
-            }
-            */
-
-            //target
-            List<CampaignTargetEntity> targetDraftList = _unitOfWork.GetRepository<CampaignTargetEntity>()
-                 .GetAll(x => !x.IsDeleted && x.CampaignId == refId)
-                 .ToList();
-            List<CampaignTargetEntity> targetList = _unitOfWork.GetRepository<CampaignTargetEntity>()
-                 .GetAll(x => !x.IsDeleted && x.CampaignId == campaignId)
-                 .ToList();
-            foreach(var targetDeleteEntity in targetList) 
-            {
-                await _unitOfWork.GetRepository<CampaignTargetEntity>().DeleteAsync(targetDeleteEntity);
-            }
-            foreach (var targetDraftEntity in targetDraftList)
-            {
-                var campaignTargetEntity = new CampaignTargetEntity();
-                campaignTargetEntity.CampaignId = campaignId;
-                campaignTargetEntity.TargetGroupId = targetDraftEntity.TargetGroupId;
-                campaignTargetEntity.TargetOperationId = targetDraftEntity.TargetOperationId;
-                campaignTargetEntity.TargetId = targetDraftEntity.TargetId;
-                await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTargetEntity);
+                foreach (var campaignAchievementDelete in _unitOfWork.GetRepository<CampaignAchievementEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
+                    await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(campaignAchievementDelete);
+                foreach (var campaignAchievement in await _draftService.CopyCampaignAchievementInfo(draftId, campaignEntity, userid, true, true))
+                    await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
             }
 
-            //achievement
-            foreach(var achievementEntityDeleteEntity in _unitOfWork.GetRepository<CampaignAchievementEntity>()
-                .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted).ToList()) 
-            {
-                await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(achievementEntityDeleteEntity);
-            }
-            //achievement
-            foreach (var achievementDraftEntity in _unitOfWork.GetRepository<CampaignAchievementEntity>()
-                .GetAll(x => x.CampaignId == refId && !x.IsDeleted).ToList())
-            {
-                var campaignAchievementEntity = new CampaignAchievementEntity();
 
-                //campaignAchievementEntity.CampaignChannelCode = achievementDraftEntity.CampaignChannelCode;
-                campaignAchievementEntity.CampaignId = campaignId;
-                campaignAchievementEntity.CurrencyId = achievementDraftEntity.CurrencyId;
-                campaignAchievementEntity.Amount = achievementDraftEntity.Amount;
-                campaignAchievementEntity.Rate = achievementDraftEntity.Rate;
-                campaignAchievementEntity.MaxAmount = achievementDraftEntity.MaxAmount;
-                campaignAchievementEntity.MaxUtilization = achievementDraftEntity.MaxUtilization;
-                campaignAchievementEntity.AchievementTypeId = achievementDraftEntity.AchievementTypeId;
-                campaignAchievementEntity.ActionOptionId = achievementDraftEntity.ActionOptionId;
-                campaignAchievementEntity.DescriptionTr = achievementDraftEntity.DescriptionTr;
-                campaignAchievementEntity.DescriptionEn = achievementDraftEntity.DescriptionEn;
-                campaignAchievementEntity.TitleTr = achievementDraftEntity.TitleTr;
-                campaignAchievementEntity.TitleEn = achievementDraftEntity.TitleEn; 
-
-                await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementEntity);
-            }
-
-            await _unitOfWork.SaveChangesAsync();
+            try { await _unitOfWork.SaveChangesAsync(); }
+            catch(Exception ex) { throw new Exception(ex.ToString()); }
+            
 
             var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
 

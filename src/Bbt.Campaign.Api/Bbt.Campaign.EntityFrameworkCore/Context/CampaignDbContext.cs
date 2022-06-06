@@ -54,7 +54,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedOn = DateTime.UtcNow;
+                        if(entry.Entity.CreatedOn == null)
+                            entry.Entity.CreatedOn = DateTime.UtcNow;
                         entry.Entity.IsDeleted = false;
                         break;
                     case EntityState.Modified:

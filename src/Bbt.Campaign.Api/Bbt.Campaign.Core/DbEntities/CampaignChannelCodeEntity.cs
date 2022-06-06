@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CampaignChannelCodeEntity : AuditableEntity
+    public class CampaignChannelCodeEntity :AuditableEntity
     {
 
         [ForeignKey("Campaign")]
