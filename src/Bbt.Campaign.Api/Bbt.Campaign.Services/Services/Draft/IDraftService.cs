@@ -12,7 +12,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         public Task<CampaignProperty> GetCampaignProperties(int campaignId);
         public Task<int> GetProcessType(int canpaignId);
         public Task<CampaignEntity> CopyCampaignInfo(CampaignEntity campaignEntity, int campaignId, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
-        public Task<CampaignRuleEntity> CopyCampaignRuleInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo);
+        //public Task<CampaignRuleEntity> CopyCampaignRuleInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo);
         public Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo);
         public Task<List<CampaignTargetEntity>> CopyCampaignTargetInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
         public Task<List<CampaignChannelCodeEntity>> CopyCampaignChannelCodeInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
@@ -21,11 +21,11 @@ namespace Bbt.Campaign.Services.Services.Draft
 
 
 
-        public Task<CampaignRuleEntity> CopyCampaignRuleInfo2(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
+        public Task<CampaignRuleEntity> CopyCampaignRuleInfo(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
         public Task<List<CampaignRuleBranchEntity>> CopyCampaignRuleBranches(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
         public Task<List<CampaignRuleBusinessLineEntity>> CopyCampaignRuleBusiness(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
-        public Task<List<CampaignRuleCustomerTypeEntity>> CopyCampaignRuleCustomerTypes(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo)
-        public Task<List<CampaignRuleIdentityEntity>> CopyCampaignRuleIdentites(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo)
+        public Task<List<CampaignRuleCustomerTypeEntity>> CopyCampaignRuleCustomerTypes(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
+        public Task<List<CampaignRuleIdentityEntity>> CopyCampaignRuleIdentites(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
 
     }
 }

@@ -63,11 +63,11 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
             await CheckValidationAsync(request);
 
-            //int processTypeId = await _draftService.GetProcessType(request.CampaignId);
-            //if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
-            //{
-            //    request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
-            //}
+            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+            {
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+            }
 
             await Update(request, userid);
 

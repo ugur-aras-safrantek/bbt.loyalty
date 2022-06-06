@@ -75,8 +75,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.StatusId = (int)StatusEnum.Draft;
             entity.Code = Helpers.CreateCampaignCode();
             entity.CreatedBy = userid;
-            entity.CreatedOn = DateTime.UtcNow;
-            entity.IsDeleted = false;
 
             entity.CampaignDetail = new CampaignDetailEntity();
             entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
@@ -88,7 +86,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
             entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
             entity.CampaignDetail.CreatedBy = userid;
-            entity.CampaignDetail.CreatedOn = DateTime.UtcNow;
             entity.CampaignDetail.IsDeleted = false;
 
             entity = await SetDefaults(entity);
@@ -192,11 +189,11 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 throw new Exception("Kampanya bulunamadı.");
             if (entity.StatusId != (int)StatusEnum.Approved)
                 throw new Exception("Kampanya uygun statüde değil.");
-            var draftEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
-               .Where(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.Draft && !x.IsDeleted)
-               .FirstOrDefault();
-            if(draftEntity != null)
-                throw new Exception("Kampanya için taslak bulunmaktadır.");
+            //var draftEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+            //   .Where(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.Draft && !x.IsDeleted)
+            //   .FirstOrDefault();
+            //if(draftEntity != null)
+            //    throw new Exception("Kampanya için taslak bulunmaktadır.");
 
             int campaignId = await _draftService.CreateCampaignDraftAsync(id, userid);
             return await GetCampaignAsync(campaignId, userid);

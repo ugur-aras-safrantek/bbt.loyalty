@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bbt.Campaign.Core.DbEntities
 {
-    public class CampaignEntity 
+    public class CampaignEntity : AuditableEntity
     {
         [MaxLength(500), Required]
         public string Name { get; set; }
@@ -42,14 +42,8 @@ namespace Bbt.Campaign.Core.DbEntities
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
 
         //Approve
+        public string? ApprovedBy { get; set; }
         public DateTime? ApproveDate { get; set; }
         public int StatusId { get; set; }
-
-        public int Id { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public string? LastModifiedBy { get; set; }
-        public DateTime? LastModifiedOn { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }
