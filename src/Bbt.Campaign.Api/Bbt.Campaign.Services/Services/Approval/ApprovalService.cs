@@ -138,7 +138,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             draftEntity.StatusId = (int)StatusEnum.Approved;
             draftEntity.ApprovedBy = userid;
-            draftEntity.ApproveDate = now;
+            draftEntity.ApprovedDate = now;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(draftEntity);
 
@@ -150,7 +150,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = draftEntity.Code;
             historyEntity.ApprovedBy = draftEntity.ApprovedBy;
-            historyEntity.ApproveDate = draftEntity.ApproveDate;
+            historyEntity.ApprovedDate = draftEntity.ApprovedDate;
 
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
@@ -234,7 +234,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = campaignDraftEntity.Code;
             historyEntity.ApprovedBy = campaignDraftEntity.ApprovedBy;
-            historyEntity.ApproveDate = campaignDraftEntity.ApproveDate;
+            historyEntity.ApprovedDate = campaignDraftEntity.ApprovedDate;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
             var campaignRuleDraftHistoryEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
@@ -290,7 +290,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 campaignEntity = await _draftService.CopyCampaignInfo(campaignEntity, draftId, userid, false, true);                
             }
             campaignEntity.StatusId = (int)StatusEnum.Approved;
-            campaignEntity.ApproveDate = DateTime.UtcNow;
+            campaignEntity.ApprovedDate = DateTime.UtcNow;
             campaignEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
@@ -403,8 +403,12 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .Include(x => x.CampaignDetail)
                 .FirstOrDefaultAsync();
 
+            //public async Task<CampaignRuleDto> GetCampaignRuleDto(int campaignId)
+            
+
             response.isNewRecord = approvedCampaignEntity == null;
             response.Campaign = _reportService.ConvertCampaignReportList(campaignQuery)[0];
+            response.CampaignRule = await _campaignRuleService.GetCampaignRuleDto(draftId);
             response.CampaignTargetList = await _campaignTargetService.GetCampaignTargetDto(draftId, false);
             response.CampaignChannelCodeList = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
             response.CampaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(draftId);
@@ -443,10 +447,20 @@ namespace Bbt.Campaign.Services.Services.Approval
                 var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
                 campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
                 campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
-
             }
             response.CampaignUpdateFields = campaignUpdateFields;
-            
+
+            response.HistoryList = new List<HistoryApproveDto>();
+            foreach (var campaignHistory in _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Code == draftCampaignEntity.Code && x.StatusId == (int)StatusEnum.History && !x.IsDeleted).ToList())
+            {
+                HistoryApproveDto historyApproveDto = new HistoryApproveDto();
+                historyApproveDto.ApprovedBy = campaignHistory.ApprovedBy;
+                historyApproveDto.ApprovedDate = campaignHistory.ApprovedDate;
+                DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
+                if(_approvedDate != DateTime.MinValue)
+                    historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                response.HistoryList.Add(historyApproveDto);
+            }
 
             return await BaseResponse<CampaignApproveFormDto>.SuccessAsync(response);
         }

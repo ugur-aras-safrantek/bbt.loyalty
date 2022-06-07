@@ -43,7 +43,7 @@ namespace Bbt.Campaign.Core.DbEntities
 
         //Approve
         public string? ApprovedBy { get; set; }
-        public DateTime? ApproveDate { get; set; }
+        public DateTime? ApprovedDate { get; set; }
         public int StatusId { get; set; }
     }
 }

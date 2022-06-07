@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
@@ -479,20 +480,62 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                     }
                 }
             }
-            CampaignRuleDto campaignRuleDto = new CampaignRuleDto()
-            {
-                Id = campaignRuleEntity.Id,
-                CampaignId = campaignRuleEntity.CampaignId,
-                JoinTypeId = campaignRuleEntity.JoinTypeId,
-                CampaignStartTermId = campaignRuleEntity.CampaignStartTermId,
-                IdentityNumber = identityNumber,
-                IsSingleIdentity = isSingleIdentity,
-                DocumentName = documentName,
-                RuleBusinessLines = campaignRuleEntity.BusinessLines.Where(c => !c.IsDeleted).Select(c => c.BusinessLineId).ToList(),
-                RuleCustomerTypes = campaignRuleEntity.CustomerTypes.Where(c => !c.IsDeleted).Select(c => c.CustomerTypeId).ToList(),
-                RuleBranches = campaignRuleEntity.Branches.Where(c => !c.IsDeleted).Select(c => c.BranchCode).ToList()
-            };
 
+            CampaignRuleDto campaignRuleDto = new CampaignRuleDto();
+            campaignRuleDto.Id = campaignRuleEntity.Id;
+            campaignRuleDto.CampaignId = campaignRuleEntity.CampaignId;
+            campaignRuleDto.JoinTypeId = campaignRuleEntity.JoinTypeId;
+            campaignRuleDto.JoinType = new ParameterDto() { Id = campaignRuleEntity.JoinTypeId, Code="", Name = Helpers.GetEnumDescription<JoinTypeEnum>(campaignRuleEntity.JoinTypeId) };
+            campaignRuleDto.CampaignStartTermId = campaignRuleEntity.CampaignStartTermId;
+            campaignRuleDto.CampaignStartTerm = new ParameterDto() { Id = campaignRuleEntity.CampaignStartTermId, Code = "", Name = Helpers.GetEnumDescription<CampaignStartTermsEnum>(campaignRuleEntity.CampaignStartTermId) };
+            campaignRuleDto.IdentityNumber = identityNumber;
+            campaignRuleDto.IsSingleIdentity = isSingleIdentity;
+            campaignRuleDto.DocumentName = documentName;
+            campaignRuleDto.RuleBusinessLines = campaignRuleEntity.BusinessLines.Where(c => !c.IsDeleted).Select(c => c.BusinessLineId).ToList();
+            campaignRuleDto.RuleCustomerTypes = campaignRuleEntity.CustomerTypes.Where(c => !c.IsDeleted).Select(c => c.CustomerTypeId).ToList();
+            campaignRuleDto.RuleBranches = campaignRuleEntity.Branches.Where(c => !c.IsDeleted).Select(c => c.BranchCode).ToList();
+            if(campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.CustomerType) 
+            {
+                if (campaignRuleDto.RuleCustomerTypes.Any()) 
+                {
+                    campaignRuleDto.RuleCustomerTypesStr = string.Empty;
+                    foreach (int customerTypeId in campaignRuleDto.RuleCustomerTypes) 
+                        campaignRuleDto.RuleCustomerTypesStr += "," + Helpers.GetEnumDescription<CustomerTypeEnum>(customerTypeId);
+                    if(campaignRuleDto.RuleCustomerTypesStr.Length > 0)
+                        campaignRuleDto.RuleCustomerTypesStr = campaignRuleDto.RuleCustomerTypesStr.Remove(0, 1);
+                }
+            }
+            else if(campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.BusinessLine) 
+            {
+                if (campaignRuleDto.RuleBusinessLines.Any())
+                {
+                    campaignRuleDto.RuleBusinessLinesStr = string.Empty;
+                    foreach (int businessLineId in campaignRuleDto.RuleBusinessLines)
+                        campaignRuleDto.RuleBusinessLinesStr += "," + Helpers.GetEnumDescription<BusinessLineEnum>(businessLineId);
+                    if(campaignRuleDto.RuleBusinessLinesStr.Length > 0)
+                        campaignRuleDto.RuleBusinessLinesStr = campaignRuleDto.RuleBusinessLinesStr.Remove(0, 1);
+                }
+            }
+            else if(campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.Branch) 
+            {
+                if (campaignRuleDto.RuleBranches.Any()) 
+                {
+                    var branchList = (await _parameterService.GetBranchListAsync())?.Data;
+                    if(branchList != null && branchList.Any()) 
+                    {
+                        campaignRuleDto.RuleBranchesStr = string.Empty;
+                        foreach(var branchCode in campaignRuleDto.RuleBranches) 
+                        {
+                            var branch = branchList.Where(x => x.Code == branchCode).FirstOrDefault();
+                            if (branch != null)
+                                campaignRuleDto.RuleBranchesStr += "," + branch.Code + "-" + branch.Name;
+                        }
+                        if(campaignRuleDto.RuleBranchesStr.Length > 0)
+                            campaignRuleDto.RuleBranchesStr = campaignRuleDto.RuleBranchesStr.Remove(0, 1);
+                    }
+                }
+            }
+            
             return campaignRuleDto;
         }
 

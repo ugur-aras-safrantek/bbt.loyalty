@@ -20,6 +20,7 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
         public CampaignTargetDto CampaignTargetList { get; set; }
         public CampaignUpdateFields CampaignUpdateFields { get; set; }
+        public List<HistoryApproveDto> HistoryList { get; set; }
 
     }
 }

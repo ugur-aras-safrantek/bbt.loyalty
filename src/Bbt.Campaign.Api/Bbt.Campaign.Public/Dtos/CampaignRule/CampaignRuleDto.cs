@@ -7,14 +7,16 @@ namespace Bbt.Campaign.Public.Dtos.CampaignRule
         public int Id { get; set; }
         public int CampaignId { get; set; }
         public CampaignDto Campaign { get; set; }
-
         public string? IdentityNumber { get; set; }
         public bool IsSingleIdentity  { get; set; }
         public int JoinTypeId { get; set; }
         public ParameterDto JoinType { get; set; } 
         public List<int> RuleBusinessLines { get; set; }
+        public string? RuleBusinessLinesStr { get; set; }
         public List<string> RuleBranches { get; set; }
+        public string? RuleBranchesStr { get; set; }
         public List<int> RuleCustomerTypes { get; set; }
+        public string? RuleCustomerTypesStr { get; set; }
         public int CampaignStartTermId { get; set; }
         public ParameterDto CampaignStartTerm { get; set; }
         public string CreatedBy { get; set; }
