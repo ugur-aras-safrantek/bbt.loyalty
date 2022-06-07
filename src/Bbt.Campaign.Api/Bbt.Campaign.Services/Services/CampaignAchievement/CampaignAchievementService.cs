@@ -118,7 +118,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 {
                     entity.Amount = null;
                     entity.CurrencyId = null;
-                    entity.MaxAmount = null;
                 }
 
 
