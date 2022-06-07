@@ -96,44 +96,39 @@
         </div>
       </div>
     </div>
-    <div class="row mt-3" *ngIf="formGroup.get('type')?.value==1">
-      <div class="col form-group">
-        <label for="currencyId">Para Birimi</label>
-        <select class="form-select" name="currencyId" id="currencyId"
-                formControlName="currencyId"
-                [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
-          <option *ngFor="let i of currencyList"
-                  [value]="i.id">{{i.name}}</option>
-        </select>
-      </div>
-      <div class="col form-group">
-        <label for="amount">Kazanım Tutarı</label>
-        <input type="text" class="form-control" currencyMask
-               name="amount" id="amount" formControlName="amount"
-               [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==1 && f.amount.invalid }">
-        <div *ngIf="submitted && formGroup.get('type')?.value==1 && f.amount.errors"
-             class="invalid-feedback">
-          <div *ngIf="f.amount.errors.required">Kazanım Tutarı girilmelidir.</div>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <ng-container *ngIf="formGroup.get('type')?.value==1;then amount else rate"></ng-container>
-      <ng-template #amount>
+    <ng-container *ngIf="formGroup.get('type')?.value==1;then amount else rate"></ng-container>
+    <ng-template #amount>
+      <div class="row mt-3">
         <div class="col form-group">
-          <label for="maxAmount">Max Tutar</label>
+          <label for="currencyId">Para Birimi</label>
+          <select class="form-select" name="currencyId" id="currencyId"
+                  formControlName="currencyId"
+                  [ngClass]="{ 'is-invalid': submitted && f.currencyId.invalid }">
+            <option *ngFor="let i of currencyList"
+                    [value]="i.id">{{i.name}}</option>
+          </select>
+        </div>
+        <div class="col form-group">
+          <label for="amount">Kazanım Tutarı</label>
           <input type="text" class="form-control" currencyMask
-                 name="maxAmount" id="maxAmount" formControlName="maxAmount">
+                 name="amount" id="amount" formControlName="amount"
+                 [ngClass]="{ 'is-invalid': submitted && f.amount.invalid }">
+          <div *ngIf="submitted && f.amount.errors"
+               class="invalid-feedback">
+            <div *ngIf="f.amount.errors.required">Kazanım Tutarı girilmelidir.</div>
+          </div>
         </div>
-      </ng-template>
-      <ng-template #rate>
-        <div class="col form-group">
+      </div>
+    </ng-template>
+    <ng-template #rate>
+      <div class="row mt-3">
+        <div class="col-6 form-group">
           <label for="rate">Kazanım Oranı</label>
           <input type="text" class="form-control" currencyMask
                  [options]="{ min: 0, max: 999 }"
                  name="rate" id="rate" formControlName="rate"
-                 [ngClass]="{ 'is-invalid': submitted && formGroup.get('type')?.value==2 && f.rate.invalid }">
-          <div *ngIf="submitted && formGroup.get('type')?.value==2 && f.rate.errors"
+                 [ngClass]="{ 'is-invalid': submitted && f.rate.invalid }">
+          <div *ngIf="submitted && f.rate.errors"
                class="invalid-feedback">
             <div *ngIf="f.rate.errors.required">Kazanım Oranı girilmelidir.</div>
             <div *ngIf="f.rate.errors.max">Kazanım Oranı 100’ün üzerinde bir değer
@@ -141,7 +136,14 @@
             </div>
           </div>
         </div>
-      </ng-template>
+      </div>
+    </ng-template>
+    <div class="row mt-3">
+      <div class="col form-group">
+        <label for="maxAmount">Max Tutar</label>
+        <input type="text" class="form-control" currencyMask
+               name="maxAmount" id="maxAmount" formControlName="maxAmount">
+      </div>
       <div class="col form-group">
         <label for="maxUtilization">Max Yararlanma</label>
         <input type="text" class="form-control" onlyNumber
