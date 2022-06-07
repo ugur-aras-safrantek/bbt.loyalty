@@ -210,7 +210,28 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   }
 
   approveState(choise: boolean) {
-    this.approveService.campaignDefinitionApproveState(choise)
+    choise ? this.approve(this.id) : this.disapprove(this.id);
+  }
+
+  approve(id){
+    this.approveService.campaignDefinitionApprove(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data) {
+            this.router.navigate(['/campaign-definition/awaiting-approval/list'], {relativeTo: this.route});
+          } else
+            this.toastrHandleService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
+  disapprove(id){
+    this.approveService.campaignDefinitionDisapprove(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
