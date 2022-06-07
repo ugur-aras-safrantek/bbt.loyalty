@@ -438,7 +438,7 @@ export class TargetSourceComponent implements OnInit, FormChange {
         next: res => {
           if (!res.hasError && res.data) {
             this.formChangeState = false;
-            this.router.navigate([`/target-definition/update/${this.id}/finish`], {relativeTo: this.route});
+            this.router.navigate([`/target-definition/update/${res.data.id}/finish`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

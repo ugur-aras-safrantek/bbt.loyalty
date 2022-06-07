@@ -513,7 +513,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.formChangeState = false;
-            this.router.navigate([`/campaign-definition/update/${this.id}/rules`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${res.data.id}/rules`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

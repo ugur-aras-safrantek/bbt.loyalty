@@ -23,7 +23,7 @@
           </i>
         </div>
       </div>
-      <div class="mt-2">
+      <div class="mt-2 overflow-x-auto">
         <table class="table table-hover table-custom">
           <thead>
           <tr class="table-primary">
@@ -59,7 +59,7 @@
       </div>
     </div>
   </div>
-  <div class="container d-flex align-items-center justify-content-end"
+  <div class="container d-flex align-items-center justify-content-end mt-3"
        *ngIf="listService.rows && listService.rows.length > 0">
     <span>Page:</span>
     <select class="form-control-sm ms-2 me-2" [(ngModel)]="listService.paging.currentPage" (change)="getList()">

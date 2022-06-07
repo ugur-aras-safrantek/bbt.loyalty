@@ -58,6 +58,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   nextButtonAuthority = false;
   isInvisibleCampaign = false;
   buttonTypeIsContinue = false;
+  crudButtonVisible = true;
 
   alertModalText = '';
 
@@ -422,7 +423,9 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
+            this.id = res.data[0].campaignId;
             this.finish();
+            this.crudButtonVisible = false;
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);
