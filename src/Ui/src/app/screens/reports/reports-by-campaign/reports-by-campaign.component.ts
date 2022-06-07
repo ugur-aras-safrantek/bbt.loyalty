@@ -35,6 +35,13 @@ export class ReportsByCampaignComponent implements OnInit {
     {columnName: 'Sözleşme', propertyName: 'isContract', isBoolean: true, sortDir: null},
     {columnName: 'Sektör', propertyName: 'sectorName', isBoolean: false, sortDir: null},
     {columnName: 'Sıralama', propertyName: 'order', isBoolean: false, sortDir: null},
+    {columnName: 'Görüntüleme', propertyName: 'viewOptionName', isBoolean: false, sortDir: null},
+    {columnName: 'Dahil Olma Şekli', propertyName: 'joinTypeName', isBoolean: false, sortDir: null},
+    {columnName: 'Katılım Sağlanma Adedi', propertyName: 'customerCount', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Tipi', propertyName: 'achievementTypeName', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmount', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Oranı', propertyName: 'achievementRate', isBoolean: false, sortDir: null},
+    {columnName: 'Çatı Limiti', propertyName: 'topLimitName', isBoolean: false, sortDir: null},
   ];
 
   viewOptionList: DropdownListModel[];
