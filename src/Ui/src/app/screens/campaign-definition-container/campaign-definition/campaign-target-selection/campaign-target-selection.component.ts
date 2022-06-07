@@ -218,7 +218,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.campaignDefinitionService.isCampaignValuesChanged = true;
             this.formChangeState = false;
-            this.router.navigate([`/campaign-definition/update/${this.id}/gain-channels`], {relativeTo: this.route});
+            this.router.navigate([`/campaign-definition/update/${res.data.campaignId}/gain-channels`], {relativeTo: this.route});
             this.toastrHandleService.success();
           } else
             this.toastrHandleService.error(res.errorMessage);

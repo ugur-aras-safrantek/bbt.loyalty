@@ -166,7 +166,7 @@ export class CampaignGainChannelsComponent implements OnInit, FormChange {
             this.formChangeState = false;
             this.newId
               ? this.router.navigate([`/campaign-definition/create/gains/${this.newId}`], {relativeTo: this.route})
-              : this.router.navigate([`/campaign-definition/update/${this.id}/gains`], {relativeTo: this.route});
+              : this.router.navigate([`/campaign-definition/update/${res.data.campaignId}/gains`], {relativeTo: this.route});
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

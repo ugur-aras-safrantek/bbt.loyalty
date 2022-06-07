@@ -188,7 +188,7 @@
               <th>Max Yararlanma</th>
               <th class="gain-channel-add-update">
                 <app-auth-check [authorization]="nextButtonAuthority">
-                  <img src="/assets/img/plus.png" *ngIf="addButtonVisibleState" (click)="showAddModal()">
+                  <img src="/assets/img/plus.png" *ngIf="addButtonVisibleState && crudButtonVisible" (click)="showAddModal()">
                 </app-auth-check>
               </th>
             </tr>
@@ -196,8 +196,8 @@
             <tbody>
             <tr *ngFor='let achievement of campaignAchievementList'>
               <td class="gain-channel-add-update">
-                <img src="/assets/img/eye.png"
-                     (click)="showUpdateModal(achievement)">
+                <img *ngIf="crudButtonVisible"
+                     src="/assets/img/eye.png" (click)="showUpdateModal(achievement)">
               </td>
               <td>{{achievement.rule?.name}}</td>
               <td>{{achievement.achievementType?.name}}</td>
@@ -205,7 +205,8 @@
               <td>{{achievement.maxUtilization}}</td>
               <td class="gain-channel-delete">
                 <app-auth-check [authorization]="nextButtonAuthority">
-                  <img src="/assets/img/cross.png" (click)="openDeleteAlertModal(achievement)">
+                  <img *ngIf="crudButtonVisible"
+                       src="/assets/img/cross.png" (click)="openDeleteAlertModal(achievement)">
                 </app-auth-check>
               </td>
             </tr>
