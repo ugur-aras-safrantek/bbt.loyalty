@@ -622,11 +622,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     //    }
                     //}
 
+                    string accessToken = await _parameterService.GetAccessToken();
                     string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
                     serviceUrl = serviceUrl.Replace("{customerId}", customerCode);
                     serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
                     serviceUrl = serviceUrl.Replace("{lang}", lang);
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     var restResponse = await httpClient.GetAsync(serviceUrl);
                     if (restResponse.IsSuccessStatusCode)
                     {

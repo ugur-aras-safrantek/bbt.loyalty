@@ -688,10 +688,12 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 using (var httpClient = new HttpClient())
                 {
+                    string accessToken = await _parameterService.GetAccessToken();
                     serviceUrl = string.Empty;
                     serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
                     serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     var restResponse1 = await httpClient.GetAsync(serviceUrl);
                     if (restResponse1.IsSuccessStatusCode)
                     {
