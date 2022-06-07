@@ -156,7 +156,6 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       this.formGroup.patchValue({
         currencyId: 1,
         amount: null,
-        maxAmount: null,
       });
       this.f.amount.clearValidators();
     }
@@ -275,6 +274,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     achievement.titleEn = formGroup.titleEn;
     achievement.descriptionTr = formGroup.descriptionTr;
     achievement.descriptionEn = formGroup.descriptionEn;
+    achievement.maxAmount = formGroup.maxAmount;
     achievement.maxUtilization = formGroup.maxUtilization == "" || formGroup.maxUtilization == null
       ? null
       : parseInt(formGroup.maxUtilization);
@@ -283,7 +283,6 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       case "1":
         achievement.currencyId = formGroup.currencyId;
         achievement.amount = formGroup.amount;
-        achievement.maxAmount = formGroup.maxAmount;
         break;
       case 2:
       case "2":
