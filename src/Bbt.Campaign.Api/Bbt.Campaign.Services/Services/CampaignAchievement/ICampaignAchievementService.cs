@@ -16,5 +16,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         public Task<BaseResponse<List<CampaignAchievementDto>>> GetListAsync();
         public Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid);
         public Task<List<CustomerAchievement>> GetCustomerAchievementsAsync(int campaignId, string customerCode, string lang);
+        public Task<BaseResponse<bool>> SendToAppropval(int campaignId, string userid);
     }
 }

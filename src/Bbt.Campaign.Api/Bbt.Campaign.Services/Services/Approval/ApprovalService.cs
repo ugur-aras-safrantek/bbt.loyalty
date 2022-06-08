@@ -387,9 +387,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll().Where(x =>x.Id == draftId);
             if (!campaignQuery.Any()) 
-            {
                 throw new Exception("Kampanya bulunamadı");
-            }
 
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == draftId && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -403,9 +401,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .Include(x => x.CampaignDetail)
                 .FirstOrDefaultAsync();
 
-            //public async Task<CampaignRuleDto> GetCampaignRuleDto(int campaignId)
-            
-
+            response.CampaignDetail = _mapper.Map<CampaignDetailDto>(draftCampaignEntity.CampaignDetail);
             response.isNewRecord = approvedCampaignEntity == null;
             response.Campaign = _reportService.ConvertCampaignReportList(campaignQuery)[0];
             response.CampaignRule = await _campaignRuleService.GetCampaignRuleDto(draftId);

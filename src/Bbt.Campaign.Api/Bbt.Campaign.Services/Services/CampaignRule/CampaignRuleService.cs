@@ -188,7 +188,16 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             int processTypeId = await _draftService.GetProcessType(campaignRule.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid);
+                campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid, (int)PageTypeEnum.CampaignRule);
+            }
+            else
+            {
+                var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == campaignRule.CampaignId).FirstOrDefault();
+                if (campaignUpdatePageEntity != null)
+                {
+                    campaignUpdatePageEntity.IsCampaignRuleUpdated = true;
+                    await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().UpdateAsync(campaignUpdatePageEntity);
+                }
             }
 
             var entity = await _unitOfWork.GetRepository<CampaignRuleEntity>()

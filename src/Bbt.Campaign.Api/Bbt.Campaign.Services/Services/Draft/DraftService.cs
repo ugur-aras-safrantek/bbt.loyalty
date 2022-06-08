@@ -48,7 +48,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             _parameterService = parameterService;
             _authorizationService = authorizationService;
         }
-        public async Task<int> CreateCampaignDraftAsync(int campaignId, string userid)
+        public async Task<int> CreateCampaignDraftAsync(int campaignId, string userid, int pageTypeId)
         {
             var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
                 .Where(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
@@ -110,6 +110,15 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             foreach (var campaignAchievement in await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, true, true))
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
+
+            CampaignUpdatePageEntity campaignUpdatePageEntity = new CampaignUpdatePageEntity();
+            campaignUpdatePageEntity.Campaign = campaignEntity;
+            campaignUpdatePageEntity.IsCampaignUpdated = pageTypeId == (int)PageTypeEnum.Campaign;
+            campaignUpdatePageEntity.IsCampaignRuleUpdated = pageTypeId == (int)PageTypeEnum.CampaignRule;
+            campaignUpdatePageEntity.IsCampaignTargetUpdated = pageTypeId == (int)PageTypeEnum.CampaignTarget;
+            campaignUpdatePageEntity.IsCampaignChannelCodeUpdated = pageTypeId == (int)PageTypeEnum.CampaignChannelCode;
+            campaignUpdatePageEntity.IsCampaignAchievementUpdated = pageTypeId == (int)PageTypeEnum.CampaignAchievement;
+            await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().AddAsync(campaignUpdatePageEntity);
 
             await _unitOfWork.SaveChangesAsync();
 

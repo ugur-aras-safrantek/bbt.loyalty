@@ -61,9 +61,6 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             await CheckValidationAsync(request);
 
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
-
-
-
             await Update(request, userid);
 
             response.CampaignId = request.CampaignId;
@@ -71,13 +68,21 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 
             return await BaseResponse<CampaignChannelCodeDto>.SuccessAsync(response);
         }
-
         private async Task Update(CampaignChannelCodeUpdateRequest request, string userid) 
         {
             int processTypeId = await _draftService.GetProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignChannelCode);
+            }
+            else
+            {
+                var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == request.CampaignId).FirstOrDefault();
+                if (campaignUpdatePageEntity != null)
+                {
+                    campaignUpdatePageEntity.IsCampaignChannelCodeUpdated = true;
+                    await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().UpdateAsync(campaignUpdatePageEntity);
+                }
             }
 
             foreach (var deleteEntity in _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
@@ -97,7 +102,6 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             });
             await _unitOfWork.SaveChangesAsync();
         }
-
         public async Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
