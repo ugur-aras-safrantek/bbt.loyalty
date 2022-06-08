@@ -10,6 +10,7 @@ import {saveAs} from 'file-saver';
 import {ActivatedRoute, Router} from "@angular/router";
 import {CampaignTargetGroup} from "../../../../models/campaign-definition";
 import {ApproveService} from "../../../../services/approve.service";
+import {CampaignDefinitionService} from "../../../../services/campaign-definition.service";
 
 @Component({
   selector: 'app-campaign-definition-awaiting-approval-detail',
@@ -30,9 +31,9 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   }
 
   campaignDefinitionFormGroup: FormGroup;
-  campaignDefinitionContractDocument: any = null;
 
   campaignRulesFormGroup: FormGroup;
+  campaignRulesDocument: boolean = false;
   showForCustomer: boolean = false;
   showBusinessLines: boolean = false;
   showBranches: boolean = false;
@@ -50,6 +51,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private loginService: LoginService,
+              private campaignDefinitionService: CampaignDefinitionService,
               private approveService: ApproveService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -63,8 +65,9 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       isActive: false,
       isContract: false,
       contractId: '',
-      programTypeId: '',
-      viewOptionId: '',
+      contractName: '',
+      programTypeName: '',
+      viewOptionName: '',
       name: '',
       code: '',
       summaryTr: '',
@@ -75,19 +78,19 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       campaignListImageDownloadUrl: '',
       campaignDetailImageUrl: '',
       campaignDetailImageDownloadUrl: '',
-      startDate: '',
-      endDate: '',
+      startDateStr: '',
+      endDateStr: '',
       maxNumberOfUser: '',
       order: '',
     });
     this.campaignDefinitionFormGroup.disable();
 
     this.campaignRulesFormGroup = this.fb.group({
-      joinTypeId: '',
-      documentName: '',
-      businessLines: '',
-      branches: '',
-      customerTypes: '',
+      joinTypeName: '',
+      identityNumber: '',
+      ruleBusinessLinesStr: '',
+      ruleBranchesStr: '',
+      ruleCustomerTypesStr: '',
     });
     this.campaignRulesFormGroup.disable();
 
@@ -113,25 +116,26 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
     return this.campaignDefinitionFormGroup.controls;
   }
 
-  private populateCampaignDefinitionForm(data) {
+  private populateCampaignDefinitionForm(data, campaignDetail) {
     this.campaignDefinitionFormGroup.patchValue({
       isActive: data.isActive,
       isContract: data.isContract,
       contractId: data.contractId,
-      programTypeId: data.programTypeId,
-      viewOptionId: data.viewOptionId,
+      contractName: data.contractId + '-Sözleşme.html',
+      programTypeName: data.programTypeName,
+      viewOptionName: data.viewOptionName,
       name: data.name,
       code: data.code,
-      summaryTr: data.campaignDetail.summaryTr,
-      summaryEn: data.campaignDetail.summaryEn,
-      contentTr: data.campaignDetail.contentTr,
-      contentEn: data.campaignDetail.contentEn,
-      campaignListImageUrl: data.campaignDetail.campaignListImageUrl,
-      campaignListImageDownloadUrl: data.campaignDetail.campaignListImageUrl,
-      campaignDetailImageUrl: data.campaignDetail.campaignDetailImageUrl,
-      campaignDetailImageDownloadUrl: data.campaignDetail.campaignDetailImageUrl,
-      startDate: data.startDate,
-      endDate: data.endDate,
+      summaryTr: campaignDetail.summaryTr,
+      summaryEn: campaignDetail.summaryEn,
+      contentTr: campaignDetail.contentTr,
+      contentEn: campaignDetail.contentEn,
+      campaignListImageUrl: campaignDetail.campaignListImageUrl,
+      campaignListImageDownloadUrl: campaignDetail.campaignListImageUrl,
+      campaignDetailImageUrl: campaignDetail.campaignDetailImageUrl,
+      campaignDetailImageDownloadUrl: campaignDetail.campaignDetailImageUrl,
+      startDateStr: data.startDateStr,
+      endDateStr: data.endDateStr,
       maxNumberOfUser: data.maxNumberOfUser,
       order: data.order,
     })
@@ -139,51 +143,86 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
 
   private populateCampaignRulesForm(data) {
     this.campaignRulesFormGroup.patchValue({
-      joinTypeId: data.joinTypeId,
-      documentName: data.documentName,
-      businessLines: data.businessLines,
-      branches: data.branches,
-      customerTypes: data.customerTypes,
-    })
+      joinTypeName: data.joinType?.name,
+      identityNumber: data.identityNumber ?? data.documentName,
+      ruleBusinessLinesStr: data.ruleBusinessLinesStr,
+      ruleBranchesStr: data.ruleBranchesStr,
+      ruleCustomerTypesStr: data.ruleCustomerTypesStr,
+    });
+    this.campaignRulesDocument = !!data.documentName;
+    switch (data.joinTypeId) {
+      case 2:
+        this.showForCustomer = true;
+        break;
+      case 3:
+        this.showBusinessLines = true;
+        break;
+      case 4:
+        this.showBranches = true;
+        break;
+      case 5:
+        this.showCustomerTypes = true;
+        break;
+    }
   }
 
   private populateCampaignGainsForm(data) {
     this.campaignGainsFormGroup.patchValue({
-      campaignGainChannelList: data.campaignGainChannelList
+      campaignGainChannelList: data
     })
   }
 
   showDocumentFile() {
-    let document = this.campaignDefinitionContractDocument;
-    if (document) {
-      let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
+    let contractId = this.campaignDefinitionFormGroup.getRawValue().contractId;
+    if (contractId && contractId > 0) {
+      this.campaignDefinitionService.campaignDefinitionGetContractFile(contractId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: res => {
+            if (!res.hasError && res.data?.document) {
+              let document = res.data?.document;
+              if (document) {
+                let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+                const fileURL = URL.createObjectURL(file);
+                window.open(fileURL, '_blank');
+              } else {
+                this.toastrHandleService.warning("Sözleşme bulunamadı.");
+              }
+            } else {
+              this.toastrHandleService.error(res.errorMessage);
+            }
+          },
+          error: err => {
+            if (err.error) {
+              this.toastrHandleService.error(err.error);
+            }
+          }
+        });
     } else {
       this.toastrHandleService.warning("Sözleşme bulunamadı.");
     }
   }
 
   campaignRuleDocumentDownload() {
-    this.approveService.campaignRuleDocumentDownload(this.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (!res.hasError && res.data?.document) {
-            let document = res.data.document;
-            let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
-            saveAs(file, res.data?.document.documentName);
-            this.toastrHandleService.success();
-          } else {
-            this.toastrHandleService.error(res.errorMessage);
-          }
-        },
-        error: err => {
-          if (err.error) {
-            this.toastrHandleService.error(err.error);
-          }
-        }
-      });
+    // this.approveService.campaignRuleDocumentDownload(this.id)
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: res => {
+    //       if (!res.hasError && res.data?.document) {
+    //         let document = res.data.document;
+    //         let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+    //         saveAs(file, res.data?.document.documentName);
+    //         this.toastrHandleService.success();
+    //       } else {
+    //         this.toastrHandleService.error(res.errorMessage);
+    //       }
+    //     },
+    //     error: err => {
+    //       if (err.error) {
+    //         this.toastrHandleService.error(err.error);
+    //       }
+    //     }
+    //   });
   }
 
   private CampaignDefinitionApproveForm() {
@@ -192,13 +231,12 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.populateCampaignDefinitionForm(res.data.campaign);
-            this.campaignDefinitionContractDocument = res.data.contractFile?.document;
-            this.populateCampaignRulesForm(res.data.campaignRules);
+            this.populateCampaignDefinitionForm(res.data.campaign, res.data.campaignDetail);
+            this.populateCampaignRulesForm(res.data.campaignRule);
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
-            this.populateCampaignGainsForm(res.data.campaignGains);
+            this.populateCampaignGainsForm(res.data.campaignChannelCodeList);
             this.campaignAchievementList = res.data.campaignAchievementList;
-            this.history = res.data.history;
+            this.history = res.data.historyList;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -213,7 +251,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
     choise ? this.approve(this.id) : this.disapprove(this.id);
   }
 
-  approve(id){
+  private approve(id){
     this.approveService.campaignDefinitionApprove(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -230,7 +268,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       });
   }
 
-  disapprove(id){
+  private disapprove(id){
     this.approveService.campaignDefinitionDisapprove(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
