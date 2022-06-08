@@ -15,11 +15,11 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public CampaignReportListDto Campaign { get; set; }
         public CampaignDetailDto CampaignDetail { get; set; }
         public CampaignRuleDto CampaignRule { get; set; }
-        
         public string CampaignChannelCodeList { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
         public CampaignTargetDto CampaignTargetList { get; set; }
         public CampaignUpdateFields CampaignUpdateFields { get; set; }
+        public CampaignUpdatePages CampaignUpdatePages { get; set; }
         public List<HistoryApproveDto> HistoryList { get; set; }
 
     }

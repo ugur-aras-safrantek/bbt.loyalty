@@ -90,15 +90,10 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             entity = await SetDefaults(entity);
            
-
             entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
-            //entity.Code = entity.Id.ToString();
-            //await _unitOfWork.SaveChangesAsync();
-
             return await GetCampaignAsync(entity.Id, userid);
-
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid)
@@ -185,7 +180,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await GetCampaignAsync(campaign.Id, userid);
+            return await GetCampaignAsync(entity.Id, userid);
         }
 
         public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, string userid) 

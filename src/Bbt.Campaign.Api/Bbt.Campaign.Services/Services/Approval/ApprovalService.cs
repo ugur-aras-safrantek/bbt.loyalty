@@ -220,11 +220,9 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
 
-            bool isCampaignUpdated = true;
-            bool isCampaignRuleUpdated = true;
-            bool isCampaignTargetUpdated = true;
-            bool isCampaignChannelCodeUpdated = true;
-            bool isCampaignAchievementUpdated = true;
+            var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
+            if(campaignUpdatePageEntity == null) 
+                throw new Exception("Bu kayıt için güncelleme kaydı yoktur.");
 
             #region add history
 
@@ -285,7 +283,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             #endregion
 
-            if (isCampaignUpdated)
+            if (campaignUpdatePageEntity.IsCampaignUpdated)
             {
                 campaignEntity = await _draftService.CopyCampaignInfo(campaignEntity, draftId, userid, false, true);                
             }
@@ -294,7 +292,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
-            if (isCampaignRuleUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignRuleUpdated) 
             {
                 var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                     .GetAll(x => x.CampaignId == draftId && !x.IsDeleted)
@@ -346,7 +344,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 }
             }
 
-            if (isCampaignTargetUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignTargetUpdated) 
             {
                 foreach (var x in _unitOfWork.GetRepository<CampaignTargetEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignTargetEntity>().DeleteAsync(x);
@@ -354,7 +352,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
             }
 
-            if (isCampaignChannelCodeUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignChannelCodeUpdated) 
             {
                 foreach (var campaignChannelCodeDelete in _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().DeleteAsync(campaignChannelCodeDelete);
@@ -362,7 +360,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
             }
 
-            if (isCampaignAchievementUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignAchievementUpdated) 
             {
                 foreach (var campaignAchievementDelete in _unitOfWork.GetRepository<CampaignAchievementEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(campaignAchievementDelete);
@@ -408,6 +406,18 @@ namespace Bbt.Campaign.Services.Services.Approval
             response.CampaignTargetList = await _campaignTargetService.GetCampaignTargetDto(draftId, false);
             response.CampaignChannelCodeList = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
             response.CampaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(draftId);
+
+            CampaignUpdatePages campaignUpdatePages = new CampaignUpdatePages();
+            var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
+            if (campaignUpdatePageEntity != null)
+            {
+                campaignUpdatePages.IsCampaignUpdated = campaignUpdatePageEntity.IsCampaignUpdated;
+                campaignUpdatePages.IsCampaignRuleUpdated = campaignUpdatePageEntity.IsCampaignRuleUpdated;
+                campaignUpdatePages.IsCampaignTargetUpdated = campaignUpdatePageEntity.IsCampaignTargetUpdated;
+                campaignUpdatePages.IsCampaignChannelCodeUpdated = campaignUpdatePageEntity.IsCampaignChannelCodeUpdated;
+                campaignUpdatePages.IsCampaignAchievementUpdated = campaignUpdatePageEntity.IsCampaignAchievementUpdated;
+            }
+            response.CampaignUpdatePages = campaignUpdatePages;
 
             CampaignUpdateFields campaignUpdateFields = new CampaignUpdateFields();
             if (!response.isNewRecord) 
