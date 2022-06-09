@@ -8,5 +8,6 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public bool isNewRecord { get; set; }
         public TopLimitDto TopLimit { get; set; }
         public TopLimitUpdateFields TopLimitUpdateFields { get; set; }
+        public List<HistoryApproveDto> HistoryList { get; set; }
     }
 }

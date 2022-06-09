@@ -643,6 +643,18 @@ namespace Bbt.Campaign.Services.Services.Approval
             }
             response.TopLimitUpdateFields = topLimitUpdateFields;
 
+            response.HistoryList = new List<HistoryApproveDto>();
+            foreach (var campaignHistory in _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.History && !x.IsDeleted).ToList())
+            {
+                HistoryApproveDto historyApproveDto = new HistoryApproveDto();
+                historyApproveDto.ApprovedBy = campaignHistory.ApprovedBy;
+                historyApproveDto.ApprovedDate = campaignHistory.ApprovedDate;
+                DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
+                if (_approvedDate != DateTime.MinValue)
+                    historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                response.HistoryList.Add(historyApproveDto);
+            }
+
             return await BaseResponse<TopLimitApproveFormDto>.SuccessAsync(response);
         }
         

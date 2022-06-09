@@ -106,7 +106,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             DateTime now = DateTime.UtcNow;
             bool isCreateDraft = false;
             string code = entity.Code;
-            int processTypeId = await _draftService.GetCampaignProcessType(request.Id);
+            int processTypeId = await _draftService.GetTopLimitProcessType(request.Id);
             if(processTypeId == (int)ProcessTypesEnum.CreateDraft) 
             {
                 isCreateDraft = true;

@@ -98,7 +98,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="id">Record Id of the draft top limit</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-toplimit-approval-form")]
+        [Route("get-toplimit-form")]
         public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
         {
             var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
