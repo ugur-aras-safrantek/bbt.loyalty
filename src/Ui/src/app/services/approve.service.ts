@@ -22,14 +22,6 @@ export class ApproveService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  campaignRuleDocumentDownload(id: any) {
-    let params = new HttpParams();
-    params = params.append('id', id);
-
-    const url = `${this.baseUrl}/${ApiPaths.CampaignRuleDocumentDownload}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
-  }
-
   campaignDefinitionApprove(id: any) {
     const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionApprove}/${id}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
