@@ -78,7 +78,7 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _approvalService.GetCampaignApprovalFormAsync(id, userId);
             return Ok(result);
         }
-        
+
         /// <summary>
         /// Returns the form data for target approval page
         /// </summary>
@@ -97,13 +97,27 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="id">Record Id of the draft top limit</param>
         /// <returns></returns>
-        //[HttpGet]
-        //[Route("get-toplimit-approval-form")]
-        //public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
-        //{
-        //    var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
-        //    return Ok(result);
-        //}
+        [HttpGet]
+        [Route("get-toplimit-approval-form")]
+        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
+        {
+            var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Approves or disapproves the draft toplimit.
+        /// </summary>
+        /// <param name="id">Record Id of the draft toplimit</param>
+        /// <param name="isApproved">Approved or disapproved</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("toplimit/{id}/{isApproved}")]
+        public async Task<IActionResult> ApproveTopLimit(int id, bool isApproved, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _approvalService.ApproveTopLimitAsync(id, isApproved, userId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// Returns the form data for campaign view page

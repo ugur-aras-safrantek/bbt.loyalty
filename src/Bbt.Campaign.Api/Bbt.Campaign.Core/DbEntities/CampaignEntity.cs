@@ -44,6 +44,9 @@ namespace Bbt.Campaign.Core.DbEntities
         //Approve
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
+
+        [ForeignKey("Statuses")]
         public int StatusId { get; set; }
+        public StatusEntity Status { get; set; }
     }
 }

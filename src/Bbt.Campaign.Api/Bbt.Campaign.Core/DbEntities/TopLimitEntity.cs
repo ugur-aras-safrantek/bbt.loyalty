@@ -7,6 +7,9 @@ namespace Bbt.Campaign.Core.DbEntities
 {
     public class TopLimitEntity : AuditableEntity
     {
+        [MaxLength(100), Required]
+        public string Code { get; set; }
+
         [MaxLength(250), Required]
         public string Name { get; set; } //adı
 
@@ -16,8 +19,6 @@ namespace Bbt.Campaign.Core.DbEntities
         public int AchievementFrequencyId { get; set; }
         public AchievementFrequencyEntity AchievementFrequency { get; set; }
         public TopLimitType Type { get; set; }
-
-
 
 
         //tutar
@@ -37,12 +38,16 @@ namespace Bbt.Campaign.Core.DbEntities
         [MaxLength(250)]
         public decimal? MaxTopLimitUtilization { get; set; }  //Çatı Max Yararlanma
 
-
         //Approve
-        public bool IsApproved { get; set; }
-        public bool IsDraft { get; set; }
-        public int? RefId { get; set; }
+        public string? ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+
+        [ForeignKey("Statuses")]
+        public int StatusId { get; set; }
+        public StatusEntity Status { get; set; }
 
         public virtual ICollection<CampaignTopLimitEntity> TopLimitCampaigns { get; set; }
+
+
     }
 }

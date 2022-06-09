@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
@@ -11,11 +12,11 @@ using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 {
@@ -26,27 +27,35 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
 
-        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice)
+        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService
+            , IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
-
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(campaignTopLimit);
+
+            DateTime now = DateTime.UtcNow;
+
             var entity = _mapper.Map<TopLimitEntity>(campaignTopLimit);
+            entity.Code = Helpers.CreateCampaignCode();
+            entity.StatusId = (int)StatusEnum.SentToApprove;
             entity.CreatedBy = userid;
-            entity.IsDraft = true;
-            entity.IsApproved = false;
+            entity.LastModifiedBy = userid;
+            entity.CreatedOn = now;
+            entity.LastModifiedOn = now;
             entity = await SetTopLimitChanges(entity);
             var campaignIds = campaignTopLimit.CampaignIds.Distinct().ToList();
 
@@ -60,6 +69,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                     {
                         CampaignId = x,
                         CreatedBy = userid,
+                        LastModifiedBy = userid,
+                        CreatedOn = now,
+                        LastModifiedOn = now
                     });
                 });
             }
@@ -84,14 +96,23 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             if (request.Id <= 0)
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
-            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == request.Id)
-                .Include(x => x.TopLimitCampaigns).FirstOrDefaultAsync();
-
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => !x.IsDeleted && x.Id == request.Id)
+                .Include(x => x.TopLimitCampaigns)
+                .FirstOrDefaultAsync();
             if (entity is null)
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
 
-            var campaignIds = request.CampaignIds.Distinct().ToList();
-
+            DateTime now = DateTime.UtcNow;
+            bool isCreateDraft = false;
+            string code = entity.Code;
+            int processTypeId = await _draftService.GetCampaignProcessType(request.Id);
+            if(processTypeId == (int)ProcessTypesEnum.CreateDraft) 
+            {
+                isCreateDraft = true;
+                entity = new TopLimitEntity();
+                entity = await _draftService.CopyTopLimitInfo(request.Id, entity, userid, false, false, false, true, false);
+            }
             entity.AchievementFrequencyId = request.AchievementFrequencyId;
             entity.CurrencyId = request.CurrencyId;
             entity.IsActive = request.IsActive;
@@ -100,28 +121,39 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             entity.MaxTopLimitUtilization = request.MaxTopLimitUtilization;
             entity.Name = request.Name;
             entity.Type = request.Type;
-            entity.IsDraft = true;
-            entity.IsApproved = false;
-            entity.LastModifiedBy = userid;
+            if (!isCreateDraft) 
+            { 
+                entity.LastModifiedBy = userid;
+                entity.LastModifiedOn = now;
+            }
+                
 
             entity = await SetTopLimitChanges(entity);
 
-            foreach (var requestEntityDelete in _unitOfWork.GetRepository<CampaignTopLimitEntity>().GetAll(x => !x.IsDeleted
-                     && x.TopLimitId == request.Id))
+            if (!isCreateDraft) 
             {
-                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(requestEntityDelete);
+                foreach (var requestEntityDelete in _unitOfWork.GetRepository<CampaignTopLimitEntity>().GetAll(x => !x.IsDeleted && x.TopLimitId == request.Id))
+                    await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(requestEntityDelete);
             }
+            
+            var campaignIds = request.CampaignIds.Distinct().ToList();
             foreach (int campaignId in campaignIds)
             {
                 await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(new CampaignTopLimitEntity()
                 {
                     CampaignId = campaignId,
-                    TopLimitId = request.Id,
+                    TopLimit = entity,
                     CreatedBy = userid,
+                    LastModifiedBy = userid,
+                    CreatedOn = now,
+                    LastModifiedOn = now
                 });
             }
 
-            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
+            if(isCreateDraft)
+                await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(entity);
+            else
+                await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -162,6 +194,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
         public async Task<BaseResponse<TopLimitDto>> GetCampaignTopLimitAsync(int id)
         {
+            var topLimitDto = await GetTopLimitDto(id);
+            return await BaseResponse<TopLimitDto>.SuccessAsync(topLimitDto);
+        }
+
+        public async Task<TopLimitDto> GetTopLimitDto(int id) 
+        {
             var campaignTopLimitEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                                                           .GetAll(x => x.Id == id && x.IsDeleted == false)
                                                           .Include(x => x.TopLimitCampaigns).ThenInclude(x => x.Campaign)
@@ -178,23 +216,35 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                         Id = c.CampaignId,
                         Name = c.Campaign.Name
                     }).ToList(),
-                    Currency = campaignTopLimitEntity.Currency is null ? null : new Public.Dtos.ParameterDto { Id = campaignTopLimitEntity.Currency?.Id??0, Code = campaignTopLimitEntity.Currency?.Code, Name = campaignTopLimitEntity.Currency?.Name },
+                    Currency = campaignTopLimitEntity.Currency is null ? null : new Public.Dtos.ParameterDto { Id = campaignTopLimitEntity.Currency?.Id ?? 0, Code = campaignTopLimitEntity.Currency?.Code, Name = campaignTopLimitEntity.Currency?.Name },
                     CurrencyId = campaignTopLimitEntity.CurrencyId,
                     Id = campaignTopLimitEntity.Id,
                     IsActive = campaignTopLimitEntity.IsActive,
                     MaxTopLimitAmount = campaignTopLimitEntity.MaxTopLimitAmount,
                     MaxTopLimitRate = campaignTopLimitEntity.MaxTopLimitRate,
                     MaxTopLimitUtilization = campaignTopLimitEntity.MaxTopLimitUtilization,
-                    MaxTopLimitAmountStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitAmount),
-                    MaxTopLimitRateStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitRate),
-                    MaxTopLimitUtilizationStr = Core.Helper.Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitUtilization),
+                    MaxTopLimitAmountStr = Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitAmount),
+                    MaxTopLimitRateStr = Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitRate),
+                    MaxTopLimitUtilizationStr = Helpers.ConvertNullablePriceString(campaignTopLimitEntity.MaxTopLimitUtilization),
                     Name = campaignTopLimitEntity.Name,
-                    Type = campaignTopLimitEntity.Type
+                    Type = campaignTopLimitEntity.Type,
+                    TypeName = Helpers.GetEnumDescription(campaignTopLimitEntity.Type),
+                    Code = campaignTopLimitEntity.Code,
+                    ApprovedBy = campaignTopLimitEntity.ApprovedBy,
+                    ApprovedDate = campaignTopLimitEntity.ApprovedDate,
+                    StatusId = campaignTopLimitEntity.StatusId,
                 };
-                return await BaseResponse<TopLimitDto>.SuccessAsync(mappedCampaignTopLimit);
+
+                if (campaignTopLimitEntity.TopLimitCampaigns.Any())
+                {
+                    mappedCampaignTopLimit.CampaignNamesStr = string.Empty;
+                    foreach (var topLimitCampaign in campaignTopLimitEntity.TopLimitCampaigns)
+                        mappedCampaignTopLimit.CampaignNamesStr += "," + topLimitCampaign.Campaign.Name;
+                    if (mappedCampaignTopLimit.CampaignNamesStr.Length > 0)
+                        mappedCampaignTopLimit.CampaignNamesStr = mappedCampaignTopLimit.CampaignNamesStr.Remove(0, 1);
+                }
+                return mappedCampaignTopLimit;
             }
-            
-            
             throw new Exception("Kampanya Çatı Limiti bulunamadı.");
         }
 
@@ -209,15 +259,14 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<CampaignTopLimitInsertFormDto>.SuccessAsync(response);
         }
-
         private async Task FillForm(CampaignTopLimitInsertFormDto response)
         {
             response.CurrencyList = (await _parameterService.GetCurrencyListAsync())?.Data;
             response.AchievementFrequencyList = (await _parameterService.GetAchievementFrequencyListAsync())?.Data;
-            response.CampaignList = 
-                _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved &&  !x.IsDeleted).Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+            response.CampaignList = _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved &&  !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.UtcNow))
+                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
-
         public async Task<BaseResponse<List<TopLimitDto>>> GetListAsync()
         {
             List<TopLimitDto> campaignTopLimitList = _unitOfWork.GetRepository<TopLimitEntity>()
@@ -244,7 +293,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<List<TopLimitDto>>.SuccessAsync(campaignTopLimitList);
         }
-
         public async Task<BaseResponse<CampaignTopLimitUpdateFormDto>> GetUpdateForm(int id, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -257,7 +305,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<CampaignTopLimitUpdateFormDto>.SuccessAsync(response);
         }
-
         public async Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -276,7 +323,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CampaignTopLimitListFilterResponse>.SuccessAsync(response);
         }
-
         public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, string userid)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -312,7 +358,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 return await BaseResponse<GetFileResponse>.FailAsync("Hata oluştu." + ex.Message);
             }
         }
-
         private async Task<List<CampaignTopLimitListDto>> GetFilteredCampaignTopLimitList(CampaignTopLimitListFilterRequest request) 
         {
             Core.Helper.Helpers.ListByFilterCheckValidation(request);
@@ -392,7 +437,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return topLimitList;
         }
-
         public async Task<BaseResponse<CampaignTopLimitFilterParameterResponse>> GetFilterParameterList()
         {
             CampaignTopLimitFilterParameterResponse response = new CampaignTopLimitFilterParameterResponse();
@@ -405,7 +449,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<CampaignTopLimitFilterParameterResponse>.SuccessAsync(response);
         }
-
         async Task CheckValidationAsync(CampaignTopLimitInsertBaseRequest input)
         {
             if (string.IsNullOrWhiteSpace(input.Name))
@@ -469,7 +512,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             }
 
         }
-
         public async Task<bool> IsActiveTopLimit(int id) 
         {
             var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(id);

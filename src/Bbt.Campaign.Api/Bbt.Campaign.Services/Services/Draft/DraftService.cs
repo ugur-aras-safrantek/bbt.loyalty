@@ -624,5 +624,89 @@ namespace Bbt.Campaign.Services.Services.Draft
                 retVal = (int)ProcessTypesEnum.CreateDraft;
             return retVal;
         }
+
+
+
+        public async Task<int> GetTopLimitProcessType(int topLimitId)
+        {
+            int retVal = (int)ProcessTypesEnum.Update;
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(topLimitId);
+            if (entity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
+            var sentToApproveEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (sentToApproveEntity != null)
+                throw new Exception("Bu çatı limiti için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
+
+            if (entity.StatusId == (int)StatusEnum.Draft)
+                retVal = (int)ProcessTypesEnum.Update;
+            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
+                throw new Exception("Bu çatı limiti güncellenmek için uygun statüde değildir.");
+            else if (entity.StatusId == (int)StatusEnum.Approved)
+                retVal = (int)ProcessTypesEnum.CreateDraft;
+            return retVal;
+        }
+
+        public async Task<TopLimitEntity> CopyTopLimitInfo(int topLimitId, TopLimitEntity targetEntity, string userid,
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
+            bool isIncludeCode, bool isIncludeStatusId) 
+        {
+            var sourceEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == topLimitId)
+                .Include(x => x.TopLimitCampaigns)
+                .FirstOrDefaultAsync();
+            if (sourceEntity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
+
+            targetEntity.AchievementFrequencyId = sourceEntity.AchievementFrequencyId;
+            targetEntity.CurrencyId = sourceEntity.CurrencyId;
+            targetEntity.IsActive = sourceEntity.IsActive;
+            targetEntity.MaxTopLimitAmount = sourceEntity.MaxTopLimitAmount;
+            targetEntity.MaxTopLimitRate = sourceEntity.MaxTopLimitRate;
+            targetEntity.MaxTopLimitUtilization = sourceEntity.MaxTopLimitUtilization;
+            targetEntity.Name = sourceEntity.Name;
+            targetEntity.Type = sourceEntity.Type;
+            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.SentToApprove; 
+            targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
+            targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
+            targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.UtcNow;
+            if (isIncludeUpdateInfo) 
+            {
+                targetEntity.LastModifiedBy = sourceEntity.LastModifiedBy;
+                targetEntity.LastModifiedOn = sourceEntity.LastModifiedOn;
+            }
+            if (isIncludeApproveInfo)
+            {
+                targetEntity.ApprovedBy = sourceEntity.ApprovedBy;
+                targetEntity.ApprovedDate = sourceEntity.ApprovedDate;
+            }
+            return targetEntity;
+        }
+
+        public async Task<List<CampaignTopLimitEntity>> CopyCampaignTopLimits(int topLimitId, TopLimitEntity targetEntity, string userid,
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo) 
+        {
+            List<CampaignTopLimitEntity> campaignTopLimitList = new List<CampaignTopLimitEntity>();
+            var sourceEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == topLimitId)
+                .Include(x => x.TopLimitCampaigns)
+                .FirstOrDefaultAsync();
+            if (sourceEntity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
+            foreach (var item in sourceEntity.TopLimitCampaigns)
+            {
+                CampaignTopLimitEntity campaignTopLimitEntity = new CampaignTopLimitEntity();
+                campaignTopLimitEntity.TopLimit = targetEntity;
+                campaignTopLimitEntity.CampaignId = item.CampaignId;
+                campaignTopLimitEntity.CreatedBy = isIncludeCreateInfo ? item.CreatedBy : userid;
+                campaignTopLimitEntity.CreatedOn = isIncludeCreateInfo ? item.CreatedOn : DateTime.UtcNow;
+                if (isIncludeUpdateInfo) 
+                {
+                    campaignTopLimitEntity.LastModifiedBy = item.LastModifiedBy;
+                    campaignTopLimitEntity.LastModifiedOn = item.LastModifiedOn;
+                } 
+                campaignTopLimitList.Add(campaignTopLimitEntity);
+            }
+            return campaignTopLimitList;
+        }
     }
 }

@@ -28,5 +28,12 @@ namespace Bbt.Campaign.Services.Services.Draft
         public Task<List<CampaignRuleCustomerTypeEntity>> CopyCampaignRuleCustomerTypes(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
         public Task<List<CampaignRuleIdentityEntity>> CopyCampaignRuleIdentites(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
 
+        public Task<int> GetTopLimitProcessType(int topLimitId);
+
+        public Task<TopLimitEntity> CopyTopLimitInfo(int topLimitId, TopLimitEntity targetEntity, string userid,
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo,
+            bool isIncludeCode, bool isIncludeStatusId);
+        public Task<List<CampaignTopLimitEntity>> CopyCampaignTopLimits(int topLimitId, TopLimitEntity targetEntity, string userid,
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo);
     }
 }

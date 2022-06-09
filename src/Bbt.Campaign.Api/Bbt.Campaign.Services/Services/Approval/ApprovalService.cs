@@ -22,6 +22,7 @@ using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignChannelCode;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
+using Bbt.Campaign.Services.Services.CampaignTopLimit;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Report;
@@ -44,6 +45,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly IDraftService _draftService;
         private readonly IReportService _reportService;
         private readonly ICampaignAchievementService _campaignAchievementService;
+        private readonly ICampaignTopLimitService _campaignTopLimitService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignService campaignService, 
@@ -53,7 +55,8 @@ namespace Bbt.Campaign.Services.Services.Approval
             IAuthorizationService authorizationservice, 
             IReportService reportService, 
             IDraftService draftService,
-            ICampaignAchievementService campaignAchievementService
+            ICampaignAchievementService campaignAchievementService,
+            ICampaignTopLimitService campaignTopLimitService
             )
         {
             _unitOfWork = unitOfWork;
@@ -67,6 +70,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             _reportService = reportService;
             _draftService = draftService;
             _campaignAchievementService = campaignAchievementService;
+            _campaignTopLimitService = campaignTopLimitService;
         }
 
         #region campaign
@@ -94,6 +98,10 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -115,8 +123,9 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, string userid)
         {
-            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            //await _authorizationService.CheckAuthorizationAsync(userid, (int)ModuleTypeEnu, authorizationTypeId);
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -125,7 +134,6 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Kampanya bulunamadı");
 
             campaignEntity.StatusId = (int)StatusEnum.Draft;
-            campaignEntity.IsDeleted = true;
             campaignEntity.LastModifiedBy = userid;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
@@ -142,7 +150,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .FirstOrDefaultAsync();
             if (draftEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
-            if (draftEntity.CreatedBy == userid || draftEntity.LastModifiedBy == userid)
+            if (draftEntity.CreatedBy == userid)
                 throw new Exception("Kampanyayı oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             //update campaign
@@ -231,7 +239,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
 
-            if (campaignDraftEntity.CreatedBy == userid || campaignDraftEntity.LastModifiedBy == userid)
+            if (campaignDraftEntity.CreatedBy == userid)
                 throw new Exception("Kampanyayı oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
@@ -485,184 +493,155 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         #endregion
 
-        #region toplimit
+        #region approve toplimit
+        public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, string userid) 
+        {
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            if (isApproved) 
+            {
+                var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                    .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
+                if (draftEntity == null)
+                    throw new Exception("Çatı limiti bulunamadı");
 
-        //public async Task<BaseResponse<TopLimitEntity>> ApproveTopLimitAsync(int id)
-        //{
-        //    var entity = await _unitOfWork.GetRepository<TopLimitEntity>()
-        //        .GetAll(x => (x.RefId ?? 0) == id && !x.IsDeleted)
-        //        .FirstOrDefaultAsync();
-        //    return entity == null ? await ApproveTopLimitAddAsync(id) : 
-        //                                    await ApproveTopLimitUpdateAsync(entity.RefId ?? 0, entity.Id);
-        //}
-        //private async Task<BaseResponse<TopLimitEntity>> ApproveTopLimitAddAsync(int refId)
-        //{
-        //    var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
-        //        .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
-        //        .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted))
-        //        .FirstOrDefaultAsync();
-        //    if (draftEntity == null) { throw new Exception("Çatı limit bulunamadı."); }
+                //if (draftEntity.CreatedBy == userid)
+                //    throw new Exception("Çatı limitini oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
-        //    draftEntity.IsApproved = true;
-        //    await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
+                var approvedEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                    .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
 
-        //    var campaignTopLimitDto = _mapper.Map<TopLimitEntity>(draftEntity);
-        //    var entity = _mapper.Map<TopLimitEntity>(campaignTopLimitDto);
-        //    entity.Id = 0;
-        //    entity.IsApproved = true;
-        //    entity.IsDraft = false;
-        //    entity.RefId = refId;
+                if (approvedEntity == null)
+                {
+                    return await ApproveTopLimitAddAsync(id, userid);
+                }
+                else
+                {
+                    return await ApproveTopLimitUpdateAsync(id, approvedEntity.Id, userid);
+                }
+            }
+            else 
+            {
+                return await this.DisApproveTopLimitAsync(id, userid);
+            }
+        }
+        private async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAddAsync(int id, string userid) 
+        {
+            DateTime now = DateTime.UtcNow;
+            var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == id && !x.IsDeleted).FirstOrDefaultAsync();
+            if (draftEntity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
 
-        //    //Campaigns
-        //    if (draftEntity.TopLimitCampaigns.Any())
-        //    {
-        //        entity.TopLimitCampaigns = new List<CampaignTopLimitEntity>();
-        //        foreach (var campaignTopLimitDraft in draftEntity.TopLimitCampaigns)
-        //        {
-        //            entity.TopLimitCampaigns.Add(new CampaignTopLimitEntity()
-        //            {
-        //                CampaignId = campaignTopLimitDraft.CampaignId,
-        //            });
-        //        }
-        //    }
+            //update draft top limit
+            draftEntity.StatusId = (int)StatusEnum.Approved;
+            draftEntity.ApprovedBy = userid;
+            draftEntity.ApprovedDate = now;
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
+            //add history
+            var historyEntity = new TopLimitEntity();
+            historyEntity = await _draftService.CopyTopLimitInfo(id, historyEntity, userid, true, true, true, true, true);
+            historyEntity.StatusId = (int)StatusEnum.History;
+            historyEntity.ApprovedBy = userid;
+            historyEntity.ApprovedDate = now;
+            await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(historyEntity);
 
-        //    await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(entity);
+            foreach (var campaignTopLimit in await _draftService.CopyCampaignTopLimits(id, historyEntity, userid, true, true)) 
+            {
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(campaignTopLimit);
+            }
+                
+            await _unitOfWork.SaveChangesAsync();
 
-        //    await _unitOfWork.SaveChangesAsync();
+            return await _campaignTopLimitService.GetCampaignTopLimitAsync(draftEntity.Id);
+        }
+        private async Task<BaseResponse<TopLimitDto>> ApproveTopLimitUpdateAsync(int draftId, int topLimitId, string userid) 
+        {
+            DateTime now = DateTime.UtcNow;
+            var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == draftId && !x.IsDeleted).FirstOrDefaultAsync();
+            var approvedEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == topLimitId && !x.IsDeleted).FirstOrDefaultAsync();
 
-        //    var mappedTopLimit = _mapper.Map<TopLimitEntity>(entity);
+            if (draftEntity == null || approvedEntity == null) 
+                throw new Exception("Çatı limiti bulunamadı.");
+            
 
-        //    return await BaseResponse<TopLimitEntity>.SuccessAsync(mappedTopLimit);
-        //}
-        //private async Task<BaseResponse<TopLimitEntity>> ApproveTopLimitUpdateAsync(int refId, int id)
-        //{
-        //    var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
-        //        .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
-        //        .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted))
-        //        .FirstOrDefaultAsync();
-        //    var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(id);
+            approvedEntity = await _draftService.CopyTopLimitInfo(draftId, approvedEntity, userid, true, true, true, true, true);
+            approvedEntity.StatusId = (int)StatusEnum.Approved;
+            approvedEntity.ApprovedDate = DateTime.UtcNow;
+            approvedEntity.ApprovedBy = userid;
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(approvedEntity);
 
-        //    if (draftEntity == null || entity == null) { throw new Exception("Çatı limit bulunamadı."); }
+            draftEntity.ApprovedBy = userid;
+            draftEntity.ApprovedDate = now;
+            draftEntity.StatusId = (int)StatusEnum.History;
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
 
-        //    draftEntity.IsApproved = true;
-        //    await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
+            await _unitOfWork.SaveChangesAsync();
+            var mappedEntity = _mapper.Map<TopLimitDto>(approvedEntity);
+            return await BaseResponse<TopLimitDto>.SuccessAsync(mappedEntity);
 
-        //    entity.AchievementFrequencyId = draftEntity.AchievementFrequencyId;
-        //    entity.CurrencyId = draftEntity.CurrencyId;
-        //    entity.IsActive = draftEntity.IsActive;
-        //    entity.MaxTopLimitAmount = draftEntity.MaxTopLimitAmount;
-        //    entity.MaxTopLimitRate = draftEntity.MaxTopLimitRate;
-        //    entity.MaxTopLimitUtilization = draftEntity.MaxTopLimitUtilization;
-        //    entity.Name = draftEntity.Name;
-        //    entity.Type = draftEntity.Type;
-        //    entity.IsDraft = false;
-        //    entity.IsApproved = true;
+        }
+        private async Task<BaseResponse<TopLimitDto>> DisApproveTopLimitAsync(int id, string userid)
+        {
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(id); 
+            if (entity is null)
+                throw new Exception("Kampanya Çatı Limiti bulunamadı.");
 
-        //    //delete campaigns
-        //    foreach (var campaignDelete in _unitOfWork.GetRepository<CampaignTopLimitEntity>().
-        //        GetAll(x => !x.IsDeleted && x.TopLimitId == id))
-        //    {
-        //        await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(campaignDelete);
-        //    }
+            entity.StatusId = (int)StatusEnum.Draft;
+            entity.LastModifiedBy = userid;
 
-        //    //add campaigns
-        //    if (draftEntity.TopLimitCampaigns.Any())
-        //    {
-        //        foreach (var campaignDraft in draftEntity.TopLimitCampaigns)
-        //        {
-        //            CampaignTopLimitEntity campaignTopLimitEntity = new CampaignTopLimitEntity()
-        //            {
-        //                CampaignId = campaignDraft.CampaignId,
-        //                TopLimitId = id,
-        //            };
-
-        //            await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(campaignTopLimitEntity);
-        //        }
-        //    }
-
-        //    await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
-
-        //    await _unitOfWork.SaveChangesAsync();
-
-        //    var mappedTopLimit = _mapper.Map<TopLimitEntity>(entity);
-
-        //    return await BaseResponse<TopLimitEntity>.SuccessAsync(mappedTopLimit);
-
-        //}
-        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int refId) 
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            var mappedEntity = _mapper.Map<TopLimitDto>(entity);
+            return await BaseResponse<TopLimitDto>.SuccessAsync(mappedEntity);
+        }
+        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id) 
         {
             TopLimitApproveFormDto response = new TopLimitApproveFormDto();
 
-            response.CurrencyList = (await _parameterService.GetCurrencyListAsync())?.Data;
-            response.AchievementFrequencyList = (await _parameterService.GetAchievementFrequencyListAsync())?.Data;
-            response.CampaignList = (await _campaignService.GetParameterListAsync())?.Data;
+            var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => x.Id == id && !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
+                .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted)).FirstOrDefaultAsync();
+            if(draftEntity == null)
+                throw new Exception("Çatı limiti bulunamadı");
+            var approvedEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted)).FirstOrDefaultAsync();
 
-            var topLimitDraftEntitiy = await _unitOfWork.GetRepository<TopLimitEntity>()
-                                                          .GetAll(x => x.Id == refId && x.IsDeleted == false)
-                                                          .Include(x => x.TopLimitCampaigns).ThenInclude(x => x.Campaign)
-                                                          .Include(x => x.Currency)
-                                                          .Include(x => x.AchievementFrequency).FirstOrDefaultAsync();
+            response.isNewRecord = approvedEntity == null;
 
-            if (topLimitDraftEntitiy == null) { throw new Exception("Çatı limit bulunamadı."); }
+            response.TopLimit = await _campaignTopLimitService.GetTopLimitDto(id);
 
-            var TopLimitEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
-                                                          .GetAll(x => x.RefId == topLimitDraftEntitiy.Id && x.IsDeleted == false)
-                                                          .Include(x => x.TopLimitCampaigns).ThenInclude(x => x.Campaign)
-                                                          .Include(x => x.Currency)
-                                                          .Include(x => x.AchievementFrequency).FirstOrDefaultAsync();
-
-            if (TopLimitEntity == null)
+            TopLimitUpdateFields topLimitUpdateFields = new TopLimitUpdateFields();
+            if (!response.isNewRecord) 
             {
-                response.isNewRecord = true;
-            }
+                topLimitUpdateFields.IsNameUpdated = draftEntity.Name != approvedEntity.Name;
+                topLimitUpdateFields.IsActiveUpdated = draftEntity.IsActive != approvedEntity.IsActive;
+                topLimitUpdateFields.IsAchievementFrequencyIdUpdated = draftEntity.AchievementFrequencyId != approvedEntity.AchievementFrequencyId;
+                topLimitUpdateFields.IsTypeIdUpdated = draftEntity.Type != approvedEntity.Type;
+                topLimitUpdateFields.IsMaxTopLimitAmountUpdated = draftEntity.MaxTopLimitAmount != approvedEntity.MaxTopLimitAmount;
+                topLimitUpdateFields.IsCurrencyIdUpdated = draftEntity.CurrencyId != approvedEntity.CurrencyId;
+                topLimitUpdateFields.IsMaxTopLimitRateUpdated = draftEntity.MaxTopLimitRate != approvedEntity.MaxTopLimitRate;
+                topLimitUpdateFields.IsMaxTopLimitUtilizationUpdated = draftEntity.MaxTopLimitUtilization != approvedEntity.MaxTopLimitUtilization;
 
-            if (topLimitDraftEntitiy != null)
-            {
-                TopLimitDto mappedCampaignTopLimitDraft = new TopLimitDto
-                {
-                    AchievementFrequency = new Public.Dtos.ParameterDto { Id = topLimitDraftEntitiy.AchievementFrequency.Id, Name = topLimitDraftEntitiy.AchievementFrequency.Name },
-                    AchievementFrequencyId = topLimitDraftEntitiy.AchievementFrequencyId,
-                    Campaigns = topLimitDraftEntitiy.TopLimitCampaigns.Where(c => !c.IsDeleted).Select(c => new Public.Dtos.ParameterDto
-                    {
-                        Id = c.CampaignId,
-                        Name = c.Campaign.Name
-                    }).ToList(),
-                    Currency = topLimitDraftEntitiy.Currency is null ? null : new Public.Dtos.ParameterDto { Id = topLimitDraftEntitiy.Currency?.Id ?? 0, Code = topLimitDraftEntitiy.Currency?.Code, Name = topLimitDraftEntitiy.Currency?.Name },
-                    CurrencyId = topLimitDraftEntitiy.CurrencyId,
-                    Id = topLimitDraftEntitiy.Id,
-                    IsActive = topLimitDraftEntitiy.IsActive,
-                    //MaxTopLimitAmount = topLimitDraftEntitiy.MaxTopLimitAmount,
-                    //MaxTopLimitRate = topLimitDraftEntitiy.MaxTopLimitRate,
-                    //MaxTopLimitUtilization = topLimitDraftEntitiy.MaxTopLimitUtilization,
-                    Name = topLimitDraftEntitiy.Name,
-                    Type = topLimitDraftEntitiy.Type
-                };
-                response.TopLimitDraft = mappedCampaignTopLimitDraft;
+                if (draftEntity.TopLimitCampaigns.Count != approvedEntity.TopLimitCampaigns.Count)
+                    topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
+                else 
+                { 
+                    foreach(var draftTopLimitCampaign in draftEntity.TopLimitCampaigns) 
+                    { 
+                        var approvedTopLimitCampaign = approvedEntity.TopLimitCampaigns.Where(x=>x.CampaignId == draftTopLimitCampaign.Id);
+                        if(approvedTopLimitCampaign == null) 
+                        {
+                            topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
+                            break;
+                        }
+                    }
+                }
             }
-
-            if (TopLimitEntity != null) 
-            {
-                TopLimitDto mappedCampaignTopLimit = new TopLimitDto
-                {
-                    AchievementFrequency = new Public.Dtos.ParameterDto { Id = TopLimitEntity.AchievementFrequency.Id, Name = TopLimitEntity.AchievementFrequency.Name },
-                    AchievementFrequencyId = TopLimitEntity.AchievementFrequencyId,
-                    Campaigns = TopLimitEntity.TopLimitCampaigns.Where(c => !c.IsDeleted).Select(c => new Public.Dtos.ParameterDto
-                    {
-                        Id = c.CampaignId,
-                        Name = c.Campaign.Name
-                    }).ToList(),
-                    Currency = TopLimitEntity.Currency is null ? null : new Public.Dtos.ParameterDto { Id = TopLimitEntity.Currency?.Id ?? 0, Code = TopLimitEntity.Currency?.Code, Name = TopLimitEntity.Currency?.Name },
-                    CurrencyId = TopLimitEntity.CurrencyId,
-                    Id = TopLimitEntity.Id,
-                    IsActive = TopLimitEntity.IsActive,
-                    //MaxTopLimitAmount = TopLimitEntity.MaxTopLimitAmount,
-                    //MaxTopLimitRate = TopLimitEntity.MaxTopLimitRate,
-                    //MaxTopLimitUtilization = TopLimitEntity.MaxTopLimitUtilization,
-                    Name = TopLimitEntity.Name,
-                    Type = TopLimitEntity.Type
-                };
-                response.TopLimit = mappedCampaignTopLimit;
-            }
+            response.TopLimitUpdateFields = topLimitUpdateFields;
 
             return await BaseResponse<TopLimitApproveFormDto>.SuccessAsync(response);
         }
@@ -1011,48 +990,14 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-
-            var topLimitDraftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
-                                                          .GetAll(x => x.Id == refId && x.IsDeleted == false)
-                                                          .Include(x => x.TopLimitCampaigns.Where(x=>!x.IsDeleted))
-                                                          .FirstOrDefaultAsync();
-            if (topLimitDraftEntity == null)
-                throw new Exception("Çatı limiti bulunamadı.");
-
-            //topLimitEntity
-
-            TopLimitEntity topLimitEntity = new TopLimitEntity();
-            topLimitEntity.AchievementFrequencyId = topLimitDraftEntity.AchievementFrequencyId;
-            topLimitEntity.CurrencyId = topLimitDraftEntity.CurrencyId;
-            topLimitEntity.IsActive = topLimitDraftEntity.IsActive;
-            topLimitEntity.MaxTopLimitAmount = topLimitDraftEntity.MaxTopLimitAmount;
-            topLimitEntity.MaxTopLimitRate = topLimitDraftEntity.MaxTopLimitRate;
-            topLimitEntity.MaxTopLimitUtilization = topLimitDraftEntity.MaxTopLimitUtilization;
-            topLimitEntity.Name = topLimitDraftEntity.Name + "-Copy";
-            topLimitEntity.Type = topLimitDraftEntity.Type;
-            topLimitEntity.IsApproved = false;
-            topLimitEntity.IsDraft = true;
-            topLimitEntity.RefId = null;
-            topLimitEntity.CreatedBy = userid;
-
-            topLimitEntity.TopLimitCampaigns = new List<CampaignTopLimitEntity>();
-            foreach (var campaign in topLimitDraftEntity.TopLimitCampaigns)
-            {
-                topLimitEntity.TopLimitCampaigns.Add(new CampaignTopLimitEntity()
-                {
-                    CampaignId = campaign.CampaignId,
-                    CreatedBy = userid,
-                });
-            }
-
-            await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(topLimitEntity);
-
+            
+            TopLimitEntity entity = new TopLimitEntity();
+            entity = await _draftService.CopyTopLimitInfo(refId, entity, userid, false, false, false, false, false);
+            await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
-            var mappedTopLimit = _mapper.Map<TopLimitDto>(topLimitEntity);
-
+            var mappedTopLimit = _mapper.Map<TopLimitDto>(entity);
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedTopLimit);
         }
 

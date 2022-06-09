@@ -5,6 +5,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTopLimit
     public class TopLimitDto
     {
         public int Id { get; set; }
+
+        public string Code { get; set; }
         public string Name { get; set; }
         public List<ParameterDto> Campaigns { get; set; }
         public int AchievementFrequencyId { get; set; }
@@ -18,10 +20,13 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTopLimit
         public string? MaxTopLimitRateStr { get; set; }
         public string? MaxTopLimitUtilizationStr { get; set; }
         public TopLimitType Type { get; set; }
+        public string TypeName { get; set; }
         public bool IsActive { get; set; }
-        public bool IsApproved { get; set; }
-        public bool IsDraft { get; set; }
-        public int? RefId { get; set; }
+
+        public string CampaignNamesStr { get; set; }
+        public string? ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public int StatusId { get; set; }
 
     }
 }

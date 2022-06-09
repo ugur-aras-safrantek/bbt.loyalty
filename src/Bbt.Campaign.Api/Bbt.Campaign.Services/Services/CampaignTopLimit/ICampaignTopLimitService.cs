@@ -18,5 +18,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         public Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, string userid);
         public Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, string userid);
         public Task<bool> IsActiveTopLimit(int id);
+        public Task<TopLimitDto> GetTopLimitDto(int id);
     }
 }

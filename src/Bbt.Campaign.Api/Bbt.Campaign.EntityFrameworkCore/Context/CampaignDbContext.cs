@@ -36,10 +36,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             }
 
             //migration yapılırken bu satır açılacak
-            //modelBuilder.Ignore<CampaignReportEntity>();
-            //modelBuilder.Ignore<CampaignListEntity>();
-            //modelBuilder.Ignore<CampaignDetailListEntity>();
-            //modelBuilder.Ignore<CampaignTargetListEntity>();
+            modelBuilder.Ignore<CampaignReportEntity>();
+            modelBuilder.Ignore<CampaignListEntity>();
+            modelBuilder.Ignore<CampaignDetailListEntity>();
+            modelBuilder.Ignore<CampaignTargetListEntity>();
 
             new CampaignDbInitializer(modelBuilder).Seed();
         }
