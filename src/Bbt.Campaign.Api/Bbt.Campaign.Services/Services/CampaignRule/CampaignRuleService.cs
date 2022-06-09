@@ -185,7 +185,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             await CheckValidationsAsync(campaignRule, true);
 
-            int processTypeId = await _draftService.GetProcessType(campaignRule.CampaignId);
+            int processTypeId = await _draftService.GetCampaignProcessType(campaignRule.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
                 campaignRule.CampaignId = await _draftService.CreateCampaignDraftAsync(campaignRule.CampaignId, userid, (int)PageTypeEnum.CampaignRule);

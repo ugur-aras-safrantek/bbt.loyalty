@@ -604,32 +604,24 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             return campaignProperty;
         }
-        public async Task<int> GetProcessType(int canpaignId)
+        public async Task<int> GetCampaignProcessType(int campaignId)
         {
             int retVal = (int)ProcessTypesEnum.Update;
-
-            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(canpaignId);
+            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+            if(entity == null)
+                throw new Exception("Kampanya bulunamadı.");
+            var sentToApproveEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if(sentToApproveEntity != null)
+                throw new Exception("Bu kampanya için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
 
             if (entity.StatusId == (int)StatusEnum.Draft)
-            {
                 retVal = (int)ProcessTypesEnum.Update;
-            }
             else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
-            {
                 throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
-            }
             else if (entity.StatusId == (int)StatusEnum.Approved)
-            {
                 retVal = (int)ProcessTypesEnum.CreateDraft;
-
-                //var usingEntity = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
-                //    .Where(x => !x.IsDeleted && x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove)
-                //    .FirstOrDefault();
-                //if (usingEntity == null) 
-                //    retVal = (int)ProcessTypesEnum.CreateDraft;
-                //else
-                //    throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
-            }
             return retVal;
         }
     }

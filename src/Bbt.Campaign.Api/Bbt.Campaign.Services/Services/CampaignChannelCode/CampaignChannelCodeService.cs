@@ -70,7 +70,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
         }
         private async Task Update(CampaignChannelCodeUpdateRequest request, string userid) 
         {
-            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            int processTypeId = await _draftService.GetCampaignProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
                 request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignChannelCode);

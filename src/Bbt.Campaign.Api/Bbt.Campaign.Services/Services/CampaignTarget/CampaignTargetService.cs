@@ -71,7 +71,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
         private async Task Update(CampaignTargetInsertRequest request, string userid) 
         {
-            int processTypeId = await _draftService.GetProcessType(request.CampaignId);
+            int processTypeId = await _draftService.GetCampaignProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
                 request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignTarget);

@@ -126,7 +126,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 }
             }
 
-            int processTypeId = await _draftService.GetProcessType(campaign.Id);
+            int processTypeId = await _draftService.GetCampaignProcessType(campaign.Id);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
                 int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid, (int)PageTypeEnum.Campaign);

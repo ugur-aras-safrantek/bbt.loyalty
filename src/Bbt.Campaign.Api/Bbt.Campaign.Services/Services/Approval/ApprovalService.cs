@@ -142,6 +142,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .FirstOrDefaultAsync();
             if (draftEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
+            if (draftEntity.CreatedBy == userid || draftEntity.LastModifiedBy == userid)
+                throw new Exception("Kampanyayı oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             //update campaign
 
@@ -228,6 +230,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .FirstOrDefaultAsync();
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
+
+            if (campaignDraftEntity.CreatedBy == userid || campaignDraftEntity.LastModifiedBy == userid)
+                throw new Exception("Kampanyayı oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
             if(campaignUpdatePageEntity == null) 

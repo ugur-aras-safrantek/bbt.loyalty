@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         public Task<int> CreateCampaignDraftAsync(int campaignId, string userid, int pageTypeId);
         public Task<BaseResponse<CampaignDto>> CreateCampaignCopyAsync(int campaignId, string userid);
         public Task<CampaignProperty> GetCampaignProperties(int campaignId);
-        public Task<int> GetProcessType(int canpaignId);
+        public Task<int> GetCampaignProcessType(int campaignId);
         public Task<CampaignEntity> CopyCampaignInfo(CampaignEntity campaignEntity, int campaignId, string userid,
             bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
             bool isIncludeOrder, bool isIncludeCode, bool isIncludeStatusId);
