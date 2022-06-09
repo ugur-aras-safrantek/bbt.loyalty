@@ -9,6 +9,12 @@
 app-root {
   color: #464646;
 
+  .change-bgc{
+    .angular-editor-textarea.disabled {
+      background-color: #fbc89c !important;
+    }
+  }
+
   .preview-modal-custom-class {
     max-width: fit-content !important;
   }

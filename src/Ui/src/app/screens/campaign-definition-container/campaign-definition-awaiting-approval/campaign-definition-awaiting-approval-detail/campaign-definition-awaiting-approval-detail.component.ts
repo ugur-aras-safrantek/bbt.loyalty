@@ -47,6 +47,9 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
 
   history: any[];
 
+  campaignUpdateFields: any;
+  campaignUpdatePages: any;
+
   constructor(private fb: FormBuilder,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
@@ -237,6 +240,8 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
             this.populateCampaignGainsForm(res.data.campaignChannelCodeList);
             this.campaignAchievementList = res.data.campaignAchievementList;
             this.history = res.data.historyList;
+            this.campaignUpdateFields = res.data.campaignUpdateFields;
+            this.campaignUpdatePages = res.data.campaignUpdatePages;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
