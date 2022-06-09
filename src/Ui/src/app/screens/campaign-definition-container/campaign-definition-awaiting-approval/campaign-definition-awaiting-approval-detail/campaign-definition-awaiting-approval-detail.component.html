@@ -12,14 +12,18 @@
         </div>
       </div>
       <form [formGroup]="campaignDefinitionFormGroup" class="p-4">
-        <h4>Kampanya Tanımı</h4>
+        <button class="title-button"
+                [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignUpdated}">Kampanya Tanımı
+        </button>
         <div class="row align-items-end">
           <div class="col">
             <div class="row" [ngClass]="{ 'mb-3': campaignDefinitionF.isContract.value }">
               <div class="col pl-20px">
                 <div class="form-group">
                   <div class="form-check">
-                    <input class="form-check-input scale-2x" type="checkbox" id="isActive" name="isActive"
+                    <input class="form-check-input scale-2x"
+                           [ngClass]="{'change-bgc':campaignUpdateFields.isIsActiveUpdated}"
+                           type="checkbox" id="isActive" name="isActive"
                            formControlName="isActive">
                     <label class="form-check-label ms-2" for="isActive">Aktif</label>
                   </div>
@@ -28,11 +32,11 @@
               <div class="col">
                 <div class="form-group">
                   <div class="form-check">
-                    <input class="form-check-input scale-2x" type="checkbox" id="isContract" name="isContract"
+                    <input class="form-check-input scale-2x"
+                           [ngClass]="{'change-bgc':campaignUpdateFields.isIsContractUpdated}"
+                           type="checkbox" id="isContract" name="isContract"
                            formControlName="isContract">
-                    <label class="form-check-label ms-2" for="isContract">
-                      Sözleşme
-                    </label>
+                    <label class="form-check-label ms-2" for="isContract">Sözleşme</label>
                   </div>
                 </div>
               </div>
@@ -44,7 +48,10 @@
                 <div class="form-group">
                   <label for="contractName">Sözleşme ID</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" name="contractName" id="contractName"
+                    <input type="text"
+                           class="form-control"
+                           [ngClass]="{'change-bgc':campaignUpdateFields.isContractIdUpdated}"
+                           name="contractName" id="contractName"
                            formControlName="contractName">
                   </div>
                 </div>
@@ -59,14 +66,20 @@
           <div class="col">
             <div class="form-group">
               <label for="programTypeName">Program Tipi</label>
-              <input type="text" class="form-control" name="programTypeName" id="programTypeName"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isProgramTypeIdUpdated}"
+                     name="programTypeName" id="programTypeName"
                      formControlName="programTypeName">
             </div>
           </div>
           <div class="col">
             <div class="form-group">
               <label for="viewOptionName">Görüntüleme</label>
-              <input type="text" class="form-control" name="viewOptionName" id="viewOptionName"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isViewOptionIdUpdated}"
+                     name="viewOptionName" id="viewOptionName"
                      formControlName="viewOptionName">
             </div>
           </div>
@@ -75,21 +88,28 @@
           <div class="col">
             <div class="form-group">
               <label for="name">Kampanya Adı</label>
-              <input type="text" class="form-control" name="name" id="name"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isNameUpdated}"
+                     name="name" id="name"
                      formControlName="name">
             </div>
           </div>
           <div class="col">
             <div class="form-group">
               <label for="code">Kampanya Kodu</label>
-              <input type="text" class="form-control" name="code" id="code"
+              <input type="text"
+                     class="form-control"
+                     name="code" id="code"
                      formControlName="code">
             </div>
           </div>
         </div>
         <div class="accordion mt-3" id="accordionSummary">
           <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSummary">
+            <h2 class="accordion-header"
+                [ngClass]="{'change-bgc':campaignUpdateFields.isSummaryTrUpdated || campaignUpdateFields.isSummaryEnUpdated}"
+                id="headingSummary">
               <button class="accordion-button collapsed accordion-custom" type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseSummary"
@@ -106,6 +126,7 @@
                     <div class="form-group">
                       <label for="summaryTr">Türkçe</label>
                       <angular-editor [config]="editorConfig" formControlName="summaryTr" id="summaryTr"
+                                      [ngClass]="{'change-bgc':campaignUpdateFields.isSummaryTrUpdated}"
                                       placeholder="Özet (Türkçe)">
                       </angular-editor>
                     </div>
@@ -114,6 +135,7 @@
                     <div class="form-group">
                       <label for="summaryEn">İngilizce</label>
                       <angular-editor [config]="editorConfig" formControlName="summaryEn" id="summaryEn"
+                                      [ngClass]="{'change-bgc':campaignUpdateFields.isSummaryEnUpdated}"
                                       placeholder="Özet (İngilizce)">
                       </angular-editor>
                     </div>
@@ -125,7 +147,9 @@
         </div>
         <div class="accordion mt-3" id="accordionContent">
           <div class="accordion-item">
-            <h2 class="accordion-header" id="headingContent">
+            <h2 class="accordion-header"
+                [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated || campaignUpdateFields.isContentEnUpdated}"
+                id="headingContent">
               <button class="accordion-button collapsed accordion-custom" type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseContent"
@@ -142,6 +166,7 @@
                     <div class="form-group">
                       <label for="contentTr">Türkçe</label>
                       <angular-editor [config]="editorConfig" formControlName="contentTr" id="contentTr"
+                                      [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated}"
                                       placeholder="İçerik (Türkçe)">
                       </angular-editor>
                     </div>
@@ -150,6 +175,7 @@
                     <div class="form-group">
                       <label for="contentEn">İngilizce</label>
                       <angular-editor [config]="editorConfig" formControlName="contentEn" id="contentEn"
+                                      [ngClass]="{'change-bgc':campaignUpdateFields.isContentEnUpdated}"
                                       placeholder="İçerik (İngilizce)">
                       </angular-editor>
                     </div>
@@ -163,7 +189,10 @@
           <div class="col">
             <div class="form-group">
               <label for="campaignListImageUrl" class="form-label">Kampanya Liste Görseli</label>
-              <input type="text" class="form-control" name="campaignListImageUrl" id="campaignListImageUrl"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignListImageUrlUpdated}"
+                     name="campaignListImageUrl" id="campaignListImageUrl"
                      formControlName="campaignListImageUrl">
             </div>
             <a target="_blank"
@@ -175,7 +204,10 @@
           <div class="col">
             <div class="form-group">
               <label for="campaignDetailImageUrl" class="form-label">Kampanya Detay Görseli</label>
-              <input type="text" class="form-control" name="campaignDetailImageUrl" id="campaignDetailImageUrl"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignDetailImageUrlUpdated}"
+                     name="campaignDetailImageUrl" id="campaignDetailImageUrl"
                      formControlName="campaignDetailImageUrl">
             </div>
             <a target="_blank"
@@ -189,46 +221,66 @@
           <div class="col">
             <div class="form-group new-camp-calendar">
               <label for="startDateStr">Başlama Tarihi</label>
-              <input type="text" class="form-control pl-32px" name="startDateStr" id="startDateStr"
+              <input type="text"
+                     class="form-control pl-32px"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isStartDateUpdated}"
+                     name="startDateStr" id="startDateStr"
                      formControlName="startDateStr">
             </div>
           </div>
           <div class="col">
             <div class="form-group new-camp-calendar">
               <label for="endDateStr">Bitiş Tarihi</label>
-              <input type="text" class="form-control pl-32px" name="endDateStr" id="endDateStr"
+              <input type="text"
+                     class="form-control pl-32px"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isEndDateUpdated}"
+                     name="endDateStr" id="endDateStr"
                      formControlName="endDateStr">
             </div>
           </div>
           <div class="col">
             <div class="form-group">
               <label for="maxNumberOfUser">Max Kullanıcı</label>
-              <input type="text" class="form-control" name="maxNumberOfUser" id="maxNumberOfUser"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isMaxNumberOfUserUpdated}"
+                     name="maxNumberOfUser" id="maxNumberOfUser"
                      formControlName="maxNumberOfUser">
             </div>
           </div>
           <div class="col">
             <div class="form-group">
               <label for="order">Sıralama</label>
-              <input type="text" class="form-control" name="order" id="order"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isOrderUpdated}"
+                     name="order" id="order"
                      formControlName="order">
             </div>
           </div>
         </div>
       </form>
       <form [formGroup]="campaignRulesFormGroup" class="p-4">
-        <h4>Kampanya Kuralları</h4>
+        <button class="title-button"
+                [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignRuleUpdated}">Kampanya Kuralları
+        </button>
         <div class="row">
           <div class="col-6 form-group mt-3">
             <label for="joinTypeName">Dahil Olma Şekli</label>
-            <input type="text" class="form-control" name="joinTypeName" id="joinTypeName"
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleJoinTypeIdUpdated}"
+                   name="joinTypeName" id="joinTypeName"
                    formControlName="joinTypeName">
           </div>
           <div class="col-6 mt-3" *ngIf="showForCustomer">
             <div class="row align-items-end">
               <div class="col form-group">
                 <label for="identityNumber">{{ campaignRulesDocument ? 'Dosya Adı' : 'TCKN' }}</label>
-                <input type="text" class="form-control" name="identityNumber" id="identityNumber"
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleIdentityNumberUpdated}"
+                       name="identityNumber" id="identityNumber"
                        formControlName="identityNumber">
               </div>
               <div class="col-auto" *ngIf="campaignRulesDocument">
@@ -240,23 +292,34 @@
           </div>
           <div class="col-6 form-group mt-3" *ngIf="showBusinessLines">
             <label for="ruleBusinessLinesStr">İş Kolu</label>
-            <input type="text" class="form-control" name="ruleBusinessLinesStr" id="ruleBusinessLinesStr"
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleBusinessLinesUpdated}"
+                   name="ruleBusinessLinesStr" id="ruleBusinessLinesStr"
                    formControlName="ruleBusinessLinesStr">
           </div>
           <div class="col-6 form-group mt-3" *ngIf="showBranches">
             <label for="ruleBranchesStr">Şube</label>
-            <input type="text" class="form-control" name="ruleBranchesStr" id="ruleBranchesStr"
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleBranchesUpdated}"
+                   name="ruleBranchesStr" id="ruleBranchesStr"
                    formControlName="ruleBranchesStr">
           </div>
           <div class="col-6 form-group mt-3" *ngIf="showCustomerTypes">
             <label for="ruleCustomerTypesStr">Müşteri Tipi</label>
-            <input type="text" class="form-control" name="ruleCustomerTypesStr" id="ruleCustomerTypesStr"
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleCustomerTypesUpdated}"
+                   name="ruleCustomerTypesStr" id="ruleCustomerTypesStr"
                    formControlName="ruleCustomerTypesStr">
           </div>
         </div>
       </form>
       <div class="p-4">
-        <h4>Hedefler</h4>
+        <button class="title-button"
+                [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignTargetUpdated}">Hedefler
+        </button>
         <div class="row pt-3 color-blue fw-bold">
           <div class="col-1">
             <img src="/assets/img/conjunction.png">
@@ -270,7 +333,7 @@
         </div>
         <hr class="blue">
         <div *ngFor="let group of campaignTargetGroups">
-          <div class="row campaign-target-row"
+          <div class="row campaign-target-row ctr-bgc"
                *ngFor="let campaignTarget of group.targetList">
             <div class="col-1"></div>
             <div class="col-1">VE</div>
@@ -285,12 +348,17 @@
         </div>
       </div>
       <form [formGroup]="campaignGainsFormGroup" class="p-4">
-        <h4>Kazanımlar</h4>
+        <button class="title-button"
+                [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignAchievementUpdated}">Kazanımlar
+        </button>
         <div class="row">
           <div class="col">
             <div class="form-group">
               <label for="campaignGainChannelList">Kazanım Kanalı</label>
-              <input type="text" class="form-control" name="campaignGainChannelList" id="campaignGainChannelList"
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignChannelCodeUpdated}"
+                     name="campaignGainChannelList" id="campaignGainChannelList"
                      formControlName="campaignGainChannelList">
             </div>
           </div>
@@ -319,7 +387,7 @@
         </div>
       </form>
       <div class="p-4">
-        <h4>Tarihçe</h4>
+        <button class="title-button">Tarihçe</button>
         <div class="row fw-bold">
           <div class="col d-flex justify-content-start">
             İşlemi Yapan

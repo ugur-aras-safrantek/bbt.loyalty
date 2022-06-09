@@ -33,6 +33,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   campaignDefinitionFormGroup: FormGroup;
 
   campaignRulesFormGroup: FormGroup;
+  campaignRuleId: any;
   campaignRulesDocument: boolean = false;
   showForCustomer: boolean = false;
   showBusinessLines: boolean = false;
@@ -46,6 +47,9 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   campaignAchievementList: any[];
 
   history: any[];
+
+  campaignUpdateFields: any = {};
+  campaignUpdatePages: any = {};
 
   constructor(private fb: FormBuilder,
               private toastrHandleService: ToastrHandleService,
@@ -204,25 +208,25 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   }
 
   campaignRuleDocumentDownload() {
-    // this.approveService.campaignRuleDocumentDownload(this.id)
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: res => {
-    //       if (!res.hasError && res.data?.document) {
-    //         let document = res.data.document;
-    //         let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
-    //         saveAs(file, res.data?.document.documentName);
-    //         this.toastrHandleService.success();
-    //       } else {
-    //         this.toastrHandleService.error(res.errorMessage);
-    //       }
-    //     },
-    //     error: err => {
-    //       if (err.error) {
-    //         this.toastrHandleService.error(err.error);
-    //       }
-    //     }
-    //   });
+    this.campaignDefinitionService.campaignRuleDocumentDownload(this.campaignRuleId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data?.document) {
+            let document = res.data.document;
+            let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+            saveAs(file, res.data?.document.documentName);
+            this.toastrHandleService.success();
+          } else {
+            this.toastrHandleService.error(res.errorMessage);
+          }
+        },
+        error: err => {
+          if (err.error) {
+            this.toastrHandleService.error(err.error);
+          }
+        }
+      });
   }
 
   private CampaignDefinitionApproveForm() {
@@ -233,10 +237,13 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
           if (!res.hasError && res.data) {
             this.populateCampaignDefinitionForm(res.data.campaign, res.data.campaignDetail);
             this.populateCampaignRulesForm(res.data.campaignRule);
+            this.campaignRuleId = res.data.campaignRule?.id;
             this.campaignTargetGroups = res.data.campaignTargetList?.targetGroupList ?? new Array<CampaignTargetGroup>();
             this.populateCampaignGainsForm(res.data.campaignChannelCodeList);
             this.campaignAchievementList = res.data.campaignAchievementList;
             this.history = res.data.historyList;
+            this.campaignUpdateFields = res.data.campaignUpdateFields;
+            this.campaignUpdatePages = res.data.campaignUpdatePages;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
@@ -251,7 +258,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
     choise ? this.approve(this.id) : this.disapprove(this.id);
   }
 
-  private approve(id){
+  private approve(id) {
     this.approveService.campaignDefinitionApprove(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -268,7 +275,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       });
   }
 
-  private disapprove(id){
+  private disapprove(id) {
     this.approveService.campaignDefinitionDisapprove(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

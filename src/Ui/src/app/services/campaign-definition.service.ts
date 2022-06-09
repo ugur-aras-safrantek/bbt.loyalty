@@ -123,9 +123,9 @@ export class CampaignDefinitionService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
-  campaignDefinitionGetContractFile(campaignId: any) {
+  campaignDefinitionGetContractFile(contractId: any) {
     let params = new HttpParams();
-    params = params.append('campaignId', campaignId);
+    params = params.append('id', contractId);
 
     const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionGetContractFile}`;
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
