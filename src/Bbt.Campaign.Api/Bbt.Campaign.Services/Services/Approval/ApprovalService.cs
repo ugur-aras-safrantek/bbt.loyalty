@@ -83,6 +83,15 @@ namespace Bbt.Campaign.Services.Services.Approval
             return DateTime.ParseExact(date, format, iFormatProvider);
         }
 
+        public DateTime ConvertWithNewDateTime(string dateStr) 
+        {
+            string[] dateArray = dateStr.Split('-');
+            int day = int.Parse(dateArray[0]);
+            int month = int.Parse(dateArray[1]);    
+            int year = int.Parse(dateArray[2]);
+            return new DateTime(year, month, day);  
+        }
+
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
         {
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
