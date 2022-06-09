@@ -46,6 +46,8 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
             await CheckValidationAsync(request);
 
+            await CheckValidationForSentToApproval(request.CampaignId);
+
             await Update(request, userid);
 
             List<CampaignAchievementDto> response = new List<CampaignAchievementDto>();
@@ -66,8 +68,19 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             int processTypeId = await _draftService.GetProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignAchievement);
             }
+            else
+            {
+                var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == request.CampaignId).FirstOrDefault();
+                if (campaignUpdatePageEntity != null)
+                {
+                    campaignUpdatePageEntity.IsCampaignAchievementUpdated = true;
+                    await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().UpdateAsync(campaignUpdatePageEntity);
+                }
+            }
+
+            await CheckValidationForSentToApproval(request.CampaignId);
 
             await Update(request, userid);
 
@@ -118,7 +131,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 {
                     entity.Amount = null;
                     entity.CurrencyId = null;
-                    entity.MaxAmount = null;
                 }
 
 
@@ -268,39 +280,11 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
         public async Task CheckValidationAsync(CampaignAchievementInsertRequest request)
         {
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                    .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted)
-                    .FirstOrDefaultAsync();
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == request.CampaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
             if (campaignEntity == null)
-            {
                 throw new Exception("Kampanya bulunamadı.");
-            }
 
-            var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
-               .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted)
-               .FirstOrDefaultAsync();
-            if (campaignRuleEntity == null)
-            {
-                throw new Exception("Kampanya kuralları giriniz.");
-            }
-
-            var campaignTargetEntity = await _unitOfWork.GetRepository<CampaignTargetEntity>()
-                .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (campaignTargetEntity == null)
-            {
-                throw new Exception("Kampanya hedefleri giriniz.");
-            }
-
-            var campaignChannelCodeEntity = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>()
-                .GetAll(x => x.CampaignId == request.CampaignId && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (campaignChannelCodeEntity == null)
-            {
-                throw new Exception("Kampanya kanal kodu giriniz.");
-            }
-
-            if(!request.CampaignAchievementList.Any())
+            if (!request.CampaignAchievementList.Any())
                 throw new Exception("Kazanım giriniz.");
 
             var groupedAchievementType = request.CampaignAchievementList
@@ -365,6 +349,36 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 else
                     throw new Exception("Kazanım türü (Tutar/Oran) seçilmelidir.");
             }
+        }
+
+        private async Task CheckValidationForSentToApproval(int campaignId) 
+        {
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı.");
+
+            var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted).FirstOrDefaultAsync();
+            if (campaignRuleEntity == null)
+                throw new Exception("Kampanya kuralları giriniz.");
+
+            var campaignTargetEntity = await _unitOfWork.GetRepository<CampaignTargetEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted).FirstOrDefaultAsync();
+            if (campaignTargetEntity == null)
+                throw new Exception("Kampanya hedefleri giriniz.");
+
+            var campaignChannelCodeEntity = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted).FirstOrDefaultAsync();
+            if (campaignChannelCodeEntity == null)
+                throw new Exception("Kampanya kanal kodu giriniz.");
+        }
+
+        public async Task<BaseResponse<bool>> SendToAppropval(int campaignId, string userid) 
+        {
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı.");
+            campaignEntity.StatusId = (int)StatusEnum.SentToApprove;
+            campaignEntity.LastModifiedBy = userid;
+            await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
+            return await BaseResponse<bool>.SuccessAsync(true);
         }
 
         public async Task<List<CustomerAchievement>> GetCustomerAchievementsAsync(int campaignId, string customerCode, string lang) 

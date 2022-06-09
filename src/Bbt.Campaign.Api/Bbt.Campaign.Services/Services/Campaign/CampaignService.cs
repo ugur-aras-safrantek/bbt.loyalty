@@ -90,15 +90,10 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             entity = await SetDefaults(entity);
            
-
             entity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
-            //entity.Code = entity.Id.ToString();
-            //await _unitOfWork.SaveChangesAsync();
-
             return await GetCampaignAsync(entity.Id, userid);
-
         }
 
         public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, string userid)
@@ -109,9 +104,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await CheckValidationAsync(campaign, campaign.Id);
 
-            var entity = _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAllIncluding(x => x.CampaignDetail)
-                .Where(x => x.Id == campaign.Id).FirstOrDefault();
+            var entity = _unitOfWork.GetRepository<CampaignEntity>().GetAllIncluding(x => x.CampaignDetail).Where(x => x.Id == campaign.Id).FirstOrDefault();
 
             if(entity == null)
                 return await BaseResponse<CampaignDto>.FailAsync("Kampanya bulunamadı.");
@@ -136,11 +129,20 @@ namespace Bbt.Campaign.Services.Services.Campaign
             int processTypeId = await _draftService.GetProcessType(campaign.Id);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid);
+                int id = await _draftService.CreateCampaignDraftAsync(campaign.Id, userid, (int)PageTypeEnum.Campaign);
                 entity = _unitOfWork.GetRepository<CampaignEntity>()
                     .GetAllIncluding(x => x.CampaignDetail)
                     .Where(x => x.Id == id)
                     .FirstOrDefault();
+            }
+            else 
+            {
+                var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == entity.Id).FirstOrDefault();
+                if (campaignUpdatePageEntity != null)
+                {
+                    campaignUpdatePageEntity.IsCampaignUpdated = true;
+                    await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().UpdateAsync(campaignUpdatePageEntity);
+                }
             }
 
             entity.CampaignDetail.DetailEn = campaign.CampaignDetail.DetailEn;
@@ -178,7 +180,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await GetCampaignAsync(campaign.Id, userid);
+            return await GetCampaignAsync(entity.Id, userid);
         }
 
         public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, string userid) 
@@ -195,7 +197,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             //if(draftEntity != null)
             //    throw new Exception("Kampanya için taslak bulunmaktadır.");
 
-            int campaignId = await _draftService.CreateCampaignDraftAsync(id, userid);
+            int campaignId = await _draftService.CreateCampaignDraftAsync(id, userid, (int)PageTypeEnum.Campaign);
             return await GetCampaignAsync(campaignId, userid);
         }
 

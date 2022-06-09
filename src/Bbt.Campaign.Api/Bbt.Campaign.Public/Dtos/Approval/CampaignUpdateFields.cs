@@ -37,13 +37,9 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public bool IsDetailEnUpdated { get; set; } = false;
 
         //rule
-        public bool IsCampaignRuleUpdated { get; set; } = false;
+        
         public bool IsCampaignRuleStartTermIdUpdated { get; set; } = false;
         public bool IsCampaignRuleJoinTypeIdUpdated { get; set; } = false;
-
-        //listeler
-        public bool IsCampaignTargetListUpdated { get; set; } = false;
-        public bool IsCampaignChannelCodeListUpdated { get; set; } = false;
-        public bool IsCampaignAchievementListUpdated { get; set; } = false;
+        
     }
 }

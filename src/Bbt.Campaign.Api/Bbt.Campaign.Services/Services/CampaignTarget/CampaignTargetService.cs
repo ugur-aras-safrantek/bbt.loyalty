@@ -74,7 +74,16 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             int processTypeId = await _draftService.GetProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid);
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignTarget);
+            }
+            else
+            {
+                var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == request.CampaignId).FirstOrDefault();
+                if (campaignUpdatePageEntity != null)
+                {
+                    campaignUpdatePageEntity.IsCampaignTargetUpdated = true;
+                    await _unitOfWork.GetRepository<CampaignUpdatePageEntity>().UpdateAsync(campaignUpdatePageEntity);
+                }
             }
 
             foreach (var campaignTargetEntityDelete in _unitOfWork.GetRepository<CampaignTargetEntity>()

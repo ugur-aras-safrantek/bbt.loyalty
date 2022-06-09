@@ -7,7 +7,7 @@ namespace Bbt.Campaign.Services.Services.Draft
 {
     public interface IDraftService
     {
-        public Task<int> CreateCampaignDraftAsync(int campaignId, string userid);
+        public Task<int> CreateCampaignDraftAsync(int campaignId, string userid, int pageTypeId);
         public Task<BaseResponse<CampaignDto>> CreateCampaignCopyAsync(int campaignId, string userid);
         public Task<CampaignProperty> GetCampaignProperties(int campaignId);
         public Task<int> GetProcessType(int canpaignId);

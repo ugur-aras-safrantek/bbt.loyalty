@@ -15,7 +15,7 @@
         <h4>Kampanya Tanımı</h4>
         <div class="row align-items-end">
           <div class="col">
-            <div class="row" [ngClass]="{ 'mb-3': campaignDefinitionF.isContract }">
+            <div class="row" [ngClass]="{ 'mb-3': campaignDefinitionF.isContract.value }">
               <div class="col pl-20px">
                 <div class="form-group">
                   <div class="form-check">
@@ -39,13 +39,13 @@
             </div>
           </div>
           <div class="col">
-            <div class="row align-items-end" *ngIf="campaignDefinitionF.isContract">
+            <div class="row align-items-end" *ngIf="campaignDefinitionF.isContract.value">
               <div class="col">
                 <div class="form-group">
-                  <label for="contractId">Sözleşme ID</label>
+                  <label for="contractName">Sözleşme ID</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" name="contractId" id="contractId"
-                           formControlName="contractId">
+                    <input type="text" class="form-control" name="contractName" id="contractName"
+                           formControlName="contractName">
                   </div>
                 </div>
               </div>
@@ -58,16 +58,16 @@
         <div class="row mt-3">
           <div class="col">
             <div class="form-group">
-              <label for="programTypeId">Program Tipi</label>
-              <input type="text" class="form-control" name="programTypeId" id="programTypeId"
-                     formControlName="programTypeId">
+              <label for="programTypeName">Program Tipi</label>
+              <input type="text" class="form-control" name="programTypeName" id="programTypeName"
+                     formControlName="programTypeName">
             </div>
           </div>
           <div class="col">
             <div class="form-group">
-              <label for="viewOptionId">Görüntüleme</label>
-              <input type="text" class="form-control" name="viewOptionId" id="viewOptionId"
-                     formControlName="viewOptionId">
+              <label for="viewOptionName">Görüntüleme</label>
+              <input type="text" class="form-control" name="viewOptionName" id="viewOptionName"
+                     formControlName="viewOptionName">
             </div>
           </div>
         </div>
@@ -188,16 +188,16 @@
         <div class="row mt-3">
           <div class="col">
             <div class="form-group new-camp-calendar">
-              <label for="startDate">Başlama Tarihi</label>
-              <input type="text" class="form-control pl-32px" name="startDate" id="startDate"
-                     formControlName="startDate">
+              <label for="startDateStr">Başlama Tarihi</label>
+              <input type="text" class="form-control pl-32px" name="startDateStr" id="startDateStr"
+                     formControlName="startDateStr">
             </div>
           </div>
           <div class="col">
             <div class="form-group new-camp-calendar">
-              <label for="endDate">Bitiş Tarihi</label>
-              <input type="text" class="form-control pl-32px" name="endDate" id="endDate"
-                     formControlName="endDate">
+              <label for="endDateStr">Bitiş Tarihi</label>
+              <input type="text" class="form-control pl-32px" name="endDateStr" id="endDateStr"
+                     formControlName="endDateStr">
             </div>
           </div>
           <div class="col">
@@ -220,45 +220,43 @@
         <h4>Kampanya Kuralları</h4>
         <div class="row">
           <div class="col-6 form-group mt-3">
-            <label for="joinTypeId">Dahil Olma Şekli</label>
-            <input type="text" class="form-control" name="joinTypeId" id="joinTypeId"
-                   formControlName="joinTypeId">
+            <label for="joinTypeName">Dahil Olma Şekli</label>
+            <input type="text" class="form-control" name="joinTypeName" id="joinTypeName"
+                   formControlName="joinTypeName">
           </div>
           <div class="col-6 mt-3" *ngIf="showForCustomer">
             <div class="row align-items-end">
               <div class="col form-group">
-                <label for="contractId">TCKN</label>
-                <input type="text" class="form-control" name="documentName" id="documentName"
-                       formControlName="documentName">
+                <label for="identityNumber">{{ campaignRulesDocument ? 'Dosya Adı' : 'TCKN' }}</label>
+                <input type="text" class="form-control" name="identityNumber" id="identityNumber"
+                       formControlName="identityNumber">
               </div>
-              <div class="col-auto">
+              <div class="col-auto" *ngIf="campaignRulesDocument">
                 <button class="btn btn-secondary px-5" (click)="campaignRuleDocumentDownload()">
                   Görüntüle
                 </button>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
           <div class="col-6 form-group mt-3" *ngIf="showBusinessLines">
-            <label for="businessLines">İş Kolu</label>
-            <input type="text" class="form-control" name="businessLines" id="businessLines"
-                   formControlName="businessLines">
+            <label for="ruleBusinessLinesStr">İş Kolu</label>
+            <input type="text" class="form-control" name="ruleBusinessLinesStr" id="ruleBusinessLinesStr"
+                   formControlName="ruleBusinessLinesStr">
           </div>
           <div class="col-6 form-group mt-3" *ngIf="showBranches">
-            <label for="branches">Şube</label>
-            <input type="text" class="form-control" name="branches" id="branches"
-                   formControlName="branches">
+            <label for="ruleBranchesStr">Şube</label>
+            <input type="text" class="form-control" name="ruleBranchesStr" id="ruleBranchesStr"
+                   formControlName="ruleBranchesStr">
           </div>
           <div class="col-6 form-group mt-3" *ngIf="showCustomerTypes">
-            <label for="customerTypes">Müşteri Tipi</label>
-            <input type="text" class="form-control" name="customerTypes" id="customerTypes"
-                   formControlName="customerTypes">
+            <label for="ruleCustomerTypesStr">Müşteri Tipi</label>
+            <input type="text" class="form-control" name="ruleCustomerTypesStr" id="ruleCustomerTypesStr"
+                   formControlName="ruleCustomerTypesStr">
           </div>
         </div>
       </form>
       <div class="p-4">
-        <h4>Hedef Seçimi</h4>
+        <h4>Hedefler</h4>
         <div class="row pt-3 color-blue fw-bold">
           <div class="col-1">
             <img src="/assets/img/conjunction.png">
@@ -271,8 +269,8 @@
           </div>
         </div>
         <hr class="blue">
-        <ng-template *ngFor="let group of campaignTargetGroups">
-          <div class="row campaign-target-row bg-color-blue"
+        <div *ngFor="let group of campaignTargetGroups">
+          <div class="row campaign-target-row"
                *ngFor="let campaignTarget of group.targetList">
             <div class="col-1"></div>
             <div class="col-1">VE</div>
@@ -281,12 +279,10 @@
           <div class="row campaign-target-row color-blue fw-bold"
                *ngIf="group != campaignTargetGroups[campaignTargetGroups.length-1]">
             <div class="col-1"></div>
-            <div class="col-1">
-              VEYA
-            </div>
+            <div class="col-1">VEYA</div>
             <div class="col-10"></div>
           </div>
-        </ng-template>
+        </div>
       </div>
       <form [formGroup]="campaignGainsFormGroup" class="p-4">
         <h4>Kazanımlar</h4>
@@ -315,7 +311,7 @@
                 <td>{{achievement.rule?.name}}</td>
                 <td>{{achievement.achievementType?.name}}</td>
                 <td>{{achievement.actionOption?.name}}</td>
-                <td>{{achievement.maxUtilization}}</td>
+                <td>{{achievement.maxUtilizationStr}}</td>
               </tr>
               </tbody>
             </table>
@@ -334,8 +330,8 @@
         </div>
         <hr class="blue mt-2 mb-0">
         <div class="history-row" *ngFor="let item of history">
-          <div class="col d-flex justify-content-start">{{item.user}}</div>
-          <div class="col d-flex justify-content-end">{{item.date}}</div>
+          <div class="col d-flex justify-content-start">{{item.approvedBy}}</div>
+          <div class="col d-flex justify-content-end">{{item.approvedDateStr}}</div>
         </div>
       </div>
     </div>

@@ -36,5 +36,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? JoinTypeName { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
+        public int? MaxNumberOfUser { get; set; }
     }
 }

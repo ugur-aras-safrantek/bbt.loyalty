@@ -138,7 +138,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             draftEntity.StatusId = (int)StatusEnum.Approved;
             draftEntity.ApprovedBy = userid;
-            draftEntity.ApproveDate = now;
+            draftEntity.ApprovedDate = now;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(draftEntity);
 
@@ -150,7 +150,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = draftEntity.Code;
             historyEntity.ApprovedBy = draftEntity.ApprovedBy;
-            historyEntity.ApproveDate = draftEntity.ApproveDate;
+            historyEntity.ApprovedDate = draftEntity.ApprovedDate;
 
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
@@ -220,11 +220,9 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             if (campaignDraftEntity == null || campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
 
-            bool isCampaignUpdated = true;
-            bool isCampaignRuleUpdated = true;
-            bool isCampaignTargetUpdated = true;
-            bool isCampaignChannelCodeUpdated = true;
-            bool isCampaignAchievementUpdated = true;
+            var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
+            if(campaignUpdatePageEntity == null) 
+                throw new Exception("Bu kayıt için güncelleme kaydı yoktur.");
 
             #region add history
 
@@ -234,7 +232,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             historyEntity.StatusId = (int)StatusEnum.History;
             historyEntity.Code = campaignDraftEntity.Code;
             historyEntity.ApprovedBy = campaignDraftEntity.ApprovedBy;
-            historyEntity.ApproveDate = campaignDraftEntity.ApproveDate;
+            historyEntity.ApprovedDate = campaignDraftEntity.ApprovedDate;
             await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(historyEntity);
 
             var campaignRuleDraftHistoryEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
@@ -285,16 +283,16 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             #endregion
 
-            if (isCampaignUpdated)
+            if (campaignUpdatePageEntity.IsCampaignUpdated)
             {
                 campaignEntity = await _draftService.CopyCampaignInfo(campaignEntity, draftId, userid, false, true);                
             }
             campaignEntity.StatusId = (int)StatusEnum.Approved;
-            campaignEntity.ApproveDate = DateTime.UtcNow;
+            campaignEntity.ApprovedDate = DateTime.UtcNow;
             campaignEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
-            if (isCampaignRuleUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignRuleUpdated) 
             {
                 var campaignRuleDraftEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
                     .GetAll(x => x.CampaignId == draftId && !x.IsDeleted)
@@ -346,7 +344,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 }
             }
 
-            if (isCampaignTargetUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignTargetUpdated) 
             {
                 foreach (var x in _unitOfWork.GetRepository<CampaignTargetEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignTargetEntity>().DeleteAsync(x);
@@ -354,7 +352,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     await _unitOfWork.GetRepository<CampaignTargetEntity>().AddAsync(campaignTarget);
             }
 
-            if (isCampaignChannelCodeUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignChannelCodeUpdated) 
             {
                 foreach (var campaignChannelCodeDelete in _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().DeleteAsync(campaignChannelCodeDelete);
@@ -362,7 +360,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                     await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
             }
 
-            if (isCampaignAchievementUpdated) 
+            if (campaignUpdatePageEntity.IsCampaignAchievementUpdated) 
             {
                 foreach (var campaignAchievementDelete in _unitOfWork.GetRepository<CampaignAchievementEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(campaignAchievementDelete);
@@ -387,9 +385,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll().Where(x =>x.Id == draftId);
             if (!campaignQuery.Any()) 
-            {
                 throw new Exception("Kampanya bulunamadı");
-            }
 
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == draftId && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -403,11 +399,25 @@ namespace Bbt.Campaign.Services.Services.Approval
                 .Include(x => x.CampaignDetail)
                 .FirstOrDefaultAsync();
 
+            response.CampaignDetail = _mapper.Map<CampaignDetailDto>(draftCampaignEntity.CampaignDetail);
             response.isNewRecord = approvedCampaignEntity == null;
             response.Campaign = _reportService.ConvertCampaignReportList(campaignQuery)[0];
+            response.CampaignRule = await _campaignRuleService.GetCampaignRuleDto(draftId);
             response.CampaignTargetList = await _campaignTargetService.GetCampaignTargetDto(draftId, false);
             response.CampaignChannelCodeList = await _campaignChannelCodeService.GetCampaignChannelCodesAsString(draftId);
             response.CampaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(draftId);
+
+            CampaignUpdatePages campaignUpdatePages = new CampaignUpdatePages();
+            var campaignUpdatePageEntity = _unitOfWork.GetRepository<CampaignUpdatePageEntity>().GetAll().Where(x => x.CampaignId == draftId).FirstOrDefault();
+            if (campaignUpdatePageEntity != null)
+            {
+                campaignUpdatePages.IsCampaignUpdated = campaignUpdatePageEntity.IsCampaignUpdated;
+                campaignUpdatePages.IsCampaignRuleUpdated = campaignUpdatePageEntity.IsCampaignRuleUpdated;
+                campaignUpdatePages.IsCampaignTargetUpdated = campaignUpdatePageEntity.IsCampaignTargetUpdated;
+                campaignUpdatePages.IsCampaignChannelCodeUpdated = campaignUpdatePageEntity.IsCampaignChannelCodeUpdated;
+                campaignUpdatePages.IsCampaignAchievementUpdated = campaignUpdatePageEntity.IsCampaignAchievementUpdated;
+            }
+            response.CampaignUpdatePages = campaignUpdatePages;
 
             CampaignUpdateFields campaignUpdateFields = new CampaignUpdateFields();
             if (!response.isNewRecord) 
@@ -443,10 +453,20 @@ namespace Bbt.Campaign.Services.Services.Approval
                 var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
                 campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
                 campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
-
             }
             response.CampaignUpdateFields = campaignUpdateFields;
-            
+
+            response.HistoryList = new List<HistoryApproveDto>();
+            foreach (var campaignHistory in _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Code == draftCampaignEntity.Code && x.StatusId == (int)StatusEnum.History && !x.IsDeleted).ToList())
+            {
+                HistoryApproveDto historyApproveDto = new HistoryApproveDto();
+                historyApproveDto.ApprovedBy = campaignHistory.ApprovedBy;
+                historyApproveDto.ApprovedDate = campaignHistory.ApprovedDate;
+                DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
+                if(_approvedDate != DateTime.MinValue)
+                    historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                response.HistoryList.Add(historyApproveDto);
+            }
 
             return await BaseResponse<CampaignApproveFormDto>.SuccessAsync(response);
         }

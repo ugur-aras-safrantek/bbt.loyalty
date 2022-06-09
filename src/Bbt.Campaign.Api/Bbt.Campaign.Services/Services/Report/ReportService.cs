@@ -160,6 +160,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 JoinTypeName = x.JoinTypeName,
                 StatusId = x.StatusId,
                 StatusName = x.StatusName,
+                MaxNumberOfUser = x.MaxNumberOfUser,
             }).ToList();
 
             return campaignList;

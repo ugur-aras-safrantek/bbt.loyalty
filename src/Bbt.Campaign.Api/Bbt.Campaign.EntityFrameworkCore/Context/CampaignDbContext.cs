@@ -119,5 +119,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<CustomerReportEntity> CustomerReports { get; set; }
         public DbSet<ConstantsEntity> ServiceConstants { get; set; }
         public DbSet<StatusEntity> Statuses { get; set; }
+        public DbSet<CampaignUpdatePageEntity> CampaignUpdatePages { get; set; }
     }
 }

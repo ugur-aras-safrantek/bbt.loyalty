@@ -30,8 +30,13 @@ export class ApproveService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  campaignDefinitionApproveState(state: boolean) {
-    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionApproveState}/${state}`;
+  campaignDefinitionApprove(id: any) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionApprove}/${id}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url);
+  }
+
+  campaignDefinitionDisapprove(id: any) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignDefinitionDisapprove}/${id}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
   }
 

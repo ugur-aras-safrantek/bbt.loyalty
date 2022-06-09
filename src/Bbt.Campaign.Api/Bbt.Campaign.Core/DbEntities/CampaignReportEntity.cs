@@ -34,5 +34,6 @@ namespace Bbt.Campaign.Core.DbEntities
         public string? JoinTypeName { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
+        public int? MaxNumberOfUser { get; set; }
     }
 }

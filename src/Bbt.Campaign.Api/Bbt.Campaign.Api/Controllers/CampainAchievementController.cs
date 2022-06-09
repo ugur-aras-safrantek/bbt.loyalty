@@ -104,6 +104,19 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// sends campaign for the approval
+        /// </summary>
+        /// <param name="campaignId">Record Id of the capaign</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("send-to-approval")]
+        public async Task<IActionResult> SendToAppropval(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _campaignAchievementService.SendToAppropval(campaignId, General.GetUserIdFromHeader(Request));
+            return Ok(result);
+        }
+
 
         ///// <summary>
         ///// Returns the campaign Achievement list by campaign Id

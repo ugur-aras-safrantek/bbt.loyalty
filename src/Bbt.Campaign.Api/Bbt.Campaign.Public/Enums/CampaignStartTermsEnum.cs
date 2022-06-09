@@ -6,5 +6,7 @@ namespace Bbt.Campaign.Public.Enums
     {
         [Description("Katılım Anında")]
         JoinMoment = 1,
+        [Description("Dönem Başlangıcı")]
+        TermStart = 2,
     }
 }
