@@ -109,7 +109,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if(entity == null)
                 return await BaseResponse<CampaignDto>.FailAsync("Kampanya bulunamadı.");
 
-            if (entity.IsActive && !campaign.IsActive && DateTime.Parse(campaign.EndDate) > DateTime.UtcNow.AddDays(-1))
+            if (entity.IsActive && !campaign.IsActive && Helpers.ConvertUIDateTimeStringForBackEnd(campaign.EndDate) > DateTime.UtcNow.AddDays(-1))
             {
                 var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
                     .Where(x => !x.IsDeleted && x.Code == entity.Code && x.StatusId == (int)StatusEnum.Approved)
