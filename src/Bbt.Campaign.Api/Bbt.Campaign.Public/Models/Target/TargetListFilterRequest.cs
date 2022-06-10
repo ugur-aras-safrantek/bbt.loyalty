@@ -9,8 +9,7 @@ namespace Bbt.Campaign.Public.Models.Target
         public int? TargetViewTypeId { get; set; }
         public int? TargetSourceId { get; set; }
         public bool? IsActive { get; set; }
-        public bool? IsApproved { get; set; }
-        //public bool? IsDraft { get; set; }
+        public int? StatusId { get; set; }
 
     }
 }

@@ -55,6 +55,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 CampaignId = campaignRule.CampaignId,
                 CampaignStartTermId = campaignRule.StartTermId,
                 JoinTypeId = campaignRule.JoinTypeId,
+                IsEmployeeIncluded = campaignRule.IsEmployeeIncluded,
+                IsPrivateBanking = campaignRule.IsPrivateBanking,
                 CreatedBy = userid,
             };
 
@@ -215,6 +217,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             entity.CampaignStartTermId = campaignRule.StartTermId;
             entity.JoinTypeId = campaignRule.JoinTypeId;
+            entity.IsEmployeeIncluded = campaignRule.IsEmployeeIncluded;
+            entity.IsPrivateBanking = campaignRule.IsPrivateBanking;
             entity.LastModifiedBy = userid;
 
             foreach (var x in entity.Branches)

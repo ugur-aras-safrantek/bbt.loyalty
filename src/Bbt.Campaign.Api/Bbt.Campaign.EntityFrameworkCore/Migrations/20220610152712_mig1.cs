@@ -16,9 +16,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -34,9 +34,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -53,9 +53,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -72,9 +72,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -90,9 +90,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -108,9 +108,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -127,9 +127,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -181,9 +181,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -200,9 +200,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -219,9 +219,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -238,9 +238,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -257,9 +257,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -275,9 +275,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -294,9 +294,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -313,9 +313,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -346,9 +346,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -364,9 +364,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -382,9 +382,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -400,9 +400,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -412,38 +412,15 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Targets",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
-                    IsDraft = table.Column<bool>(type: "bit", nullable: false),
-                    RefId = table.Column<int>(type: "int", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Targets", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TargetSources",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -459,9 +436,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -477,9 +454,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -495,9 +472,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -514,9 +491,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -534,9 +511,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     RoleTypeId = table.Column<int>(type: "int", nullable: false),
                     ModuleTypeId = table.Column<int>(type: "int", nullable: false),
                     AuthorizationTypeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -585,6 +562,36 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Targets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Targets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Targets_Statuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Statuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TopLimits",
                 columns: table => new
                 {
@@ -599,12 +606,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     CurrencyId = table.Column<int>(type: "int", nullable: true),
                     MaxTopLimitRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     MaxTopLimitUtilization = table.Column<decimal>(type: "decimal(18,2)", maxLength: 250, nullable: true),
-                    ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -632,100 +639,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TargetGroupLines",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false),
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroupLines", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupLines_TargetGroups_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupLines_Targets_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Targets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetDetails",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    TargetSourceId = table.Column<int>(type: "int", nullable: false),
-                    TargetViewTypeId = table.Column<int>(type: "int", nullable: false),
-                    TriggerTimeId = table.Column<int>(type: "int", nullable: true),
-                    VerificationTimeId = table.Column<int>(type: "int", nullable: true),
-                    FlowName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    NumberOfTransaction = table.Column<int>(type: "int", nullable: true),
-                    FlowFrequency = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    AdditionalFlowTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Query = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Condition = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TargetDetailEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TargetDetailTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DescriptionTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetDetails", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TargetDetails_Targets_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Targets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetDetails_TargetSources_TargetSourceId",
-                        column: x => x.TargetSourceId,
-                        principalTable: "TargetSources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetDetails_TargetViewTypes_TargetViewTypeId",
-                        column: x => x.TargetViewTypeId,
-                        principalTable: "TargetViewTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetDetails_TriggerTimes_TriggerTimeId",
-                        column: x => x.TriggerTimeId,
-                        principalTable: "TriggerTimes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetDetails_VerificationTimes_VerificationTimeId",
-                        column: x => x.VerificationTimeId,
-                        principalTable: "VerificationTimes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Campaigns",
                 columns: table => new
                 {
@@ -733,10 +646,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Code = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DescriptionTr = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TitleTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TitleEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionTr = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    DescriptionEn = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    TitleTr = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    TitleEn = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: true),
@@ -749,12 +662,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     ViewOptionId = table.Column<int>(type: "int", nullable: true),
                     ProgramTypeId = table.Column<int>(type: "int", nullable: false),
                     ParticipationTypeId = table.Column<int>(type: "int", nullable: false),
-                    ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -794,6 +707,100 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TargetDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    TargetSourceId = table.Column<int>(type: "int", nullable: false),
+                    TargetViewTypeId = table.Column<int>(type: "int", nullable: false),
+                    TriggerTimeId = table.Column<int>(type: "int", nullable: true),
+                    VerificationTimeId = table.Column<int>(type: "int", nullable: true),
+                    FlowName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    NumberOfTransaction = table.Column<int>(type: "int", nullable: true),
+                    FlowFrequency = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    AdditionalFlowTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Query = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Condition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TargetDetailEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TargetDetailTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TargetDetails_Targets_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Targets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetDetails_TargetSources_TargetSourceId",
+                        column: x => x.TargetSourceId,
+                        principalTable: "TargetSources",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetDetails_TargetViewTypes_TargetViewTypeId",
+                        column: x => x.TargetViewTypeId,
+                        principalTable: "TargetViewTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetDetails_TriggerTimes_TriggerTimeId",
+                        column: x => x.TriggerTimeId,
+                        principalTable: "TriggerTimes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetDetails_VerificationTimes_VerificationTimeId",
+                        column: x => x.VerificationTimeId,
+                        principalTable: "VerificationTimes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupLines",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false),
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupLines", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupLines_TargetGroups_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupLines_Targets_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Targets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CampaignAchievements",
                 columns: table => new
                 {
@@ -812,9 +819,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     DescriptionEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TitleTr = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TitleEn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    XKAMPCode = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -855,9 +863,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     ChannelCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -879,17 +887,17 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    CampaignListImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CampaignDetailImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CampaignListImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CampaignDetailImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     SummaryTr = table.Column<string>(type: "ntext", nullable: true),
                     SummaryEn = table.Column<string>(type: "ntext", nullable: true),
                     ContentTr = table.Column<string>(type: "ntext", nullable: true),
                     ContentEn = table.Column<string>(type: "ntext", nullable: true),
                     DetailTr = table.Column<string>(type: "ntext", nullable: true),
                     DetailEn = table.Column<string>(type: "ntext", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -913,11 +921,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    MimeType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DocumentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MimeType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DocumentName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -941,9 +949,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     JoinTypeId = table.Column<int>(type: "int", nullable: false),
                     CampaignStartTermId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsEmployeeIncluded = table.Column<bool>(type: "bit", nullable: false),
+                    IsPrivateBanking = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -980,9 +990,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     TargetOperationId = table.Column<int>(type: "int", nullable: false),
                     TargetId = table.Column<int>(type: "int", nullable: false),
                     TargetGroupId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1023,9 +1033,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TopLimitId = table.Column<int>(type: "int", nullable: false),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1081,9 +1091,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsJoin = table.Column<bool>(type: "bit", nullable: false),
                     IsFavorite = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1105,11 +1115,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignRuleId = table.Column<int>(type: "int", nullable: false),
-                    BranchCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BranchCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    BranchName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1132,9 +1142,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignRuleId = table.Column<int>(type: "int", nullable: false),
                     BusinessLineId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1163,9 +1173,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignRuleId = table.Column<int>(type: "int", nullable: false),
                     CustomerTypeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1193,10 +1203,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignRuleId = table.Column<int>(type: "int", nullable: false),
-                    Identities = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Identities = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -1216,9 +1226,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7479), false, null, null, "Anlık" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7481), false, null, null, "Aylık" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7482), false, null, null, "Yıllık" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2128), false, null, null, "Anlık" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2130), false, null, null, "Aylık" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2131), false, null, null, "Yıllık" }
                 });
 
             migrationBuilder.InsertData(
@@ -1226,9 +1236,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6486), false, null, null, "Mevduat" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6556), false, null, null, "Kredi" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6590), false, null, null, "Cashback" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1128), false, null, null, "Mevduat" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1224), false, null, null, "Kredi" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1270), false, null, null, "Cashback" }
                 });
 
             migrationBuilder.InsertData(
@@ -1236,8 +1246,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6916), false, null, null, "Ödeme Cashback" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6992), false, null, null, "Fatura Cashback" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1502), false, null, null, "Ödeme Cashback" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1584), false, null, null, "Fatura Cashback" }
                 });
 
             migrationBuilder.InsertData(
@@ -1245,10 +1255,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7791), false, null, null, "Insert" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7792), false, null, null, "Update" },
-                    { 3, "3", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7793), false, null, null, "View" },
-                    { 4, "4", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7795), false, null, null, "Approve" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2402), false, null, null, "Insert" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2403), false, null, null, "Update" },
+                    { 3, "3", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2404), false, null, null, "View" },
+                    { 4, "4", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2405), false, null, null, "Approve" }
                 });
 
             migrationBuilder.InsertData(
@@ -1256,14 +1266,14 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5160), false, null, null, "Bireysel (B)" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5424), false, null, null, "Ticari (T)" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5477), false, null, null, "Dijital (X)" },
-                    { 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5513), false, null, null, "Ticari 1 (I)" },
-                    { 5, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5551), false, null, null, "Ticari 2 (P)" },
-                    { 6, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5583), false, null, null, "Ticari 3 (M)" },
-                    { 7, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5636), false, null, null, "Kurumsal (K)" },
-                    { 8, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5669), false, null, null, "Kurumsal 1 (A)" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9087), false, null, null, "Bireysel (B)" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9405), false, null, null, "Ticari (T)" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9477), false, null, null, "Dijital (X)" },
+                    { 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9522), false, null, null, "Ticari 1 (I)" },
+                    { 5, "1", new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9570), false, null, null, "Ticari 2 (P)" },
+                    { 6, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(25), false, null, null, "Ticari 3 (M)" },
+                    { 7, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(89), false, null, null, "Kurumsal (K)" },
+                    { 8, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(130), false, null, null, "Kurumsal 1 (A)" }
                 });
 
             migrationBuilder.InsertData(
@@ -1271,8 +1281,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7433), false, null, null, "Katılım Anında" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7434), false, null, null, "Dönem Başlangıcı" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2092), false, null, null, "Katılım Anında" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2094), false, null, null, "Dönem Başlangıcı" }
                 });
 
             migrationBuilder.InsertData(
@@ -1280,10 +1290,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "TRY", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7546), false, null, null, "TRY" },
-                    { 2, "GBP", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7547), false, null, null, "GBP" },
-                    { 3, "EUR", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7549), false, null, null, "EUR" },
-                    { 4, "USD", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7550), false, null, null, "USD" }
+                    { 1, "TRY", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2186), false, null, null, "TRY" },
+                    { 2, "GBP", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2188), false, null, null, "GBP" },
+                    { 3, "EUR", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2189), false, null, null, "EUR" },
+                    { 4, "USD", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2190), false, null, null, "USD" }
                 });
 
             migrationBuilder.InsertData(
@@ -1291,11 +1301,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6033), false, null, null, "Gerçek" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6128), false, null, null, "Tüzel" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6165), false, null, null, "Ortak" },
-                    { 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6197), false, null, null, "Reşit Olmayan" },
-                    { 5, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6233), false, null, null, "Adi Ortaklık" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(521), false, null, null, "Gerçek" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(625), false, null, null, "Tüzel" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(673), false, null, null, "Ortak" },
+                    { 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(800), false, null, null, "Reşit Olmayan" },
+                    { 5, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(848), false, null, null, "Adi Ortaklık" }
                 });
 
             migrationBuilder.InsertData(
@@ -1303,11 +1313,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7402), false, null, null, "Tüm Müşteriler" },
-                    { 2, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7403), false, null, null, "Müşteri Özelinde" },
-                    { 3, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7404), false, null, null, "İş Kolu Özelinde" },
-                    { 4, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7405), false, null, null, "Şube Özelinde" },
-                    { 5, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7406), false, null, null, "Müşteri Tipi Özelinde" }
+                    { 1, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2025), false, null, null, "Tüm Müşteriler" },
+                    { 2, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2026), false, null, null, "Müşteri Özelinde" },
+                    { 3, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2039), false, null, null, "İş Kolu Özelinde" },
+                    { 4, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2049), false, null, null, "Şube Özelinde" },
+                    { 5, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2050), false, null, null, "Müşteri Tipi Özelinde" }
                 });
 
             migrationBuilder.InsertData(
@@ -1315,8 +1325,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "TR", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7107), false, null, null, "Türkçe" },
-                    { 2, "EN", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7109), false, null, null, "İngilizce" }
+                    { 1, "TR", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1853), false, null, null, "Türkçe" },
+                    { 2, "EN", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1855), false, null, null, "İngilizce" }
                 });
 
             migrationBuilder.InsertData(
@@ -1324,10 +1334,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7767), false, null, null, "Campaign" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7770), false, null, null, "TopLimit" },
-                    { 3, "3", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7771), false, null, null, "Target" },
-                    { 4, "4", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7772), false, null, null, "Report" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2378), false, null, null, "Campaign" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2379), false, null, null, "TopLimit" },
+                    { 3, "3", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2381), false, null, null, "Target" },
+                    { 4, "4", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2382), false, null, null, "Report" }
                 });
 
             migrationBuilder.InsertData(
@@ -1335,9 +1345,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7710), false, null, null, "Otomatik Katılım" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7712), false, null, null, "Müşteri Seçimi" },
-                    { 3, "3", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7713), false, null, null, "Operatör Seçimi" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2304), false, null, null, "Otomatik Katılım" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2308), false, null, null, "Müşteri Seçimi" },
+                    { 3, "3", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2309), false, null, null, "Operatör Seçimi" }
                 });
 
             migrationBuilder.InsertData(
@@ -1345,9 +1355,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7569), false, null, null, "Sadakat" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7570), false, null, null, "Kampanya" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7571), false, null, null, "Kazanım" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2211), false, null, null, "Sadakat" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2212), false, null, null, "Kampanya" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2213), false, null, null, "Kazanım" }
                 });
 
             migrationBuilder.InsertData(
@@ -1355,11 +1365,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7737), false, null, null, "isLoyaltyCreator" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7743), false, null, null, "isLoyaltyApprover" },
-                    { 3, "3", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7745), false, null, null, "isLoyaltyReader" },
-                    { 4, "4", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7747), false, null, null, "isLoyaltyRuleCreator" },
-                    { 5, "5", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7748), false, null, null, "isLoyaltyRuleApprover" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2327), false, null, null, "isLoyaltyCreator" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2328), false, null, null, "isLoyaltyApprover" },
+                    { 3, "3", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2329), false, null, null, "isLoyaltyReader" },
+                    { 4, "4", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2331), false, null, null, "isLoyaltyRuleCreator" },
+                    { 5, "5", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2332), false, null, null, "isLoyaltyRuleApprover" }
                 });
 
             migrationBuilder.InsertData(
@@ -1367,9 +1377,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Akr", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7344), false, null, null, "Akaryakıt" },
-                    { 2, "Chl", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7346), false, null, null, "Giyim" },
-                    { 3, "Edu", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7347), false, null, null, "Eğitim" }
+                    { 1, "Akr", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1973), false, null, null, "Akaryakıt" },
+                    { 2, "Chl", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1975), false, null, null, "Giyim" },
+                    { 3, "Edu", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1976), false, null, null, "Eğitim" }
                 });
 
             migrationBuilder.InsertData(
@@ -1377,10 +1387,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7851), false, null, null, "Taslak" },
-                    { 2, "2", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7850), false, null, null, "Onaya Gönderildi" },
-                    { 3, "3", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7849), false, null, null, "Tarihçe" },
-                    { 4, "4", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7847), false, null, null, "Onaylandı" }
+                    { 1, "1", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2470), false, null, null, "Taslak" },
+                    { 2, "2", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2468), false, null, null, "Onaya Gönderildi" },
+                    { 3, "3", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2467), false, null, null, "Tarihçe" },
+                    { 4, "4", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2466), false, null, null, "Onaylandı" }
                 });
 
             migrationBuilder.InsertData(
@@ -1388,10 +1398,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7453), false, null, null, "ve" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7455), false, null, null, "veya" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7456), false, null, null, "kesişim" },
-                    { 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7457), false, null, null, "fark" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2109), false, null, null, "ve" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2110), false, null, null, "veya" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2111), false, null, null, "kesişim" },
+                    { 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2112), false, null, null, "fark" }
                 });
 
             migrationBuilder.InsertData(
@@ -1399,8 +1409,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7691), false, null, null, "Akış" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7692), false, null, null, "Sorgu" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2280), false, null, null, "Akış" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2281), false, null, null, "Sorgu" }
                 });
 
             migrationBuilder.InsertData(
@@ -1408,9 +1418,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7589), false, null, null, "Progress Bar" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7591), false, null, null, "Bilgi" },
-                    { 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7592), false, null, null, "Görüntülenmeyecek" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2231), false, null, null, "Progress Bar" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2233), false, null, null, "Bilgi" },
+                    { 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2234), false, null, null, "Görüntülenmeyecek" }
                 });
 
             migrationBuilder.InsertData(
@@ -1418,8 +1428,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7611), false, null, null, "Hedefe Ulaşıldığı Anda" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7612), false, null, null, "Tamamlandıktan Sonra" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2250), false, null, null, "Hedefe Ulaşıldığı Anda" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2251), false, null, null, "Tamamlandıktan Sonra" }
                 });
 
             migrationBuilder.InsertData(
@@ -1427,8 +1437,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7668), false, null, null, "İlk Kontrol Edildiğinde" },
-                    { 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7670), false, null, null, "Her Kontrol Edildiğinde" }
+                    { 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2265), false, null, null, "İlk Kontrol Edildiğinde" },
+                    { 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2266), false, null, null, "Her Kontrol Edildiğinde" }
                 });
 
             migrationBuilder.InsertData(
@@ -1436,10 +1446,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "Code", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, "SK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7374), false, null, null, "Sürekli Kampanyalar" },
-                    { 2, "DK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7375), false, null, null, "Dönemsel Kampanyalar" },
-                    { 3, "AK", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7377), false, null, null, "Genel Kampanyalar" },
-                    { 4, "NG", "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7378), false, null, null, "Görüntülenmeyecek" }
+                    { 1, "SK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2001), false, null, null, "Sürekli Kampanyalar" },
+                    { 2, "DK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2002), false, null, null, "Dönemsel Kampanyalar" },
+                    { 3, "AK", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2004), false, null, null, "Genel Kampanyalar" },
+                    { 4, "NG", "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2005), false, null, null, "Görüntülenmeyecek" }
                 });
 
             migrationBuilder.InsertData(
@@ -1447,21 +1457,21 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 columns: new[] { "Id", "AuthorizationTypeId", "CreatedBy", "CreatedOn", "IsDeleted", "LastModifiedBy", "LastModifiedOn", "ModuleTypeId", "RoleTypeId" },
                 values: new object[,]
                 {
-                    { 1, 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7809), false, null, null, 1, 1 },
-                    { 2, 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7810), false, null, null, 1, 1 },
-                    { 3, 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7812), false, null, null, 2, 1 },
-                    { 4, 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7814), false, null, null, 2, 1 },
-                    { 5, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7815), false, null, null, 3, 1 },
-                    { 6, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7816), false, null, null, 4, 1 },
-                    { 7, 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7819), false, null, null, 1, 2 },
-                    { 8, 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7820), false, null, null, 2, 2 },
-                    { 9, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7821), false, null, null, 1, 3 },
-                    { 10, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7822), false, null, null, 2, 3 },
-                    { 11, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7823), false, null, null, 3, 3 },
-                    { 12, 3, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7824), false, null, null, 4, 3 },
-                    { 13, 1, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7825), false, null, null, 3, 4 },
-                    { 14, 2, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7826), false, null, null, 3, 4 },
-                    { 15, 4, "1", new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7827), false, null, null, 3, 5 }
+                    { 1, 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2428), false, null, null, 1, 1 },
+                    { 2, 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2430), false, null, null, 1, 1 },
+                    { 3, 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2431), false, null, null, 2, 1 },
+                    { 4, 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2432), false, null, null, 2, 1 },
+                    { 5, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2433), false, null, null, 3, 1 },
+                    { 6, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2434), false, null, null, 4, 1 },
+                    { 7, 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2436), false, null, null, 1, 2 },
+                    { 8, 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2437), false, null, null, 2, 2 },
+                    { 9, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2438), false, null, null, 1, 3 },
+                    { 10, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2439), false, null, null, 2, 3 },
+                    { 11, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2441), false, null, null, 3, 3 },
+                    { 12, 3, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2442), false, null, null, 4, 3 },
+                    { 13, 1, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2443), false, null, null, 3, 4 },
+                    { 14, 2, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2444), false, null, null, 3, 4 },
+                    { 15, 4, "1", new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2445), false, null, null, 3, 5 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1660,6 +1670,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                 name: "IX_TargetGroupLines_TargetId",
                 table: "TargetGroupLines",
                 column: "TargetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Targets_StatusId",
+                table: "Targets",
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TopLimits_AchievementFrequencyId",

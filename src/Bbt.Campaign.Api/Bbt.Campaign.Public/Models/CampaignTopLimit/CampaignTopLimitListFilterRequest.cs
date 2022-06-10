@@ -15,5 +15,6 @@ namespace Bbt.Campaign.Public.Models.CampaignTopLimit
         public bool? IsActive { get; set; }
         public bool? IsApproved { get; set; }
         public bool? IsDraft { get; set; }
+        public int? StatusId { get; set; }
     }
 }

@@ -26,7 +26,9 @@ using Bbt.Campaign.Services.Services.CampaignTopLimit;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Report;
+using Bbt.Campaign.Services.Services.Target.Detail;
 using Bbt.Campaign.Shared.ServiceDependencies;
+using Bbt.Target.Services.Services.Target;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -46,6 +48,8 @@ namespace Bbt.Campaign.Services.Services.Approval
         private readonly IReportService _reportService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly ICampaignTopLimitService _campaignTopLimitService;
+        private readonly ITargetService _targetService;
+        private readonly ITargetDetailService _targetDetailService;
 
         public ApprovalService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             ICampaignService campaignService, 
@@ -56,7 +60,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             IReportService reportService, 
             IDraftService draftService,
             ICampaignAchievementService campaignAchievementService,
-            ICampaignTopLimitService campaignTopLimitService
+            ICampaignTopLimitService campaignTopLimitService,
+            ITargetService targetService,
+            ITargetDetailService targetDetailService
             )
         {
             _unitOfWork = unitOfWork;
@@ -71,6 +77,8 @@ namespace Bbt.Campaign.Services.Services.Approval
             _draftService = draftService;
             _campaignAchievementService = campaignAchievementService;
             _campaignTopLimitService = campaignTopLimitService;
+            _targetService = targetService;
+            _targetDetailService = targetDetailService;
         }
 
         #region campaign
@@ -535,11 +543,6 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (draftEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
 
-            //update draft top limit
-            draftEntity.StatusId = (int)StatusEnum.Approved;
-            draftEntity.ApprovedBy = userid;
-            draftEntity.ApprovedDate = now;
-            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
             //add history
             var historyEntity = new TopLimitEntity();
             historyEntity = await _draftService.CopyTopLimitInfo(id, historyEntity, userid, true, true, true, true, true);
@@ -552,7 +555,13 @@ namespace Bbt.Campaign.Services.Services.Approval
             {
                 await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(campaignTopLimit);
             }
-                
+
+            //update draft top limit
+            draftEntity.StatusId = (int)StatusEnum.Approved;
+            draftEntity.ApprovedBy = userid;
+            draftEntity.ApprovedDate = now;
+            await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(draftEntity);
+
             await _unitOfWork.SaveChangesAsync();
 
             return await _campaignTopLimitService.GetCampaignTopLimitAsync(draftEntity.Id);
@@ -597,7 +606,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             var mappedEntity = _mapper.Map<TopLimitDto>(entity);
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id) 
+        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, string userid) 
         {
             TopLimitApproveFormDto response = new TopLimitApproveFormDto();
 
@@ -661,126 +670,119 @@ namespace Bbt.Campaign.Services.Services.Approval
         #endregion
 
         #region target
-        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id)
+        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, string userid)
         {
-            var targetEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => (x.RefId ?? 0) == id && !x.IsDeleted)
-                .FirstOrDefaultAsync();
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
+            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
-            return targetEntity == null ? await ApproveTargetAddAsync(id) : await ApproveTargetUpdateAsync(id, targetEntity.Id);
+            if (isApproved)
+            {
+                var draftEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                    .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
+                if (draftEntity == null)
+                    throw new Exception("Hedef bulunamadı");
+
+                //if (draftEntity.CreatedBy == userid)
+                //    throw new Exception("Çatı limitini oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
+                var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                    .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                    .FirstOrDefaultAsync();
+
+                if (approvedEntity == null)
+                {
+                    return await ApproveTargetAddAsync(id, userid);
+                }
+                else
+                {
+                    return await ApproveTargetUpdateAsync(id, approvedEntity.Id, userid);
+                }
+            }
+            else
+            {
+                return await this.DisApproveTargetAsync(id, userid);
+            }
 
         }
-        private async Task<BaseResponse<TargetDto>> ApproveTargetAddAsync(int refId)
+
+        private async Task<BaseResponse<TargetDto>> DisApproveTargetAsync(int id, string userid)
         {
-            var draftEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
-                .Include(x => x.TargetDetail)
-                .FirstOrDefaultAsync();
+            var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
+            if (entity is null)
+                throw new Exception("Hedef Limiti bulunamadı.");
 
-            if (draftEntity == null) { throw new Exception("Hedef bulunamadı."); }
-
-            //draftEntity
-            draftEntity.IsApproved = true;
-            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(draftEntity);
-
-            //entity
-            var targetDto = _mapper.Map<TargetDto>(draftEntity);
-            var entity = _mapper.Map<TargetEntity>(targetDto);
-            entity.Id = 0;
-            entity.IsApproved = true;
-            entity.IsDraft = false;
-            entity.RefId = refId;
-
-            //targetDetailEntity
-            var detailDto = _mapper.Map<TargetDetailDto>(draftEntity.TargetDetail);
-            var detailEntity = _mapper.Map<TargetDetailEntity>(detailDto);
-            detailEntity.Id = 0;
-            entity.TargetDetail = detailEntity;
-
-            entity = await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            var mappedTarget = _mapper.Map<TargetDto>(entity);
-            return await BaseResponse<TargetDto>.SuccessAsync(mappedTarget);
-        }
-        private async Task<BaseResponse<TargetDto>> ApproveTargetUpdateAsync(int refId, int id)
-        {
-            var draftEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => x.Id == refId && !x.IsDeleted && x.IsDraft && !x.IsApproved)
-                .Include(x => x.TargetDetail)
-                .FirstOrDefaultAsync();
-            var entity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAllIncluding(x => x.TargetDetail)
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
-
-            if (draftEntity == null || entity == null) { throw new Exception("Hedef bulunamadı."); }
-
-            //draftEntity
-            draftEntity.IsApproved = true;
-            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(draftEntity);
-
-            //targetEntity
-            entity.Title = draftEntity.Title;
-            entity.Name = draftEntity.Name;
-            entity.IsActive = draftEntity.IsActive;
-            entity.IsApproved = true;
-            entity.IsDraft = false;
-            entity.RefId = draftEntity.Id;
-
-            //targetDetailEntity
-            var targetDetail = entity.TargetDetail;
-            var draftTargetDetail = draftEntity.TargetDetail;
-
-            targetDetail.AdditionalFlowTime = draftTargetDetail.AdditionalFlowTime;
-            targetDetail.FlowFrequency = draftTargetDetail.FlowFrequency;
-            targetDetail.TotalAmount = draftTargetDetail.TotalAmount;
-            targetDetail.Condition = draftTargetDetail.Condition;
-            targetDetail.DescriptionEn = draftTargetDetail.DescriptionEn;
-            targetDetail.DescriptionTr = draftTargetDetail.DescriptionTr;
-            targetDetail.FlowName = draftTargetDetail.FlowName;
-            targetDetail.NumberOfTransaction = draftTargetDetail.NumberOfTransaction;
-            targetDetail.Query = draftTargetDetail.Query;
-            targetDetail.TargetDetailEn = draftTargetDetail.TargetDetailEn;
-            targetDetail.TargetDetailTr = draftTargetDetail.TargetDetailTr;
-            targetDetail.TargetSourceId = draftTargetDetail.TargetSourceId;
-            targetDetail.TargetViewTypeId = draftTargetDetail.TargetViewTypeId;
-            targetDetail.TriggerTimeId = draftTargetDetail.TriggerTimeId;
-            targetDetail.VerificationTimeId = draftTargetDetail.VerificationTimeId;
+            entity.StatusId = (int)StatusEnum.Draft;
+            entity.LastModifiedOn = DateTime.UtcNow;
+            entity.LastModifiedBy = userid;
 
             await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
+            var mappedEntity = _mapper.Map<TargetDto>(entity);
+            return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
+        }
+
+        private async Task<BaseResponse<TargetDto>> ApproveTargetAddAsync(int id, string userid)
+        {
+            DateTime now = DateTime.UtcNow;
+            var draftEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == id && !x.IsDeleted).FirstOrDefaultAsync();
+            if (draftEntity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
+
+            //add history
+            var historyEntity = new TargetEntity();
+            historyEntity.TargetDetail = new TargetDetailEntity();
+            historyEntity = await _draftService.CopyTargetInfo(id, historyEntity, userid, true, true, true, true, true);
+            historyEntity.StatusId = (int)StatusEnum.History;
+            historyEntity.ApprovedBy = userid;
+            historyEntity.ApprovedDate = now;
+            await _unitOfWork.GetRepository<TargetEntity>().AddAsync(historyEntity);
+
+            // update draft top limit
+            draftEntity.StatusId = (int)StatusEnum.Approved;
+            draftEntity.ApprovedBy = userid;
+            draftEntity.ApprovedDate = now;
+            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(draftEntity);
 
             await _unitOfWork.SaveChangesAsync();
 
-            var mappedTarget = _mapper.Map<TargetDto>(entity);
+            var mappedEntity = _mapper.Map<TargetDto>(draftEntity);
 
-            return await BaseResponse<TargetDto>.SuccessAsync(mappedTarget);
+            return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int refId)
+        private async Task<BaseResponse<TargetDto>> ApproveTargetUpdateAsync(int draftId, int targetId, string userid)
+        {
+            DateTime now = DateTime.UtcNow;
+            var draftEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == draftId && !x.IsDeleted).FirstOrDefaultAsync();
+            var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == targetId && !x.IsDeleted)
+                .Include(x=>x.TargetDetail).FirstOrDefaultAsync();
+
+            if (draftEntity == null || approvedEntity == null)
+                throw new Exception("Hedef bulunamadı.");
+
+            approvedEntity = await _draftService.CopyTargetInfo(draftId, approvedEntity, userid, true, true, true, true, true);
+            approvedEntity.StatusId = (int)StatusEnum.Approved;
+            approvedEntity.ApprovedDate = DateTime.UtcNow;
+            approvedEntity.ApprovedBy = userid;
+            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(approvedEntity);
+
+            draftEntity.ApprovedBy = userid;
+            draftEntity.ApprovedDate = now;
+            draftEntity.StatusId = (int)StatusEnum.History;
+            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(draftEntity);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            var mappedEntity = _mapper.Map<TargetDto>(draftEntity);
+
+            return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
+        }
+        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, string userid)
         {
             TargetApproveFormDto response = new TargetApproveFormDto();
 
-            var targetDdraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAllIncluding(x => x.TargetDetail)
-                .Where(x => x.Id == refId)
-                .FirstOrDefaultAsync();
-
-            var targetEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAllIncluding(x => x.TargetDetail)
-                .Where(x => (x.RefId ?? 0) == refId)
-                .FirstOrDefaultAsync();
-
-            response.isNewRecord = targetEntity == null ? true : false;
-
-            response.TargetDraft = _mapper.Map<TargetDto>(targetDdraftEntity);
-            response.TargetDraftDetail = _mapper.Map<TargetDetailDto>(targetDdraftEntity.TargetDetail);
-
-            if (!response.isNewRecord)
-            {
-                response.Target = _mapper.Map<TargetDto>(targetEntity);
-                response.TargetDetail = _mapper.Map<TargetDetailDto>(targetEntity?.TargetDetail);
-            }
+            response.Target = await _targetService.GetTargetDto2(id);
 
             return await BaseResponse<TargetApproveFormDto>.SuccessAsync(response);
         }
@@ -932,71 +934,11 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         #region copy
 
-        //taslak bir kampanya oluşturur
-
         public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, string userid)
         {
             return await _draftService.CreateCampaignCopyAsync(id, userid);
         }
-        //public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int refId, string userid)
-        //{
-        //    int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
-        //    int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-
-        //    await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-
-        //    var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-        //        .GetAll(x => x.Id == refId && !x.IsDeleted)
-        //        .Include(x => x.CampaignDetail)
-        //        .FirstOrDefaultAsync();
-
-        //    if (campaignDraftEntity == null)
-        //        throw new Exception("Kampanya bulunamadı.");
-
-        //    //campaign
-        //    var campaignDto = _mapper.Map<CampaignDto>(campaignDraftEntity);
-        //    var campaignEntity = _mapper.Map<CampaignEntity>(campaignDto);
-        //    campaignEntity.Id = 0;
-        //    campaignEntity.Name = campaignDraftEntity.Name + "-Copy";
-        //    campaignEntity.Code = string.Empty;
-        //    campaignEntity.Order = null;
-        //    //campaignEntity.IsApproved = false;
-        //    //campaignEntity.IsDraft = true;
-        //    //campaignEntity.RefId = null;
-        //    campaignEntity.CreatedBy = userid;
-
-        //    //campaign detail
-        //    var campaignDetailDto = _mapper.Map<CampaignDetailDto>(campaignDraftEntity.CampaignDetail);
-        //    var campaignDetailEntity = _mapper.Map<CampaignDetailEntity>(campaignDetailDto);
-        //    campaignDetailEntity.Id = 0;
-        //    campaignDetailEntity.CreatedBy = userid;
-
-        //    campaignEntity.CampaignDetail = campaignDetailEntity;
-
-        //    campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().AddAsync(campaignEntity);
-
-        //    await AddCampaignRule(refId, campaignEntity, userid);
-            
-        //    await AddCampaignDocument(refId, campaignEntity, userid);
-
-        //    await AddCampaignTarget(refId, campaignEntity, userid);
-
-        //    await AddCampaignChannelCode(refId, campaignEntity, userid);
-
-        //    await AddCampaignAchievement(refId, campaignEntity, userid);
-
-        //    await _unitOfWork.SaveChangesAsync();
-            
-        //    campaignEntity.Code = campaignEntity.Id.ToString();
-        //    //campaignEntity.RefId = campaignEntity.Id;
-
-        //    await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
-
-        //    await _unitOfWork.SaveChangesAsync();
-
-        //    var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
-        //    return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
-        //}
+        
 
         public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, string userid)
         {
@@ -1017,48 +959,17 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
-
             await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
 
-            var targetDraftEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                                                              .GetAll(x => x.Id == refId && x.IsDeleted == false)
-                                                              .Include(x=>x.TargetDetail)
-                                                              .FirstOrDefaultAsync();
-            if (targetDraftEntity == null)
-                throw new Exception("Hedef bulunamadı.");
-
-            if (targetDraftEntity.TargetDetail == null)
-                throw new Exception("Hedef detayı bulunamadı.");
-
-            //target
-            var targetDto = _mapper.Map<TargetDto>(targetDraftEntity);
-            targetDto.Id = 0;
-            var targetEntity = _mapper.Map<TargetEntity>(targetDto);
-            targetEntity.Name = targetDraftEntity.Name + "-Copy";
-            targetEntity.IsApproved = false;
-            targetEntity.IsDraft = true;
-            targetEntity.RefId = null;
-            targetEntity.CreatedBy = userid;
-            targetEntity.TargetDetail = null;
-
-             await _unitOfWork.GetRepository<TargetEntity>().AddAsync(targetEntity);
-
-            if (targetDraftEntity.TargetDetail != null) 
-            {
-                var targetDetailDto = _mapper.Map<TargetDetailDto>(targetDraftEntity.TargetDetail);
-                targetDetailDto.Id = 0;
-                var targetDetailEntity = _mapper.Map<TargetDetailEntity>(targetDetailDto);
-                targetDetailEntity.Target = targetEntity;
-                targetDetailEntity.CreatedBy = userid;
-
-                await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(targetDetailEntity);
-            }
-
+            TargetEntity entity = new TargetEntity();
+            entity.TargetDetail = new TargetDetailEntity();
+            entity = await _draftService.CopyTargetInfo(refId, entity, userid, false, false, false, false, false);
+            await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
-            var mappedTarget = _mapper.Map<TargetDto>(targetEntity);
+            var mappedEntity = _mapper.Map<TargetDto>(entity);
 
-            return await BaseResponse<TargetDto>.SuccessAsync(mappedTarget);
+            return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
         }
 
         #endregion

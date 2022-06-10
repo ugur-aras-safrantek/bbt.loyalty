@@ -743,15 +743,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         //    return isInvisibleCampaign;
         //}
 
-        public async Task<bool> IsActiveCampaign(int campaignId) 
-        {
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if (campaignEntity == null)
-                throw new Exception("Kampanya bulunamadı");
-            return  campaignEntity.IsActive && 
-                    campaignEntity.EndDate > DateTime.UtcNow.AddDays(-1) && 
-                    !campaignEntity.IsDeleted;
-        }
+        
 
         private async Task<List<int>> GetOrderListAsync(int maxCount) 
         {

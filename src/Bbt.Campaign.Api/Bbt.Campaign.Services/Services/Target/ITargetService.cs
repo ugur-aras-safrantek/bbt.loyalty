@@ -15,5 +15,6 @@ namespace Bbt.Target.Services.Services.Target
         public Task<BaseResponse<TargetDto>> GetTargetAsync(int id);
         public Task<BaseResponse<List<TargetDto>>> GetListAsync();
         public Task<BaseResponse<GetFileResponse>> GetExcelAsync(TargetListFilterRequest request, string userid);
+        public Task<TargetDto> GetTargetDto2(int id);
     }
 }

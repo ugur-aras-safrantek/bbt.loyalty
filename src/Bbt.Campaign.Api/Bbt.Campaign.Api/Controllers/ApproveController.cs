@@ -84,13 +84,27 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="id">Record Id of the draft target</param>
         /// <returns></returns>
-        //[HttpGet]
-        //[Route("get-target-approval-form")]
-        //public async Task<IActionResult> GetTargetApprovalFormAsync(int id)
-        //{
-        //    var result = await _approvalService.GetTargetApprovalFormAsync(id);
-        //    return Ok(result);
-        //}
+        [HttpGet]
+        [Route("get-target-form")]
+        public async Task<IActionResult> GetTargetApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _approvalService.GetTargetApprovalFormAsync(id, userId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Approves or disapproves the draft target.
+        /// </summary>
+        /// <param name="id">Record Id of the draft target</param>
+        /// <param name="isApproved">Approved or disapproved</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("target/{id}/{isApproved}")]
+        public async Task<IActionResult> ApproveTargetAsync(int id, bool isApproved, [FromHeader(Name = "userid")][Required] string userId)
+        {
+            var result = await _approvalService.ApproveTargetAsync(id, isApproved, userId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// Returns the form data for top limit approval page
@@ -99,9 +113,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-toplimit-form")]
-        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
+        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
-            var result = await _approvalService.GetTopLimitApprovalFormAsync(id);
+            var result = await _approvalService.GetTopLimitApprovalFormAsync(id, userId);
             return Ok(result);
         }
 

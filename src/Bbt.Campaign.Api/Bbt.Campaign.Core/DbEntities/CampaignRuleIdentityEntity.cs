@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public int CampaignRuleId { get; set; }
         public CampaignRuleEntity CampaignRule { get; set; }
 
-        [MaxLength(11), Required]
+        [MaxLength(20), Required]
         public string Identities { get; set; }
     }
 }

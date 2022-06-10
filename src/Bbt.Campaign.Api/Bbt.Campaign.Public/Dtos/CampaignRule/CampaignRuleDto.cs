@@ -19,6 +19,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignRule
         public string? RuleCustomerTypesStr { get; set; }
         public int CampaignStartTermId { get; set; }
         public ParameterDto CampaignStartTerm { get; set; }
+        public bool IsEmployeeIncluded { get; set; }
+        public bool IsPrivateBanking { get; set; }
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
         public string? LastModifiedBy { get; set; }

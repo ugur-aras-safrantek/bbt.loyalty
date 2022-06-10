@@ -369,6 +369,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             var topLimitQuery = _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted);
 
+            if (request.StatusId.HasValue)
+                topLimitQuery = topLimitQuery.Where(x => x.StatusId == request.StatusId);
             if (!string.IsNullOrWhiteSpace(request.Name))
                 topLimitQuery = topLimitQuery.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
             if (request.AchievementFrequencyId.HasValue)

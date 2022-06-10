@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(CampaignDbContext))]
-    [Migration("20220609152101_mig1")]
+    [Migration("20220610152712_mig1")]
     partial class mig1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -43,7 +44,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -62,7 +64,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7479),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2128),
                             IsDeleted = false,
                             Name = "Anlık"
                         },
@@ -70,7 +72,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7481),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2130),
                             IsDeleted = false,
                             Name = "Aylık"
                         },
@@ -78,7 +80,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7482),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2131),
                             IsDeleted = false,
                             Name = "Yıllık"
                         });
@@ -94,7 +96,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -103,7 +106,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -122,7 +126,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6486),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1128),
                             IsDeleted = false,
                             Name = "Mevduat"
                         },
@@ -130,7 +134,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6556),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1224),
                             IsDeleted = false,
                             Name = "Kredi"
                         },
@@ -138,7 +142,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6590),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1270),
                             IsDeleted = false,
                             Name = "Cashback"
                         });
@@ -159,7 +163,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -168,7 +173,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -188,7 +194,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6916),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1502),
                             IsDeleted = false,
                             Name = "Ödeme Cashback"
                         },
@@ -197,7 +203,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6992),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1584),
                             IsDeleted = false,
                             Name = "Fatura Cashback"
                         });
@@ -218,7 +224,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -227,7 +234,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -247,7 +255,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7791),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2402),
                             IsDeleted = false,
                             Name = "Insert"
                         },
@@ -256,7 +264,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7792),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2403),
                             IsDeleted = false,
                             Name = "Update"
                         },
@@ -265,7 +273,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "3",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7793),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2404),
                             IsDeleted = false,
                             Name = "View"
                         },
@@ -274,7 +282,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "4",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7795),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2405),
                             IsDeleted = false,
                             Name = "Approve"
                         });
@@ -290,7 +298,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -299,7 +308,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -318,7 +328,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5160),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9087),
                             IsDeleted = false,
                             Name = "Bireysel (B)"
                         },
@@ -326,7 +336,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5424),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9405),
                             IsDeleted = false,
                             Name = "Ticari (T)"
                         },
@@ -334,7 +344,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5477),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9477),
                             IsDeleted = false,
                             Name = "Dijital (X)"
                         },
@@ -342,7 +352,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5513),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9522),
                             IsDeleted = false,
                             Name = "Ticari 1 (I)"
                         },
@@ -350,7 +360,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 5,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5551),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 590, DateTimeKind.Local).AddTicks(9570),
                             IsDeleted = false,
                             Name = "Ticari 2 (P)"
                         },
@@ -358,7 +368,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 6,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5583),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(25),
                             IsDeleted = false,
                             Name = "Ticari 3 (M)"
                         },
@@ -366,7 +376,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 7,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5636),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(89),
                             IsDeleted = false,
                             Name = "Kurumsal (K)"
                         },
@@ -374,7 +384,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 8,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(5669),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(130),
                             IsDeleted = false,
                             Name = "Kurumsal 1 (A)"
                         });
@@ -402,7 +412,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -420,7 +431,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -442,6 +454,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
+
+                    b.Property<string>("XKAMPCode")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
 
                     b.HasKey("Id");
 
@@ -474,7 +490,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -483,7 +500,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -504,13 +522,15 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CampaignDetailImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
                     b.Property<string>("CampaignListImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ContentEn")
                         .HasColumnType("ntext");
@@ -520,7 +540,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -535,7 +556,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -571,14 +593,16 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DocumentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int>("DocumentType")
                         .HasColumnType("int");
@@ -587,14 +611,16 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MimeType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -612,7 +638,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ApprovedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
@@ -627,18 +654,21 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DescriptionEn")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("DescriptionTr")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -656,7 +686,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -688,10 +719,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TitleEn")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("TitleTr")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int?>("ViewOptionId")
                         .HasColumnType("int");
@@ -721,18 +754,21 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("BranchCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("BranchName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("CampaignRuleId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -741,7 +777,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -769,7 +806,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -778,7 +816,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -805,7 +844,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -817,7 +857,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -847,7 +888,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -855,11 +897,18 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsEmployeeIncluded")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrivateBanking")
+                        .HasColumnType("bit");
+
                     b.Property<int>("JoinTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -888,21 +937,23 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Identities")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -924,7 +975,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -933,7 +985,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -952,7 +1005,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7433),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2092),
                             IsDeleted = false,
                             Name = "Katılım Anında"
                         },
@@ -960,7 +1013,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7434),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2094),
                             IsDeleted = false,
                             Name = "Dönem Başlangıcı"
                         });
@@ -979,7 +1032,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -988,7 +1042,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1028,7 +1083,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1037,7 +1093,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1125,7 +1182,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1134,7 +1192,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1154,7 +1213,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "TRY",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7546),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2186),
                             IsDeleted = false,
                             Name = "TRY"
                         },
@@ -1163,7 +1222,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "GBP",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7547),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2188),
                             IsDeleted = false,
                             Name = "GBP"
                         },
@@ -1172,7 +1231,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "EUR",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7549),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2189),
                             IsDeleted = false,
                             Name = "EUR"
                         },
@@ -1181,7 +1240,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "USD",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7550),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2190),
                             IsDeleted = false,
                             Name = "USD"
                         });
@@ -1200,7 +1259,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1219,7 +1279,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1335,7 +1396,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1344,7 +1406,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1363,7 +1426,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6033),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(521),
                             IsDeleted = false,
                             Name = "Gerçek"
                         },
@@ -1371,7 +1434,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6128),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(625),
                             IsDeleted = false,
                             Name = "Tüzel"
                         },
@@ -1379,7 +1442,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6165),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(673),
                             IsDeleted = false,
                             Name = "Ortak"
                         },
@@ -1387,7 +1450,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6197),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(800),
                             IsDeleted = false,
                             Name = "Reşit Olmayan"
                         },
@@ -1395,7 +1458,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 5,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(6233),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(848),
                             IsDeleted = false,
                             Name = "Adi Ortaklık"
                         });
@@ -1416,7 +1479,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1425,7 +1489,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1445,7 +1510,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7402),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2025),
                             IsDeleted = false,
                             Name = "Tüm Müşteriler"
                         },
@@ -1454,7 +1519,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7403),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2026),
                             IsDeleted = false,
                             Name = "Müşteri Özelinde"
                         },
@@ -1463,7 +1528,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7404),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2039),
                             IsDeleted = false,
                             Name = "İş Kolu Özelinde"
                         },
@@ -1472,7 +1537,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7405),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2049),
                             IsDeleted = false,
                             Name = "Şube Özelinde"
                         },
@@ -1481,7 +1546,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 5,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7406),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2050),
                             IsDeleted = false,
                             Name = "Müşteri Tipi Özelinde"
                         });
@@ -1502,7 +1567,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1511,7 +1577,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1531,7 +1598,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "TR",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7107),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1853),
                             IsDeleted = false,
                             Name = "Türkçe"
                         },
@@ -1540,7 +1607,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "EN",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7109),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1855),
                             IsDeleted = false,
                             Name = "İngilizce"
                         });
@@ -1561,7 +1628,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1570,7 +1638,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1590,7 +1659,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7767),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2378),
                             IsDeleted = false,
                             Name = "Campaign"
                         },
@@ -1599,7 +1668,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7770),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2379),
                             IsDeleted = false,
                             Name = "TopLimit"
                         },
@@ -1608,7 +1677,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "3",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7771),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2381),
                             IsDeleted = false,
                             Name = "Target"
                         },
@@ -1617,7 +1686,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "4",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7772),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2382),
                             IsDeleted = false,
                             Name = "Report"
                         });
@@ -1638,7 +1707,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1647,7 +1717,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1667,7 +1738,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7710),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2304),
                             IsDeleted = false,
                             Name = "Otomatik Katılım"
                         },
@@ -1676,7 +1747,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7712),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2308),
                             IsDeleted = false,
                             Name = "Müşteri Seçimi"
                         },
@@ -1685,7 +1756,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "3",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7713),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2309),
                             IsDeleted = false,
                             Name = "Operatör Seçimi"
                         });
@@ -1701,7 +1772,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1710,7 +1782,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1729,7 +1802,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7569),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2211),
                             IsDeleted = false,
                             Name = "Sadakat"
                         },
@@ -1737,7 +1810,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7570),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2212),
                             IsDeleted = false,
                             Name = "Kampanya"
                         },
@@ -1745,7 +1818,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7571),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2213),
                             IsDeleted = false,
                             Name = "Kazanım"
                         });
@@ -1764,7 +1837,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1773,7 +1847,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1800,7 +1875,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             AuthorizationTypeId = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7809),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2428),
                             IsDeleted = false,
                             ModuleTypeId = 1,
                             RoleTypeId = 1
@@ -1810,7 +1885,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             AuthorizationTypeId = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7810),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2430),
                             IsDeleted = false,
                             ModuleTypeId = 1,
                             RoleTypeId = 1
@@ -1820,7 +1895,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             AuthorizationTypeId = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7812),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2431),
                             IsDeleted = false,
                             ModuleTypeId = 2,
                             RoleTypeId = 1
@@ -1830,7 +1905,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             AuthorizationTypeId = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7814),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2432),
                             IsDeleted = false,
                             ModuleTypeId = 2,
                             RoleTypeId = 1
@@ -1840,7 +1915,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 5,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7815),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2433),
                             IsDeleted = false,
                             ModuleTypeId = 3,
                             RoleTypeId = 1
@@ -1850,7 +1925,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 6,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7816),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2434),
                             IsDeleted = false,
                             ModuleTypeId = 4,
                             RoleTypeId = 1
@@ -1860,7 +1935,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 7,
                             AuthorizationTypeId = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7819),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2436),
                             IsDeleted = false,
                             ModuleTypeId = 1,
                             RoleTypeId = 2
@@ -1870,7 +1945,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 8,
                             AuthorizationTypeId = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7820),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2437),
                             IsDeleted = false,
                             ModuleTypeId = 2,
                             RoleTypeId = 2
@@ -1880,7 +1955,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 9,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7821),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2438),
                             IsDeleted = false,
                             ModuleTypeId = 1,
                             RoleTypeId = 3
@@ -1890,7 +1965,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 10,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7822),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2439),
                             IsDeleted = false,
                             ModuleTypeId = 2,
                             RoleTypeId = 3
@@ -1900,7 +1975,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 11,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7823),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2441),
                             IsDeleted = false,
                             ModuleTypeId = 3,
                             RoleTypeId = 3
@@ -1910,7 +1985,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 12,
                             AuthorizationTypeId = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7824),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2442),
                             IsDeleted = false,
                             ModuleTypeId = 4,
                             RoleTypeId = 3
@@ -1920,7 +1995,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 13,
                             AuthorizationTypeId = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7825),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2443),
                             IsDeleted = false,
                             ModuleTypeId = 3,
                             RoleTypeId = 4
@@ -1930,7 +2005,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 14,
                             AuthorizationTypeId = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7826),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2444),
                             IsDeleted = false,
                             ModuleTypeId = 3,
                             RoleTypeId = 4
@@ -1940,7 +2015,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 15,
                             AuthorizationTypeId = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7827),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2445),
                             IsDeleted = false,
                             ModuleTypeId = 3,
                             RoleTypeId = 5
@@ -1962,7 +2037,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -1971,7 +2047,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -1991,7 +2068,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7737),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2327),
                             IsDeleted = false,
                             Name = "isLoyaltyCreator"
                         },
@@ -2000,7 +2077,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7743),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2328),
                             IsDeleted = false,
                             Name = "isLoyaltyApprover"
                         },
@@ -2009,7 +2086,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "3",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7745),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2329),
                             IsDeleted = false,
                             Name = "isLoyaltyReader"
                         },
@@ -2018,7 +2095,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "4",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7747),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2331),
                             IsDeleted = false,
                             Name = "isLoyaltyRuleCreator"
                         },
@@ -2027,7 +2104,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 5,
                             Code = "5",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7748),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2332),
                             IsDeleted = false,
                             Name = "isLoyaltyRuleApprover"
                         });
@@ -2048,7 +2125,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2057,7 +2135,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2077,7 +2156,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "Akr",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7344),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1973),
                             IsDeleted = false,
                             Name = "Akaryakıt"
                         },
@@ -2086,7 +2165,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "Chl",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7346),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1975),
                             IsDeleted = false,
                             Name = "Giyim"
                         },
@@ -2095,7 +2174,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "Edu",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7347),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(1976),
                             IsDeleted = false,
                             Name = "Eğitim"
                         });
@@ -2116,7 +2195,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2125,7 +2205,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2145,7 +2226,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "4",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7847),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2466),
                             IsDeleted = false,
                             Name = "Onaylandı"
                         },
@@ -2154,7 +2235,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "3",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7849),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2467),
                             IsDeleted = false,
                             Name = "Tarihçe"
                         },
@@ -2163,7 +2244,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "2",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7850),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2468),
                             IsDeleted = false,
                             Name = "Onaya Gönderildi"
                         },
@@ -2172,7 +2253,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "1",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7851),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2470),
                             IsDeleted = false,
                             Name = "Taslak"
                         });
@@ -2188,7 +2269,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2197,7 +2279,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2228,7 +2311,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2251,7 +2335,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2310,9 +2395,22 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ApprovedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2320,17 +2418,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2340,7 +2433,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int?>("RefId")
+                    b.Property<int>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -2349,6 +2442,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("nvarchar(250)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Targets");
                 });
@@ -2363,7 +2458,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2372,7 +2468,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2396,7 +2493,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2405,7 +2503,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2435,7 +2534,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2444,7 +2544,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2463,7 +2564,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7453),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2109),
                             IsDeleted = false,
                             Name = "ve"
                         },
@@ -2471,7 +2572,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7455),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2110),
                             IsDeleted = false,
                             Name = "veya"
                         },
@@ -2479,7 +2580,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7456),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2111),
                             IsDeleted = false,
                             Name = "kesişim"
                         },
@@ -2487,7 +2588,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 4,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7457),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2112),
                             IsDeleted = false,
                             Name = "fark"
                         });
@@ -2503,7 +2604,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2512,7 +2614,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2531,7 +2634,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7691),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2280),
                             IsDeleted = false,
                             Name = "Akış"
                         },
@@ -2539,7 +2642,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7692),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2281),
                             IsDeleted = false,
                             Name = "Sorgu"
                         });
@@ -2555,7 +2658,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2564,7 +2668,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2583,7 +2688,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7589),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2231),
                             IsDeleted = false,
                             Name = "Progress Bar"
                         },
@@ -2591,7 +2696,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7591),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2233),
                             IsDeleted = false,
                             Name = "Bilgi"
                         },
@@ -2599,7 +2704,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 3,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7592),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2234),
                             IsDeleted = false,
                             Name = "Görüntülenmeyecek"
                         });
@@ -2617,7 +2722,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ApprovedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
@@ -2629,7 +2735,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2644,7 +2751,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2691,7 +2799,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2700,7 +2809,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2719,7 +2829,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7611),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2250),
                             IsDeleted = false,
                             Name = "Hedefe Ulaşıldığı Anda"
                         },
@@ -2727,7 +2837,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7612),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2251),
                             IsDeleted = false,
                             Name = "Tamamlandıktan Sonra"
                         });
@@ -2768,7 +2878,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2777,7 +2888,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2796,7 +2908,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 1,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7668),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2265),
                             IsDeleted = false,
                             Name = "İlk Kontrol Edildiğinde"
                         },
@@ -2804,7 +2916,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         {
                             Id = 2,
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7670),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2266),
                             IsDeleted = false,
                             Name = "Her Kontrol Edildiğinde"
                         });
@@ -2825,7 +2937,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -2834,7 +2947,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedOn")
                         .HasColumnType("datetime2");
@@ -2854,7 +2968,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 1,
                             Code = "SK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7374),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2001),
                             IsDeleted = false,
                             Name = "Sürekli Kampanyalar"
                         },
@@ -2863,7 +2977,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 2,
                             Code = "DK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7375),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2002),
                             IsDeleted = false,
                             Name = "Dönemsel Kampanyalar"
                         },
@@ -2872,7 +2986,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 3,
                             Code = "AK",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7377),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2004),
                             IsDeleted = false,
                             Name = "Genel Kampanyalar"
                         },
@@ -2881,7 +2995,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                             Id = 4,
                             Code = "NG",
                             CreatedBy = "1",
-                            CreatedOn = new DateTime(2022, 6, 9, 18, 21, 0, 474, DateTimeKind.Local).AddTicks(7378),
+                            CreatedOn = new DateTime(2022, 6, 10, 18, 27, 11, 591, DateTimeKind.Local).AddTicks(2005),
                             IsDeleted = false,
                             Name = "Görüntülenmeyecek"
                         });
@@ -3223,6 +3337,17 @@ namespace Bbt.Campaign.EntityFrameworkCore.Migrations
                     b.Navigation("TriggerTime");
 
                     b.Navigation("VerificationTime");
+                });
+
+            modelBuilder.Entity("Bbt.Campaign.Core.DbEntities.TargetEntity", b =>
+                {
+                    b.HasOne("Bbt.Campaign.Core.DbEntities.StatusEntity", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Bbt.Campaign.Core.DbEntities.TargetGroupLineEntity", b =>

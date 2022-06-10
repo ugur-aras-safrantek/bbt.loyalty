@@ -10,13 +10,13 @@ namespace Bbt.Campaign.Public.Dtos.Target.Detail
         public int Id { get; set; }
         public int TargetId { get; set; }
         public int TargetSourceId { get; set; }
-        public TargetSourceDto  TargetSource { get; set; }
+        public ParameterDto  TargetSource { get; set; }
         public int TargetViewTypeId { get; set; }
-        public TargetViewTypeDto TargetViewType { get; set; }
+        public ParameterDto TargetViewType { get; set; }
         public int? TriggerTimeId { get; set; }
-        public TriggerTimeDto? TriggerTime { get; set; }     
+        public ParameterDto? TriggerTime { get; set; }     
         public int? VerificationTimeId { get; set; }
-        public VerificationTimeDto? VerificationTime { get; set; }
+        public ParameterDto? VerificationTime { get; set; }
         public string? FlowName { get; set; }
         public string? TargetDetailEn { get; set; }
         public string? TargetDetailTr { get; set; }

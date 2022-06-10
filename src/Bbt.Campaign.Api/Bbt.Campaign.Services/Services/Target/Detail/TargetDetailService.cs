@@ -7,6 +7,7 @@ using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Target.Detail;
 using Bbt.Campaign.Services.Services.Authorization;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Cronos;
@@ -20,14 +21,17 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetDetailService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice)
+        public TargetDetailService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
         public async Task<BaseResponse<TargetDetailDto>> AddAsync(TargetDetailInsertRequest request, string userid)
         {
@@ -90,14 +94,24 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
 
         public async Task<BaseResponse<TargetDetailDto>> GetTargetDetailAsync(int id)
         {
+            var targetDetailDto = await GetTargetDetailDto(id);
+            if (targetDetailDto != null)
+            {
+                return await BaseResponse<TargetDetailDto>.SuccessAsync(targetDetailDto);
+            }
+            return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
+        }
+
+        public async Task<TargetDetailDto> GetTargetDetailDto(int id)
+        {
             var entity = await _unitOfWork.GetRepository<TargetDetailEntity>().GetByIdAsync(id);
             if (entity != null)
             {
                 var mappedTarget = _mapper.Map<TargetDetailDto>(entity);
                 mappedTarget.TotalAmountStr = Helpers.ConvertNullablePriceString(mappedTarget.TotalAmount);
-                return await BaseResponse<TargetDetailDto>.SuccessAsync(mappedTarget);
+                return mappedTarget;
             }
-            return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
+            return null;
         }
 
         public async Task<BaseResponse<TargetDetailDto>> GetByTargetAsync(int targetId)
@@ -127,6 +141,20 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 .FirstOrDefaultAsync();
             if (entity != null)
             {
+                TargetEntity targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetDetail.TargetId);
+                bool isCreateDraft = false;
+                int processTypeId = await _draftService.GetTargetProcessType(targetDetail.TargetId);
+                if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+                {
+                    isCreateDraft = true;
+                    targetEntity = new TargetEntity();
+                    entity = new TargetDetailEntity();
+                    targetEntity.TargetDetail = entity;
+                    targetEntity = await _draftService.CopyTargetInfo(targetDetail.TargetId, targetEntity, userid, false, false, false, true, false);
+                }
+
+                targetEntity.StatusId = (int)StatusEnum.SentToApprove;
+
                 entity.AdditionalFlowTime = targetDetail.AdditionalFlowTime;
                 entity.FlowFrequency = targetDetail.FlowFrequency;
                 entity.TotalAmount = targetDetail.TotalAmount;
@@ -142,11 +170,17 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 entity.TargetViewTypeId = targetDetail.TargetViewTypeId;
                 entity.TriggerTimeId = targetDetail.TriggerTimeId;
                 entity.VerificationTimeId = targetDetail.VerificationTimeId;
-                entity.LastModifiedBy = userid;
 
                 entity = await SetChanges(entity);
 
-                await _unitOfWork.GetRepository<TargetDetailEntity>().UpdateAsync(entity);
+                if (isCreateDraft)
+                    await _unitOfWork.GetRepository<TargetEntity>().AddAsync(targetEntity);
+                else 
+                {
+                    await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(targetEntity);
+                    await _unitOfWork.GetRepository<TargetDetailEntity>().UpdateAsync(entity);
+                }
+                    
 
                 await _unitOfWork.SaveChangesAsync();
 

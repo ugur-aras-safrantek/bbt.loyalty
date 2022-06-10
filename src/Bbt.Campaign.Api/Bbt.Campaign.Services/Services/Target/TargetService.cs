@@ -12,6 +12,7 @@ using Bbt.Campaign.Public.Models.Target;
 using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
+using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -24,17 +25,18 @@ namespace Bbt.Target.Services.Services.Target
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IDraftService _draftService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignService campaignService, IAuthorizationService authorizationservice)
+        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
+            IAuthorizationService authorizationservice, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
             _authorizationService = authorizationservice;
+            _draftService = draftService;
         }
 
         public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target, string userid)
@@ -45,10 +47,12 @@ namespace Bbt.Target.Services.Services.Target
 
             await CheckValidationAsync(Target);
 
+            DateTime now = DateTime.UtcNow;
             var entity = _mapper.Map<TargetEntity>(Target);
+            entity.Code = Helpers.CreateCampaignCode();
+            entity.StatusId = (int)StatusEnum.Draft;
             entity.CreatedBy = userid;
-            entity.IsApproved = false;
-            entity.IsDraft = true;
+            entity.CreatedOn = now;
             entity = await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
@@ -95,6 +99,16 @@ namespace Bbt.Target.Services.Services.Target
             return  mappedTarget;
         }
 
+        public async Task<TargetDto> GetTargetDto2(int id) 
+        {
+            TargetDto targetDto = await GetTargetDto(id);
+            var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
+            targetDto.Name = entity.Name;
+            targetDto.Title = entity.Title;
+            targetDto.IsActive = entity.IsActive;
+            return targetDto;
+        }
+
         public async Task<BaseResponse<TargetViewFormDto>> GetTargetViewFormAsync(int id) 
         {
             var response = new TargetViewFormDto();
@@ -112,7 +126,7 @@ namespace Bbt.Target.Services.Services.Target
         public async Task<BaseResponse<List<TargetDto>>> GetListAsync()
         {
             var mappedTargets = _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => !x.IsDeleted && !x.IsDraft)
+                .GetAll(x => !x.IsDeleted)
                 .Select(x => _mapper.Map<TargetDto>(x))
                 .ToList();
             return await BaseResponse<List<TargetDto>>.SuccessAsync(mappedTargets);
@@ -121,7 +135,7 @@ namespace Bbt.Target.Services.Services.Target
         public async Task<BaseResponse<List<TargetDto>>> GetDraftListAsync()
         {
             var mappedTargets = _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => !x.IsDeleted && x.IsDraft)
+                .GetAll(x => !x.IsDeleted)
                 .Select(x => _mapper.Map<TargetDto>(x))
                 .ToList();
             return await BaseResponse<List<TargetDto>>.SuccessAsync(mappedTargets);
@@ -148,22 +162,34 @@ namespace Bbt.Target.Services.Services.Target
                     {
                         foreach(int campaignId in campaignIdList) 
                         {
-                            bool isActiveCampaign = await _campaignService.IsActiveCampaign(campaignId);
+                            bool isActiveCampaign = await _draftService.IsActiveCampaign(campaignId);
                             if (isActiveCampaign)
                                 throw new Exception("Pasif hale getirilmek istenen Hedef Tanımı, aktif bir kampanyaya bağlıdır.");
                         }
                     }
                 }
 
+                bool isCreateDraft = false;
+                int processTypeId = await _draftService.GetTargetProcessType(Target.Id);
+                if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
+                {
+                    isCreateDraft = true;
+                    entity = new TargetEntity();
+                    entity.TargetDetail = new TargetDetailEntity();
+                    entity = await _draftService.CopyTargetInfo(Target.Id, entity, userid, false, false, false, true, false);
+                }
+
                 entity.Title= Target.Title;
                 entity.Name= Target.Name;
                 entity.IsActive = Target.IsActive;
-                entity.LastModifiedBy = userid;
-                entity.IsApproved = false;
-                entity.IsDraft = true; 
-                await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(entity);
+
+                if(isCreateDraft)
+                    await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
+                else
+                    await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(entity);
+
                 await _unitOfWork.SaveChangesAsync();
-                return await GetTargetAsync(Target.Id);
+                return await GetTargetAsync(entity.Id);
             }
             return await BaseResponse<TargetDto>.FailAsync("Hedef bulunamadı.");
         }
@@ -247,6 +273,8 @@ namespace Bbt.Target.Services.Services.Target
 
             if (request.Id.HasValue)
                 targetQuery = targetQuery.Where(x => x.Id == request.Id);
+            if (request.StatusId.HasValue)
+                targetQuery = targetQuery.Where(x => x.StatusId == request.StatusId);
             if (!string.IsNullOrWhiteSpace(request.Name))
                 targetQuery = targetQuery.Where(x => x.Name.Contains(request.Name));
             if (request.TargetSourceId.HasValue)
@@ -255,14 +283,8 @@ namespace Bbt.Target.Services.Services.Target
                 targetQuery = targetQuery.Where(x => x.IsActive == request.IsActive.Value);
             if (request.TargetViewTypeId.HasValue)
                 targetQuery = targetQuery.Where(x => x.TargetDetail.TargetViewTypeId == request.TargetViewTypeId.Value);
-            //if (request.IsDraft.HasValue)
-            //    targetQuery = targetQuery.Where(x => x.IsDraft == request.IsDraft.Value);
-            //if (request.IsApproved.HasValue)
-            //    targetQuery = targetQuery.Where(x => x.IsApproved == request.IsApproved.Value);
 
-            targetQuery = targetQuery
-                .Include(x => x.TargetDetail)
-                .OrderByDescending(x => x.Id);
+            targetQuery = targetQuery.Include(x => x.TargetDetail).OrderByDescending(x => x.Id);
 
             var targetList = targetQuery.Select(x => new TargetListDto
             {

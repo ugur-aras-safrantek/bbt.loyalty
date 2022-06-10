@@ -498,6 +498,7 @@ namespace Bbt.Campaign.Services.Services.Draft
                 campaignAchievementEntity.TitleTr = achievementDraftEntity.TitleTr;
                 campaignAchievementEntity.TitleEn = achievementDraftEntity.TitleEn;
                 campaignAchievementEntity.Type = achievementDraftEntity.Type;
+                campaignAchievementEntity.XKAMPCode = achievementDraftEntity.XKAMPCode;
                 campaignAchievementEntity.CreatedBy = isIncludeCreateInfo ? achievementDraftEntity.CreatedBy : userid;
                 campaignAchievementEntity.CreatedOn = isIncludeCreateInfo ? achievementDraftEntity.CreatedOn : DateTime.UtcNow;
                 campaignAchievementEntity.LastModifiedBy = isIncludeUpdateInfo ? achievementDraftEntity.LastModifiedBy : userid;
@@ -514,6 +515,8 @@ namespace Bbt.Campaign.Services.Services.Draft
             campaignRuleEntity.Campaign = campaignEntity;
             campaignRuleEntity.CampaignStartTermId = campaignRuleDraftEntity.CampaignStartTermId;
             campaignRuleEntity.JoinTypeId = campaignRuleDraftEntity.JoinTypeId;
+            campaignRuleEntity.IsEmployeeIncluded = campaignRuleDraftEntity.IsEmployeeIncluded;
+            campaignRuleEntity.IsPrivateBanking = campaignRuleDraftEntity.IsPrivateBanking;
             campaignRuleEntity.CreatedBy = isIncludeCreateInfo ? campaignRuleDraftEntity.CreatedBy : userid;
             campaignRuleEntity.CreatedOn = isIncludeCreateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.UtcNow;
             campaignRuleEntity.LastModifiedBy = isIncludeUpdateInfo ? campaignRuleDraftEntity.LastModifiedBy : userid;
@@ -633,6 +636,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(topLimitId);
             if (entity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
+            
             var sentToApproveEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                 .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -648,6 +652,28 @@ namespace Bbt.Campaign.Services.Services.Draft
             return retVal;
         }
 
+        public async Task<int> GetTargetProcessType(int targetId)
+        {
+            int retVal = (int)ProcessTypesEnum.Update;
+            var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
+            if (entity == null)
+                throw new Exception("Hedef bulunamadı.");
+
+            var sentToApproveEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (sentToApproveEntity != null)
+                throw new Exception("Bu hedef için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
+
+            if (entity.StatusId == (int)StatusEnum.Draft)
+                retVal = (int)ProcessTypesEnum.Update;
+            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
+                throw new Exception("Bu hedef güncellenmek için uygun statüde değildir.");
+            else if (entity.StatusId == (int)StatusEnum.Approved)
+                retVal = (int)ProcessTypesEnum.CreateDraft;
+            return retVal;
+        }
+
         public async Task<TopLimitEntity> CopyTopLimitInfo(int topLimitId, TopLimitEntity targetEntity, string userid,
             bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
             bool isIncludeCode, bool isIncludeStatusId) 
@@ -657,6 +683,8 @@ namespace Bbt.Campaign.Services.Services.Draft
                 .FirstOrDefaultAsync();
             if (sourceEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
+            if (sourceEntity.StatusId == (int)StatusEnum.Draft)
+                throw new Exception("İşlem yapılmak istenen bu kayıt uygun statüde değildir.");
 
             targetEntity.AchievementFrequencyId = sourceEntity.AchievementFrequencyId;
             targetEntity.CurrencyId = sourceEntity.CurrencyId;
@@ -680,6 +708,63 @@ namespace Bbt.Campaign.Services.Services.Draft
                 targetEntity.ApprovedBy = sourceEntity.ApprovedBy;
                 targetEntity.ApprovedDate = sourceEntity.ApprovedDate;
             }
+            return targetEntity;
+        }
+
+        public async Task<TargetEntity> CopyTargetInfo(int targetId, TargetEntity targetEntity, string userid,
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo,
+            bool isIncludeCode, bool isIncludeStatusId)
+        {
+            var sourceEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => !x.IsDeleted && x.Id == targetId)
+                .Include(x => x.TargetDetail)
+                .FirstOrDefaultAsync();
+            if (sourceEntity == null)
+                throw new Exception("Hedef bulunamadı.");
+            if(sourceEntity.StatusId == (int)StatusEnum.Draft)
+                throw new Exception("İşlem yapılmak istenen bu kayıt uygun statüde değildir.");
+
+            targetEntity.Name = sourceEntity.Name;
+            targetEntity.Title = sourceEntity.Title;
+            targetEntity.IsActive = sourceEntity.IsActive; 
+            targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
+            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.Draft;
+            targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
+            targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.UtcNow;
+            if (isIncludeUpdateInfo)
+            {
+                targetEntity.LastModifiedBy = sourceEntity.LastModifiedBy;
+                targetEntity.LastModifiedOn = sourceEntity.LastModifiedOn;
+            }
+            if (isIncludeApproveInfo)
+            {
+                targetEntity.ApprovedBy = sourceEntity.ApprovedBy;
+                targetEntity.ApprovedDate = sourceEntity.ApprovedDate;
+            }
+
+            targetEntity.TargetDetail.AdditionalFlowTime = sourceEntity.TargetDetail.AdditionalFlowTime;
+            targetEntity.TargetDetail.FlowFrequency = sourceEntity.TargetDetail.FlowFrequency;
+            targetEntity.TargetDetail.TotalAmount = sourceEntity.TargetDetail.TotalAmount;
+            targetEntity.TargetDetail.Condition = sourceEntity.TargetDetail.Condition;
+            targetEntity.TargetDetail.DescriptionEn = sourceEntity.TargetDetail.DescriptionEn;
+            targetEntity.TargetDetail.DescriptionTr = sourceEntity.TargetDetail.DescriptionTr;
+            targetEntity.TargetDetail.FlowName = sourceEntity.TargetDetail.FlowName;
+            targetEntity.TargetDetail.NumberOfTransaction = sourceEntity.TargetDetail.NumberOfTransaction;
+            targetEntity.TargetDetail.Query = sourceEntity.TargetDetail.Query;
+            targetEntity.TargetDetail.TargetDetailEn = sourceEntity.TargetDetail.TargetDetailEn;
+            targetEntity.TargetDetail.TargetDetailTr = sourceEntity.TargetDetail.TargetDetailTr;
+            targetEntity.TargetDetail.TargetSourceId = sourceEntity.TargetDetail.TargetSourceId;
+            targetEntity.TargetDetail.TargetViewTypeId = sourceEntity.TargetDetail.TargetViewTypeId;
+            targetEntity.TargetDetail.TriggerTimeId = sourceEntity.TargetDetail.TriggerTimeId;
+            targetEntity.TargetDetail.VerificationTimeId = sourceEntity.TargetDetail.VerificationTimeId;
+
+            targetEntity.TargetDetail.CreatedBy = isIncludeCreateInfo ? sourceEntity.TargetDetail.CreatedBy : userid;
+            targetEntity.TargetDetail.CreatedOn = isIncludeCreateInfo ? sourceEntity.TargetDetail.CreatedOn : DateTime.UtcNow;
+            if (isIncludeUpdateInfo)
+            {
+                targetEntity.TargetDetail.LastModifiedBy = sourceEntity.TargetDetail.LastModifiedBy;
+                targetEntity.TargetDetail.LastModifiedOn = sourceEntity.TargetDetail.LastModifiedOn;
+            }
+
             return targetEntity;
         }
 
@@ -707,6 +792,15 @@ namespace Bbt.Campaign.Services.Services.Draft
                 campaignTopLimitList.Add(campaignTopLimitEntity);
             }
             return campaignTopLimitList;
+        }
+
+        public async Task<bool> IsActiveCampaign(int campaignId)
+        {
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Id == campaignId && x.StatusId == (int)StatusEnum.Approved && 
+                            !x.IsDeleted && x.EndDate > DateTime.UtcNow.AddDays(-1))
+                .FirstOrDefaultAsync();
+            return campaignEntity != null;
         }
     }
 }

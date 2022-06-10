@@ -39,6 +39,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public decimal? MaxTopLimitUtilization { get; set; }  //Çatı Max Yararlanma
 
         //Approve
+        [MaxLength(100)]
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
 

@@ -11,9 +11,17 @@ namespace Bbt.Campaign.Core.DbEntities
 
         [MaxLength(100)]
         public string Code { get; set; }
+
+        [MaxLength(1000)]
         public string DescriptionTr { get; set; }
+
+        [MaxLength(1000)]
         public string DescriptionEn { get; set; }
+
+        [MaxLength(1000)]
         public string? TitleTr { get; set; } //başlık
+
+        [MaxLength(1000)]
         public string? TitleEn { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -42,6 +50,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public virtual CampaignDetailEntity CampaignDetail { get; set; }
 
         //Approve
+        [MaxLength(100)]
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
 

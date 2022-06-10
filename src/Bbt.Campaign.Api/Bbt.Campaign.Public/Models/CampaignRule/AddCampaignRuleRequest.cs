@@ -15,5 +15,7 @@ namespace Bbt.Campaign.Public.Models.CampaignRule
         public List<string>? Branches { get; set; }
         public List<int>? CustomerTypes { get; set; }
         public int StartTermId { get; set; }
+        public bool IsEmployeeIncluded { get; set; }
+        public bool IsPrivateBanking { get; set; }
     }
 }
