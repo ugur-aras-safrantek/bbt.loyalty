@@ -61,9 +61,9 @@ export enum ApiPaths {
   CampaignDefinitionApprove = 'Approve/campaign',
   CampaignDefinitionDisapprove = 'Approve/campaign-disapprove',
 
-  CampaignLimitsApproveForm = 'Approve/get-toplimit-approval-form',
-  CampaignLimitsApproveState = 'Approve/top-limit',
+  CampaignLimitsApproveForm = 'Approve/get-toplimit-form',
+  CampaignLimitsApproveState = 'Approve/toplimit',
 
-  TargetDefinitionApproveForm = 'Approve/get-target-approval-form',
-  TargetDefinitionApproveState = 'Approve/target-definition',
+  TargetDefinitionApproveForm = 'Approve/get-target-form',
+  TargetDefinitionApproveState = 'Approve/target',
 }

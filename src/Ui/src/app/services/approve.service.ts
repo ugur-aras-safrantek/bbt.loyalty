@@ -40,9 +40,9 @@ export class ApproveService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  campaignLimitsApproveState(state: boolean) {
-    const url = `${this.baseUrl}/${ApiPaths.CampaignLimitsApproveState}/${state}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url);
+  campaignLimitsApproveState(id: any, state: boolean) {
+    const url = `${this.baseUrl}/${ApiPaths.CampaignLimitsApproveState}/${id}/${state}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, {});
   }
 
   targetDefinitionApproveForm(id: any) {
@@ -53,8 +53,8 @@ export class ApproveService {
     return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
   }
 
-  targetDefinitionApproveState(state: boolean) {
-    const url = `${this.baseUrl}/${ApiPaths.TargetDefinitionApproveState}/${state}`;
-    return this.httpClient.get<ApiBaseResponseModel>(url);
+  targetDefinitionApproveState(id: any, state: boolean) {
+    const url = `${this.baseUrl}/${ApiPaths.TargetDefinitionApproveState}/${id}/${state}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, {});
   }
 }

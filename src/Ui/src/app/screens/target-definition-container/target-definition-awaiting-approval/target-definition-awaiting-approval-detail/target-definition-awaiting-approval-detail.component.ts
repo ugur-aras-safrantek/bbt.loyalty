@@ -138,7 +138,7 @@ export class TargetDefinitionAwaitingApprovalDetailComponent implements OnInit {
   }
 
   approveState(choise: boolean) {
-    this.approveService.targetDefinitionApproveState(choise)
+    this.approveService.targetDefinitionApproveState(this.id, choise)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
