@@ -95,7 +95,7 @@ export class CampaignLimitsAwaitingApprovalDetailComponent implements OnInit {
   }
 
   approveState(choise: boolean) {
-    this.approveService.campaignLimitsApproveState(choise)
+    this.approveService.campaignLimitsApproveState(this.id, choise)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {

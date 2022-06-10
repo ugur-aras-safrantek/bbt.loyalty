@@ -224,6 +224,8 @@ interface ICampaignRulesAddRequestModel {
   branches?: any;
   customerTypes?: any;
   startTermId?: any;
+  isEmployeeIncluded?: any;
+  isPrivateBanking?: any;
 }
 
 export class CampaignRulesAddRequestModel implements ICampaignRulesAddRequestModel {
@@ -236,6 +238,8 @@ export class CampaignRulesAddRequestModel implements ICampaignRulesAddRequestMod
   branches?: any;
   customerTypes?: any;
   startTermId?: any;
+  isEmployeeIncluded?: any;
+  isPrivateBanking?: any;
 }
 
 interface ICampaignTarget {
