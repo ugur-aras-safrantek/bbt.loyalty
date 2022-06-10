@@ -87,7 +87,9 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       file: '',
       branches: [],
       customerTypes: [],
-      startTermId: [null, Validators.required]
+      startTermId: [null, Validators.required],
+      isEmployeeIncluded: false,
+      isPrivateBanking: false,
     });
 
     if (this.currentUserAuthorizations.view) {
@@ -278,7 +280,9 @@ export class CampaignRulesComponent implements OnInit, FormChange {
             if (res.data.campaignRule) {
               this.formGroup.patchValue({
                 joinTypeId: res.data.campaignRule.joinTypeId,
-                startTermId: res.data.campaignRule.campaignStartTermId
+                startTermId: res.data.campaignRule.campaignStartTermId,
+                isEmployeeIncluded: res.data.campaignRule.isEmployeeIncluded,
+                isPrivateBanking: res.data.campaignRule.isPrivateBanking,
               });
               this.joinTypeChange();
               this.formGroup.patchValue({
@@ -320,6 +324,8 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       branches: formGroup.branches,
       customerTypes: formGroup.customerTypes,
       startTermId: formGroup.startTermId,
+      isEmployeeIncluded: formGroup.isEmployeeIncluded,
+      isPrivateBanking: formGroup.isPrivateBanking,
     };
     this.campaignDefinitionService.campaignRulesAdd(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -351,6 +357,8 @@ export class CampaignRulesComponent implements OnInit, FormChange {
       branches: formGroup.branches,
       customerTypes: formGroup.customerTypes,
       startTermId: formGroup.startTermId,
+      isEmployeeIncluded: formGroup.isEmployeeIncluded,
+      isPrivateBanking: formGroup.isPrivateBanking,
     };
     this.campaignDefinitionService.campaignRulesUpdate(requestModel)
       .pipe(takeUntil(this.destroy$))
