@@ -3,6 +3,7 @@ using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
+using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Target.Detail;
@@ -45,6 +46,10 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
 
             entity = await SetChanges(entity);
             entity.CreatedBy = userid;
+
+            var targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(request.TargetId);
+            targetEntity.StatusId = (int)StatusEnum.SentToApprove;
+            await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(targetEntity);
 
             entity = await _unitOfWork.GetRepository<TargetDetailEntity>().AddAsync(entity);
             
@@ -102,14 +107,65 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
         }
 
-        public async Task<TargetDetailDto> GetTargetDetailDto(int id)
+        public async Task<TargetDetailDto> GetTargetDetailDto(int targetId)
         {
-            var entity = await _unitOfWork.GetRepository<TargetDetailEntity>().GetByIdAsync(id);
+            var entity = await _unitOfWork.GetRepository<TargetDetailEntity>()
+                .GetAll(x => x.TargetId == targetId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
             if (entity != null)
             {
                 var mappedTarget = _mapper.Map<TargetDetailDto>(entity);
-                mappedTarget.TotalAmountStr = Helpers.ConvertNullablePriceString(mappedTarget.TotalAmount);
-                return mappedTarget;
+                var targetDetailDto = new TargetDetailDto();
+                targetDetailDto.Id = entity.Id;
+                targetDetailDto.TargetId = entity.TargetId;
+
+                targetDetailDto.AdditionalFlowTime = entity.AdditionalFlowTime;
+                targetDetailDto.FlowFrequency = entity.FlowFrequency;
+                targetDetailDto.TotalAmount = entity.TotalAmount;
+                targetDetailDto.Condition = entity.Condition;
+                targetDetailDto.DescriptionEn = entity.DescriptionEn;
+                targetDetailDto.DescriptionTr = entity.DescriptionTr;
+                targetDetailDto.FlowName = entity.FlowName;
+                targetDetailDto.NumberOfTransaction = entity.NumberOfTransaction;
+                targetDetailDto.Query = entity.Query;
+                targetDetailDto.TargetDetailEn = entity.TargetDetailEn;
+                targetDetailDto.TargetDetailTr = entity.TargetDetailTr;
+                targetDetailDto.TargetSourceId = entity.TargetSourceId;
+                targetDetailDto.TargetViewTypeId = entity.TargetViewTypeId;
+                targetDetailDto.TriggerTimeId = entity.TriggerTimeId;
+                targetDetailDto.VerificationTimeId = entity.VerificationTimeId;
+                targetDetailDto.TotalAmountStr = Helpers.ConvertNullablePriceString(entity.TotalAmount);
+
+                targetDetailDto.TargetSource = new ParameterDto() { Id = entity.TargetSourceId, Code = "", 
+                    Name = Helpers.GetEnumDescription<TargetSourceEnum>(entity.TargetSourceId) };
+                targetDetailDto.TargetViewType = new ParameterDto()
+                {
+                    Id = entity.TargetViewTypeId,
+                    Code = "",
+                    Name = Helpers.GetEnumDescription<TargetViewTypeEnum>(entity.TargetViewTypeId)
+                };
+
+                if((entity.TriggerTimeId ?? 0) > 0) 
+                {
+                    targetDetailDto.TriggerTime = new ParameterDto()
+                    {
+                        Id = entity.TriggerTimeId ?? 0,
+                        Code = "",
+                        Name = Helpers.GetEnumDescription<TriggerTimeEnum>(entity.TriggerTimeId ?? 0)
+                    };
+                }
+                if ((entity.VerificationTimeId ?? 0) > 0)
+                {
+                    targetDetailDto.VerificationTime = new ParameterDto()
+                    {
+                        Id = entity.VerificationTimeId ?? 0,
+                        Code = "",
+                        Name = Helpers.GetEnumDescription<VerificationTimeEnum>(entity.VerificationTimeId ?? 0)
+                    };
+                }
+
+                targetDetailDto.TotalAmountStr = Helpers.ConvertNullablePriceString(mappedTarget.TotalAmount);
+                return targetDetailDto;
             }
             return null;
         }

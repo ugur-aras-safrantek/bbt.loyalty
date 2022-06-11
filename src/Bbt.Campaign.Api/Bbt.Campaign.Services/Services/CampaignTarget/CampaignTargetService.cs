@@ -258,7 +258,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         private async Task FillForm(CampaignTargetInsertFormDto response)
         {
             response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => x.IsActive && !x.IsDeleted)
+                .GetAll(x => x.IsActive && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
                 .Select(x => _mapper.Map<ParameterDto>(x))
                 .ToList(); 
         }

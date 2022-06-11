@@ -14,5 +14,6 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
         public Task<BaseResponse<TargetDetailDto>> GetByTargetAsync(int targetId);
         public Task<BaseResponse<TargetDetailInsertFormDto>> GetInsertFormAsync(string userid);
         public Task<BaseResponse<TargetDetailUpdateFormDto>> GetUpdateFormAsync(int targetId, string userid);
+        public Task<TargetDetailDto> GetTargetDetailDto(int targetId);
     }
 }

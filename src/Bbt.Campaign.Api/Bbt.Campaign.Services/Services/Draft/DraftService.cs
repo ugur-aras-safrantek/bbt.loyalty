@@ -590,89 +590,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             return campaignRuleIdentityList;
         }
 
-        public async Task<CampaignProperty> GetCampaignProperties(int campaignId)
-        {
-            CampaignProperty campaignProperty = new CampaignProperty();
-
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if (campaignEntity == null)
-                throw new Exception("Kampanya bulunamadı");
-
-            int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-            campaignProperty.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-
-            campaignProperty.IsActiveCampaign = campaignEntity.IsActive && campaignEntity.EndDate > DateTime.UtcNow.AddDays(-1) && !campaignEntity.IsDeleted;
-
-            campaignProperty.IsUpdatableCampaign = campaignEntity.StatusId == (int)StatusEnum.Draft;
-
-            return campaignProperty;
-        }
-        public async Task<int> GetCampaignProcessType(int campaignId)
-        {
-            int retVal = (int)ProcessTypesEnum.Update;
-            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-            if(entity == null)
-                throw new Exception("Kampanya bulunamadı.");
-            var sentToApproveEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if(sentToApproveEntity != null)
-                throw new Exception("Bu kampanya için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
-
-            if (entity.StatusId == (int)StatusEnum.Draft)
-                retVal = (int)ProcessTypesEnum.Update;
-            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
-                throw new Exception("Bu kampanya güncellenmek için uygun statüde değildir.");
-            else if (entity.StatusId == (int)StatusEnum.Approved)
-                retVal = (int)ProcessTypesEnum.CreateDraft;
-            return retVal;
-        }
-
-
-
-        public async Task<int> GetTopLimitProcessType(int topLimitId)
-        {
-            int retVal = (int)ProcessTypesEnum.Update;
-            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(topLimitId);
-            if (entity == null)
-                throw new Exception("Çatı limiti bulunamadı.");
-            
-            var sentToApproveEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
-                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (sentToApproveEntity != null)
-                throw new Exception("Bu çatı limiti için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
-
-            if (entity.StatusId == (int)StatusEnum.Draft)
-                retVal = (int)ProcessTypesEnum.Update;
-            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
-                throw new Exception("Bu çatı limiti güncellenmek için uygun statüde değildir.");
-            else if (entity.StatusId == (int)StatusEnum.Approved)
-                retVal = (int)ProcessTypesEnum.CreateDraft;
-            return retVal;
-        }
-
-        public async Task<int> GetTargetProcessType(int targetId)
-        {
-            int retVal = (int)ProcessTypesEnum.Update;
-            var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
-            if (entity == null)
-                throw new Exception("Hedef bulunamadı.");
-
-            var sentToApproveEntity = await _unitOfWork.GetRepository<TargetEntity>()
-                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
-                .FirstOrDefaultAsync();
-            if (sentToApproveEntity != null)
-                throw new Exception("Bu hedef için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
-
-            if (entity.StatusId == (int)StatusEnum.Draft)
-                retVal = (int)ProcessTypesEnum.Update;
-            else if (entity.StatusId == (int)StatusEnum.SentToApprove || entity.StatusId == (int)StatusEnum.History)
-                throw new Exception("Bu hedef güncellenmek için uygun statüde değildir.");
-            else if (entity.StatusId == (int)StatusEnum.Approved)
-                retVal = (int)ProcessTypesEnum.CreateDraft;
-            return retVal;
-        }
+        
 
         public async Task<TopLimitEntity> CopyTopLimitInfo(int topLimitId, TopLimitEntity targetEntity, string userid,
             bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
@@ -793,7 +711,6 @@ namespace Bbt.Campaign.Services.Services.Draft
             }
             return campaignTopLimitList;
         }
-
         public async Task<bool> IsActiveCampaign(int campaignId)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
@@ -802,5 +719,80 @@ namespace Bbt.Campaign.Services.Services.Draft
                 .FirstOrDefaultAsync();
             return campaignEntity != null;
         }
+        public async Task<CampaignProperty> GetCampaignProperties(int campaignId)
+        {
+            CampaignProperty campaignProperty = new CampaignProperty();
+
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+            if (campaignEntity == null)
+                throw new Exception("Kampanya bulunamadı");
+
+            int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+            campaignProperty.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
+
+            campaignProperty.IsActiveCampaign = campaignEntity.IsActive && campaignEntity.EndDate > DateTime.UtcNow.AddDays(-1) && !campaignEntity.IsDeleted;
+
+            campaignProperty.IsUpdatableCampaign = campaignEntity.StatusId == (int)StatusEnum.Draft;
+
+            return campaignProperty;
+        }
+
+
+        #region ProcessType
+
+        public async Task<int> GetCampaignProcessType(int campaignId)
+        {
+            var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+            if (entity == null)
+                throw new Exception("Kampanya bulunamadı.");
+            var sentToApproveEntity = await _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (sentToApproveEntity != null)
+                throw new Exception("Bu kampanya için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
+
+            return GetProcessId(entity.StatusId);
+        }
+        public async Task<int> GetTopLimitProcessType(int topLimitId)
+        {
+            var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(topLimitId);
+            if (entity == null)
+                throw new Exception("Çatı limiti bulunamadı.");
+
+            var sentToApproveEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (sentToApproveEntity != null)
+                throw new Exception("Bu çatı limiti için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
+
+            return GetProcessId(entity.StatusId);
+        }
+        public async Task<int> GetTargetProcessType(int targetId)
+        {
+            var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
+            if (entity == null)
+                throw new Exception("Hedef bulunamadı.");
+
+            var sentToApproveEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => x.Code == entity.Code && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (sentToApproveEntity != null)
+                throw new Exception("Bu hedef için onayda bekleyen bir kayıt vardır. Güncelleme yapılamaz.");
+
+            return GetProcessId(entity.StatusId);
+        }
+        private int GetProcessId(int statusId)
+        {
+            int retVal = (int)ProcessTypesEnum.Update;
+            if (statusId == (int)StatusEnum.Draft)
+                retVal = (int)ProcessTypesEnum.Update;
+            else if (statusId == (int)StatusEnum.SentToApprove || statusId == (int)StatusEnum.History)
+                throw new Exception("Bu kayıt güncellenmek için uygun statüde değildir.");
+            else if (statusId == (int)StatusEnum.Approved)
+                retVal = (int)ProcessTypesEnum.CreateDraft;
+            return retVal;
+        }
+
+        #endregion
     }
 }

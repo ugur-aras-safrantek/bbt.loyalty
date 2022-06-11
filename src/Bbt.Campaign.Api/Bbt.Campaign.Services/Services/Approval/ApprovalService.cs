@@ -116,6 +116,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (draftCampaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
 
+            if (draftCampaignEntity.CreatedBy == userid)
+                throw new Exception("Kampanya kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
             var approvedCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Code == draftCampaignEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -515,8 +518,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 if (draftEntity == null)
                     throw new Exception("Çatı limiti bulunamadı");
 
-                //if (draftEntity.CreatedBy == userid)
-                //    throw new Exception("Çatı limitini oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+                if (draftEntity.CreatedBy == userid)
+                    throw new Exception("Çatı limiti kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
                 var approvedEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                     .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
@@ -684,8 +687,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 if (draftEntity == null)
                     throw new Exception("Hedef bulunamadı");
 
-                //if (draftEntity.CreatedBy == userid)
-                //    throw new Exception("Çatı limitini oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+                if (draftEntity.CreatedBy == userid)
+                    throw new Exception("Hedef kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
                 var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>()
                     .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
@@ -711,7 +714,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
             if (entity is null)
-                throw new Exception("Hedef Limiti bulunamadı.");
+                throw new Exception("Hedef bulunamadı.");
 
             entity.StatusId = (int)StatusEnum.Draft;
             entity.LastModifiedOn = DateTime.UtcNow;
@@ -739,7 +742,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             historyEntity.ApprovedDate = now;
             await _unitOfWork.GetRepository<TargetEntity>().AddAsync(historyEntity);
 
-            // update draft top limit
+            // update draft 
             draftEntity.StatusId = (int)StatusEnum.Approved;
             draftEntity.ApprovedBy = userid;
             draftEntity.ApprovedDate = now;
@@ -782,7 +785,55 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             TargetApproveFormDto response = new TargetApproveFormDto();
 
+            var draftEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => x.Id == id && !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
+                .Include(x => x.TargetDetail).FirstOrDefaultAsync();
+            if (draftEntity == null)
+                throw new Exception("hedeef bulunamadı");
+            var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
+                .Include(x => x.TargetDetail).FirstOrDefaultAsync();
+            response.isNewRecord = approvedEntity == null;
+
             response.Target = await _targetService.GetTargetDto2(id);
+            response.TargetDetail = await _targetDetailService.GetTargetDetailDto(id);
+
+            TargetUpdateFields targetUpdateFields = new TargetUpdateFields();
+            if (!response.isNewRecord) 
+            {
+                targetUpdateFields.IsNameUpdated = draftEntity.Name != approvedEntity.Name;
+                targetUpdateFields.IsTitleUpdated = draftEntity.Title != approvedEntity.Title;
+                targetUpdateFields.IsIsActiveUpdated = draftEntity.IsActive != approvedEntity.IsActive;
+                targetUpdateFields.IsTargetSourceIdUpdated = draftEntity.TargetDetail.TargetSourceId != approvedEntity.TargetDetail.TargetSourceId;
+                targetUpdateFields.IsTargetViewTypeIdUpdated = draftEntity.TargetDetail.TargetViewTypeId != approvedEntity.TargetDetail.TargetViewTypeId;
+                targetUpdateFields.IsTriggerTimeIdUpdated = draftEntity.TargetDetail.TriggerTimeId != approvedEntity.TargetDetail.TriggerTimeId;
+                targetUpdateFields.IsVerificationTimeIdUpdated = draftEntity.TargetDetail.VerificationTime != approvedEntity.TargetDetail.VerificationTime;
+                targetUpdateFields.IsFlowNameUpdated = draftEntity.TargetDetail.VerificationTimeId != approvedEntity.TargetDetail.VerificationTimeId;
+                targetUpdateFields.IsTargetDetailEnUpdated = draftEntity.TargetDetail.TargetDetailEn != approvedEntity.TargetDetail.TargetDetailEn;
+                targetUpdateFields.IsTargetDetailTrUpdated = draftEntity.TargetDetail.TargetDetailTr != approvedEntity.TargetDetail.TargetDetailTr;
+                targetUpdateFields.IsDescriptionEnUpdated = draftEntity.TargetDetail.DescriptionEn != approvedEntity.TargetDetail.DescriptionEn;
+                targetUpdateFields.IsDescriptionTrUpdated = draftEntity.TargetDetail.DescriptionTr != approvedEntity.TargetDetail.DescriptionTr;
+                targetUpdateFields.IsTotalAmountUpdated = draftEntity.TargetDetail.TotalAmount != approvedEntity.TargetDetail.TotalAmount;
+                targetUpdateFields.IsNumberOfTransactionUpdated = draftEntity.TargetDetail.NumberOfTransaction != approvedEntity.TargetDetail.NumberOfTransaction;
+                targetUpdateFields.IsFlowFrequencyUpdated = draftEntity.TargetDetail.FlowFrequency != approvedEntity.TargetDetail.FlowFrequency;
+                targetUpdateFields.IsAdditionalFlowTimeUpdated = draftEntity.TargetDetail.AdditionalFlowTime != approvedEntity.TargetDetail.AdditionalFlowTime;
+                targetUpdateFields.IsQueryUpdated = draftEntity.TargetDetail.Query != approvedEntity.TargetDetail.Query;
+                targetUpdateFields.IsConditionUpdated = draftEntity.TargetDetail.Condition != approvedEntity.TargetDetail.Condition;
+            }
+            response.TargetUpdateFields = targetUpdateFields;
+
+            List <HistoryApproveDto> historyList = new List<HistoryApproveDto>();
+            foreach (var historyEntity in _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Code == draftEntity.Code && x.StatusId == (int)StatusEnum.History && !x.IsDeleted).ToList())
+            {
+                HistoryApproveDto historyApproveDto = new HistoryApproveDto();
+                historyApproveDto.ApprovedBy = historyEntity.ApprovedBy;
+                historyApproveDto.ApprovedDate = historyEntity.ApprovedDate;
+                DateTime _approvedDate = historyEntity.ApprovedDate ?? DateTime.MinValue;
+                if (_approvedDate != DateTime.MinValue)
+                    historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyList.Add(historyApproveDto);
+            }
+            response.HistoryList = historyList;
 
             return await BaseResponse<TargetApproveFormDto>.SuccessAsync(response);
         }

@@ -99,13 +99,18 @@ namespace Bbt.Target.Services.Services.Target
             return  mappedTarget;
         }
 
-        public async Task<TargetDto> GetTargetDto2(int id) 
+        public async Task<TargetDto2> GetTargetDto2(int id) 
         {
-            TargetDto targetDto = await GetTargetDto(id);
             var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
+            TargetDto2 targetDto = new TargetDto2();
             targetDto.Name = entity.Name;
+            targetDto.Id = entity.Id;
+            targetDto.Code = entity.Code;
             targetDto.Title = entity.Title;
             targetDto.IsActive = entity.IsActive;
+            targetDto.ApprovedBy = entity.ApprovedBy;
+            targetDto.ApprovedDate = entity.ApprovedDate;
+            targetDto.StatusId = entity.StatusId;
             return targetDto;
         }
 

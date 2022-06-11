@@ -40,6 +40,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             //modelBuilder.Ignore<CampaignListEntity>();
             //modelBuilder.Ignore<CampaignDetailListEntity>();
             //modelBuilder.Ignore<CampaignTargetListEntity>();
+            //modelBuilder.Ignore<CustomerReportEntity>();
 
             new CampaignDbInitializer(modelBuilder).Seed();
         }
