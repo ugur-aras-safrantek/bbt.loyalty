@@ -115,6 +115,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       maxAmount: null,
       amount: null,
       rate: null,
+      xkampCode: '',
       maxUtilization: '',
     });
   }
@@ -149,10 +150,15 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     if (this.formGroup.get('type')?.value == 1) {
       this.f.amount.setValidators(Validators.required);
 
-      this.formGroup.patchValue({rate: null});
+      this.formGroup.patchValue({
+        rate: null,
+        xkampCode: ''
+      });
       this.f.rate.clearValidators();
+      this.f.xkampCode.clearValidators();
     } else {
       this.f.rate.setValidators([Validators.required, Validators.max(100)]);
+      this.f.xkampCode.setValidators([Validators.required]);
 
       this.formGroup.patchValue({
         currencyId: 1,
@@ -163,6 +169,35 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     Object.keys(this.f).forEach(key => {
       this.formGroup.controls[key].updateValueAndValidity();
     });
+  }
+
+  rateChange() {
+    let rate = this.formGroup.get('rate')?.value;
+    if (rate != null && rate >= 0) {
+      this.formGroup.patchValue({
+        xkampCode: ''
+      });
+      this.f.xkampCode.clearValidators();
+      this.f.xkampCode.disable();
+    } else {
+      this.f.xkampCode.setValidators(Validators.required);
+      this.f.xkampCode.enable();
+    }
+    this.f.xkampCode.updateValueAndValidity();
+  }
+
+  xkampChange() {
+    if (this.formGroup.get('xkampCode')?.value) {
+      this.formGroup.patchValue({
+        rate: null
+      });
+      this.f.rate.clearValidators();
+      this.f.rate.disable();
+    } else {
+      this.f.rate.setValidators([Validators.required, Validators.max(100)]);
+      this.f.rate.enable();
+    }
+    this.f.rate.updateValueAndValidity();
   }
 
   private campaignViewingStateActions(state: boolean) {
@@ -232,6 +267,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       maxAmount: null,
       amount: null,
       rate: null,
+      xkampCode: '',
       maxUtilization: '',
     })
   }
@@ -251,6 +287,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       maxAmount: data.maxAmount,
       amount: data.amount,
       rate: data.rate,
+      xkampCode: data.xkampCode,
       maxUtilization: data.maxUtilization,
     })
   }
@@ -288,6 +325,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       case 2:
       case "2":
         achievement.rate = formGroup.rate;
+        achievement.xkampCode = formGroup.xkampCode;
         break;
     }
     return achievement;
@@ -314,7 +352,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.achievementTypeList.sort((a, b) => a.id - b.id);
   }
 
-  private checkAddButtonVisibleState(){
+  private checkAddButtonVisibleState() {
     this.addButtonVisibleState = false;
     this.allAchievementTypeList.map(x => {
       if (this.campaignAchievementList.findIndex(y => y.achievementTypeId == x.id) < 0) {

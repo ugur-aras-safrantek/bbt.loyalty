@@ -301,6 +301,7 @@ interface ICampaignDefinitionGainModel {
   maxAmount?: any;
   amount?: any;
   rate?: any;
+  xkampCode?: any;
   maxUtilization?: any;
 }
 
@@ -319,6 +320,7 @@ export class CampaignDefinitionGainModel implements ICampaignDefinitionGainModel
   maxAmount?: any;
   amount?: any;
   rate?: any;
+  xkampCode?: any;
   maxUtilization?: any;
 }
 
