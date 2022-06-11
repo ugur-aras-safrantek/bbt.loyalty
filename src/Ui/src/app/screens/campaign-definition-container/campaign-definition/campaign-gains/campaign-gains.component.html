@@ -127,6 +127,7 @@
           <input type="text" class="form-control" currencyMask
                  [options]="{ min: 0, max: 999 }"
                  name="rate" id="rate" formControlName="rate"
+                 (ngModelChange)="rateChange()"
                  [ngClass]="{ 'is-invalid': submitted && f.rate.invalid }">
           <div *ngIf="submitted && f.rate.errors"
                class="invalid-feedback">
@@ -134,6 +135,16 @@
             <div *ngIf="f.rate.errors.max">Kazanım Oranı 100’ün üzerinde bir değer
               girilemez.
             </div>
+          </div>
+        </div>
+        <div class="col-6 form-group">
+          <label for="xkampCode">XKAMP</label>
+          <input type="text" class="form-control" name="xkampCode" id="xkampCode"
+                 formControlName="xkampCode" maxlength="7"
+                 (ngModelChange)="xkampChange()"
+                 [ngClass]="{ 'is-invalid': submitted && f.xkampCode.invalid }">
+          <div *ngIf="submitted && f.xkampCode.errors" class="invalid-feedback">
+            <div *ngIf="f.xkampCode.errors.required">XKAMP girilmelidir.</div>
           </div>
         </div>
       </div>
