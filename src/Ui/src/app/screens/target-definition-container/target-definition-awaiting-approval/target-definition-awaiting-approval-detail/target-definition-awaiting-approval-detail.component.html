@@ -17,7 +17,9 @@
           <div class="col-2 mt-3 ms-2 d-flex justify-content-start">
             <div class="form-group">
               <div class="form-check">
-                <input class="form-check-input scale-2x" type="checkbox"
+                <input type="checkbox"
+                       class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isIsActiveUpdated}"
                        name="isActive" id="isActive" formControlName="isActive">
                 <label class="form-check-label ms-2" for="isActive">Aktif</label>
               </div>
@@ -27,50 +29,63 @@
         <div class="row mt-4">
           <div class="col form-group">
             <label for="name">Hedef Tanım İsmi</label>
-            <input type="text" class="form-control" name="name" id="name"
-                   formControlName="name">
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':targetUpdateFields.isNameUpdated}"
+                   name="name" id="name" formControlName="name">
           </div>
           <div class="col form-group">
             <label for="title">Görüntülenecek Hedef Başlığı</label>
-            <input type="text" class="form-control" name="title" id="title"
-                   formControlName="title">
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':targetUpdateFields.isTitleUpdated}"
+                   name="title" id="title" formControlName="title">
           </div>
         </div>
         <div class="row mt-3" *ngIf="id">
           <div class="col-6 form-group">
             <label for="id">Hedef ID</label>
-            <input type="text" class="form-control" name="id" id="id"
-                   formControlName="id">
+            <input type="text"
+                   class="form-control"
+                   name="id" id="id" formControlName="id">
           </div>
         </div>
       </form>
       <form [formGroup]="targetSourceFormGroup" class="p-4">
         <h4>Hedef Kaynağı</h4>
         <div class="form-group">
-          <label for="targetViewTypeId">Hedef Gösterim Tipi</label>
-          <input type="text" class="form-control" name="targetViewTypeId" id="targetViewTypeId"
-                 formControlName="targetViewTypeId">
+          <label for="targetViewType">Hedef Gösterim Tipi</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':targetUpdateFields.isTargetViewTypeIdUpdated}"
+                 name="targetViewType" id="targetViewType" formControlName="targetViewType">
         </div>
         <div class="row mt-3" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value">
           <div class="col">
             <div class="form-group">
-              <label for="targetSourceId">Hedef Kaynağı</label>
-              <input type="text" class="form-control" name="targetSourceId" id="targetSourceId"
-                     formControlName="targetSourceId">
+              <label for="targetSource">Hedef Kaynağı</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':targetUpdateFields.isTargetSourceIdUpdated}"
+                     name="targetSource" id="targetSource" formControlName="targetSource">
             </div>
           </div>
           <div class="col" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==1">
             <div class="form-group">
               <label for="flowName">Akış İsmi</label>
-              <input type="text" class="form-control" name="flowName" id="flowName"
-                     formControlName="flowName">
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':targetUpdateFields.isFlowNameUpdated}"
+                     name="flowName" id="flowName" formControlName="flowName">
             </div>
           </div>
           <div class="col" *ngIf="targetSourceFormGroup.get('targetSourceId')?.value==2">
             <div class="form-group">
               <label for="condition">Koşul</label>
-              <input type="text" class="form-control" name="condition" id="condition"
-                     formControlName="condition">
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':targetUpdateFields.isConditionUpdated}"
+                     name="condition" id="condition" formControlName="condition">
             </div>
           </div>
         </div>
@@ -80,16 +95,20 @@
               <div class="row">
                 <div class="col">
                   <div class="form-group">
-                    <label for="totalAmount">Toplam Tutar</label>
-                    <input type="text" class="form-control" name="totalAmount" id="totalAmount"
-                           formControlName="totalAmount">
+                    <label for="totalAmountStr">Toplam Tutar</label>
+                    <input type="text"
+                           class="form-control"
+                           [ngClass]="{'change-bgc':targetUpdateFields.isTotalAmountUpdated}"
+                           name="totalAmountStr" id="totalAmountStr" formControlName="totalAmountStr">
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-group">
                     <label for="numberOfTransaction">İşlem Adedi</label>
-                    <input type="text" class="form-control" name="numberOfTransaction" id="numberOfTransaction"
-                           formControlName="numberOfTransaction">
+                    <input type="text"
+                           class="form-control"
+                           [ngClass]="{'change-bgc':targetUpdateFields.isNumberOfTransactionUpdated}"
+                           name="numberOfTransaction" id="numberOfTransaction" formControlName="numberOfTransaction">
                   </div>
                 </div>
               </div>
@@ -97,8 +116,10 @@
             <div class="col">
               <div class="form-group">
                 <label for="flowFrequency">Akış Frekansı</label>
-                <input type="text" class="form-control" name="flowFrequency" id="flowFrequency"
-                       formControlName="flowFrequency">
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isFlowFrequencyUpdated}"
+                       name="flowFrequency" id="flowFrequency" formControlName="flowFrequency">
               </div>
             </div>
           </div>
@@ -106,15 +127,19 @@
             <div class="col">
               <div class="form-group">
                 <label for="additionalFlowTime">Akış Ek Süresi</label>
-                <input type="text" class="form-control" name="additionalFlowTime" id="additionalFlowTime"
-                       formControlName="additionalFlowTime">
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isAdditionalFlowTimeUpdated}"
+                       name="additionalFlowTime" id="additionalFlowTime" formControlName="additionalFlowTime">
               </div>
             </div>
             <div class="col">
               <div class="form-group">
-                <label for="triggerTimeId">Tetiklenme Zamanı</label>
-                <input type="text" class="form-control" name="triggerTimeId" id="triggerTimeId"
-                       formControlName="triggerTimeId">
+                <label for="triggerTime">Tetiklenme Zamanı</label>
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isTriggerTimeIdUpdated}"
+                       name="triggerTime" id="triggerTime" formControlName="triggerTime">
               </div>
             </div>
           </div>
@@ -124,15 +149,19 @@
             <div class="col">
               <div class="form-group">
                 <label for="query">Sorgu</label>
-                <input type="text" class="form-control" name="query" id="query"
-                       formControlName="query">
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isQueryUpdated}"
+                       name="query" id="query" formControlName="query">
               </div>
             </div>
             <div class="col">
               <div class="form-group">
-                <label for="verificationTimeId">Kampanya Doğrulama Zamanı</label>
-                <input type="text" class="form-control" name="verificationTimeId" id="verificationTimeId"
-                       formControlName="verificationTimeId">
+                <label for="verificationTime">Kampanya Doğrulama Zamanı</label>
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':targetUpdateFields.isVerificationTimeIdUpdated}"
+                       name="verificationTime" id="verificationTime" formControlName="verificationTime">
               </div>
             </div>
           </div>
@@ -141,7 +170,9 @@
           *ngIf="targetSourceFormGroup.get('targetSourceId')?.value && targetSourceFormGroup.get('targetViewTypeId')?.value!=3">
           <div class="accordion mt-3" id="accordionTargetDetail">
             <div class="accordion-item">
-              <h2 class="accordion-header" id="headingTargetDetail">
+              <h2 class="accordion-header"
+                  [ngClass]="{'change-bgc':targetUpdateFields.isTargetDetailTrUpdated || targetUpdateFields.isTargetDetailEnUpdated}"
+                  id="headingTargetDetail">
                 <button class="accordion-button collapsed accordion-custom" type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseTargetDetail"
@@ -160,6 +191,7 @@
                         <label for="targetDetailTr">Türkçe</label>
                         <angular-editor [config]="editorConfig"
                                         formControlName="targetDetailTr" id="targetDetailTr"
+                                        [ngClass]="{'change-bgc':targetUpdateFields.isTargetDetailTrUpdated}"
                                         placeholder="Hedef Detay (Türkçe)">
                         </angular-editor>
                       </div>
@@ -169,6 +201,7 @@
                         <label for="targetDetailEn">İngilizce</label>
                         <angular-editor [config]="editorConfig"
                                         formControlName="targetDetailEn" id="targetDetailEn"
+                                        [ngClass]="{'change-bgc':targetUpdateFields.isTargetDetailEnUpdated}"
                                         placeholder="Hedef Detay (İngilizce)">
                         </angular-editor>
                       </div>
@@ -180,7 +213,9 @@
           </div>
           <div class="accordion mt-3" id="accordionDescription">
             <div class="accordion-item">
-              <h2 class="accordion-header" id="headingDescription">
+              <h2 class="accordion-header"
+                  [ngClass]="{'change-bgc':targetUpdateFields.isDescriptionTrUpdated || targetUpdateFields.isDescriptionEnUpdated}"
+                  id="headingDescription">
                 <button class="accordion-button collapsed accordion-custom" type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#collapseDescription"
@@ -198,6 +233,7 @@
                         <label for="descriptionTr">Türkçe</label>
                         <angular-editor [config]="editorConfig"
                                         formControlName="descriptionTr" id="descriptionTr"
+                                        [ngClass]="{'change-bgc':targetUpdateFields.isDescriptionTrUpdated}"
                                         placeholder="Detay (Türkçe)">
                         </angular-editor>
                       </div>
@@ -207,6 +243,7 @@
                         <label for="descriptionEn">İngilizce</label>
                         <angular-editor [config]="editorConfig"
                                         formControlName="descriptionEn" id="descriptionEn"
+                                        [ngClass]="{'change-bgc':targetUpdateFields.isDescriptionEnUpdated}"
                                         placeholder="Detay (İngilizce)">
                         </angular-editor>
                       </div>
@@ -230,8 +267,8 @@
         </div>
         <hr class="blue mt-2 mb-0">
         <div class="history-row" *ngFor="let item of history">
-          <div class="col d-flex justify-content-start">{{item.user}}</div>
-          <div class="col d-flex justify-content-end">{{item.date}}</div>
+          <div class="col d-flex justify-content-start">{{item.approvedBy}}</div>
+          <div class="col d-flex justify-content-end">{{item.approvedDateStr}}</div>
         </div>
       </div>
     </div>

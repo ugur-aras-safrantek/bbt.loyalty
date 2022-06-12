@@ -31,6 +31,8 @@ export class TargetDefinitionAwaitingApprovalDetailComponent implements OnInit {
 
   history: any[];
 
+  targetUpdateFields: any = {};
+
   constructor(private fb: FormBuilder,
               private toastrHandleService: ToastrHandleService,
               private loginService: LoginService,
@@ -53,18 +55,22 @@ export class TargetDefinitionAwaitingApprovalDetailComponent implements OnInit {
 
     this.targetSourceFormGroup = this.fb.group({
       targetSourceId: '',
+      targetSource: '',
       targetViewTypeId: '',
+      targetViewType: '',
 
       flowName: '',
-      totalAmount: '',
+      totalAmountStr: '',
       numberOfTransaction: '',
       flowFrequency: '',
       additionalFlowTime: '',
       triggerTimeId: '',
+      triggerTime: '',
 
       condition: '',
       query: '',
       verificationTimeId: '',
+      verificationTime: '',
 
       targetDetailTr: '',
       targetDetailEn: '',
@@ -98,18 +104,22 @@ export class TargetDefinitionAwaitingApprovalDetailComponent implements OnInit {
   private populateTargetSourceForm(data) {
     this.targetSourceFormGroup.patchValue({
       targetSourceId: data.targetSourceId,
+      targetSource: data.targetSource?.name,
 
       targetViewTypeId: data.targetViewTypeId,
+      targetViewType: data.targetViewType?.name,
       flowName: data.flowName,
-      totalAmount: data.totalAmount,
+      totalAmountStr: data.totalAmountStr,
       numberOfTransaction: data.numberOfTransaction,
       flowFrequency: data.flowFrequency,
       additionalFlowTime: data.additionalFlowTime,
       triggerTimeId: data.triggerTimeId,
+      triggerTime: data.triggerTime?.name,
 
       condition: data.condition,
       query: data.query,
       verificationTimeId: data.verificationTimeId,
+      verificationTime: data.verificationTime?.name,
 
       targetDetailEn: data.targetDetailEn,
       targetDetailTr: data.targetDetailTr,
@@ -124,9 +134,10 @@ export class TargetDefinitionAwaitingApprovalDetailComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.populateTargetDefinitionForm(res.data);
-            this.populateTargetSourceForm(res.data);
-            this.history = res.data.history;
+            this.populateTargetDefinitionForm(res.data.target);
+            this.populateTargetSourceForm(res.data.targetDetail);
+            this.history = res.data.historyList;
+            this.targetUpdateFields = res.data.targetUpdateFields;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },
