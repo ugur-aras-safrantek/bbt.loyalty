@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {ApiPaths} from "../models/api-paths";
 import {ApiBaseResponseModel} from "../models/api-base-response.model";
 import {AuthorizationModel, LoginRequestModel, UserAuthorizationsModel} from "../models/login.model";
@@ -17,8 +17,8 @@ export class LoginService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getUserId() {
-    return JSON.parse(sessionStorage.getItem('userId') || '');
+  getAccessToken() {
+    return JSON.parse(sessionStorage.getItem('accessToken') || '');
   }
 
   getUserLoginInfo() {
@@ -29,25 +29,29 @@ export class LoginService {
     return JSON.parse(sessionStorage.getItem('currentUserAuthorizations') || '{}');
   }
 
-  setCurrentUserAuthorizations(userId: any, userData: any[]) {
+  setCurrentUserAuthorizations(accessToken: any, userData: any[]) {
     this.currentUserAuthorizations = new UserAuthorizationsModel();
     userData.map(x => {
       this.setAuthorization(x);
     })
     sessionStorage.setItem('isLogin', 'true');
-    sessionStorage.setItem('userId', JSON.stringify(userId));
+    sessionStorage.setItem('accessToken', JSON.stringify(accessToken));
     sessionStorage.setItem('currentUserAuthorizations', JSON.stringify(this.currentUserAuthorizations));
   }
 
   logout() {
     sessionStorage.removeItem('isLogin');
-    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('currentUserAuthorizations');
   }
 
   login(data: LoginRequestModel) {
+    let params = new HttpParams();
+    params = params.append('code', data.code);
+    params = params.append('state', data.state);
+
     const url = `${this.baseUrl}/${ApiPaths.Login}`;
-    return this.httpClient.post<ApiBaseResponseModel>(url, data);
+    return this.httpClient.post<ApiBaseResponseModel>(url, {}, {params: params});
   }
 
   private setAuthorization(module) {
