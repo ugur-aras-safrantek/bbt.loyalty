@@ -24,6 +24,8 @@ export class CampaignLimitsAwaitingApprovalDetailComponent implements OnInit {
 
   history: any[];
 
+  topLimitUpdateFields: any = {};
+
   constructor(private fb: FormBuilder,
               private toastrHandleService: ToastrHandleService,
               private loginService: LoginService,
@@ -39,13 +41,13 @@ export class CampaignLimitsAwaitingApprovalDetailComponent implements OnInit {
     this.campaignLimitsFormGroup = this.fb.group({
       name: '',
       isActive: false,
-      campaignIds: '',
-      achievementFrequencyId: '',
+      campaignNamesStr: '',
+      achievementFrequency: '',
       type: 1,
-      currencyId: '',
-      maxTopLimitAmount: '',
-      maxTopLimitRate: '',
-      maxTopLimitUtilization: '',
+      currency: '',
+      maxTopLimitAmountStr: '',
+      maxTopLimitRateStr: '',
+      maxTopLimitUtilizationStr: '',
     });
     this.campaignLimitsFormGroup.disable();
 
@@ -66,13 +68,13 @@ export class CampaignLimitsAwaitingApprovalDetailComponent implements OnInit {
     this.campaignLimitsFormGroup.patchValue({
       name: data.name,
       isActive: data.isActive,
-      campaignIds: data.campaignIds,
-      achievementFrequencyId: data.achievementFrequencyId,
+      campaignNamesStr: data.campaignNamesStr,
+      achievementFrequency: data.achievementFrequency?.name,
       type: data.type,
-      currencyId: data.currencyId,
-      maxTopLimitAmount: data.maxTopLimitAmount,
-      maxTopLimitRate: data.maxTopLimitRate,
-      maxTopLimitUtilization: data.maxTopLimitUtilization,
+      currency: data.currency?.name,
+      maxTopLimitAmountStr: data.maxTopLimitAmountStr,
+      maxTopLimitRateStr: data.maxTopLimitRateStr,
+      maxTopLimitUtilizationStr: data.maxTopLimitUtilizationStr,
     })
   }
 
@@ -82,8 +84,9 @@ export class CampaignLimitsAwaitingApprovalDetailComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data) {
-            this.populateCampaignLimitsForm(res.data);
-            this.history = res.data.history;
+            this.populateCampaignLimitsForm(res.data.topLimit);
+            this.history = res.data.historyList;
+            this.topLimitUpdateFields = res.data.topLimitUpdateFields;
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

@@ -17,14 +17,18 @@
           <div class="col-8">
             <div class="form-group">
               <label for="name">Çatı Limiti Adı</label>
-              <input type="text" class="form-control" name="name" id="name"
-                     formControlName="name">
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':topLimitUpdateFields.isNameUpdated}"
+                     name="name" id="name" formControlName="name">
             </div>
           </div>
           <div class="col-4 checkbox-mt d-flex justify-content-center">
             <div class="form-group">
               <div class="form-check">
-                <input class="form-check-input scale-2x" type="checkbox"
+                <input type="checkbox"
+                       class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':topLimitUpdateFields.isActiveUpdated}"
                        name="isActive" id="isActive" formControlName="isActive">
                 <label class="form-check-label ms-2" for="isActive">Aktif</label>
               </div>
@@ -32,25 +36,33 @@
           </div>
         </div>
         <div class="form-group mt-3">
-          <label for="campaignIds">Kampanyalar</label>
-          <input type="text" class="form-control" name="campaignIds" id="campaignIds"
-                 formControlName="campaignIds">
+          <label for="campaignNamesStr">Kampanyalar</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isTopLimitCampaignsUpdated}"
+                 name="campaignNamesStr" id="campaignNamesStr" formControlName="campaignNamesStr">
         </div>
         <div class="form-group mt-3">
-          <label for="achievementFrequencyId">Kazanım Sıklığı</label>
-          <input type="text" class="form-control" name="achievementFrequencyId" id="achievementFrequencyId"
-                 formControlName="achievementFrequencyId">
+          <label for="achievementFrequency">Kazanım Sıklığı</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isAchievementFrequencyIdUpdated}"
+                 name="achievementFrequency" id="achievementFrequency" formControlName="achievementFrequency">
         </div>
         <div class="row my-4">
           <div class="col pl-20px">
             <div class="form-group">
               <div class="form-check form-check-inline me-5">
-                <input class="form-check-input scale-2x" type="radio"
+                <input class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':topLimitUpdateFields.isTypeIdUpdated && campaignLimitsFormGroup.get('type')?.value == 1}"
+                       type="radio"
                        name="type" formControlName="type" id="type1" [value]="1">
                 <label class="form-check-label ms-2" for="type1">Tutar</label>
               </div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input scale-2x" type="radio"
+                <input class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':topLimitUpdateFields.isTypeIdUpdated && campaignLimitsFormGroup.get('type')?.value == 2}"
+                       type="radio"
                        name="type" formControlName="type" id="type2" [value]="2">
                 <label class="form-check-label ms-2" for="type2">Oran</label>
               </div>
@@ -58,24 +70,32 @@
           </div>
         </div>
         <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==1">
-          <label for="currencyId">Para Birimi</label>
-          <input type="text" class="form-control" name="currencyId" id="currencyId"
-                 formControlName="currencyId">
+          <label for="currency">Para Birimi</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isCurrencyIdUpdated}"
+                 name="currency" id="currency" formControlName="currency">
         </div>
         <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==1">
-          <label for="maxTopLimitAmount">Çatı Max Tutar</label>
-          <input type="text" class="form-control" name="maxTopLimitAmount" id="maxTopLimitAmount"
-                 formControlName="maxTopLimitAmount">
+          <label for="maxTopLimitAmountStr">Çatı Max Tutar</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isMaxTopLimitAmountUpdated}"
+                 name="maxTopLimitAmountStr" id="maxTopLimitAmountStr" formControlName="maxTopLimitAmountStr">
         </div>
         <div class="form-group mt-3" *ngIf="campaignLimitsFormGroup.get('type')?.value==2">
-          <label for="maxTopLimitRate">Çatı Oranı</label>
-          <input type="text" class="form-control" name="maxTopLimitRate" id="maxTopLimitRate"
-                 formControlName="maxTopLimitRate">
+          <label for="maxTopLimitRateStr">Çatı Oranı</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isMaxTopLimitRateUpdated}"
+                 name="maxTopLimitRateStr" id="maxTopLimitRateStr" formControlName="maxTopLimitRateStr">
         </div>
         <div class="form-group mt-3">
-          <label for="maxTopLimitUtilization">Çatı Max Yararlanma</label>
-          <input type="text" class="form-control" name="maxTopLimitUtilization" id="maxTopLimitUtilization"
-                 formControlName="maxTopLimitUtilization">
+          <label for="maxTopLimitUtilizationStr">Çatı Max Yararlanma</label>
+          <input type="text"
+                 class="form-control"
+                 [ngClass]="{'change-bgc':topLimitUpdateFields.isMaxTopLimitUtilizationUpdated}"
+                 name="maxTopLimitUtilizationStr" id="maxTopLimitUtilizationStr" formControlName="maxTopLimitUtilizationStr">
         </div>
       </form>
       <div class="p-4">
@@ -90,8 +110,8 @@
         </div>
         <hr class="blue mt-2 mb-0">
         <div class="history-row" *ngFor="let item of history">
-          <div class="col d-flex justify-content-start">{{item.user}}</div>
-          <div class="col d-flex justify-content-end">{{item.date}}</div>
+          <div class="col d-flex justify-content-start">{{item.approvedBy}}</div>
+          <div class="col d-flex justify-content-end">{{item.approvedDateStr}}</div>
         </div>
       </div>
     </div>

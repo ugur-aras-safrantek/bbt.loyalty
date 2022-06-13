@@ -354,12 +354,13 @@ export class TargetSourceComponent implements OnInit, FormChange {
       this.alertModalText = this.id
         ? 'Yaptığınız değişiklikleri kaydetmeyi onaylıyor musunuz?'
         : 'Yeni hedef tanımını kaydetmeyi onaylıyor musunuz?';
-      this.modalService.open("campaignTargetsApproveAlertModal");
+      this.modalService.getModal("campaignTargetsApproveAlertModal").open();
     }
   }
 
   alertModalOk() {
     this.newTargetId ? this.targetSourceAdd() : this.targetSourceUpdate();
+    this.modalService.getModal("campaignTargetsApproveAlertModal").close();
   }
 
   private targetSourceGetInsertForm() {
@@ -456,6 +457,6 @@ export class TargetSourceComponent implements OnInit, FormChange {
 
   previewTarget(event) {
     this.targetPreviewComponent.getTargetInfo(event.id);
-    this.modalService.open("previewModal");
+    this.modalService.getModal("previewModal").open();
   }
 }
