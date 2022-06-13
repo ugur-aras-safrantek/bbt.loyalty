@@ -343,20 +343,17 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignId = campaignId;
 
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                .GetAll(x => x.Id == campaignId && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted)
                 .FirstOrDefaultAsync();
             if (campaignEntity == null)
             {
                 if (campaignEntity == null) { throw new Exception("Kampanya bulunamadı."); }
             }
 
-            response.IsInvisibleCampaign = false;
+            int viewOptionId = campaignEntity.ViewOptionId ?? 0;
+            response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
 
-            if (campaignEntity != null)
-            {
-                int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-                response.IsInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-            }
+            response.IsOverDue = DateTime.Now.AddDays(-1) > campaignEntity.EndDate;
 
             response.IsJoin = false;
             var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
