@@ -4,6 +4,7 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Approval;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Dtos.CampaignDetail;
@@ -126,7 +127,9 @@ namespace Bbt.Campaign.Services.Services.Draft
 
         public async Task<BaseResponse<CampaignDto>> CreateCampaignCopyAsync(int campaignId, string userid)
         {
-            await CheckValidationCampaignCopy(campaignId, userid);
+            //await CheckValidationCampaignCopy(campaignId, userRole);
+
+            
 
             //campaign
             CampaignEntity campaignEntity = new CampaignEntity();
@@ -191,11 +194,11 @@ namespace Bbt.Campaign.Services.Services.Draft
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
-        private async Task CheckValidationCampaignCopy(int campaignId, string userid)
+        private async Task CheckValidationCampaignCopy(int campaignId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
             if (entity == null)

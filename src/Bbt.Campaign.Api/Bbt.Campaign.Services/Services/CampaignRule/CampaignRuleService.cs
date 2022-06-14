@@ -47,7 +47,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(campaignRule, false);
 
@@ -186,7 +186,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(campaignRule, true);
 
@@ -378,7 +378,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             string userid = userRole.UserId;
 
@@ -409,7 +409,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignRuleInsertFormDto response = new CampaignRuleInsertFormDto();
             await FillForm(response);
@@ -436,7 +436,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignRuleUpdateFormDto response = new CampaignRuleUpdateFormDto();
             

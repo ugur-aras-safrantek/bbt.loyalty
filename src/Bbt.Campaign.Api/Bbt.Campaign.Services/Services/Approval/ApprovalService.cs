@@ -109,7 +109,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -506,7 +506,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
             string userid = userRole.UserId;
             if (isApproved) 
             {
@@ -675,7 +675,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             if (isApproved)
             {
@@ -987,7 +987,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             return await _draftService.CreateCampaignCopyAsync(id, userRole.UserId);
         }
@@ -997,7 +997,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
             
             TopLimitEntity entity = new TopLimitEntity();
             entity = await _draftService.CopyTopLimitInfo(refId, entity, userRole.UserId, false, false, false, false, false);
@@ -1012,7 +1012,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             TargetEntity entity = new TargetEntity();
             entity.TargetDetail = new TargetDetailEntity();

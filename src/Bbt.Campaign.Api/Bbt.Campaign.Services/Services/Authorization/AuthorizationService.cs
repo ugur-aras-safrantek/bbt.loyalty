@@ -146,42 +146,45 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             await _parameterService.SetUserRoleListAsync(userId, new List<UserRoleDto>()); 
         }
-        public async Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request) 
-        {
-            CheckAuthorizationResponse response = new CheckAuthorizationResponse();
-            await CheckAuthorizationAsync(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
-            response.HasAuthorization = true; 
-            return await BaseResponse<CheckAuthorizationResponse>.SuccessAsync(response);
-        }
-        public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId)
-        {
-            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
-            if (roleAuthorizationList == null || !roleAuthorizationList.Any())
-                throw new Exception("Rol tanımları bulunamadı.");
-
-            // kullanıcı yetkileri
-            var userRoleList = (await _parameterService.GetUserRoleListAsync(userId))?.Data;
-            if (userRoleList == null || !userRoleList.Any())
-                throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
-
-            //session timeout kontrolu
-            //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
-            //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
-            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
-
-            //modul ve işlem bazlı sorgulama
-            List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
-                .Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId) 
-                                                && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
-                .ToList();
-            if (!userRoleAuthorizationList.Any())
-                throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
-
-            await UpdateUserProcessDate(userId);
-        }
+       
+        //public async Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request) 
+        //{
+        //    CheckAuthorizationResponse response = new CheckAuthorizationResponse();
+        //    await CheckAuthorizationAsync(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
+        //    response.HasAuthorization = true; 
+        //    return await BaseResponse<CheckAuthorizationResponse>.SuccessAsync(response);
+        //}
 
 
-        public async Task CheckAuthorizationAsync2(UserRoleDto2 userRoleDto, int moduleTypeId, int authorizationTypeId)
+        //public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId)
+        //{
+        //    List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+        //    if (roleAuthorizationList == null || !roleAuthorizationList.Any())
+        //        throw new Exception("Rol tanımları bulunamadı.");
+
+        //    // kullanıcı yetkileri
+        //    var userRoleList = (await _parameterService.GetUserRoleListAsync(userId))?.Data;
+        //    if (userRoleList == null || !userRoleList.Any())
+        //        throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
+
+        //    //session timeout kontrolu
+        //    //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
+        //    //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
+        //    //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
+
+        //    //modul ve işlem bazlı sorgulama
+        //    List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
+        //        .Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId) 
+        //                                        && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
+        //        .ToList();
+        //    if (!userRoleAuthorizationList.Any())
+        //        throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
+
+        //    await UpdateUserProcessDate(userId);
+        //}
+
+
+        public async Task CheckAuthorizationAsync(UserRoleDto2 userRoleDto, int moduleTypeId, int authorizationTypeId)
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
             if (roleAuthorizationList == null || !roleAuthorizationList.Any())
@@ -330,7 +333,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             }
         }
 
-        public async Task CheckAuthorizationAsync2(string userId, int moduleTypeId, int authorizationTypeId) 
+        public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId) 
         {
             //var x =  System.Security.Claims.ClaimsPrincipal.Current.Claims.Where(x=>x.) 
 

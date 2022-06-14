@@ -48,7 +48,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(request);
 
@@ -61,7 +61,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(request);
 
@@ -247,7 +247,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTargetInsertFormDto response = new CampaignTargetInsertFormDto();
 
@@ -780,7 +780,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTargetUpdateFormDto response = new CampaignTargetUpdateFormDto();
 

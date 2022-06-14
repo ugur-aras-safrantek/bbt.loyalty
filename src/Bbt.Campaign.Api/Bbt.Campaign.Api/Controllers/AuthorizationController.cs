@@ -38,22 +38,22 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("check-authorization")]
-        public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
-        {
-            if (User.Claims.Count() > 0) 
-            {
-                var x = User.Claims.Where(x => x.Value == "cc");
+        //[HttpPost]
+        //[Route("check-authorization")]
+        //public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
+        //{
+        //    if (User.Claims.Count() > 0) 
+        //    {
+        //        var x = User.Claims.Where(x => x.Value == "cc");
             
-            }
+        //    }
 
 
 
-           var createResult = await _authorizationService.CheckAuthorizationAsync(request);
+        //   var createResult = await _authorizationService.CheckAuthorizationAsync(request);
 
-            return Ok(createResult);
-        }
+        //    return Ok(createResult);
+        //}
 
         /// <summary>
         /// Updates roles of the user 

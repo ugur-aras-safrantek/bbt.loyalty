@@ -1,12 +1,18 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Report;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace Bbt.Campaign.Api.Controllers
 {
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
     public class ReportController : BaseController<ReportController>
     {
         private readonly IReportService _reportService;
@@ -22,9 +28,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-campaign-report-form")]
-        public async Task<IActionResult> FillCampaignFormAsync([FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> FillCampaignFormAsync()
         {
-            var result = await _reportService.FillCampaignFormAsync(General.GetUserIdFromHeader(Request));
+            var result = await _reportService.FillCampaignFormAsync(await GetUser());
             return Ok(result);
         }
 
@@ -35,9 +41,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-campaignreport-by-filter")]
-        public async Task<IActionResult> GetCampaignReportByFilterAsync(CampaignReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCampaignReportByFilterAsync(CampaignReportRequest request)
         {
-            var result = await _reportService.GetCampaignReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCampaignReportByFilterAsync(request, await GetUser());
             return Ok(result);
         }
 
@@ -48,9 +54,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-campaign-report-by-filter-excel")]
-        public async Task<IActionResult> GetByFilterExcel(CampaignReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetByFilterExcel(CampaignReportRequest request)
         {
-            var result = await _reportService.GetCampaignReportExcelAsync(request, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCampaignReportExcelAsync(request, await GetUser());
             return Ok(result);
         }
 
@@ -60,9 +66,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-customer-report-form")]
-        public async Task<IActionResult> FillCustomerFormAsync([FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> FillCustomerFormAsync()
         {
-            var result = await _reportService.FillCustomerFormAsync(General.GetUserIdFromHeader(Request));
+            var result = await _reportService.FillCustomerFormAsync(await GetUser());
             return Ok(result);
         }
 
@@ -73,9 +79,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-customer-report-by-filter")]
-        public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request)
         {
-            var result = await _reportService.GetCustomerReportByFilterAsync(request, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCustomerReportByFilterAsync(request, await GetUser());
             return Ok(result);
         }
 
@@ -87,9 +93,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-customer-report-by-filter-excel")]
-        public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerReportRequest request, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerReportRequest request)
         {
-            var result = await _reportService.GetCustomerReportExcelAsync(request, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCustomerReportExcelAsync(request, await GetUser());
             return Ok(result);
         }
 
@@ -99,10 +105,40 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="id">Record Id of the line</param>
         [HttpGet]
         [Route("get-customer-report-detail/{id}")]
-        public async Task<IActionResult> GetCustomerReportDetailAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCustomerReportDetailAsync(int id)
         {
-            var result = await _reportService.GetCustomerReportDetailAsync(id, General.GetUserIdFromHeader(Request));
+            var result = await _reportService.GetCustomerReportDetailAsync(id, await GetUser());
             return Ok(result);
+        }
+
+        private async Task<UserRoleDto2> GetUser()
+        {
+            UserRoleDto2 userRoleDto2 = new UserRoleDto2();
+
+            List<int> roleTypeIdList = new List<int>();
+            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+
+            if (!roleTypeIdList.Any())
+                throw new Exception("Kullanıcının yetkisi yoktur.");
+
+            userRoleDto2.RoleTypeIdList = roleTypeIdList;
+
+            return userRoleDto2;
         }
     }
 }

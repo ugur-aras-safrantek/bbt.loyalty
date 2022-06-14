@@ -1,5 +1,6 @@
 ﻿using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Public.BaseResultModels;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.File;
@@ -14,13 +15,13 @@ namespace Bbt.Campaign.Services.Services.Report
 {
     public interface IReportService
     {
-        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(string userid);
-        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(string userid);
-        public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, string userid);
-        public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, string userid);
-        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, string userid);
-        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, string userid);
-        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int campaignId, string userid);
+        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(UserRoleDto2 userRole);
+        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(UserRoleDto2 userRole);
+        public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, UserRoleDto2 userRole);
+        public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, UserRoleDto2 userRole);
+        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, UserRoleDto2 userRole);
+        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, UserRoleDto2 userRole);
+        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int campaignId, UserRoleDto2 userRole);
         public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
     }
 }

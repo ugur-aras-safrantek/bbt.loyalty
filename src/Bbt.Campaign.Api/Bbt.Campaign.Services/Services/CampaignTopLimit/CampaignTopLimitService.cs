@@ -44,7 +44,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(campaignTopLimit);
 
@@ -93,7 +93,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
@@ -256,7 +256,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTopLimitInsertFormDto response = new CampaignTopLimitInsertFormDto();
             await FillForm(response);
@@ -301,7 +301,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTopLimitUpdateFormDto response = new CampaignTopLimitUpdateFormDto();
             await FillForm(response);
@@ -313,7 +313,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTopLimitListFilterResponse response = new CampaignTopLimitListFilterResponse();
             List<CampaignTopLimitListDto> campaignList = await GetFilteredCampaignTopLimitList(request); 
@@ -331,7 +331,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             var response = new GetFileResponse();
 
