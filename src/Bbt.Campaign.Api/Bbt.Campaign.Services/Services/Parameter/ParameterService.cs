@@ -476,5 +476,48 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 return accessToken;
             }
         }
+
+        public async Task<string> GetUserRoles(string code, string state)
+        {
+            string accessToken = string.Empty;
+            if (state == "LoyaltyGondor") 
+            {
+                using (var client = new HttpClient())
+                {
+                    string baseAddress = await GetServiceConstantValue("AccessTokenBaseAddress");
+                    string apiAddress = await GetServiceConstantValue("AccessTokenApiAddress");
+                    client.BaseAddress = new Uri(baseAddress);
+
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("code", code),
+                        new KeyValuePair<string, string>("client_id", await GetServiceConstantValue("client_id")),
+                        new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                        new KeyValuePair<string, string>("client_secret", await GetServiceConstantValue("client_secret")),
+                        new KeyValuePair<string, string>("redirect_uri", await GetServiceConstantValue("redirect_uri")),
+                    });
+
+                    var result = await client.PostAsync(apiAddress, content);
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
+                    if (token == null)
+                        throw new Exception("Token servisinden veri çekilirken hata alındı.");
+                    accessToken = token.Access_token;
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://gondor-apigateway.burgan.com.tr"); 
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("access_token", accessToken),
+                    });
+                    var result = await client.PostAsync(await GetServiceConstantValue("ResourceApiAddress"), content);
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                }
+            }
+            else { throw new Exception("Invalid state."); }
+            return accessToken;
+        }
     }
 }

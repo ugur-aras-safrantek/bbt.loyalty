@@ -1,12 +1,17 @@
 ﻿using Bbt.Campaign.Api.Base;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Services.Services.Campaign;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
+
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
     public class CampaignController : BaseController<CampaignController>
     {
         private readonly ICampaignService _campaignService;
@@ -25,10 +30,12 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="id">Campaign Id</param>
         /// <returns></returns>
         //[HttpGet("{id}")]
+
         [HttpGet]
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id, [FromHeader(Name = "userid")][Required] string userId)
         {
+            var x = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             var adminSektor = await _campaignService.GetCampaignAsync(id, General.GetUserIdFromHeader(Request));
             return Ok(adminSektor);
         }

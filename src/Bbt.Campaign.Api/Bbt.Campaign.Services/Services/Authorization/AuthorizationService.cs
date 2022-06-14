@@ -6,11 +6,18 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Models.Authorization;
+using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Bbt.Campaign.Services.Services.Authorization
 {
@@ -29,39 +36,64 @@ namespace Bbt.Campaign.Services.Services.Authorization
             _parameterService = parameterService;
             _redisDatabaseProvider = redisDatabaseProvider;
         }
-        public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(LoginRequest request) 
+        public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(string code, string state) 
         {
-            //if (!StaticValues.IsDevelopment) 
-            //{
-            //    //servisten user roller çekilecek
-            //    string userRoles = "";
-            //    await UpdateUserRoles(request.UserId, userRoles);
-            //}
 
-            await UpdateUserProcessDate(request.UserId);
+
+
+
+            if (!StaticValues.IsDevelopment)
+            {
+                //string accessToken = await _parameterService.GetUserAccessToken(code);
+
+                //using (var client = new HttpClient())
+                //{
+                //    string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                //    string apiAddress = await _parameterService.GetServiceConstantValue("RolesApiAddress");
+                //    client.BaseAddress = new Uri(baseAddress);
+                //    var content = new FormUrlEncodedContent(new[]
+                //    {
+                //        new KeyValuePair<string, string>("access_token", accessToken),
+                //    });
+
+                //    var result = await client.PostAsync(apiAddress, content);
+                //    var responseContent = result.Content.ReadAsStringAsync().Result;
+
+                //    throw new Exception(responseContent);
+                //}
+
+
+
+
+                //servisten user roller çekilecek
+                //string userRoles = "";
+                //await UpdateUserRoles(request.UserId, userRoles);
+            }
+
+           // await UpdateUserProcessDate(request.UserId);
 
             List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
-            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
-            if(roleAuthorizationList == null || !roleAuthorizationList.Any()) 
-                throw new Exception("Rol tanımları bulunamadı.");
-            List<UserRoleDto> userRoleList = (await _parameterService.GetUserRoleListAsync(request.UserId))?.Data; 
-            if(userRoleList == null)
-                return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
+            //List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+            //if(roleAuthorizationList == null || !roleAuthorizationList.Any()) 
+            //    throw new Exception("Rol tanımları bulunamadı.");
+            //List<UserRoleDto> userRoleList = (await _parameterService.GetUserRoleListAsync(request.UserId))?.Data; 
+            //if(userRoleList == null)
+            //    return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
 
-            roleAuthorizationList = roleAuthorizationList.Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId)).ToList();
-            var moduleTypeList = roleAuthorizationList.Select(x=>x.ModuleTypeId).Distinct().ToList();
-            foreach(int moduleTypeId in moduleTypeList) 
-            {
-                UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
-                List<int> authorizationList = new List<int>();
-                foreach(var roleAuthorization in roleAuthorizationList.Where(x=>x.ModuleTypeId == moduleTypeId)) 
-                {
-                    authorizationList.Add(roleAuthorization.AuthorizationTypeId);
-                }
-                userAuthorizationDto.ModuleId = moduleTypeId;
-                userAuthorizationDto.AuthorizationList = authorizationList;
-                userAuthorizationList.Add(userAuthorizationDto);
-            }
+            //roleAuthorizationList = roleAuthorizationList.Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId)).ToList();
+            //var moduleTypeList = roleAuthorizationList.Select(x=>x.ModuleTypeId).Distinct().ToList();
+            //foreach(int moduleTypeId in moduleTypeList) 
+            //{
+            //    UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
+            //    List<int> authorizationList = new List<int>();
+            //    foreach(var roleAuthorization in roleAuthorizationList.Where(x=>x.ModuleTypeId == moduleTypeId)) 
+            //    {
+            //        authorizationList.Add(roleAuthorization.AuthorizationTypeId);
+            //    }
+            //    userAuthorizationDto.ModuleId = moduleTypeId;
+            //    userAuthorizationDto.AuthorizationList = authorizationList;
+            //    userAuthorizationList.Add(userAuthorizationDto);
+            //}
 
             return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
         }
@@ -155,5 +187,151 @@ namespace Bbt.Campaign.Services.Services.Authorization
             await _unitOfWork.SaveChangesAsync();
             await _parameterService.SetUserRoleListAsync(userId, userRoleList);
         }
+
+        public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync2(string code, string state, IConfiguration _configuration) 
+        {
+            List<UserAuthorizationDto> list = new List<UserAuthorizationDto>();
+
+
+
+            //UserModelDto userModel = await GetUserRoles(code, state);
+            //var result = new GetSearchPersonSummaryDto
+            //{
+            //    CitizenshipNumber = response.Tckn
+            //};
+
+            UserModelDto userModel = new UserModelDto();
+            userModel.Authority = new AuthorityModel();
+            userModel.UserId = "11";
+            userModel.Authority.IsLoyaltyCreator = true;
+            userModel.Authority.IsLoyaltyApprover = true;
+            userModel.Authority.IsLoyaltyReader = true;
+            userModel.Authority.IsLoyaltyRuleCreator = true;
+            userModel.Authority.IsLoyaltyRuleApprover = true;
+
+
+            //TokenHandler tokenHandler = new TokenHandler(_configuration);
+            Token token = await CreateAccessToken(userModel);
+            //result.Token = token.AccessToken;
+
+
+            //System.Security.Claims.ClaimsPrincipal.
+
+            //if (User.Claims.Count() == 0)
+
+            //if(User.)
+
+            return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(list); 
+
+        }
+
+        private async Task<UserModelDto> GetUserRoles(string code, string state)
+        {
+            UserModelDto userModel;
+            string accessToken = string.Empty;
+
+            if (state == "LoyaltyGondor")
+            {
+                using (var client = new HttpClient())
+                {
+                    string baseAddress = await _parameterService.GetServiceConstantValue("AccessTokenBaseAddress");
+                    string apiAddress = await _parameterService.GetServiceConstantValue("AccessTokenApiAddress");
+                    client.BaseAddress = new Uri(baseAddress);
+
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("code", code),
+                        new KeyValuePair<string, string>("client_id", await _parameterService.GetServiceConstantValue("client_id")),
+                        new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                        new KeyValuePair<string, string>("client_secret", await _parameterService.GetServiceConstantValue("client_secret")),
+                        new KeyValuePair<string, string>("redirect_uri", await _parameterService.GetServiceConstantValue("redirect_uri")),
+                    });
+
+                    var result = await client.PostAsync(apiAddress, content);
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
+                    if (token.Access_token == null)
+                        throw new Exception("Token servisinden veri çekilirken hata alındı.");
+                    accessToken = token.Access_token;
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://gondor-apigateway.burgan.com.tr");
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("access_token", accessToken),
+                    });
+                    var result = await client.PostAsync(await _parameterService.GetServiceConstantValue("ResourceApiAddress"), content);
+
+                    userModel = JsonConvert.DeserializeObject<UserModelDto>(result.Content.ReadAsStringAsync().Result);
+                }
+            }
+            else { throw new Exception("Invalid state."); }
+            return userModel;
+        }
+
+        public async Task<Token> CreateAccessToken(UserModelDto user)
+        {
+            var tokenInstance = new Token();
+            var claims = new Claim[]{
+                new Claim(JwtRegisteredClaimNames.NameId,Guid.NewGuid().ToString()),
+                new Claim("UserId",user.UserId.ToString()),
+                new Claim("IsLoyaltyCreator",user.Authority.IsLoyaltyCreator.ToString()),
+                new Claim("IsLoyaltyApprover",user.Authority.IsLoyaltyApprover.ToString()),
+                new Claim("IsLoyaltyReader",user.Authority.IsLoyaltyReader.ToString()),
+                new Claim("IsLoyaltyRuleCreator",user.Authority.IsLoyaltyRuleCreator.ToString()),
+                new Claim("IsLoyaltyRuleApprover",user.Authority.IsLoyaltyRuleApprover.ToString())
+            };
+
+            //Security  Key'in simetriğini alıyoruz.
+            SymmetricSecurityKey securityKey = 
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE"));
+
+            //Şifrelenmiş kimliği oluşturuyoruz.
+            SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            //Oluşturulacak token ayarlarını veriyoruz.
+            tokenInstance.Expiration = DateTime.Now.AddMinutes(60);
+            JwtSecurityToken securityToken = new JwtSecurityToken(
+                issuer: "Issuer",
+                audience: "Audience",
+                expires: tokenInstance.Expiration,//Token süresini 5 dk olarak belirliyorum
+                notBefore: DateTime.Now,//Token üretildikten ne kadar süre sonra devreye girsin ayarlıyouz.
+                signingCredentials: signingCredentials,
+                claims: claims
+                );
+
+            //Token oluşturucu sınıfında bir örnek alıyoruz.
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            //Token üretiyoruz.
+            tokenInstance.AccessToken = tokenHandler.WriteToken(securityToken);
+
+            //Refresh Token üretiyoruz.
+            tokenInstance.RefreshToken = CreateRefreshToken();
+            return tokenInstance;
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using (RandomNumberGenerator random = RandomNumberGenerator.Create())
+            {
+                random.GetBytes(number);
+                return Convert.ToBase64String(number);
+            }
+        }
+
+        public async Task CheckAuthorizationAsync2(string userId, int moduleTypeId, int authorizationTypeId) 
+        {
+            //var x =  System.Security.Claims.ClaimsPrincipal.Current.Claims.Where(x=>x.) 
+
+
+            //if (User.Claims.Count() == 0)
+            //    throw new Exception("");
+        }
+
+
     }
 }

@@ -4,10 +4,13 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Services;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,19 +33,19 @@ StaticValues.SessionTimeout = configuration["SessionTimeout"] == null ? 20 : Con
 if (StaticValues.IsDevelopment)
     Bbt.Campaign.Shared.Redis.RedisServer.StartRedis();
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Bbt.Campaign.Api",
-        Description = "An ASP.NET Core Web API for managing Bbt.Campaign.Api items"
-    });
+//builder.Services.AddSwaggerGen(options =>
+//{
+//    options.SwaggerDoc("v1", new OpenApiInfo
+//    {
+//        Version = "v1",
+//        Title = "Bbt.Campaign.Api",
+//        Description = "An ASP.NET Core Web API for managing Bbt.Campaign.Api items"
+//    });
 
-    // using System.Reflection;
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
+//    // using System.Reflection;
+//    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+//    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+//});
 
 IocLoader.UseIocLoader(builder.Services);
 ServiceModule.Configure(configuration, builder.Services);
@@ -55,6 +58,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//              .AddJwtBearer(options =>
+//              {
+//                  options.Authority = Configuration["Authentication:Authority"];
+//                  options.Audience = "api";
+//              });
+
 
 builder.Services.AddCors(o => o.AddPolicy("CampaignApiCors", builder =>
 {
@@ -62,6 +72,69 @@ builder.Services.AddCors(o => o.AddPolicy("CampaignApiCors", builder =>
            .AllowAnyMethod()
            .AllowAnyHeader();
 })); ;
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1.5",
+        Title = "Contract Approval API",
+        Description = "Provides validation infrastructure for contracts that customers need to approve."
+    });
+
+    // To Enable authorization using Swagger (JWT)  
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+
+                    }
+                });
+
+    // options.SchemaFilter<EnumSchemaFilter>();
+    options.UseInlineDefinitionsForEnums();
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    options.IncludeXmlComments(xmlPath);
+    options.CustomSchemaIds(x => x.FullName);
+    //options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false, // Oluþturulacak token deðerini kimlerin/hangi originlerin/sitelerin kullanacaðýný belirlediðimiz alandýr.
+        ValidateIssuer = false, // Oluþturulacak token deðerini kimin daðýttýðýný ifade edeceðimiz alandýr.
+        ValidateLifetime = true, // Oluþturulan token deðerinin süresini kontrol edecek olan doðrulamadýr.
+        ValidateIssuerSigningKey = true, // Üretilecek token deðerinin uygulamamýza ait bir deðer olduðunu ifade eden security key verisinin doðrulamasýdýr.
+        ValidIssuer = "Token:Issuer",
+        ValidAudience = "Token:Audience",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE")),
+        ClockSkew = TimeSpan.Zero // Üretilecek token deðerinin expire süresinin belirtildiði deðer kadar uzatýlmasýný saðlayan özelliktir. 
+    };
+});
+
+
+
 
 var app = builder.Build();
 
@@ -94,6 +167,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
 app.UseCors("CampaignApiCors");
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.UseCors(x => x
                .AllowAnyMethod()

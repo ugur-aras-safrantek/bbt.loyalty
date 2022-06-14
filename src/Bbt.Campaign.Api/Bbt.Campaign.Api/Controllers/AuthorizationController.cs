@@ -9,22 +9,43 @@ namespace Bbt.Campaign.Api.Controllers
     public class AuthorizationController :  BaseController<AuthorizationController>
     {
         private readonly IAuthorizationService _authorizationService;
+        private readonly IConfiguration _configuration;
 
-        public AuthorizationController(IAuthorizationService authorizationService)
+        public AuthorizationController(IAuthorizationService authorizationService, IConfiguration configuration)
         {
             _authorizationService = authorizationService;
+            _configuration = configuration;
         }
 
         /// <summary>
         /// Login of the user
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="code"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost]
+        [Route("login2")]
+        public async Task<IActionResult> LoginAsync2(string code, string state)
+        {
+            var createResult = await _authorizationService.LoginAsync2(code, state, _configuration);
+
+           // var x = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+
+            return Ok(createResult);
+        }
+
+        /// <summary>
+        /// Login of the user
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="state"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> LoginAsync(LoginRequest request)
+        public async Task<IActionResult> LoginAsync(string code, string state)
         {
-            var createResult = await _authorizationService.LoginAsync(request);
+            var createResult = await _authorizationService.LoginAsync(code, state);
             return Ok(createResult);
         }
 
@@ -37,7 +58,16 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("check-authorization")]
         public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
         {
-            var createResult = await _authorizationService.CheckAuthorizationAsync(request);
+            if (User.Claims.Count() > 0) 
+            {
+                var x = User.Claims.Where(x => x.Value == "cc");
+            
+            }
+
+
+
+           var createResult = await _authorizationService.CheckAuthorizationAsync(request);
+
             return Ok(createResult);
         }
 
