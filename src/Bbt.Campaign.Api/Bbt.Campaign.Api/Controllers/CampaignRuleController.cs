@@ -1,12 +1,17 @@
 ﻿using Bbt.Campaign.Api.Base;
-using Bbt.Campaign.Public.Dtos.CampaignRule;
+using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignRule;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
     public class CampaignRuleController : BaseController<CampaignRuleController>
     {
         private readonly ICampaignRuleService _campaignRuleService;
@@ -23,9 +28,9 @@ namespace Bbt.Campaign.Api.Controllers
         //[HttpGet("{id}")]
         [HttpGet]
         [Route("get/{id}")]
-        public async Task<IActionResult> GetById(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetById(int id)
         {
-            var adminSektor = await _campaignRuleService.GetCampaignRuleAsync(id, General.GetUserIdFromHeader(Request));
+            var adminSektor = await _campaignRuleService.GetCampaignRuleAsync(id);
             return Ok(adminSektor);
         }
         /// <summary>
@@ -37,9 +42,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         //public async Task<IActionResult> Add([FromForm] AddCampaignRuleRequest campaignRule)
-        public async Task<IActionResult> Add(AddCampaignRuleRequest campaignRule, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> Add(AddCampaignRuleRequest campaignRule)
         {
-            var createResult = await _campaignRuleService.AddAsync(campaignRule, General.GetUserIdFromHeader(Request));
+            var createResult = await _campaignRuleService.AddAsync(campaignRule, await GetUser());
             return Ok(createResult);
         }
         /// <summary>
@@ -51,9 +56,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         //public async Task<IActionResult> Update([FromForm] UpdateCampaignRuleRequest campaignRule)
-        public async Task<IActionResult> Update(UpdateCampaignRuleRequest campaignRule, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> Update(UpdateCampaignRuleRequest campaignRule)
         {
-            var result = await _campaignRuleService.UpdateAsync(campaignRule, General.GetUserIdFromHeader(this.Request));
+            var result = await _campaignRuleService.UpdateAsync(campaignRule, await GetUser());
             return Ok(result);
         }
         /// <summary>
@@ -63,9 +68,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("delete")]
-        public async Task<IActionResult> Delete(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = await _campaignRuleService.DeleteAsync(id, General.GetUserIdFromHeader(Request));
+            var result = await _campaignRuleService.DeleteAsync(id, await GetUser());
             return Ok(result);
         }
         /// <summary>
@@ -85,9 +90,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm([FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetInsertForm()
         {
-            var result = await _campaignRuleService.GetInsertForm(General.GetUserIdFromHeader(Request));
+            var result = await _campaignRuleService.GetInsertForm(await GetUser());
             return Ok(result);
         }
         /// <summary>
@@ -97,9 +102,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetUpdateForm(int campaignId)
         {
-            var result = await _campaignRuleService.GetUpdateForm(campaignId, General.GetUserIdFromHeader(Request));
+            var result = await _campaignRuleService.GetUpdateForm(campaignId, await GetUser());
             return Ok(result);
         }
 
@@ -114,6 +119,36 @@ namespace Bbt.Campaign.Api.Controllers
         {
             var result = await _campaignRuleService.GetRuleIdentityFileAsync(campaignId);
             return Ok(result);
+        }
+
+        private async Task<UserRoleDto2> GetUser()
+        {
+            UserRoleDto2 userRoleDto2 = new UserRoleDto2();
+
+            List<int> roleTypeIdList = new List<int>();
+            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+
+            if (!roleTypeIdList.Any())
+                throw new Exception("Kullanıcının yetkisi yoktur.");
+
+            userRoleDto2.RoleTypeIdList = roleTypeIdList;
+
+            return userRoleDto2;
         }
     }
 }

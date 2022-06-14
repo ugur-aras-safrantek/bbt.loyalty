@@ -3,11 +3,14 @@ using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
     public class CampainAchievementController : BaseController<CampainAchievementController>
     {
         private readonly ICampaignAchievementService _campaignAchievementService;

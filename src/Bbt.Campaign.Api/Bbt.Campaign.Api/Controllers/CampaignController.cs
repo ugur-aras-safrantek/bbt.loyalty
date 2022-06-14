@@ -4,9 +4,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Services.Services.Campaign;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Bbt.Campaign.Api.Controllers
 {

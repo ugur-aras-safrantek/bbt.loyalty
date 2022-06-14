@@ -2,11 +2,15 @@
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Services.Services.Approval;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+
 
 namespace Bbt.Campaign.Api.Controllers
 {
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
     public class ApproveController : BaseController<ApproveController>
     {
         private readonly IApprovalService _approvalService;

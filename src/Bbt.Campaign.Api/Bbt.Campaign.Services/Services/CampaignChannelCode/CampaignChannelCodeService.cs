@@ -2,6 +2,7 @@
 using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignChannelCode;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
@@ -34,17 +35,17 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, string userid)
+        public async Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
 
-            await Update(request, userid);
+            await Update(request, userRole.UserId);
 
             response.CampaignId = request.CampaignId;
             response.CampaignChannelCodeList = await GetCampaignChannelCodeList(request.CampaignId);
@@ -52,16 +53,16 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             return await BaseResponse<CampaignChannelCodeDto>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request, string userid) 
+        public async Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto2 userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
             CampaignChannelCodeDto response = new CampaignChannelCodeDto();
-            await Update(request, userid);
+            await Update(request, userRole.UserId);
 
             response.CampaignId = request.CampaignId;
             response.CampaignChannelCodeList = await GetCampaignChannelCodeList(request.CampaignId);
@@ -102,11 +103,11 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             });
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, string userid)
+        public async Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignChannelCodeInsertFormDto response = new CampaignChannelCodeInsertFormDto();
 
@@ -114,11 +115,11 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 
             return await BaseResponse<CampaignChannelCodeInsertFormDto>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid)
+        public async Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignChannelCodeUpdateFormDto response = new CampaignChannelCodeUpdateFormDto();
             
