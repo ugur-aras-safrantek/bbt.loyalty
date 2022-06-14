@@ -41,7 +41,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
@@ -89,7 +89,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
         }
 
-        public async Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -252,7 +252,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             throw new Exception("Kampanya Çatı Limiti bulunamadı.");
         }
 
-        public async Task<BaseResponse<CampaignTopLimitInsertFormDto>> GetInsertForm(UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTopLimitInsertFormDto>> GetInsertForm(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -297,7 +297,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<List<TopLimitDto>>.SuccessAsync(campaignTopLimitList);
         }
-        public async Task<BaseResponse<CampaignTopLimitUpdateFormDto>> GetUpdateForm(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTopLimitUpdateFormDto>> GetUpdateForm(int id, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -309,7 +309,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<CampaignTopLimitUpdateFormDto>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -327,7 +327,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CampaignTopLimitListFilterResponse>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

@@ -43,7 +43,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignRuleDto>> AddAsync(AddCampaignRuleRequest campaignRule, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
@@ -182,7 +182,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await BaseResponse<CampaignRuleDto>.SuccessAsync(mappedCampaignRuleDto);
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> UpdateAsync(AddCampaignRuleRequest campaignRule, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignRuleDto>> UpdateAsync(AddCampaignRuleRequest campaignRule, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -374,7 +374,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await GetCampaignRuleAsync(entity.Id);
         }
 
-        public async Task<BaseResponse<CampaignRuleDto>> DeleteAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignRuleDto>> DeleteAsync(int id, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -405,7 +405,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return null;
         }
 
-        public async Task<BaseResponse<CampaignRuleInsertFormDto>> GetInsertForm(UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignRuleInsertFormDto>> GetInsertForm(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -432,7 +432,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             return await BaseResponse<List<CampaignRuleDto>>.SuccessAsync(campaignRules);
         }
 
-        public async Task<BaseResponse<CampaignRuleUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignRuleUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

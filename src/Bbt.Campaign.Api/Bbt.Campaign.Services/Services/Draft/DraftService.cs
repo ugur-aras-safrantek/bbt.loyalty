@@ -194,7 +194,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
 
-        private async Task CheckValidationCampaignCopy(int campaignId, UserRoleDto2 userRole)
+        private async Task CheckValidationCampaignCopy(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;

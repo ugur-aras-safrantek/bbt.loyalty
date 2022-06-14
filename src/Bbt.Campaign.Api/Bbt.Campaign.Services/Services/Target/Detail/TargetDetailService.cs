@@ -35,7 +35,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             _authorizationService = authorizationservice;
             _draftService = draftService;
         }
-        public async Task<BaseResponse<TargetDetailDto>> AddAsync(TargetDetailInsertRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDetailDto>> AddAsync(TargetDetailInsertRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
@@ -93,7 +93,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             return await BaseResponse<TargetDetailDto>.FailAsync("Kampanya bulunamadı.");
         }
 
-        public Task<BaseResponse<TargetDetailListFilterResponse>> GetByFilterAsync(TargetDetailListFilterRequest request, UserRoleDto2 userRole)
+        public Task<BaseResponse<TargetDetailListFilterResponse>> GetByFilterAsync(TargetDetailListFilterRequest request, UserRoleDto userRole)
         {
             throw new NotImplementedException();
         }
@@ -185,7 +185,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             return await BaseResponse<TargetDetailDto>.FailAsync("Hedef bulunamadı.");
         }
 
-        public async Task<BaseResponse<TargetDetailDto>> UpdateAsync(TargetDetailInsertRequest targetDetail, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDetailDto>> UpdateAsync(TargetDetailInsertRequest targetDetail, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -249,7 +249,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             }
         }
 
-        public async Task<BaseResponse<TargetDetailInsertFormDto>> GetInsertFormAsync(UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDetailInsertFormDto>> GetInsertFormAsync(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -269,7 +269,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
             response.VerificationTimeList = (await _parameterService.GetVerificationTimeListAsync())?.Data;
         }
 
-        public async Task<BaseResponse<TargetDetailUpdateFormDto>> GetUpdateFormAsync(int targetId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDetailUpdateFormDto>> GetUpdateFormAsync(int targetId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

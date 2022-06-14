@@ -109,9 +109,9 @@ namespace Bbt.Target.Api.Controllers
             return Ok(result);
         }
 
-        private async Task<UserRoleDto2> GetUser()
+        private async Task<UserRoleDto> GetUser()
         {
-            UserRoleDto2 userRoleDto2 = new UserRoleDto2();
+            UserRoleDto userRoleDto2 = new UserRoleDto();
 
             List<int> roleTypeIdList = new List<int>();
             userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;

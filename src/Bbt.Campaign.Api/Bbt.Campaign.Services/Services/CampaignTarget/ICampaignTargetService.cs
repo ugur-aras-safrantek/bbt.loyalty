@@ -9,13 +9,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
     public interface ICampaignTargetService
     {
         public Task<BaseResponse<CampaignTargetDto>> GetCampaignTargetAsync(int id);
-        public Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, UserRoleDto2 userRole);
-        public Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, UserRoleDto2 userRole);
+        public Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, UserRoleDto userRole);
         public Task<BaseResponse<List<CampaignTargetDto>>> GetListAsync(); 
         public Task<BaseResponse<CampaignTargetDto>> GetListByCampaignAsync(int campaignId);
         public Task<BaseResponse<CampaignTargetDto>> DeleteAsync(int id);
-        public Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(UserRoleDto2 userRole);
-        public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto2 userRole);
+        public Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(UserRoleDto userRole);
+        public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto userRole);
         public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool isRemoveInvisible);
         public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, decimal usedAmount, int usedNumberOfTransaction);
         public Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang);

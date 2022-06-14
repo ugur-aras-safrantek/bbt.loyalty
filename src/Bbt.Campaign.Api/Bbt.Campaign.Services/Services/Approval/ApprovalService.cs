@@ -105,7 +105,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             return new DateTime(year, month, day);  
         }
 
-        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
@@ -133,7 +133,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 return await ApproveCampaignUpdateAsync(id, approvedCampaignEntity.Id, userRole.UserId);
             }
         }
-        public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto userRole)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -407,7 +407,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
-        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId, UserRoleDto2 userRoleDto) 
+        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId, UserRoleDto userRoleDto) 
         {
             CampaignApproveFormDto response = new CampaignApproveFormDto();
 
@@ -502,7 +502,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         #endregion
 
         #region approve toplimit
-        public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, UserRoleDto2 userRole) 
+        public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
@@ -607,7 +607,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             var mappedEntity = _mapper.Map<TopLimitDto>(entity);
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, UserRoleDto2 userRoleDto) 
+        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, UserRoleDto userRoleDto) 
         {
             TopLimitApproveFormDto response = new TopLimitApproveFormDto();
 
@@ -671,7 +671,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         #endregion
 
         #region target
-        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
@@ -779,7 +779,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, UserRoleDto userRole)
         {
             TargetApproveFormDto response = new TargetApproveFormDto();
 
@@ -983,7 +983,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         #region copy
 
-        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
@@ -993,7 +993,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         
 
-        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
@@ -1008,7 +1008,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedTopLimit);
         }
 
-        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId, UserRoleDto2 userRole) 
+        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;

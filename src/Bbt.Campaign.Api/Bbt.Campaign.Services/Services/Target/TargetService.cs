@@ -40,7 +40,7 @@ namespace Bbt.Target.Services.Services.Target
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDto>> AddAsync(TargetInsertRequest Target, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
@@ -147,7 +147,7 @@ namespace Bbt.Target.Services.Services.Target
             return await BaseResponse<List<TargetDto>>.SuccessAsync(mappedTargets);
         }
 
-        public async Task<BaseResponse<TargetDto>> UpdateAsync(TargetUpdateRequest Target, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetDto>> UpdateAsync(TargetUpdateRequest Target, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -208,7 +208,7 @@ namespace Bbt.Target.Services.Services.Target
             //file eklenmeli
         }
 
-        public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -237,7 +237,7 @@ namespace Bbt.Target.Services.Services.Target
             } 
         }
 
-        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(TargetListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<GetFileResponse>> GetExcelAsync(TargetListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

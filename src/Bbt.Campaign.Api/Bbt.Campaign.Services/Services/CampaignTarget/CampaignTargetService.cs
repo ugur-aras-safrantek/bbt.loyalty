@@ -44,7 +44,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             _authorizationService = authorizationservice;
             _draftService = draftService;
         }
-        public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, UserRoleDto2 userRole) 
+        public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
@@ -57,7 +57,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return await this.GetListByCampaignAsync(request.CampaignId);
         }
 
-        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -243,7 +243,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return null;
         }
 
-        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -776,7 +776,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
         //    return item;
         //}
-        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

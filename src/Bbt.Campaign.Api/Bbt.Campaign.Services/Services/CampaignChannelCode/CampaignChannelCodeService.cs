@@ -35,7 +35,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignChannelCodeDto>> AddAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
@@ -53,7 +53,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             return await BaseResponse<CampaignChannelCodeDto>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto2 userRole) 
+        public async Task<BaseResponse<CampaignChannelCodeDto>> UpdateAsync(CampaignChannelCodeUpdateRequest request, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -103,7 +103,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
             });
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignChannelCodeInsertFormDto>> GetInsertFormAsync(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -115,7 +115,7 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
 
             return await BaseResponse<CampaignChannelCodeInsertFormDto>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignChannelCodeUpdateFormDto>> GetUpdateFormAsync(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 

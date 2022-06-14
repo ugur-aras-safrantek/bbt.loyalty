@@ -15,13 +15,13 @@ namespace Bbt.Campaign.Services.Services.Report
 {
     public interface IReportService
     {
-        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(UserRoleDto2 userRole);
-        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(UserRoleDto2 userRole);
-        public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, UserRoleDto2 userRole);
-        public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, UserRoleDto2 userRole);
-        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, UserRoleDto2 userRole);
-        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, UserRoleDto2 userRole);
-        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int campaignId, UserRoleDto2 userRole);
+        public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(UserRoleDto userRole);
+        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(UserRoleDto userRole);
+        public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(int campaignId, UserRoleDto userRole);
         public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
     }
 }

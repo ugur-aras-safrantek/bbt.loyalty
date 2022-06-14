@@ -47,7 +47,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, UserRoleDto2 userRoleDto)
+        public async Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, UserRoleDto userRoleDto)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userRoleDto, moduleTypeId, authorizationTypeId);
@@ -97,7 +97,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await GetCampaignAsync(entity.Id);
         }
 
-        public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignDto>> UpdateAsync(CampaignUpdateRequest campaign, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -189,7 +189,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
         
         
         
-        public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, UserRoleDto2 userRole) 
+        public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
@@ -216,7 +216,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await _draftService.CreateCampaignCopyAsync(id, userid);
         }
 
-        public async Task<BaseResponse<CampaignDto>> DeleteAsync(int id, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignDto>> DeleteAsync(int id, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
@@ -266,7 +266,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return  mappedCampaign;
         }
 
-        public async Task<BaseResponse<CampaignInsertFormDto>> GetInsertFormAsync(UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignInsertFormDto>> GetInsertFormAsync(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -277,7 +277,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<CampaignInsertFormDto>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<List<CampaignDto>>> GetListAsync(UserRoleDto2 userRole)
+        public async Task<BaseResponse<List<CampaignDto>>> GetListAsync(UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -297,7 +297,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(existCampaings);
         }
 
-        public async Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id, string contentRootPath, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignUpdateFormDto>> GetUpdateFormAsync(int id, string contentRootPath, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -539,7 +539,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
         }
 
-        public async Task<BaseResponse<CampaignListFilterResponse>> GetByFilterAsync(CampaignListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<CampaignListFilterResponse>> GetByFilterAsync(CampaignListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -558,7 +558,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<CampaignListFilterResponse>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request, UserRoleDto2 userRole)
+        public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignListFilterRequest request, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
