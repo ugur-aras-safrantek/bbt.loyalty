@@ -1,9 +1,11 @@
 export interface ILoginRequestModel {
-  userId: any;
+  code: any;
+  state: any;
 }
 
 export class LoginRequestModel implements ILoginRequestModel {
-  userId: any;
+  code: any;
+  state: any;
 }
 
 export interface IAuthorizationModel {

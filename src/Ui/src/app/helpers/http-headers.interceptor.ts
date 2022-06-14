@@ -10,7 +10,7 @@ export class HttpHeadersInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (this.loginService.getUserLoginInfo()) {
-      request = request.clone({headers: request.headers.set('userid', this.loginService.getUserId())});
+      request = request.clone({headers: request.headers.set('accessToken', this.loginService.getAccessToken())});
     }
     return next.handle(request);
   }
