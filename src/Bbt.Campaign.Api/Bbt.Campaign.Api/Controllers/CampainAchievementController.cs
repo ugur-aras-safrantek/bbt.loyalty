@@ -1,4 +1,6 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +37,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> Add(CampaignAchievementInsertRequest campaignAchievement)
         {
-            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, General.GetUserIdFromHeader(Request));
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, await GetUser());
             return Ok(result);
         }
 
@@ -48,9 +50,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> Update(CampaignAchievementInsertRequest campaignAchievement)
         {
-            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, General.GetUserIdFromHeader(Request));
+            var result = await _campaignAchievementService.UpdateAsync(campaignAchievement, await GetUser());
             return Ok(result);
         }
         /// <summary>
@@ -85,9 +87,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-insert-form")]
-        public async Task<IActionResult> GetInsertForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetInsertForm(int campaignId)
         {
-            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId, General.GetUserIdFromHeader(Request));
+            var result = await _campaignAchievementService.GetInsertFormAsync(campaignId, await GetUser());
             return Ok(result);
         }
 
@@ -98,9 +100,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-update-form")]
-        public async Task<IActionResult> GetUpdateForm(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetUpdateForm(int campaignId)
         {
-            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId, General.GetUserIdFromHeader(Request));
+            var result = await _campaignAchievementService.GetUpdateFormAsync(campaignId, await GetUser());
             return Ok(result);
         }
 
@@ -111,9 +113,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("send-to-approval")]
-        public async Task<IActionResult> SendToAppropval(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> SendToAppropval(int campaignId)
         {
-            var result = await _campaignAchievementService.SendToAppropval(campaignId, General.GetUserIdFromHeader(Request));
+            var result = await _campaignAchievementService.SendToAppropval(campaignId, await GetUser());
             return Ok(result);
         }
 
@@ -129,6 +131,37 @@ namespace Bbt.Campaign.Api.Controllers
         //    var result = await _campaignAchievementService.GetListByCampaignAsync(campaignId);
         //    return Ok(result);
         //}
+
+
+        private async Task<UserRoleDto2> GetUser()
+        {
+            UserRoleDto2 userRoleDto2 = new UserRoleDto2();
+
+            List<int> roleTypeIdList = new List<int>();
+            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+
+            if (!roleTypeIdList.Any())
+                throw new Exception("Kullanıcının yetkisi yoktur.");
+
+            userRoleDto2.RoleTypeIdList = roleTypeIdList;
+
+            return userRoleDto2;
+        }
 
     }
 }

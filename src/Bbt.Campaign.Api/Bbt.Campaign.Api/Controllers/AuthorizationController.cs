@@ -17,23 +17,7 @@ namespace Bbt.Campaign.Api.Controllers
             _configuration = configuration;
         }
 
-        /// <summary>
-        /// Login of the user
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        /// 
-        [HttpPost]
-        [Route("login2")]
-        public async Task<IActionResult> LoginAsync2(string code, string state)
-        {
-            var createResult = await _authorizationService.LoginAsync2(code, state, _configuration);
-
-           // var x = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-
-            return Ok(createResult);
-        }
+        
 
         /// <summary>
         /// Login of the user

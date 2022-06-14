@@ -15,5 +15,11 @@
 
         public static string ContractServiceUrl { get; set; }
         public static int SessionTimeout { get; set; }
+
+
+        public static string Audience { get; set; }
+        public static string Issuer { get; set; }
+        public static string SecurityKey { get; set; }
+
     }
 }

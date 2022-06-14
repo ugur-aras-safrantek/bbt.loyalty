@@ -4,6 +4,7 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Approval;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Dtos.CampaignDetail;
@@ -104,11 +105,11 @@ namespace Bbt.Campaign.Services.Services.Approval
             return new DateTime(year, month, day);  
         }
 
-        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, string userid)
+        public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -116,7 +117,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (draftCampaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
 
-            if (draftCampaignEntity.CreatedBy == userid)
+            if (draftCampaignEntity.CreatedBy == userRole.UserId)
                 throw new Exception("Kampanya kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             var approvedCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
@@ -125,19 +126,15 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             if (approvedCampaignEntity == null)
             {
-                return await ApproveCampaignAddAsync(id, userid);
+                return await ApproveCampaignAddAsync(id, userRole.UserId);
             }
             else 
             {
-                return await ApproveCampaignUpdateAsync(id, approvedCampaignEntity.Id, userid);
+                return await ApproveCampaignUpdateAsync(id, approvedCampaignEntity.Id, userRole.UserId);
             }
         }
-        public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, string userid)
+        public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto2 userRole)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
-
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -145,7 +142,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Kampanya bulunamadı");
 
             campaignEntity.StatusId = (int)StatusEnum.Draft;
-            campaignEntity.LastModifiedBy = userid;
+            campaignEntity.LastModifiedBy = userRole.UserId;
 
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -410,7 +407,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             return await BaseResponse<CampaignDto>.SuccessAsync(mappedCampaign);
         }
-        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId, string userId) 
+        public async Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int draftId, UserRoleDto2 userRoleDto) 
         {
             CampaignApproveFormDto response = new CampaignApproveFormDto();
 
@@ -505,11 +502,12 @@ namespace Bbt.Campaign.Services.Services.Approval
         #endregion
 
         #region approve toplimit
-        public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, string userid) 
+        public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, UserRoleDto2 userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+            string userid = userRole.UserId;
             if (isApproved) 
             {
                 var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
@@ -531,12 +529,12 @@ namespace Bbt.Campaign.Services.Services.Approval
                 }
                 else
                 {
-                    return await ApproveTopLimitUpdateAsync(id, approvedEntity.Id, userid);
+                    return await ApproveTopLimitUpdateAsync(id, approvedEntity.Id, userRole.UserId);
                 }
             }
             else 
             {
-                return await this.DisApproveTopLimitAsync(id, userid);
+                return await this.DisApproveTopLimitAsync(id, userRole.UserId);
             }
         }
         private async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAddAsync(int id, string userid) 
@@ -609,7 +607,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             var mappedEntity = _mapper.Map<TopLimitDto>(entity);
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, string userid) 
+        public async Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, UserRoleDto2 userRoleDto) 
         {
             TopLimitApproveFormDto response = new TopLimitApproveFormDto();
 
@@ -673,11 +671,11 @@ namespace Bbt.Campaign.Services.Services.Approval
         #endregion
 
         #region target
-        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, string userid)
+        public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            int moduleTypeId = (int)ModuleTypeEnum.Target;
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             if (isApproved)
             {
@@ -687,7 +685,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 if (draftEntity == null)
                     throw new Exception("Hedef bulunamadı");
 
-                if (draftEntity.CreatedBy == userid)
+                if (draftEntity.CreatedBy == userRole.UserId)
                     throw new Exception("Hedef kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
                 var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>()
@@ -696,16 +694,16 @@ namespace Bbt.Campaign.Services.Services.Approval
 
                 if (approvedEntity == null)
                 {
-                    return await ApproveTargetAddAsync(id, userid);
+                    return await ApproveTargetAddAsync(id, userRole.UserId);
                 }
                 else
                 {
-                    return await ApproveTargetUpdateAsync(id, approvedEntity.Id, userid);
+                    return await ApproveTargetUpdateAsync(id, approvedEntity.Id, userRole.UserId);
                 }
             }
             else
             {
-                return await this.DisApproveTargetAsync(id, userid);
+                return await this.DisApproveTargetAsync(id, userRole.UserId);
             }
 
         }
@@ -781,7 +779,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             return await BaseResponse<TargetDto>.SuccessAsync(mappedEntity);
         }
-        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, string userid)
+        public async Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, UserRoleDto2 userRole)
         {
             TargetApproveFormDto response = new TargetApproveFormDto();
 
@@ -985,20 +983,24 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         #region copy
 
-        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, string userid)
+        public async Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int id, UserRoleDto2 userRole)
         {
-            return await _draftService.CreateCampaignCopyAsync(id, userid);
+            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
+
+            return await _draftService.CreateCampaignCopyAsync(id, userRole.UserId);
         }
         
 
-        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, string userid)
+        public async Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int refId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
             
             TopLimitEntity entity = new TopLimitEntity();
-            entity = await _draftService.CopyTopLimitInfo(refId, entity, userid, false, false, false, false, false);
+            entity = await _draftService.CopyTopLimitInfo(refId, entity, userRole.UserId, false, false, false, false, false);
             await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
@@ -1006,15 +1008,15 @@ namespace Bbt.Campaign.Services.Services.Approval
             return await BaseResponse<TopLimitDto>.SuccessAsync(mappedTopLimit);
         }
 
-        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId, string userid) 
+        public async Task<BaseResponse<TargetDto>> TargetCopyAsync(int refId, UserRoleDto2 userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             int moduleTypeId = (int)ModuleTypeEnum.Target;
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             TargetEntity entity = new TargetEntity();
             entity.TargetDetail = new TargetDetailEntity();
-            entity = await _draftService.CopyTargetInfo(refId, entity, userid, false, false, false, false, false);
+            entity = await _draftService.CopyTargetInfo(refId, entity, userRole.UserId, false, false, false, false, false);
             await _unitOfWork.GetRepository<TargetEntity>().AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 

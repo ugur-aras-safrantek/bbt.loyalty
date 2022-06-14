@@ -4,6 +4,7 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
@@ -38,17 +39,17 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             _draftService = draftService;
         }
 
-        public async Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, string userid)
+        public async Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
             await CheckValidationForSentToApproval(request.CampaignId);
 
-            await Update(request, userid);
+            await Update(request, userRole.UserId);
 
             List<CampaignAchievementDto> response = new List<CampaignAchievementDto>();
 
@@ -57,18 +58,18 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<List<CampaignAchievementDto>>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<List<CampaignAchievementDto>>> UpdateAsync(CampaignAchievementInsertRequest request, string userid)
+        public async Task<BaseResponse<List<CampaignAchievementDto>>> UpdateAsync(CampaignAchievementInsertRequest request, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationAsync(request);
 
             int processTypeId = await _draftService.GetCampaignProcessType(request.CampaignId);
             if (processTypeId == (int)ProcessTypesEnum.CreateDraft)
             {
-                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userid, (int)PageTypeEnum.CampaignAchievement);
+                request.CampaignId = await _draftService.CreateCampaignDraftAsync(request.CampaignId, userRole.UserId, (int)PageTypeEnum.CampaignAchievement);
             }
             else
             {
@@ -82,7 +83,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
             await CheckValidationForSentToApproval(request.CampaignId);
 
-            await Update(request, userid);
+            await Update(request, userRole.UserId);
 
             List<CampaignAchievementDto> response = await GetCampaignAchievementListDto(request.CampaignId);
 
@@ -239,11 +240,11 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return mappedCampaignAchievement;
         }
 
-        public async Task<BaseResponse<CampaignAchievementInsertFormDto>> GetInsertFormAsync(int campaignId, string userid)
+        public async Task<BaseResponse<CampaignAchievementInsertFormDto>> GetInsertFormAsync(int campaignId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementInsertFormDto response = new CampaignAchievementInsertFormDto();
             
@@ -269,11 +270,11 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<List<CampaignAchievementDto>>.SuccessAsync(campaignAchievementList);
         }
 
-        public async Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId, string userid)
+        public async Task<BaseResponse<CampaignAchievementUpdateFormDto>> GetUpdateFormAsync(int campaignId, UserRoleDto2 userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userid, moduleTypeId, authorizationTypeId);
+            await _authorizationService.CheckAuthorizationAsync2(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementUpdateFormDto response = new CampaignAchievementUpdateFormDto();
             await FillForm(response, campaignId);            
@@ -374,13 +375,13 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 throw new Exception("Kampanya kanal kodu giriniz.");
         }
 
-        public async Task<BaseResponse<bool>> SendToAppropval(int campaignId, string userid) 
+        public async Task<BaseResponse<bool>> SendToAppropval(int campaignId, UserRoleDto2 userRole) 
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
             campaignEntity.StatusId = (int)StatusEnum.SentToApprove;
-            campaignEntity.LastModifiedBy = userid;
+            campaignEntity.LastModifiedBy = userRole.UserId;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
             return await BaseResponse<bool>.SuccessAsync(true);
         }

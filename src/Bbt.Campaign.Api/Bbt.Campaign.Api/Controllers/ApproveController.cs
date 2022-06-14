@@ -1,4 +1,6 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Services.Services.Approval;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -21,9 +23,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("campaign/{id}")]
-        public async Task<IActionResult> ApproveCampaign(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> ApproveCampaign(int id)
         {
-            var result = await _approvalService.ApproveCampaignAsync(id, userId);
+            var result = await _approvalService.ApproveCampaignAsync(id, await GetUser());
             return Ok(result);
         }
 
@@ -34,9 +36,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("campaign-disapprove/{id}")]
-        public async Task<IActionResult> DisApproveCampaign(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> DisApproveCampaign(int id)
         {
-            var result = await _approvalService.DisApproveCampaignAsync(id, userId);
+            var result = await _approvalService.DisApproveCampaignAsync(id, await GetUser());
             return Ok(result);
         }
 
@@ -73,9 +75,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-campaign-form")]
-        public async Task<IActionResult> GetCampaignApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetCampaignApprovalFormAsync(int id)
         {
-            var result = await _approvalService.GetCampaignApprovalFormAsync(id, userId);
+            var result = await _approvalService.GetCampaignApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
 
@@ -86,9 +88,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-target-form")]
-        public async Task<IActionResult> GetTargetApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetTargetApprovalFormAsync(int id)
         {
-            var result = await _approvalService.GetTargetApprovalFormAsync(id, userId);
+            var result = await _approvalService.GetTargetApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
 
@@ -100,9 +102,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("target/{id}/{isApproved}")]
-        public async Task<IActionResult> ApproveTargetAsync(int id, bool isApproved, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> ApproveTargetAsync(int id, bool isApproved)
         {
-            var result = await _approvalService.ApproveTargetAsync(id, isApproved, userId);
+            var result = await _approvalService.ApproveTargetAsync(id, isApproved, await GetUser());
             return Ok(result);
         }
 
@@ -113,9 +115,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get-toplimit-form")]
-        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
         {
-            var result = await _approvalService.GetTopLimitApprovalFormAsync(id, userId);
+            var result = await _approvalService.GetTopLimitApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
 
@@ -127,9 +129,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("toplimit/{id}/{isApproved}")]
-        public async Task<IActionResult> ApproveTopLimit(int id, bool isApproved, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> ApproveTopLimit(int id, bool isApproved)
         {
-            var result = await _approvalService.ApproveTopLimitAsync(id, isApproved, userId);
+            var result = await _approvalService.ApproveTopLimitAsync(id, isApproved, await GetUser());
             return Ok(result);
         }
 
@@ -153,9 +155,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("copy-campaign")]
-        public async Task<IActionResult> CampaignCopyAsync(int campaignId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> CampaignCopyAsync(int campaignId)
         {
-            var result = await _approvalService.CampaignCopyAsync(campaignId, General.GetUserIdFromHeader(Request));
+            var result = await _approvalService.CampaignCopyAsync(campaignId, await GetUser());
             return Ok(result);
         }
 
@@ -166,9 +168,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("copy-top-limit")]
-        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> TopLimitCopyAsync(int topLimitId)
         {
-            var result = await _approvalService.TopLimitCopyAsync(topLimitId, General.GetUserIdFromHeader(Request));
+            var result = await _approvalService.TopLimitCopyAsync(topLimitId, await GetUser());
             return Ok(result);
         }
 
@@ -179,13 +181,11 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("copy-target")]
-        public async Task<IActionResult> TargetCopyAsync(int targetId, [FromHeader(Name = "userid")][Required] string userId)
+        public async Task<IActionResult> TargetCopyAsync(int targetId)
         {
-            var result = await _approvalService.TargetCopyAsync(targetId, General.GetUserIdFromHeader(Request));
+            var result = await _approvalService.TargetCopyAsync(targetId, await GetUser());
             return Ok(result);
         }
-
-
 
         /// <summary>
         /// convert
@@ -228,5 +228,36 @@ namespace Bbt.Campaign.Api.Controllers
             var result = _approvalService.ConvertWithNewDateTime(date);
             return Ok(result);
         }
+
+        private async Task<UserRoleDto2> GetUser()
+        {
+            UserRoleDto2 userRoleDto2 = new UserRoleDto2();
+
+            List<int> roleTypeIdList = new List<int>();
+            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+
+            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
+                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+
+            if (!roleTypeIdList.Any())
+                throw new Exception("Kullanıcının yetkisi yoktur.");
+
+            userRoleDto2.RoleTypeIdList = roleTypeIdList;
+
+            return userRoleDto2;
+        }
+
     }
 }

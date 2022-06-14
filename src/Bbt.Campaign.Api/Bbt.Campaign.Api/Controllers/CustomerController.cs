@@ -21,7 +21,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("join")]
+        [Route("join/{customerId}")]
         public async Task<IActionResult> SetJoin(SetJoinRequest request)
         {
             var createResult = await _customerService.SetJoin(request);
@@ -33,7 +33,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="request">Code of the customer</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("favorite")]
+        [Route("favorite/{customerId}")]
         public async Task<IActionResult> SetFavorite(SetFavoriteRequest request)
         {
             var createResult = await _customerService.SetFavorite(request);
@@ -45,7 +45,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="campaignId">Record Id of the campaign</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("view-customer-min")]
+        [Route("view-customer-min/{customerId}")]
         public async Task<IActionResult> GetCustomerViewFormAsync(int campaignId)
         {
             var result = await _customerService.GetCustomerViewFormAsync(campaignId, _webHostEnvironment.ContentRootPath);
@@ -59,7 +59,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="customerCode">Code of the customer</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-join-form")]
+        [Route("get-join-form/{customerId}")]
         public async Task<IActionResult> GetCustomerJoinFormAsync(int campaignId, string customerCode)
         {
             var result = await _customerService.GetCustomerJoinFormAsync(campaignId, customerCode, _webHostEnvironment.ContentRootPath);
@@ -73,7 +73,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="customerCode">Code of the customer</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-join-success-form")]
+        [Route("get-join-success-form/{customerId}")]
         public async Task<IActionResult> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode)
         {
             var result = await _customerService.GetCustomerJoinSuccessFormAsync(campaignId, customerCode);
@@ -86,7 +86,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="request">Page types: Campaign = 1, Join = 2, Favorite = 3, OverDue = 4</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("get-by-filter")]
+        [Route("get-by-filter/{customerId}")]
         public async Task<IActionResult> GetByFilter(CustomerCampaignListFilterRequest request)
         {
             var result = await _customerService.GetByFilterAsync(request);
@@ -101,7 +101,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="language">language (send tr for turkish)</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-customer-achievements")]
+        [Route("get-customer-achievements/{customerId}")]
         public async Task<IActionResult> GetCustomerAchievementFormAsync2(int campaignId, string customerCode, string? language)
         {
             

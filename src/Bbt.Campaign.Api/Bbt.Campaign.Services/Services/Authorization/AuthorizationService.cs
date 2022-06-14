@@ -14,6 +14,7 @@ using Bbt.Campaign.Shared.Static;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -36,66 +37,70 @@ namespace Bbt.Campaign.Services.Services.Authorization
             _parameterService = parameterService;
             _redisDatabaseProvider = redisDatabaseProvider;
         }
-        public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(string code, string state) 
+        public async Task<BaseResponse<UserAuthorizationResponseDto>> LoginAsync(string code, string state) 
         {
+            UserAuthorizationResponseDto response = new UserAuthorizationResponseDto();
 
+            response.Code = code;   
+            response.State = state;
 
-
-
-            if (!StaticValues.IsDevelopment)
-            {
-                //string accessToken = await _parameterService.GetUserAccessToken(code);
-
-                //using (var client = new HttpClient())
-                //{
-                //    string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
-                //    string apiAddress = await _parameterService.GetServiceConstantValue("RolesApiAddress");
-                //    client.BaseAddress = new Uri(baseAddress);
-                //    var content = new FormUrlEncodedContent(new[]
-                //    {
-                //        new KeyValuePair<string, string>("access_token", accessToken),
-                //    });
-
-                //    var result = await client.PostAsync(apiAddress, content);
-                //    var responseContent = result.Content.ReadAsStringAsync().Result;
-
-                //    throw new Exception(responseContent);
-                //}
-
-
-
-
-                //servisten user roller çekilecek
-                //string userRoles = "";
-                //await UpdateUserRoles(request.UserId, userRoles);
-            }
-
-           // await UpdateUserProcessDate(request.UserId);
-
-            List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
-            //List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
-            //if(roleAuthorizationList == null || !roleAuthorizationList.Any()) 
-            //    throw new Exception("Rol tanımları bulunamadı.");
-            //List<UserRoleDto> userRoleList = (await _parameterService.GetUserRoleListAsync(request.UserId))?.Data; 
-            //if(userRoleList == null)
-            //    return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
-
-            //roleAuthorizationList = roleAuthorizationList.Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId)).ToList();
-            //var moduleTypeList = roleAuthorizationList.Select(x=>x.ModuleTypeId).Distinct().ToList();
-            //foreach(int moduleTypeId in moduleTypeList) 
+            //UserModelDto userModel = await GetUserRoles(code, state);
+            //var result = new GetSearchPersonSummaryDto
             //{
-            //    UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
-            //    List<int> authorizationList = new List<int>();
-            //    foreach(var roleAuthorization in roleAuthorizationList.Where(x=>x.ModuleTypeId == moduleTypeId)) 
-            //    {
-            //        authorizationList.Add(roleAuthorization.AuthorizationTypeId);
-            //    }
-            //    userAuthorizationDto.ModuleId = moduleTypeId;
-            //    userAuthorizationDto.AuthorizationList = authorizationList;
-            //    userAuthorizationList.Add(userAuthorizationDto);
-            //}
+            //    CitizenshipNumber = response.Tckn
+            //};
 
-            return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(userAuthorizationList);
+            UserModelDto userModel = new UserModelDto();
+            userModel.Authority = new AuthorityModel();
+            userModel.UserId = "11";
+            userModel.Authority.IsLoyaltyCreator = false;
+            userModel.Authority.IsLoyaltyApprover = false;
+            userModel.Authority.IsLoyaltyReader = true;
+            userModel.Authority.IsLoyaltyRuleCreator = true;
+            userModel.Authority.IsLoyaltyRuleApprover = true;
+
+            //set user roles
+            List<UserRoleDto> userRoleList = new List<UserRoleDto>();
+            if (userModel.Authority.IsLoyaltyCreator)
+                userRoleList.Add(new UserRoleDto() { Id = 1, UserId = userModel.UserId, RoleTypeId = (int)RoleTypeEnum.IsLoyaltyCreator });
+            if (userModel.Authority.IsLoyaltyApprover)
+                userRoleList.Add(new UserRoleDto() { Id = 2, UserId = userModel.UserId, RoleTypeId = (int)RoleTypeEnum.IsLoyaltyApprover });
+            if (userModel.Authority.IsLoyaltyReader)
+                userRoleList.Add(new UserRoleDto() { Id = 3, UserId = userModel.UserId, RoleTypeId = (int)RoleTypeEnum.IsLoyaltyReader });
+            if (userModel.Authority.IsLoyaltyRuleCreator)
+                userRoleList.Add(new UserRoleDto() { Id = 4, UserId = userModel.UserId, RoleTypeId = (int)RoleTypeEnum.IsLoyaltyRuleCreator });
+            if (userModel.Authority.IsLoyaltyRuleApprover)
+                userRoleList.Add(new UserRoleDto() { Id = 5, UserId = userModel.UserId, RoleTypeId = (int)RoleTypeEnum.IsLoyaltyRuleApprover });
+
+            if(!userRoleList.Any())
+                throw new Exception("Bu kullanıcı için tanımlı bir yetki bulunamadı.");
+
+            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+            if (roleAuthorizationList == null || !roleAuthorizationList.Any())
+                throw new Exception("Rol tanımları bulunamadı.");
+
+            roleAuthorizationList = roleAuthorizationList.Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId)).ToList();
+            var moduleTypeList = roleAuthorizationList.Select(x => x.ModuleTypeId).Distinct().ToList();
+            List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
+            foreach (int moduleTypeId in moduleTypeList)
+            {
+                UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
+                List<int> authorizationList = new List<int>();
+                foreach (var roleAuthorization in roleAuthorizationList.Where(x => x.ModuleTypeId == moduleTypeId))
+                    authorizationList.Add(roleAuthorization.AuthorizationTypeId);
+
+                userAuthorizationDto.ModuleId = moduleTypeId;
+                userAuthorizationDto.AuthorizationList = authorizationList;
+                userAuthorizationList.Add(userAuthorizationDto);
+            }
+            response.AuthorizationList = userAuthorizationList;
+
+            Token token = await CreateAccessToken(userModel);
+            response.AccessToken = token.AccessToken;
+
+            //await UpdateUserProcessDate(userModel.UserId);
+
+            return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
         public async Task<BaseResponse<LogoutResponse>> LogoutAsync(LogoutRequest request) 
         {
@@ -160,9 +165,9 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
 
             //session timeout kontrolu
-            DateTime lastProcessDate = userRoleList[0].LastProcessDate;
-            if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
-                throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
+            //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
+            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
 
             //modul ve işlem bazlı sorgulama
             List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
@@ -174,6 +179,45 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             await UpdateUserProcessDate(userId);
         }
+
+
+        public async Task CheckAuthorizationAsync2(UserRoleDto2 userRoleDto, int moduleTypeId, int authorizationTypeId)
+        {
+            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+            if (roleAuthorizationList == null || !roleAuthorizationList.Any())
+                throw new Exception("Rol tanımları bulunamadı.");
+
+            // kullanıcı yetkileri
+            //var userRoleList = (await _parameterService.GetUserRoleListAsync(userRoleDto.UserId))?.Data;
+            //if (userRoleList == null || !userRoleList.Any())
+            //    throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
+
+            //session timeout kontrolu
+            //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
+            //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
+            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
+
+            //modul ve işlem bazlı sorgulama
+            List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
+                .Where(x => userRoleDto.RoleTypeIdList.Any(p2 => p2 == x.RoleTypeId)
+                                                && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
+                .ToList();
+            if (!userRoleAuthorizationList.Any())
+                throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
+
+            //await UpdateUserProcessDate(userId);
+        }
+
+
+
+
+
+
+
+
+
+
+
         private async Task UpdateUserProcessDate(string userId) 
         {
             DateTime now = DateTime.Now;
@@ -186,43 +230,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
             }
             await _unitOfWork.SaveChangesAsync();
             await _parameterService.SetUserRoleListAsync(userId, userRoleList);
-        }
-
-        public async Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync2(string code, string state, IConfiguration _configuration) 
-        {
-            List<UserAuthorizationDto> list = new List<UserAuthorizationDto>();
-
-
-
-            //UserModelDto userModel = await GetUserRoles(code, state);
-            //var result = new GetSearchPersonSummaryDto
-            //{
-            //    CitizenshipNumber = response.Tckn
-            //};
-
-            UserModelDto userModel = new UserModelDto();
-            userModel.Authority = new AuthorityModel();
-            userModel.UserId = "11";
-            userModel.Authority.IsLoyaltyCreator = true;
-            userModel.Authority.IsLoyaltyApprover = true;
-            userModel.Authority.IsLoyaltyReader = true;
-            userModel.Authority.IsLoyaltyRuleCreator = true;
-            userModel.Authority.IsLoyaltyRuleApprover = true;
-
-
-            //TokenHandler tokenHandler = new TokenHandler(_configuration);
-            Token token = await CreateAccessToken(userModel);
-            //result.Token = token.AccessToken;
-
-
-            //System.Security.Claims.ClaimsPrincipal.
-
-            //if (User.Claims.Count() == 0)
-
-            //if(User.)
-
-            return await BaseResponse<List<UserAuthorizationDto>>.SuccessAsync(list); 
-
         }
 
         private async Task<UserModelDto> GetUserRoles(string code, string state)
@@ -286,7 +293,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             //Security  Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = 
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE"));
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StaticValues.SecurityKey));
 
             //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -294,8 +301,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //Oluşturulacak token ayarlarını veriyoruz.
             tokenInstance.Expiration = DateTime.Now.AddMinutes(60);
             JwtSecurityToken securityToken = new JwtSecurityToken(
-                issuer: "Issuer",
-                audience: "Audience",
+                issuer: StaticValues.Issuer,
+                audience: StaticValues.Audience,
                 expires: tokenInstance.Expiration,//Token süresini 5 dk olarak belirliyorum
                 notBefore: DateTime.Now,//Token üretildikten ne kadar süre sonra devreye girsin ayarlıyouz.
                 signingCredentials: signingCredentials,
@@ -330,6 +337,20 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             //if (User.Claims.Count() == 0)
             //    throw new Exception("");
+        }
+
+        private enum RoleTypeEnum
+        {
+            [Description("isLoyaltyCreator")]
+            IsLoyaltyCreator = 1,
+            [Description("isLoyaltyApprover")]
+            IsLoyaltyApprover = 2,
+            [Description("isLoyaltyReader")]
+            IsLoyaltyReader = 3,
+            [Description("isLoyaltyRuleCreator")]
+            IsLoyaltyRuleCreator = 4,
+            [Description("isLoyaltyRuleApprover")]
+            IsLoyaltyRuleApprover = 5
         }
 
 
