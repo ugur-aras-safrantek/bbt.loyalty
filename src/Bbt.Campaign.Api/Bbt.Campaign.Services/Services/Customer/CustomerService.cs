@@ -321,7 +321,9 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             //target
 
-            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, true);
+            //var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDto(campaignId, true);
+
+            var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, string.Empty, "tr", true);
 
             response.CampaignTarget = campaignTargetDto;
 
@@ -332,12 +334,12 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerJoinFormAsync(int campaignId, string customerCode, string contentRootPath)
+        public async Task<BaseResponse<CustomerJoinFormDto>> GetCustomerJoinFormAsync(int campaignId, string customerCode, string contentRootPath)
         {
             if (string.IsNullOrEmpty(customerCode))
                 throw new Exception("Müşteri kodu giriniz.");
 
-            CustomerViewFormMinDto response = new CustomerViewFormMinDto();
+            CustomerJoinFormDto response = new CustomerJoinFormDto();
 
             //campaign
             response.CampaignId = campaignId;
@@ -388,7 +390,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             //response.CampaignAchievementList = campaignAchievementList;
 
-            return await BaseResponse<CustomerViewFormMinDto>.SuccessAsync(response);
+            return await BaseResponse<CustomerJoinFormDto>.SuccessAsync(response);
         }
 
         //private async Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerFormAsync(int campaignId, string? customerCode, int customerFormType, string contentRootPath)
@@ -741,7 +743,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
 
-            response.CampaignTarget =  await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language);
+            response.CampaignTarget =  await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
             //response.CampaignTarget.ProgressBarlist = campaignTargetDto2.ProgressBarlist;
             //response.CampaignTarget.Informationlist = campaignTargetDto2.Informationlist;
 

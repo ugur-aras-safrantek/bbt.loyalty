@@ -519,9 +519,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                             RemainAmountStr = remainAmountStr,
                             Percent = percent,
                             DescriptionTr = campaignTarget.DescriptionTr,
-                            //DescriptionEn = campaignTarget.DescriptionEn,
-                            //TargetDetailTr = campaignTarget.TargetDetailTr,
-                            //TargetDetailEn = campaignTarget.TargetDetailEn,
+                            DescriptionEn = campaignTarget.DescriptionEn,
+                            TargetDetailTr = campaignTarget.TargetDetailTr,
+                            TargetDetailEn = campaignTarget.TargetDetailEn,
                         });
                 }
                 campaignTargetDto.TargetGroupList.Add(targetGroupDto);
@@ -530,7 +530,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto;
         }
 
-        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang) 
+        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang, bool isTest) 
         {
             CampaignTargetDto2 campaignTargetDto2 = new CampaignTargetDto2();
             List<TargetParameterDto2> progressBarlist = new List<TargetParameterDto2>();
@@ -545,6 +545,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             bool isAchieved = false;
             if (StaticValues.IsDevelopment) 
             {
+                campaignTargetDto2.IsAchieved = isAchieved;
                 var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
                 campaignTargetQuery = campaignTargetQuery.Where(x => x.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible);
                 var campaignTargetList = CampaignTargetListData.GetCampaignTargetList(campaignTargetQuery);
@@ -568,7 +569,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         targetParameterDto2.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
                         targetParameterDto2.TargetAmountCurrencyCode = "TRY";
 
-                        usedAmount = 1000;
+                        usedAmount = 0;
                         targetParameterDto2.UsedAmount = usedAmount;
                         targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
                         targetParameterDto2.UsedAmountCurrencyCode = "TRY";
@@ -595,7 +596,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                         targetParameterDto2.TargetAmountStr = campaignTarget.NumberOfTransaction.ToString();
                         targetParameterDto2.TargetAmountCurrencyCode = null;
 
-                        usedNumberOfTransaction = 2;
+                        usedNumberOfTransaction = 0;
                         targetParameterDto2.UsedAmount = usedNumberOfTransaction;
                         targetParameterDto2.UsedAmountStr = usedNumberOfTransaction.ToString(); 
                         targetParameterDto2.UsedAmountCurrencyCode = null;
