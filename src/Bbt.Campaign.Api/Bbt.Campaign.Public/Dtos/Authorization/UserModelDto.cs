@@ -8,12 +8,11 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
 {
     public class UserModelDto
     {
-        public string UserId { get; set; }
-        public string Token { get; set; }
-        public AuthorityModel Authority { get; set; }
+        public string Tckn { get; set; }
+        public List<string> Credentials { get; set; }
     }
 
-    public class AuthorityModel
+    public class Credentials
     {
         public bool IsLoyaltyCreator { get; set; } 
         public bool IsLoyaltyApprover { get; set; } 
@@ -22,4 +21,11 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
         public bool IsLoyaltyRuleApprover { get; set; } 
     }
 
+    public class UserModelDto2 
+    {
+        public string Tckn { get; set; }
+
+        public Credentials Credentials { get; set; }
+
+    }
 }

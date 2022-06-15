@@ -5,6 +5,7 @@ using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Authorization;
 using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Services.Services.Parameter;
@@ -44,39 +45,60 @@ namespace Bbt.Campaign.Services.Services.Authorization
             response.Code = code;   
             response.State = state;
 
-            //UserModelDto userModel = await GetUserRoles(code, state);
-            //var result = new GetSearchPersonSummaryDto
-            //{
-            //    CitizenshipNumber = response.Tckn
-            //};
+            UserModelDto userModel = await GetUserRoles(code, state);
 
-            UserModelDto userModel = new UserModelDto();
-            userModel.Authority = new AuthorityModel();
-            userModel.UserId = "11";
-            userModel.Authority.IsLoyaltyCreator = false;
-            userModel.Authority.IsLoyaltyApprover = false;
-            userModel.Authority.IsLoyaltyReader = true;
-            userModel.Authority.IsLoyaltyRuleCreator = true;
-            userModel.Authority.IsLoyaltyRuleApprover = true;
+            //UserModelDto userModel = new UserModelDto();
+            //userModel.Tckn = "11701604572";
+            //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
+
+            UserModelDto2 userModel2 = new UserModelDto2();
+            userModel2.Credentials = new Credentials();
+            userModel2.Tckn = userModel.Tckn;
+            userModel2.Credentials.IsLoyaltyRuleCreator = false;
+            userModel2.Credentials.IsLoyaltyRuleCreator = false;
+            userModel2.Credentials.IsLoyaltyRuleApprover = false;
+            userModel2.Credentials.IsLoyaltyApprover = false;
+            userModel2.Credentials.IsLoyaltyReader = false;
 
             //set user roles
             UserRoleDto userRoleDto = new UserRoleDto();
             List<int> roleTypeIdList = new List<int>();
-            userRoleDto.UserId = userModel.UserId;
+            userRoleDto.UserId = userModel.Tckn;
 
-            List<UserRoleDto> userRoleList = new List<UserRoleDto>();
-            if (userModel.Authority.IsLoyaltyCreator)
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
-            if (userModel.Authority.IsLoyaltyApprover)
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
-            if (userModel.Authority.IsLoyaltyReader)
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
-            if (userModel.Authority.IsLoyaltyRuleCreator)
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
-            if (userModel.Authority.IsLoyaltyRuleApprover)
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+            foreach(string credential in userModel.Credentials) 
+            {
+                string[] credentialArray = credential.Split("###");
+                string credentialName = credentialArray[0];
+                string credentialValue = credentialArray[1];
+                if(!string.IsNullOrEmpty(credentialValue) && credentialValue == "1") 
+                {
+                    switch (credentialName) 
+                    {
+                        case "isLoyaltyCreator":
+                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+                            userModel2.Credentials.IsLoyaltyCreator = true;
+                            break;
+                        case "isLoyaltyRuleCreator":
+                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+                            userModel2.Credentials.IsLoyaltyRuleCreator = true;
+                            break;
+                        case "isLoyaltyRuleApprover":
+                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+                            userModel2.Credentials.IsLoyaltyRuleApprover = true;
+                            break;
+                        case "isLoyaltyApprover":
+                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+                            userModel2.Credentials.IsLoyaltyApprover = true;
+                            break;
+                        case "isLoyaltyReader":
+                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+                            userModel2.Credentials.IsLoyaltyReader = true;
+                            break;
+                    }
+                }
+            }
 
-            if (!userRoleList.Any())
+            if (!roleTypeIdList.Any())
                 throw new Exception("Bu kullanıcı için tanımlı bir yetki bulunamadı.");
 
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
@@ -99,83 +121,14 @@ namespace Bbt.Campaign.Services.Services.Authorization
             }
             response.AuthorizationList = userAuthorizationList;
 
-            Token token = await CreateAccessToken(userModel);
+            Token token = await CreateAccessToken(userModel2);
             response.AccessToken = token.AccessToken;
 
             //await UpdateUserProcessDate(userModel.UserId);
 
             return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
-        //public async Task<BaseResponse<LogoutResponse>> LogoutAsync(LogoutRequest request) 
-        //{
-        //    LogoutResponse response = new LogoutResponse();
-
-        //    await UpdateUserRoles(request.UserId, string.Empty);
-
-        //    return await BaseResponse<LogoutResponse>.SuccessAsync(response);
-        //}
-        //private async Task UpdateUserRoles(string userId, string userRoles) 
-        //{
-        //    List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
-        //    List<ParameterDto> roleTypeList = (await _parameterService.GetRoleTypeListAsync()).Data;
-
-        //    foreach (var itemRemove in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
-        //    {
-        //        await _unitOfWork.GetRepository<UserRoleEntity>().DeleteAsync(itemRemove);
-        //    }
-
-        //    DateTime now = DateTime.Now;
-        //    List<string> userRoleStrList = userRoles.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-        //    foreach (string roleName in userRoleStrList)
-        //    {
-        //        var roleType = roleTypeList.Where(x => x.Name == roleName.Trim()).FirstOrDefault();
-        //        if (roleType == null)
-        //            throw new Exception("Rol bilgisi hatalı.");
-
-        //        await _unitOfWork.GetRepository<UserRoleEntity>().AddAsync(
-        //            new UserRoleEntity() { UserId = userId, RoleTypeId = roleType.Id, LastProcessDate = now, });
-        //    }
-            
-        //    await _unitOfWork.SaveChangesAsync();
-
-        //    await _parameterService.SetUserRoleListAsync(userId, new List<UserRoleDto>()); 
-        //}
-       
-        //public async Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request) 
-        //{
-        //    CheckAuthorizationResponse response = new CheckAuthorizationResponse();
-        //    await CheckAuthorizationAsync(request.UserId, request.ModuleTypeId, request.AuthorizationTypeId);
-        //    response.HasAuthorization = true; 
-        //    return await BaseResponse<CheckAuthorizationResponse>.SuccessAsync(response);
-        //}
-
-
-        //public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId)
-        //{
-        //    List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
-        //    if (roleAuthorizationList == null || !roleAuthorizationList.Any())
-        //        throw new Exception("Rol tanımları bulunamadı.");
-
-        //    // kullanıcı yetkileri
-        //    var userRoleList = (await _parameterService.GetUserRoleListAsync(userId))?.Data;
-        //    if (userRoleList == null || !userRoleList.Any())
-        //        throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
-
-        //    //session timeout kontrolu
-        //    //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
-        //    //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
-        //    //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
-
-        //    //modul ve işlem bazlı sorgulama
-        //    List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
-        //        .Where(x => userRoleList.Any(p2 => p2.RoleTypeId == x.RoleTypeId) 
-        //                                        && x.ModuleTypeId == moduleTypeId && x.AuthorizationTypeId == authorizationTypeId)
-        //        .ToList();
-        //    if (!userRoleAuthorizationList.Any())
-        //        throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
-
-        //    await UpdateUserProcessDate(userId);
-        //}
+        
 
 
         public async Task CheckAuthorizationAsync(UserRoleDto userRoleDto, int moduleTypeId, int authorizationTypeId)
@@ -261,7 +214,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("https://gondor-apigateway.burgan.com.tr");
+                    client.BaseAddress = new Uri(await _parameterService.GetServiceConstantValue("BaseAddress"));
                     var content = new FormUrlEncodedContent(new[]
                     {
                         new KeyValuePair<string, string>("access_token", accessToken),
@@ -275,22 +228,22 @@ namespace Bbt.Campaign.Services.Services.Authorization
             return userModel;
         }
 
-        public async Task<Token> CreateAccessToken(UserModelDto user)
+        public async Task<Token> CreateAccessToken(UserModelDto2 user)
         {
             var tokenInstance = new Token();
             var claims = new Claim[]{
                 new Claim(JwtRegisteredClaimNames.NameId,Guid.NewGuid().ToString()),
-                new Claim("UserId",user.UserId.ToString()),
-                new Claim("IsLoyaltyCreator",user.Authority.IsLoyaltyCreator.ToString()),
-                new Claim("IsLoyaltyApprover",user.Authority.IsLoyaltyApprover.ToString()),
-                new Claim("IsLoyaltyReader",user.Authority.IsLoyaltyReader.ToString()),
-                new Claim("IsLoyaltyRuleCreator",user.Authority.IsLoyaltyRuleCreator.ToString()),
-                new Claim("IsLoyaltyRuleApprover",user.Authority.IsLoyaltyRuleApprover.ToString())
+                new Claim("UserId",user.Tckn.ToString()),
+                new Claim("IsLoyaltyCreator",user.Credentials.IsLoyaltyCreator.ToString()),
+                new Claim("IsLoyaltyApprover",user.Credentials.IsLoyaltyApprover.ToString()),
+                new Claim("IsLoyaltyReader",user.Credentials.IsLoyaltyReader.ToString()),
+                new Claim("IsLoyaltyRuleCreator",user.Credentials.IsLoyaltyRuleCreator.ToString()),
+                new Claim("IsLoyaltyRuleApprover",user.Credentials.IsLoyaltyRuleApprover.ToString())
             };
 
             //Security  Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = 
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StaticValues.SecurityKey));
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE"));
 
             //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -298,8 +251,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //Oluşturulacak token ayarlarını veriyoruz.
             tokenInstance.Expiration = DateTime.Now.AddMinutes(60);
             JwtSecurityToken securityToken = new JwtSecurityToken(
-                issuer: StaticValues.Issuer,
-                audience: StaticValues.Audience,
+                issuer: "Issuer",
+                audience: "Audience",
                 expires: tokenInstance.Expiration,//Token süresini 5 dk olarak belirliyorum
                 notBefore: DateTime.Now,//Token üretildikten ne kadar süre sonra devreye girsin ayarlıyouz.
                 signingCredentials: signingCredentials,
@@ -335,21 +288,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //if (User.Claims.Count() == 0)
             //    throw new Exception("");
         }
-
-        private enum RoleTypeEnum
-        {
-            [Description("isLoyaltyCreator")]
-            IsLoyaltyCreator = 1,
-            [Description("isLoyaltyApprover")]
-            IsLoyaltyApprover = 2,
-            [Description("isLoyaltyReader")]
-            IsLoyaltyReader = 3,
-            [Description("isLoyaltyRuleCreator")]
-            IsLoyaltyRuleCreator = 4,
-            [Description("isLoyaltyRuleApprover")]
-            IsLoyaltyRuleApprover = 5
-        }
-
 
     }
 }
