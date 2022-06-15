@@ -8,9 +8,16 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
 {
     public class GoalResultByCustomerAndCampaing
     {
+        public bool isAchived { get; set; }
+
+        public List<GoalTarget> TargetList { get; set; }
+    }
+
+
+    public class GoalTarget 
+    {
         public int CampaignId { get; set; }
         public string Name { get; set; }
-
         public Detail Detail { get; set; }
         public string Title { get; set; }
         public int TargetGroupId { get; set; }
@@ -31,6 +38,10 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
 
     public class StreamResult 
     {
+        public decimal? RemainingAmount { get; set; }
+        public int? AmountPercent { get; set; }
+        public int? RemainingTimes { get; set; }
+        public int? TimesPercent { get; set; }
         public string Id { get; set; }
         public string CustomerId { get; set; }
         public string StreamName { get; set; }

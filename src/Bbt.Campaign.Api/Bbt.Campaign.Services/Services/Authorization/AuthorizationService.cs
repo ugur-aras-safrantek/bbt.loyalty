@@ -208,7 +208,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
                     var responseContent = result.Content.ReadAsStringAsync().Result;
                     AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
                     if (token.Access_token == null)
-                        throw new Exception("Token servisinden veri çekilirken hata alındı.");
+                        throw new Exception(responseContent);
                     accessToken = token.Access_token;
                 }
 
