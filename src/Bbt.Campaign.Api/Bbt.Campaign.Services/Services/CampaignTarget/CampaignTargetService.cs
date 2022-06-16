@@ -543,7 +543,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             int index = 0;
             int usedNumberOfTransaction = 0;
             bool isAchieved = false;
-            if (StaticValues.IsDevelopment) 
+            if (isTest) 
             {
                 campaignTargetDto2.IsAchieved = isAchieved;
                 var campaignTargetQuery = _unitOfWork.GetRepository<CampaignTargetListEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
