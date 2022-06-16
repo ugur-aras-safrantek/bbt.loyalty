@@ -87,6 +87,16 @@ jobs:
           sed -i -e "s/ELASTIC_PASSWORD/${{ secrets.ELASTIC_PASSWORD }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
           
+      - name: Replace Security Keys Audience Secret
+        run: |
+          sed -i -e "s/TOKEN_AUDIENCE/${{ secrets.TOKEN_AUDIENCE }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+      
+      - name: Replace Security Keys Security key Secret
+        run: |
+          sed -i -e "s/TOKEN_SECURITYKEY/${{ secrets.TOKEN_SECURITYKEY }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          cat ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
+          
       - name: Replace Security Keys Issuer Secret
         run: |
           sed -i -e "s/TOKEN_ISSUER/${{ secrets.TOKEN_ISSUER }}/g" ./src/Bbt.Campaign.Api/Bbt.Campaign.Api/appsettings.json
