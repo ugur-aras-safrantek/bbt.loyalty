@@ -17,23 +17,7 @@ namespace Bbt.Campaign.Api.Controllers
             _configuration = configuration;
         }
 
-        /// <summary>
-        /// Login of the user
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        /// 
-        [HttpPost]
-        [Route("login2")]
-        public async Task<IActionResult> LoginAsync2(string code, string state)
-        {
-            var createResult = await _authorizationService.LoginAsync2(code, state, _configuration);
-
-           // var x = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-
-            return Ok(createResult);
-        }
+        
 
         /// <summary>
         /// Login of the user
@@ -54,22 +38,22 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("check-authorization")]
-        public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
-        {
-            if (User.Claims.Count() > 0) 
-            {
-                var x = User.Claims.Where(x => x.Value == "cc");
+        //[HttpPost]
+        //[Route("check-authorization")]
+        //public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
+        //{
+        //    if (User.Claims.Count() > 0) 
+        //    {
+        //        var x = User.Claims.Where(x => x.Value == "cc");
             
-            }
+        //    }
 
 
 
-           var createResult = await _authorizationService.CheckAuthorizationAsync(request);
+        //   var createResult = await _authorizationService.CheckAuthorizationAsync(request);
 
-            return Ok(createResult);
-        }
+        //    return Ok(createResult);
+        //}
 
         /// <summary>
         /// Updates roles of the user 
@@ -77,13 +61,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="userId">User Id</param>
         /// <param name="userRoles">Roles of the user</param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("update-user-roles")]
-        public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
-        {
-            var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
-            return Ok(createResult);
-        }
+        //[HttpPost]
+        //[Route("update-user-roles")]
+        //public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
+        //{
+        //    var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
+        //    return Ok(createResult);
+        //}
 
     }
 }

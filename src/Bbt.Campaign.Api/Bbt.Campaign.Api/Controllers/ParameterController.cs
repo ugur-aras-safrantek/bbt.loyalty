@@ -247,13 +247,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// </summary>
         /// <param name="userId">Record Id of the user</param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("get-single-user-role-list")]
-        public async Task<IActionResult> GetSingleUserRoleListAsync(string userId)
-        {
-            var result = await _parameterService.GetSingleUserRoleListAsync(userId);
-            return Ok(result);
-        }
+        //[HttpGet]
+        //[Route("get-single-user-role-list")]
+        //public async Task<IActionResult> GetSingleUserRoleListAsync(string userId)
+        //{
+        //    var result = await _parameterService.GetSingleUserRoleListAsync(userId);
+        //    return Ok(result);
+        //}
 
 
 

@@ -10,13 +10,9 @@ namespace Bbt.Campaign.Services.Services.Authorization
 {
     public interface IAuthorizationService
     {
-        public Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync(string code, string state);
-        public Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request);
-        public Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId);
-        public Task<BaseResponse<List<UserRoleDto>>> UpdateUserRolesAsync(string userId,string userRoles);
-
-
-
-        public Task<BaseResponse<List<UserAuthorizationDto>>> LoginAsync2(string code, string state, IConfiguration _configuration);
+        public Task<BaseResponse<UserAuthorizationResponseDto>> LoginAsync(string code, string state);
+        //public Task<BaseResponse<CheckAuthorizationResponse>> CheckAuthorizationAsync(CheckAuthorizationRequest request);
+        //public Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId);
+        public Task CheckAuthorizationAsync(UserRoleDto userRoleDto, int moduleTypeId, int authorizationTypeId);
     }
 }

@@ -4,6 +4,7 @@
     {
         public static string GetUserIdFromHeader(HttpRequest request) 
         {
+
             if(request.Headers.TryGetValue("userid", out var value)) 
             {
                 return value; 
@@ -13,5 +14,13 @@
                 throw new Exception("userid giriniz");
             }
         }
+
+        public static void CheckAuthorization(HttpRequest request) 
+        { 
+        
+        }
+
     }
+
+    
 }

@@ -31,11 +31,11 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetModuleTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetAuthorizationTypeListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListAsync();
-        public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync(string cacheKey);
-        public Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId);
+        //public Task<BaseResponse<List<ParameterDto>>> GetAllUsersRoleListInProgressAsync(string cacheKey);
+        //public Task<BaseResponse<List<ParameterDto>>> GetSingleUserRoleListAsync(string userId);
         public Task<BaseResponse<List<RoleAuthorizationDto>>> GetRoleAuthorizationListAsync();
-        public Task<BaseResponse<List<UserRoleDto>>> GetUserRoleListAsync(string userId);
-        public Task<BaseResponse<List<UserRoleDto>>> SetUserRoleListAsync(string userId, List<UserRoleDto> _userRoleList);
+        //public Task<BaseResponse<List<UserRoleDto>>> GetUserRoleListAsync(string userId);
+        //public Task<BaseResponse<List<UserRoleDto>>> SetUserRoleListAsync(string userId, List<UserRoleDto> _userRoleList);
         public Task<BaseResponse<List<ParameterDto>>> GetBranchSelectDateListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetChannelCodeSelectDateListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetServiceConstantListAsync();

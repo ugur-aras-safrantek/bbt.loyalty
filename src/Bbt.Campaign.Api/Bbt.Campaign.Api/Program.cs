@@ -29,6 +29,9 @@ StaticValues.BranchServiceUrl = configuration["ServiceUrl:Branch"];
 StaticValues.ChannelCodeServiceUrl = configuration["ServiceUrl:ChannelCode"];
 StaticValues.ContractServiceUrl = configuration["ServiceUrl:Contract"];
 StaticValues.SessionTimeout = configuration["SessionTimeout"] == null ? 20 : Convert.ToInt32(configuration["SessionTimeout"]);
+StaticValues.Audience = configuration["Token:Audience"];
+StaticValues.Issuer = configuration["Token:Issuer"];
+StaticValues.SecurityKey = configuration["Token:SecurityKey"];
 
 if (StaticValues.IsDevelopment)
     Bbt.Campaign.Shared.Redis.RedisServer.StartRedis();
@@ -126,8 +129,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuer = false, // Oluþturulacak token deðerini kimin daðýttýðýný ifade edeceðimiz alandýr.
         ValidateLifetime = true, // Oluþturulan token deðerinin süresini kontrol edecek olan doðrulamadýr.
         ValidateIssuerSigningKey = true, // Üretilecek token deðerinin uygulamamýza ait bir deðer olduðunu ifade eden security key verisinin doðrulamasýdýr.
-        ValidIssuer = "Token:Issuer",
-        ValidAudience = "Token:Audience",
+        ValidIssuer = "Issuer",
+        ValidAudience = "Audience",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE")),
         ClockSkew = TimeSpan.Zero // Üretilecek token deðerinin expire süresinin belirtildiði deðer kadar uzatýlmasýný saðlayan özelliktir. 
     };
@@ -166,8 +169,10 @@ app.UseExceptionHandler(c => c.Run(async context =>
 
 app.UseCors("CampaignApiCors");
 
-app.UseAuthorization();
+
 app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.UseCors(x => x
                .AllowAnyMethod()
