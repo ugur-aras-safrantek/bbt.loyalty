@@ -40,7 +40,6 @@ registerLocaleData(localeTR);
     {provide: LOCALE_ID, useValue: 'tr-TR'},
     {provide: HTTP_INTERCEPTORS, useClass: HttpHeadersInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: LocationStrategy, useClass: PathLocationStrategy},
   ],
   exports: [],
   bootstrap: [AppComponent]
