@@ -135,6 +135,10 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto userRole)
         {
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
