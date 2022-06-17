@@ -114,8 +114,6 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignListFilterRequest request)
         {
-            string userid = General.GetUserIdFromHeader(Request);
-
             var result = await _campaignService.GetByFilterAsync(request, await GetUser());
             return Ok(result);
         }
