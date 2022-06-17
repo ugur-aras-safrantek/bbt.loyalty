@@ -45,7 +45,7 @@ namespace Bbt.Campaign.Api.Controllers
         //    if (User.Claims.Count() > 0) 
         //    {
         //        var x = User.Claims.Where(x => x.Value == "cc");
-            
+
         //    }
 
 
@@ -61,13 +61,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="userId">User Id</param>
         /// <param name="userRoles">Roles of the user</param>
         /// <returns></returns>
-        //[HttpPost]
-        //[Route("update-user-roles")]
-        //public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
-        //{
-        //    var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
-        //    return Ok(createResult);
-        //}
+        [HttpPost]
+        [Route("update-user-roles")]
+        public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
+        {
+            var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
+            return Ok(createResult);
+        }
 
     }
 }

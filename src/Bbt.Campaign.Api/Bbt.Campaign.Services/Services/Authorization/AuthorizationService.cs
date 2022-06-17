@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
+using Bbt.Campaign.Public.Dtos.Approval;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Authorization;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -41,59 +44,86 @@ namespace Bbt.Campaign.Services.Services.Authorization
         public async Task<BaseResponse<UserAuthorizationResponseDto>> LoginAsync(string code, string state) 
         {
             UserAuthorizationResponseDto response = new UserAuthorizationResponseDto();
+            UserModelDto2 userModel2 = new UserModelDto2();
+            UserRoleDto userRoleDto = new UserRoleDto();
+            List<int> roleTypeIdList = new List<int>();
+            UserModelDto userModel;
 
             response.Code = code;   
             response.State = state;
 
-            UserModelDto userModel = await GetUserRoles(code, state);
-
-            //UserModelDto userModel = new UserModelDto();
-            //userModel.Tckn = "11701604572";
-            //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
-
-            UserModelDto2 userModel2 = new UserModelDto2();
-            userModel2.Credentials = new Credentials();
-            userModel2.Tckn = userModel.Tckn;
-            userModel2.Credentials.IsLoyaltyRuleCreator = false;
-            userModel2.Credentials.IsLoyaltyRuleCreator = false;
-            userModel2.Credentials.IsLoyaltyRuleApprover = false;
-            userModel2.Credentials.IsLoyaltyApprover = false;
-            userModel2.Credentials.IsLoyaltyReader = false;
-
-            //set user roles
-            UserRoleDto userRoleDto = new UserRoleDto();
-            List<int> roleTypeIdList = new List<int>();
-            userRoleDto.UserId = userModel.Tckn;
-
-            foreach(string credential in userModel.Credentials) 
+            if (StaticValues.IsDevelopment) 
             {
-                string[] credentialArray = credential.Split("###");
-                string credentialName = credentialArray[0];
-                string credentialValue = credentialArray[1];
-                if(!string.IsNullOrEmpty(credentialValue) && credentialValue == "1") 
-                {
-                    switch (credentialName) 
+                userModel2.Tckn = code;
+                userRoleDto.UserId = code;
+
+                foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == code).ToList()) 
+                { 
+                    switch(item.RoleTypeId)
                     {
-                        case "isLoyaltyCreator":
-                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+                        case (int)RoleTypeEnum.IsLoyaltyCreator:
                             userModel2.Credentials.IsLoyaltyCreator = true;
                             break;
-                        case "isLoyaltyRuleCreator":
-                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+                        case (int)RoleTypeEnum.IsLoyaltyRuleCreator:
                             userModel2.Credentials.IsLoyaltyRuleCreator = true;
                             break;
-                        case "isLoyaltyRuleApprover":
-                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+                        case (int)RoleTypeEnum.IsLoyaltyRuleApprover:
                             userModel2.Credentials.IsLoyaltyRuleApprover = true;
                             break;
-                        case "isLoyaltyApprover":
-                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+                        case (int)RoleTypeEnum.IsLoyaltyApprover:
                             userModel2.Credentials.IsLoyaltyApprover = true;
                             break;
-                        case "isLoyaltyReader":
-                            roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+                        case (int)RoleTypeEnum.IsLoyaltyReader:
                             userModel2.Credentials.IsLoyaltyReader = true;
                             break;
+                        default:
+                            break;
+
+                    }
+                    roleTypeIdList.Add(item.RoleTypeId);
+                }
+            }
+            else 
+            {
+                userModel = await GetUserRoles(code, state);
+
+                //UserModelDto userModel = new UserModelDto();
+                //userModel.Tckn = "11701604572";
+                //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
+
+                userModel2.Tckn = userModel.Tckn;
+                userRoleDto.UserId = userModel.Tckn;
+
+                foreach (string credential in userModel.Credentials)
+                {
+                    string[] credentialArray = credential.Split("###");
+                    string credentialName = credentialArray[0];
+                    string credentialValue = credentialArray[1];
+                    if (!string.IsNullOrEmpty(credentialValue) && credentialValue == "1")
+                    {
+                        switch (credentialName)
+                        {
+                            case "isLoyaltyCreator":
+                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+                                userModel2.Credentials.IsLoyaltyCreator = true;
+                                break;
+                            case "isLoyaltyRuleCreator":
+                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+                                userModel2.Credentials.IsLoyaltyRuleCreator = true;
+                                break;
+                            case "isLoyaltyRuleApprover":
+                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+                                userModel2.Credentials.IsLoyaltyRuleApprover = true;
+                                break;
+                            case "isLoyaltyApprover":
+                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+                                userModel2.Credentials.IsLoyaltyApprover = true;
+                                break;
+                            case "isLoyaltyReader":
+                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+                                userModel2.Credentials.IsLoyaltyReader = true;
+                                break;
+                        }
                     }
                 }
             }
@@ -124,13 +154,11 @@ namespace Bbt.Campaign.Services.Services.Authorization
             Token token = await CreateAccessToken(userModel2);
             response.AccessToken = token.AccessToken;
 
-            //await UpdateUserProcessDate(userModel.UserId);
+            await _parameterService.SetUserLastProcessDate(userModel2.Tckn);
 
             return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
-        
-
-
+  
         public async Task CheckAuthorizationAsync(UserRoleDto userRoleDto, int moduleTypeId, int authorizationTypeId)
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
@@ -143,9 +171,13 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //    throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
 
             //session timeout kontrolu
-            //DateTime lastProcessDate = userRoleList[0].LastProcessDate;
-            //if(lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now) 
-            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            string _lastProcessDate = await _parameterService.GetUserLastProcessDate(userRoleDto.UserId);
+            if(string.IsNullOrEmpty(_lastProcessDate))
+                throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            DateTime lastProcessDate = DateTime.ParseExact(_lastProcessDate, Helpers.dateTimeFormat, CultureInfo.InvariantCulture);
+            if (lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now)
+                throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            await _parameterService.SetUserLastProcessDate(userRoleDto.UserId);
 
             //modul ve işlem bazlı sorgulama
             List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
@@ -154,8 +186,34 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 .ToList();
             if (!userRoleAuthorizationList.Any())
                 throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
+        }
 
-            //await UpdateUserProcessDate(userId);
+        public async Task<BaseResponse<SuccessDto>> UpdateUserRolesAsync(string userId, string userRoles)
+        {
+            var response = new SuccessDto();
+            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync()).Data;
+            List<ParameterDto> roleTypeList = (await _parameterService.GetRoleTypeListAsync()).Data;
+
+            foreach (var itemRemove in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
+                await _unitOfWork.GetRepository<UserRoleEntity>().DeleteAsync(itemRemove);
+
+            DateTime now = DateTime.Now;
+            List<string> userRoleStrList = userRoles.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+            foreach (string roleName in userRoleStrList)
+            {
+                var roleType = roleTypeList.Where(x => x.Name == roleName.Trim()).FirstOrDefault();
+                if (roleType == null)
+                    throw new Exception("Rol bilgisi hatalı.");
+
+                await _unitOfWork.GetRepository<UserRoleEntity>().AddAsync(
+                    new UserRoleEntity() { UserId = userId, RoleTypeId = roleType.Id, LastProcessDate = now, });
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            response.IsSuccess = true;
+
+            return await BaseResponse<SuccessDto>.SuccessAsync(response);
         }
 
 
@@ -166,21 +224,19 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
 
 
-
-
-        //private async Task UpdateUserProcessDate(string userId) 
-        //{
-        //    DateTime now = DateTime.Now;
-        //    List<UserRoleDto> userRoleList = new List<UserRoleDto>();
-        //    foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
-        //    {
-        //        item.LastProcessDate = now;
-        //        await _unitOfWork.GetRepository<UserRoleEntity>().UpdateAsync(item);
-        //        userRoleList.Add(new UserRoleDto() { Id = item.Id, RoleTypeId = item.RoleTypeId, LastProcessDate=item.LastProcessDate });
-        //    }
-        //    await _unitOfWork.SaveChangesAsync();
-        //    await _parameterService.SetUserRoleListAsync(userId, userRoleList);
-        //}
+        private async Task UpdateUserProcessDate(string userId)
+        {
+            //DateTime now = DateTime.Now;
+            //List<UserRoleDto> userRoleList = new List<UserRoleDto>();
+            //foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == userId).ToList())
+            //{
+            //    item.LastProcessDate = now;
+            //    await _unitOfWork.GetRepository<UserRoleEntity>().UpdateAsync(item);
+            //    userRoleList.Add(new UserRoleDto() { Id = item.Id, RoleTypeId = item.RoleTypeId, LastProcessDate = item.LastProcessDate });
+            //}
+            //await _unitOfWork.SaveChangesAsync();
+            //await _parameterService.SetUserRoleListAsync(userId, userRoleList);
+        }
 
         private async Task<UserModelDto> GetUserRoles(string code, string state)
         {
@@ -278,15 +334,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 random.GetBytes(number);
                 return Convert.ToBase64String(number);
             }
-        }
-
-        public async Task CheckAuthorizationAsync(string userId, int moduleTypeId, int authorizationTypeId) 
-        {
-            //var x =  System.Security.Claims.ClaimsPrincipal.Current.Claims.Where(x=>x.) 
-
-
-            //if (User.Claims.Count() == 0)
-            //    throw new Exception("");
         }
 
     }

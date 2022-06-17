@@ -117,6 +117,20 @@ namespace Bbt.Campaign.Core.Helper
             inputDate = string.Concat(day, "-", month, "-", year, " 00:00:00");
             return DateTime.ParseExact(inputDate, dateTimeFormat, CultureInfo.InvariantCulture);
         }
+
+        public static string ConvertWithTimeForBackEnd(DateTime inputDate) 
+        {
+            string day = inputDate.Day.ToString().PadLeft(2, '0');
+            string month = inputDate.Month.ToString().PadLeft(2, '0');
+            string year = inputDate.Year.ToString();
+            string hour = inputDate.Hour.ToString().PadLeft(2, '0');
+            string minute = inputDate.Minute.ToString().PadLeft(2, '0');
+            string second = inputDate.Second.ToString().PadLeft(2, '0');
+
+            return string.Concat(day, "-", month, "-", year, " ", hour, ":", minute, ":", second);
+        }
+
+
         public static DateTime ConvertDateTimeToShortDate(DateTime inputDate)
         {
             return new DateTime(inputDate.Year, inputDate.Month, inputDate.Day);

@@ -14,15 +14,19 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
 
     public class Credentials
     {
-        public bool IsLoyaltyCreator { get; set; } 
-        public bool IsLoyaltyApprover { get; set; } 
-        public bool IsLoyaltyReader { get; set; } 
-        public bool IsLoyaltyRuleCreator { get; set; } 
-        public bool IsLoyaltyRuleApprover { get; set; } 
+        public bool IsLoyaltyCreator { get; set; } = false;
+        public bool IsLoyaltyApprover { get; set; } = false;
+        public bool IsLoyaltyReader { get; set; } = false;
+        public bool IsLoyaltyRuleCreator { get; set; } = false;
+        public bool IsLoyaltyRuleApprover { get; set; } = false;
     }
 
     public class UserModelDto2 
     {
+        public UserModelDto2() 
+        {
+            Credentials = new Credentials();
+        }
         public string Tckn { get; set; }
 
         public Credentials Credentials { get; set; }

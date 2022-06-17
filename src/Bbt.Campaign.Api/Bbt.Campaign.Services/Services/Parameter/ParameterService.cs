@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
@@ -182,6 +183,34 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             return await BaseResponse<List<ParameterDto>>.SuccessAsync(result);
         }
+
+        public async Task<string> GetUserLastProcessDate(string userId) 
+        {
+            string retVal = string.Empty;
+            List<ParameterDto> result = null;
+            string cacheKey = string.Concat(userId, "_", CacheKeys.LastProcessDate);
+            var cache = await _redisDatabaseProvider.GetAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cache))
+                result = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
+            if (result != null && result.Any())
+                retVal = result[0].Name;
+            return retVal;
+        }
+
+        public async Task<string> SetUserLastProcessDate(string userId) 
+        {
+            string lastProcessDate = Helpers.ConvertWithTimeForBackEnd(DateTime.Now);
+            List<ParameterDto> result = new List<ParameterDto>();
+            ParameterDto parameterDto = new ParameterDto() { Id= 1, Code = userId, Name = lastProcessDate };
+            result.Add(parameterDto);
+            string cacheKey = string.Concat(userId, "_", CacheKeys.LastProcessDate);
+            var value = JsonConvert.SerializeObject(result);
+            await _redisDatabaseProvider.SetAsync(cacheKey, value);
+
+            return await GetUserLastProcessDate(userId);
+        }
+
+
         //public async Task<BaseResponse<List<UserRoleDto>>> GetUserRoleListAsync(string userId)
         //{
         //    List<UserRoleDto> result = new List<UserRoleDto>();

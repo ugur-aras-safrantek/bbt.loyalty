@@ -67,5 +67,7 @@
         public const string ServiceConstantList = "ServiceConstantList";
 
         public const string StatusList = "StatusList";
+
+        public const string LastProcessDate = "LastProcessDate";
     }
 }
