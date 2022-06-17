@@ -107,9 +107,9 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id, UserRoleDto userRole)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            int moduleTypeId = (int)ModuleTypeEnum.Campaign;
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             var draftCampaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
@@ -135,6 +135,10 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         public async Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto userRole)
         {
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //int moduleTypeId = (int)ModuleTypeEnum.Campaign;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && x.StatusId == (int)StatusEnum.SentToApprove && !x.IsDeleted)
                 .FirstOrDefaultAsync();
@@ -504,9 +508,9 @@ namespace Bbt.Campaign.Services.Services.Approval
         #region approve toplimit
         public async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, UserRoleDto userRole) 
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
             string userid = userRole.UserId;
             if (isApproved) 
             {
@@ -673,9 +677,9 @@ namespace Bbt.Campaign.Services.Services.Approval
         #region target
         public async Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, UserRoleDto userRole)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
-            int moduleTypeId = (int)ModuleTypeEnum.Target;
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Approve;
+            //int moduleTypeId = (int)ModuleTypeEnum.Target;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             if (isApproved)
             {

@@ -54,6 +54,22 @@ export class LoginService {
     return this.httpClient.post<ApiBaseResponseModel>(url, {}, {params: params});
   }
 
+  setRoute() {
+    let route = '/login';
+
+    if (this.currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view) {
+      route = '/campaign-definition';
+    } else if (this.currentUserAuthorizations.campaignLimitsModuleAuthorizations.view) {
+      route = '/campaign-limits';
+    } else if (this.currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
+      route = '/target-definition';
+    } else if (this.currentUserAuthorizations.reportsModuleAuthorizations.view) {
+      route = '/reports';
+    }
+
+    return route;
+  }
+
   private setAuthorization(module) {
     switch (module.moduleId) {
       case 1:

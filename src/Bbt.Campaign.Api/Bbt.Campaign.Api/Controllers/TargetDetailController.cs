@@ -10,7 +10,6 @@ using Bbt.Campaign.Public.Enums;
 namespace Bbt.Campaign.Api.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
     [ApiController]
 
     public class TargetDetailController : BaseController<TargetDetailController>
