@@ -10,7 +10,6 @@ using System.ComponentModel.DataAnnotations;
 namespace Bbt.Campaign.Api.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
     [ApiController]
     public class CampaignRuleController : BaseController<CampaignRuleController>
     {

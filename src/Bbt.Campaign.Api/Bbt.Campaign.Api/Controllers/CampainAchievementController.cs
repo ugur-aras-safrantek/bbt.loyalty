@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bbt.Campaign.Api.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
     [ApiController]
     public class CampainAchievementController : BaseController<CampainAchievementController>
     {

@@ -10,7 +10,6 @@ namespace Bbt.Campaign.Api.Controllers
 {
 
     [Authorize]
-    [Route("[controller]")]
     [ApiController]
     public class CampaignController : BaseController<CampaignController>
     {

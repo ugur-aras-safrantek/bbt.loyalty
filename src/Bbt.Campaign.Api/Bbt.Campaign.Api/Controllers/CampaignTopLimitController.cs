@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bbt.Campaign.Api.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
     [ApiController]
     public class CampaignTopLimitController : BaseController<CampaignTopLimitController>
     {
