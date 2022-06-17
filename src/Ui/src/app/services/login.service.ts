@@ -43,7 +43,6 @@ export class LoginService {
     sessionStorage.removeItem('isLogin');
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('currentUserAuthorizations');
-    sessionStorage.removeItem('returnUrl');
   }
 
   login(data: LoginRequestModel) {
@@ -53,6 +52,22 @@ export class LoginService {
 
     const url = `${this.baseUrl}/${ApiPaths.Login}`;
     return this.httpClient.post<ApiBaseResponseModel>(url, {}, {params: params});
+  }
+
+  setRoute() {
+    let route = '/login';
+
+    if (this.currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view) {
+      route = '/campaign-definition';
+    } else if (this.currentUserAuthorizations.campaignLimitsModuleAuthorizations.view) {
+      route = '/campaign-limits';
+    } else if (this.currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
+      route = '/target-definition';
+    } else if (this.currentUserAuthorizations.reportsModuleAuthorizations.view) {
+      route = '/reports';
+    }
+
+    return route;
   }
 
   private setAuthorization(module) {
