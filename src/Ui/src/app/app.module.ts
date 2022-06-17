@@ -1,5 +1,5 @@
 import {NgModule, LOCALE_ID} from '@angular/core';
-import {registerLocaleData} from '@angular/common';
+import {LocationStrategy, PathLocationStrategy, registerLocaleData} from '@angular/common';
 import localeTR from '@angular/common/locales/tr';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -40,6 +40,7 @@ registerLocaleData(localeTR);
     {provide: LOCALE_ID, useValue: 'tr-TR'},
     {provide: HTTP_INTERCEPTORS, useClass: HttpHeadersInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    {provide: LocationStrategy, useClass: PathLocationStrategy},
   ],
   exports: [],
   bootstrap: [AppComponent]
