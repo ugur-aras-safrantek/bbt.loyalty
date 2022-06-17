@@ -43,6 +43,7 @@ export class LoginService {
     sessionStorage.removeItem('isLogin');
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('currentUserAuthorizations');
+    sessionStorage.removeItem('returnUrl');
   }
 
   login(data: LoginRequestModel) {

@@ -1,5 +1,5 @@
 import {NgModule, LOCALE_ID} from '@angular/core';
-import {registerLocaleData} from '@angular/common';
+import {LocationStrategy, PathLocationStrategy, registerLocaleData} from '@angular/common';
 import localeTR from '@angular/common/locales/tr';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
