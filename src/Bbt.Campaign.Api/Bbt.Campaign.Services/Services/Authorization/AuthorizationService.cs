@@ -171,12 +171,12 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //    throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
 
             //session timeout kontrolu
-            string _lastProcessDate = await _parameterService.GetUserLastProcessDate(userRoleDto.UserId);
-            if(string.IsNullOrEmpty(_lastProcessDate))
-                throw new Exception(StaticFormValues.SessionTimeoutAlert);
-            DateTime lastProcessDate = DateTime.ParseExact(_lastProcessDate, Helpers.dateTimeFormat, CultureInfo.InvariantCulture);
-            if (lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now)
-                throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            //string _lastProcessDate = await _parameterService.GetUserLastProcessDate(userRoleDto.UserId);
+            //if(string.IsNullOrEmpty(_lastProcessDate))
+            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
+            //DateTime lastProcessDate = DateTime.ParseExact(_lastProcessDate, Helpers.dateTimeFormat, CultureInfo.InvariantCulture);
+            //if (lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now)
+            //    throw new Exception(StaticFormValues.SessionTimeoutAlert);
             //await _parameterService.SetUserLastProcessDate(userRoleDto.UserId);
 
             //modul ve işlem bazlı sorgulama
