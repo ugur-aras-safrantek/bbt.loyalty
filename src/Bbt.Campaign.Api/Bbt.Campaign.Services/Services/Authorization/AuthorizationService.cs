@@ -154,7 +154,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             Token token = await CreateAccessToken(userModel2);
             response.AccessToken = token.AccessToken;
 
-            await _parameterService.SetUserLastProcessDate(userModel2.Tckn);
+            //await _parameterService.SetUserLastProcessDate(userModel2.Tckn);
 
             return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
@@ -177,7 +177,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             DateTime lastProcessDate = DateTime.ParseExact(_lastProcessDate, Helpers.dateTimeFormat, CultureInfo.InvariantCulture);
             if (lastProcessDate.AddMinutes(StaticValues.SessionTimeout) < DateTime.Now)
                 throw new Exception(StaticFormValues.SessionTimeoutAlert);
-            await _parameterService.SetUserLastProcessDate(userRoleDto.UserId);
+            //await _parameterService.SetUserLastProcessDate(userRoleDto.UserId);
 
             //modul ve işlem bazlı sorgulama
             List<RoleAuthorizationDto> userRoleAuthorizationList = roleAuthorizationList
