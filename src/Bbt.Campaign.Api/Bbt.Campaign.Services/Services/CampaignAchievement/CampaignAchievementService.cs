@@ -345,12 +345,18 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 }
                 else if (input.Type == (int)AchievementType.Rate)
                 {
-                    if (!input.Rate.HasValue)
-                        throw new Exception("Kazanım Oranı girilmelidir.");
-                    if (input.Rate > 100)
-                        throw new Exception("“Kazanım Oranı % 100’ün üzerinde bir değer girilemez.");
-                    if (input.Rate <= 0)
-                        throw new Exception("Kazanım Oranı 0’dan küçük bir değer girilemez");
+                    if(!input.Rate.HasValue && string.IsNullOrEmpty(input.XKAMPCode)) 
+                    {
+                        throw new Exception("Kazanım Oranı veya Xkamp kodu girilmelidir.");
+                    }
+
+                    if (input.Rate.HasValue) 
+                    {
+                        if (input.Rate > 100)
+                            throw new Exception("“Kazanım Oranı % 100’ün üzerinde bir değer girilemez.");
+                        if (input.Rate <= 0)
+                            throw new Exception("Kazanım Oranı 0’dan küçük bir değer girilemez");
+                    }
                 }
                 else
                     throw new Exception("Kazanım türü (Tutar/Oran) seçilmelidir.");
