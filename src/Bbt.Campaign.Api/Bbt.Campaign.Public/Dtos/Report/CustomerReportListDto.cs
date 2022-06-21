@@ -35,5 +35,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? AchievementTypeName { get; set; }
         public DateTime? AchievementDate { get; set; }
         public string AchievementDateStr { get; set; }
+        public string? AchievementAmountStr { get; set; }
+        public string? AchievementRateStr { get; set; }
     }
 }

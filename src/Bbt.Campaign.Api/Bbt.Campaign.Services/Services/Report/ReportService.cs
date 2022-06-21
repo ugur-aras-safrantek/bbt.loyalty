@@ -272,7 +272,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
 
 
-            if (!StaticValues.IsDevelopment) 
+            if (StaticValues.IsDevelopment) 
             {
                 Helpers.ListByFilterCheckValidation(request);
 
@@ -326,7 +326,9 @@ namespace Bbt.Campaign.Services.Services.Report
                     if (request.BusinessLineId.HasValue) 
                     { 
                         int businessLineId = request.BusinessLineId ?? 0;
-                        serviceUrl += "&BusinessLine=" + Helpers.GetEnumDescription<BusinessLineEnum>((businessLineId));
+                        string businessLine = Helpers.GetEnumDescription<BusinessLineEnum>((businessLineId));
+                        string businessLineShort = businessLine.Substring(businessLine.Length - 2, 1);
+                        serviceUrl += "&BusinessLine=" + businessLineShort;
                     }
                     if (request.IsActive.HasValue)
                         serviceUrl += "&IsActive=" + request.IsActive;
@@ -341,10 +343,67 @@ namespace Bbt.Campaign.Services.Services.Report
                             var apiResponse = await restResponse.Content.ReadAsStringAsync();
                             if (!string.IsNullOrEmpty(apiResponse)) 
                             {
+                                var campaignQuery = _unitOfWork.GetRepository<CampaignEntity>()
+                                    .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
+                                    .Select(x=> new { x.IsActive, x.EndDate, x.Code });
+                                var campaignList = campaignQuery.ToList();
+
                                 var getCampaignReport = JsonConvert.DeserializeObject<List<CustomerReportDto>>(apiResponse);
                                 if(getCampaignReport != null && getCampaignReport.Any()) 
-                                { 
-                                
+                                {
+                                    foreach(var x in getCampaignReport) 
+                                    { 
+                                        CustomerReportListDto customerReportListDto = new CustomerReportListDto();
+                                        customerReportListDto.CampaignCode = x.CampaignCode;
+                                        customerReportListDto.CampaignName = x.CampaignName;
+                                        customerReportListDto.IsActive = x.IsActive;
+                                        customerReportListDto.IsBundle = x.IsBundle;
+
+                                        string joinDateStr = x.CustomerJoinDate ?? string.Empty;
+                                        if (!string.IsNullOrEmpty(joinDateStr)) 
+                                        {
+                                            string[] joinDateArray = joinDateStr.Split('T');
+                                            if(joinDateArray.Length == 2) 
+                                            {
+                                                joinDateArray = joinDateArray[0].Split('-');
+                                                if(joinDateArray.Length == 3) 
+                                                { 
+                                                    customerReportListDto.JoinDateStr = joinDateArray[2] + "-" + joinDateArray[1] + "-" + joinDateArray[0];
+                                                }
+                                                
+                                            }
+                                        }
+                                        customerReportListDto.CustomerIdentifier = x.CustomerId;
+                                        customerReportListDto.CustomerCode = x.CustomerNumber;
+                                        customerReportListDto.AchievementAmountStr =Helpers.ConvertNullablePriceString(x.EarningAmount);
+                                        customerReportListDto.AchievementRateStr = Helpers.ConvertNullablePriceString(x.EarningRate);
+                                        customerReportListDto.CustomerTypeName = x.CustomerType;
+                                        customerReportListDto.BranchName = x.BranchCode;
+                                        customerReportListDto.AchievementTypeName = x.EarningType;
+                                        
+                                        string earningUsedDateStr = x.EarningUsedDate ?? string.Empty;
+                                        if (!string.IsNullOrEmpty(earningUsedDateStr)) 
+                                        {
+                                            string[] earningUsedDateArray = earningUsedDateStr.Split('T');
+                                            if (earningUsedDateArray.Length == 2)
+                                            {
+                                                earningUsedDateArray = earningUsedDateArray[0].Split('-');
+                                                if (earningUsedDateArray.Length == 3)
+                                                {
+                                                    customerReportListDto.AchievementDateStr = earningUsedDateArray[2] + "-" + earningUsedDateArray[1] + "-" + earningUsedDateArray[0];
+                                                }
+                                            }
+                                        }
+
+                                        customerReportListDto.IsContinuingCampaign = false;
+                                        var campaign = campaignList.Where(y => y.Code == x.CampaignCode).FirstOrDefault();
+                                        if(campaign != null) 
+                                        {
+                                            customerReportListDto.IsContinuingCampaign = campaign.IsActive && campaign.EndDate.AddDays(1) > DateTime.Now;
+                                        }
+
+                                        response.CustomerCampaignList.Add(customerReportListDto);
+                                    }
                                 }
                                 else return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
@@ -510,6 +569,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 BranchName = x.BranchName,
                 AchievementTypeId = x.AchievementTypeId,
                 AchievementTypeName = x.AchievementTypeName,
+                AchievementAmountStr = "",
             }).ToList();
 
             var branchList = (await _parameterService.GetBranchListAsync())?.Data;
@@ -604,7 +664,6 @@ namespace Bbt.Campaign.Services.Services.Report
                     }
                     else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
                 }
-
             }
 
             var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(customerCampaign.CampaignId, usedAmount, usedNumberOfTransaction);

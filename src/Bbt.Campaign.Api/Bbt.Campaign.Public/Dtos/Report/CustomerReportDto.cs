@@ -10,8 +10,8 @@ namespace Bbt.Campaign.Public.Dtos.Report
     {
         public string? CampaignCode { get; set; }
         public string? CampaignName { get; set; }
-        public string? IsBundle { get; set; }
-        public string? IsActive { get; set; }
+        public bool IsBundle { get; set; }
+        public bool IsActive { get; set; }
         public string? CustomerNumber { get; set; }
         public string? CustomerId { get; set; }
         public string? CustomerType { get; set; }
@@ -24,5 +24,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? IsEarningUsed { get; set; }
         public string? EarningUsedDate { get; set; }
         public string? CampaignStartDate { get; set; }
+        public string? AchievementAmountStr { get; set; }
+        public string? AchievementRateStr { get; set; }
     }
 }
