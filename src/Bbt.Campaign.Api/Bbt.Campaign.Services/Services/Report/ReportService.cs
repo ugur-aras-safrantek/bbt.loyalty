@@ -19,6 +19,8 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Authorization;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -270,7 +272,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
 
 
-            if (StaticValues.IsDevelopment) 
+            if (!StaticValues.IsDevelopment) 
             {
                 Helpers.ListByFilterCheckValidation(request);
 
@@ -290,8 +292,75 @@ namespace Bbt.Campaign.Services.Services.Report
                 response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             }
             else 
-            { 
+            {
+                using (var httpClient = new HttpClient()) 
+                {
+                    string accessToken = await _parameterService.GetAccessToken();
+                    string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                    string apiAddress = await _parameterService.GetServiceConstantValue("CampaignReport"); 
+                    string serviceUrl = string.Concat(baseAddress, apiAddress);
+                    
+                    serviceUrl += "?1=1";
+                    if (!string.IsNullOrEmpty(request.CustomerCode))
+                        serviceUrl += "&CustomerNumber=" + request.CustomerCode;
+                    if (!string.IsNullOrEmpty(request.CustomerIdentifier))
+                        serviceUrl += "&CustomerId=" + request.CustomerIdentifier;
+                    if (request.CustomerTypeId.HasValue) 
+                    {
+                        int customerTypeId = request.CustomerTypeId ?? 0;
+                        serviceUrl += "&CustomerType=" + Helpers.GetEnumDescription<CustomerTypeEnum>((customerTypeId));
+                    }
+                    if (request.CampaignStartTermId.HasValue) 
+                    {
+                        int campaignStartTermId = request.CampaignStartTermId ?? 0;
+                        serviceUrl += "&CampaignStartTerm=" + Helpers.GetEnumDescription<CampaignStartTermsEnum>((campaignStartTermId));
+                    }
+                    if (!string.IsNullOrEmpty(request.BranchCode))
+                        serviceUrl += "&BranchCode=" + request.BranchCode;
+                    if (request.AchievementTypeId.HasValue) 
+                    { 
+                        int achievementTypeId = request.AchievementTypeId ?? 0;
+                        serviceUrl += "&EarningType=" + Helpers.GetEnumDescription<AchievementTypeEnum>((achievementTypeId));
+                    }
+
+                    if (request.BusinessLineId.HasValue) 
+                    { 
+                        int businessLineId = request.BusinessLineId ?? 0;
+                        serviceUrl += "&BusinessLine=" + Helpers.GetEnumDescription<BusinessLineEnum>((businessLineId));
+                    }
+                    if (request.IsActive.HasValue)
+                        serviceUrl += "&IsActive=" + request.IsActive;
+
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    var restResponse = await httpClient.GetAsync(serviceUrl);
+                    if (restResponse.IsSuccessStatusCode) 
+                    {
+                        if (restResponse.Content != null) 
+                        {
+                            var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            {
+                                var getCampaignReport = JsonConvert.DeserializeObject<List<CustomerReportDto>>(apiResponse);
+                                if(getCampaignReport != null && getCampaignReport.Any()) 
+                                { 
+                                
+                                }
+                                else return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        throw new Exception("Rapor servisinden veri çekilemedi.");
+                    }
+                }
+
                 
+
             }
             
             
