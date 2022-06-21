@@ -268,22 +268,33 @@ namespace Bbt.Campaign.Services.Services.Report
 
             CustomerReportResponse response = new CustomerReportResponse();
 
-            Helpers.ListByFilterCheckValidation(request);
 
-            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
 
-            if (query.Count() == 0)
-                return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+            if (StaticValues.IsDevelopment) 
+            {
+                Helpers.ListByFilterCheckValidation(request);
 
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = query.Count();
-            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
 
-            var customerCampaignList = await this.ConvertCustomerReportList(query);
+                if (query.Count() == 0)
+                    return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
-            response.CustomerCampaignList = customerCampaignList;
-            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+                var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+                var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+                var totalItems = query.Count();
+                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+                var customerCampaignList = await this.ConvertCustomerReportList(query);
+
+                response.CustomerCampaignList = customerCampaignList;
+                response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+            }
+            else 
+            { 
+                
+            }
+            
+            
             return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
         }
         public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, UserRoleDto userRole) 

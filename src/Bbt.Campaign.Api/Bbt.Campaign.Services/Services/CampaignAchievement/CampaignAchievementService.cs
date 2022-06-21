@@ -236,6 +236,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             mappedCampaignAchievement.RateStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.Rate);
             mappedCampaignAchievement.MaxAmountStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.MaxAmount);
             mappedCampaignAchievement.MaxUtilizationStr = Helpers.ConvertNullablePriceString(mappedCampaignAchievement.MaxUtilization);
+            mappedCampaignAchievement.XKAMPCode = entity.XKAMPCode;
 
             return mappedCampaignAchievement;
         }
