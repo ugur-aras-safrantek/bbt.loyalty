@@ -285,7 +285,8 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
 
         public async Task CheckValidationAsync(CampaignAchievementInsertRequest request)
         {
-            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == request.CampaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == request.CampaignId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
 
