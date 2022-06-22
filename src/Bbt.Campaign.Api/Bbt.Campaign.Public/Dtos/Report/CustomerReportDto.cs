@@ -26,5 +26,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? CampaignStartDate { get; set; }
         public string? AchievementAmountStr { get; set; }
         public string? AchievementRateStr { get; set; }
+        public string? EarningReachDate { get; set; }
     }
 }

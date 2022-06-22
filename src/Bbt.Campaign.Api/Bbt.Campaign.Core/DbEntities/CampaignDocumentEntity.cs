@@ -16,7 +16,7 @@ namespace Bbt.Campaign.Core.DbEntities
         [DoNotLog]
         public byte[] Content { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(500)]
         public string MimeType { get; set; }
 
         [MaxLength(250)]

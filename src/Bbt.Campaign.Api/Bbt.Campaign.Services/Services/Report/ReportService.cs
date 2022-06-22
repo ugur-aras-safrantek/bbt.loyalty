@@ -21,6 +21,7 @@ using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -300,7 +301,78 @@ namespace Bbt.Campaign.Services.Services.Report
                     string apiAddress = await _parameterService.GetServiceConstantValue("CampaignReport"); 
                     string serviceUrl = string.Concat(baseAddress, apiAddress);
                     
-                    serviceUrl += "?1=1";
+                    int pageNumber = (request.PageNumber - 1) ?? 0;
+                    serviceUrl += "?PageNumber=" + pageNumber;
+                    int pageSize = (request.PageSize) ?? 25;
+                    serviceUrl += "&PageSize=" + pageSize;
+                    if (!string.IsNullOrEmpty(request.SortBy)) 
+                    {
+                        if (request.SortBy.EndsWith("Str"))
+                            request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                        string sortBy = request.SortBy;
+                        switch (request.SortBy) 
+                        {
+                            case "Code": 
+                                sortBy = "CampaignCode";
+                                break;
+                            case "Name":
+                                sortBy = "CampaignName";
+                                break;
+                            case "IsActive":
+                                sortBy = "IsActive";
+                                break;
+                            case "IsBundle":
+                                sortBy = "IsBundle";
+                                break;
+                            case "JoinDate":
+                                sortBy = "CustomerJoinDate";
+                                break;
+                            case "CustomerCode":
+                                sortBy = "CustomerNumber";
+                                break;
+                            case "CustomerIdentifier":
+                                sortBy = "CustomerId";
+                                break;
+                            case "EarningReachDate":
+                                sortBy = "EarningReachDate";
+                                break;
+                            case "AchievementAmount":
+                                sortBy = "EarningAmount";
+                                break;
+                            case "AchievementRate":
+                                sortBy = "EarningRate";
+                                break;
+                            case "CustomerTypeName":
+                                sortBy = "CustomerType";
+                                break;
+                            case "BranchCode":
+                                sortBy = "BranchCode";
+                                break;
+                            case "BusinessLineName":
+                                sortBy = "BusinessLine";
+                                break;
+                            case "AchievementTypeName":
+                                sortBy = "EarningType";
+                                break;
+                            case "AchievementDate":
+                                sortBy = "EarningUsedDate";
+                                break;
+                        }
+
+                        serviceUrl += "&SortBy=" + sortBy;
+                        
+                        bool isDescending = request.SortDir?.ToLower() == "desc";
+
+                        serviceUrl += "&SortType=" + (isDescending ? (int)SortTypeEnum.Descending : (int)SortTypeEnum.Ascending);
+                    }
+                    else 
+                    {
+                        serviceUrl += "&SortBy=CustomerJoinDate";
+                        serviceUrl += "&SortType=" + (int)SortTypeEnum.Descending;
+                    }
+
+
                     if (!string.IsNullOrEmpty(request.CustomerCode))
                         serviceUrl += "&CustomerNumber=" + request.CustomerCode;
                     if (!string.IsNullOrEmpty(request.CustomerIdentifier))
@@ -310,11 +382,14 @@ namespace Bbt.Campaign.Services.Services.Report
                         int customerTypeId = request.CustomerTypeId ?? 0;
                         serviceUrl += "&CustomerType=" + Helpers.GetEnumDescription<CustomerTypeEnum>((customerTypeId));
                     }
-                    if (request.CampaignStartTermId.HasValue) 
-                    {
-                        int campaignStartTermId = request.CampaignStartTermId ?? 0;
-                        serviceUrl += "&CampaignStartTerm=" + Helpers.GetEnumDescription<CampaignStartTermsEnum>((campaignStartTermId));
-                    }
+
+                    //if (request.CampaignStartTermId.HasValue) 
+                    //{
+                    //    int campaignStartTermId = request.CampaignStartTermId ?? 0;
+                    //    serviceUrl += "&CampaignStartTerm=" + Helpers.GetEnumDescription<CampaignStartTermsEnum>((campaignStartTermId));
+                    //}
+
+
                     if (!string.IsNullOrEmpty(request.BranchCode))
                         serviceUrl += "&BranchCode=" + request.BranchCode;
                     if (request.AchievementTypeId.HasValue) 
@@ -373,8 +448,25 @@ namespace Bbt.Campaign.Services.Services.Report
                                                 
                                             }
                                         }
+                                        
                                         customerReportListDto.CustomerIdentifier = x.CustomerId;
                                         customerReportListDto.CustomerCode = x.CustomerNumber;
+
+                                        string earningReachDateStr = x.EarningReachDate ?? string.Empty;
+                                        if (!string.IsNullOrEmpty(earningReachDateStr))
+                                        {
+                                            string[] earningReachDateArray = earningReachDateStr.Split('T');
+                                            if (earningReachDateArray.Length == 2)
+                                            {
+                                                earningReachDateArray = earningReachDateArray[0].Split('-');
+                                                if (earningReachDateArray.Length == 3)
+                                                {
+                                                    customerReportListDto.EarningReachDateStr = earningReachDateArray[2] + "-" + earningReachDateArray[1] + "-" + earningReachDateArray[0];
+                                                }
+
+                                            }
+                                        }
+
                                         customerReportListDto.AchievementAmountStr =Helpers.ConvertNullablePriceString(x.EarningAmount);
                                         customerReportListDto.AchievementRateStr = Helpers.ConvertNullablePriceString(x.EarningRate);
                                         customerReportListDto.CustomerTypeName = x.CustomerType;
@@ -395,33 +487,26 @@ namespace Bbt.Campaign.Services.Services.Report
                                             }
                                         }
 
-                                        customerReportListDto.IsContinuingCampaign = false;
-                                        var campaign = campaignList.Where(y => y.Code == x.CampaignCode).FirstOrDefault();
-                                        if(campaign != null) 
-                                        {
-                                            customerReportListDto.IsContinuingCampaign = campaign.IsActive && campaign.EndDate.AddDays(1) > DateTime.Now;
-                                        }
+                                        //customerReportListDto.IsContinuingCampaign = false;
+                                        //var campaign = campaignList.Where(y => y.Code == x.CampaignCode).FirstOrDefault();
+                                        //if(campaign != null) 
+                                        //{
+                                        //    customerReportListDto.IsContinuingCampaign = campaign.IsActive && campaign.EndDate.AddDays(1) > DateTime.Now;
+                                        //}
 
                                         response.CustomerCampaignList.Add(customerReportListDto);
                                     }
                                 }
                                 else return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
-
                             }
                         }
-
-
                     }
                     else
                     {
                         throw new Exception("Rapor servisinden veri çekilemedi.");
                     }
-                }
-
-                
-
+                }  
             }
-            
             
             return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
         }
@@ -671,5 +756,14 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response);
         }
+    
+        public enum SortTypeEnum 
+        {
+            [Description("ASC")]
+            Ascending = 0,
+            [Description("DESC")]
+            Descending = 1,
+        }
+    
     }
 }
