@@ -328,13 +328,14 @@ namespace Bbt.Campaign.Services.Services.Report
                                 if (joinDateArray.Length == 3)
                                 {
                                     customerReportListDto.JoinDateStr = joinDateArray[2] + "-" + joinDateArray[1] + "-" + joinDateArray[0];
+                                    customerReportListDto.JoinDate = Helpers.ConvertUIDateTimeStringForBackEnd(customerReportListDto.JoinDateStr);
                                 }
 
                             }
                         }
 
-                        customerReportListDto.CustomerIdentifier = x.CustomerId;
-                        customerReportListDto.CustomerCode = x.CustomerNumber;
+                        customerReportListDto.CustomerIdentifier = x.CustomerNumber;
+                        customerReportListDto.CustomerCode = x.CustomerId;
 
                         string earningReachDateStr = x.EarningReachDate ?? string.Empty;
                         if (!string.IsNullOrEmpty(earningReachDateStr))
@@ -346,6 +347,7 @@ namespace Bbt.Campaign.Services.Services.Report
                                 if (earningReachDateArray.Length == 3)
                                 {
                                     customerReportListDto.EarningReachDateStr = earningReachDateArray[2] + "-" + earningReachDateArray[1] + "-" + earningReachDateArray[0];
+                                    customerReportListDto.EarningReachDate = Helpers.ConvertUIDateTimeStringForBackEnd(customerReportListDto.EarningReachDateStr);
                                 }
 
                             }
@@ -355,6 +357,8 @@ namespace Bbt.Campaign.Services.Services.Report
                         customerReportListDto.AchievementRateStr = Helpers.ConvertNullablePriceString(x.EarningRate == null ? null : (decimal)x.EarningRate);
                         customerReportListDto.CustomerTypeName = x.CustomerType;
                         customerReportListDto.BranchCode = x.BranchCode;
+                        customerReportListDto.BranchName = x.BranchCode;
+                        customerReportListDto.BusinessLineName = x.BusinessLine;
                         customerReportListDto.AchievementTypeName = x.EarningType;
 
                         string earningUsedDateStr = x.EarningUsedDate ?? string.Empty;
@@ -367,6 +371,7 @@ namespace Bbt.Campaign.Services.Services.Report
                                 if (earningUsedDateArray.Length == 3)
                                 {
                                     customerReportListDto.AchievementDateStr = earningUsedDateArray[2] + "-" + earningUsedDateArray[1] + "-" + earningUsedDateArray[0];
+                                    customerReportListDto.AchievementDate = Helpers.ConvertUIDateTimeStringForBackEnd(customerReportListDto.AchievementDateStr);
                                 }
                             }
                         }
@@ -389,14 +394,11 @@ namespace Bbt.Campaign.Services.Services.Report
 
             Helpers.ListByFilterCheckValidation(request);
 
-            IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
+            List<CustomerReportListDto> customerReportList = await GetCustomerReportData(request);
+            if (!customerReportList.Any())
+                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
-            if (query.Count() == 0)
-                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı.");
-
-            var customerCampaignList = await this.ConvertCustomerReportList(query);
-
-            byte[] data = ReportFileOperations.GetCustomerReportListExcel(customerCampaignList);
+            byte[] data = ReportFileOperations.GetCustomerReportListExcel(customerReportList);
 
             response = new GetFileResponse()
             {

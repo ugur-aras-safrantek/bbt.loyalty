@@ -45,7 +45,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="campaignId">Record Id of the campaign</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("view-customer-min/{customerId}")]
+        [Route("view-customer-min")]
         public async Task<IActionResult> GetCustomerViewFormAsync(int campaignId)
         {
             var result = await _customerService.GetCustomerViewFormAsync(campaignId, _webHostEnvironment.ContentRootPath);
