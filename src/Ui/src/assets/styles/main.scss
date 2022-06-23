@@ -9,7 +9,22 @@
 app-root {
   color: #464646;
 
-  .change-bgc{
+  .campaign-preview-summary-angular-editor .angular-editor-textarea {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .campaign-preview-target-angular-editor .angular-editor-textarea {
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-size: 13px !important;
+  }
+
+  .change-bgc {
     .angular-editor-textarea.disabled {
       background-color: #fbc89c !important;
     }

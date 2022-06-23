@@ -1,0 +1,38 @@
+.x-large {
+  font-size: x-large;
+}
+
+.target-content {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 16px;
+
+  .col-3 {
+    padding: 10px 50px 10px !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .target-title {
+    margin-bottom: 0px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .progress-bar-style {
+    height: 5px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+
+  .spent {
+    font-weight: bold;
+    color: black;
+  }
+}
+
+.target-footer {
+  color: #fff;
+  padding: 0.25rem 1.5rem !important;
+  font-weight: bold;
+  background-color: #676beb;
+}

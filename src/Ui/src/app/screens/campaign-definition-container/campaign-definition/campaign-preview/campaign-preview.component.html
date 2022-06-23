@@ -12,9 +12,21 @@
       </button>
     </div>
   </ngx-smart-modal>
+  <ngx-smart-modal #contractContentModal identifier="contractContentModal" customClass="contract-modal">
+    <h1 class="text-purple-dark">Kampanya İçeriği</h1>
+    <hr class="purple">
+    <angular-editor class="campaign-preview-summary-angular-editor"
+                    [config]="editorConfig"
+                    [ngModel]="campaign.campaignDetail?.contentTr">
+    </angular-editor>
+    <div class="button-container col-6 m-auto mt-3">
+      <button class="btn btn-purple px-5" type="button" (click)="contractContentModal.close()">Kapat</button>
+    </div>
+  </ngx-smart-modal>
   <div class="container d-flex">
     <div class="preview-container mt-5">
       <div class="row">
+        <div class="col-2"></div>
         <div class="col-8 mx-auto">
           <div class="campaign-image" *ngIf="campaign.campaignDetail?.campaignDetailImageUrl">
             <img src="{{campaign.campaignDetail?.campaignDetailImageUrl}}" alt="">
@@ -25,20 +37,14 @@
           <div class="row">
             <div class="col-8 mx-auto">
               <div class="row mt-4">
-                <div class="col-auto">
-                  <i class="bi bi-circle-fill text-purple"></i>
-                </div>
                 <div class="col">
-                  <label>Özet Bilgileri</label>
-                </div>
-              </div>
-              <div class="row mt-4">
-                <div class="col">
-                  <angular-editor [config]="editorConfig" [ngModel]="campaign.campaignDetail?.summaryTr">
+                  <angular-editor class="campaign-preview-summary-angular-editor"
+                                  [config]="editorConfig"
+                                  [ngModel]="campaign.campaignDetail?.summaryTr">
                   </angular-editor>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" *ngIf="campaign.campaignDetail?.detailTr">
                 <div class="col">
                   <div class="accordion mt-4" id="accordionCampaignDetail">
                     <div class="accordion-item">
@@ -84,31 +90,69 @@
             </div>
           </div>
         </div>
+        <div class="col-2">
+          <div class="row x-large">
+            <i class="bi bi-info-circle" (click)="contractContentModal.open()"></i>
+          </div>
+        </div>
       </div>
       <hr class="my-4">
       <h3 class="title text-purple-dark">Dönem İçi İşlemleriniz</h3>
       <b>Kampanyadan yararlanmak için {{campaign.endDate}} tarihine kadar aşağıdaki koşulu tamamlamalısınız.</b>
-      <div *ngFor="let targetGroup of targetGroupList">
-        <div class="box my-3">
-          <div class="px-4 py-2">
-            <div class="row" *ngFor="let campaignTarget of targetGroup.targetList">
-              <div class="col-auto d-flex align-items-center">
-                <i class="bi bi-square-fill text-purple"></i>
+      <div class="box my-3">
+        <div class="row target-content">
+          <div class="col-3" *ngFor='let target of campaignTarget.informationlist; let j = index'>
+            <div class="row">
+              <div class="col-auto p-0">
+                <div class="bi bi-square-fill" [ngStyle]="{'color': targetColorList[j]}"></div>
               </div>
               <div class="col">
-                <p class="my-1">{{campaignTarget.name}}</p>
+                <div class="row" style="margin-bottom:10px">
+                  <p class="target-title">
+                    {{target.title}}
+                  </p>
+                  <angular-editor [config]="editorConfig" class="campaign-preview-target-angular-editor"
+                                  [ngModel]="target.description">
+                  </angular-editor>
+                </div>
+                <div class="spent">{{target.usedAmountStr}} {{target.usedAmountCurrencyCode}}</div>
               </div>
-            </div>
-          </div>
-          <div class="bg-purple px-4 py-1">
-            <div class="row">
-              <div class="col"><b>Harcama hedef: - TL</b></div>
-              <div class="col d-flex justify-content-end"><b>Kalan harcama tutarı: - TL</b></div>
             </div>
           </div>
         </div>
-        <div *ngIf="targetGroup != targetGroupList[targetGroupList.length-1]">
-          <strong class="text-purple">VEYA</strong>
+        <div class="row target-content">
+          <div class="col-3" *ngFor='let target of campaignTarget.progressBarlist; let j = index'>
+            <div class="row">
+              <div class="col-auto p-0">
+                <div class="bi bi-square-fill" [ngStyle]="{'color': targetColorList[20-j]}"></div>
+              </div>
+              <div class="col">
+                <div class="row" style="margin-bottom:0">
+                  <p class="target-title">
+                    {{target.title}}
+                  </p>
+                  <angular-editor [config]="editorConfig" class="campaign-preview-target-angular-editor"
+                                  [ngModel]="target.description">
+                  </angular-editor>
+                </div>
+                <div class="progress progress-bar-style">
+                  <div class="progress-bar" role="progressbar"
+                       [ngStyle]="{'width': target.percent+'%'}"></div>
+                </div>
+                <div class="spent">{{target.usedAmountStr}} {{target.usedAmountCurrencyCode}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="target-footer">
+          <div class="row">
+            <div class="col">
+              Harcama hedefi: {{campaignTarget.targetAmountStr}} {{campaignTarget.targetAmountCurrencyCode}}
+            </div>
+            <div class="col d-flex justify-content-end">
+              Kalan harcama tutarı: {{campaignTarget.remainAmountStr}} {{campaignTarget.targetAmountCurrencyCode}}
+            </div>
+          </div>
         </div>
       </div>
       <div class="row" *ngIf="campaignAchievement">

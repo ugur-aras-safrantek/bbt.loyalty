@@ -18,9 +18,11 @@ export class CampaignPreviewComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   campaign: CampaignPreviewModel = new CampaignPreviewModel();
-  targetGroupList: any;
+  campaignTarget: any = {};
   campaignAchievement: any;
   contractFileUrl: any;
+
+  targetColorList: any[] = [];
 
 
   editorConfig: AngularEditorConfig = {
@@ -56,7 +58,8 @@ export class CampaignPreviewComponent implements OnInit {
         next: res => {
           if (!res.hasError && res.data) {
             this.campaign = res.data.campaign;
-            this.targetGroupList = res.data.campaignTarget?.targetGroupList;
+            this.campaignTarget = res.data.campaignTarget;
+            this.setRandomColorList();
             this.campaignAchievement = res.data.campaignAchievementList;
             let document = res.data.contractFile?.document;
             if (document) {
@@ -72,5 +75,16 @@ export class CampaignPreviewComponent implements OnInit {
             this.toastrHandleService.error(err.error);
         }
       });
+  }
+
+  setRandomColorList() {
+    const letters = '0123456789ABCDEF'
+    for (let i = 0; i < 20; i++) {
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      this.targetColorList.push(color);
+    }
   }
 }
