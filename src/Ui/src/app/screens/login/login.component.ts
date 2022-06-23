@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
               private router: Router,
               private toastrHandleService: ToastrHandleService,
               private loginService: LoginService) {
+    this.loginService.logout();
     this.route.queryParams.subscribe(params => {
       this.code = params['code'];
       this.state = params['state'];
@@ -40,8 +41,6 @@ export class LoginComponent implements OnInit {
                 this.toastrHandleService.error(err.error);
             }
           });
-      } else if (this.loginService.getUserLoginInfo()) {
-        this.router.navigate([this.loginService.setRoute()]);
       }
     });
   }
