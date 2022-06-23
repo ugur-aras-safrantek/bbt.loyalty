@@ -278,7 +278,6 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         Content = bytesList,
                         DocumentName = campaignRule.Identity,
                         CreatedBy = userid,
-                        LastModifiedBy = userid,
                     });
 
 

@@ -11,7 +11,7 @@ namespace Bbt.Campaign.Public.Models.CampaignAchievement
         public string? EarningType { get; set; }
         public string? AchivementTitle { get; set; }
         public string? AchivementDescription { get; set; }
-        public decimal? Amount { get; set; }
+        public double Amount { get; set; }
         public string? Currency { get; set; }
     }
 }

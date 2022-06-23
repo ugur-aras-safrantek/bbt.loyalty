@@ -13,11 +13,11 @@ using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
 
 namespace Bbt.Campaign.Services.Services.CampaignAchievement
 {
@@ -28,15 +28,18 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         private readonly IParameterService _parameterService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
+        private readonly IRemoteService _remoteService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice, IDraftService draftService)
+        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice
+            , IDraftService draftService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _authorizationService = authorizationservice;
             _draftService = draftService;
+            _remoteService = remoteService;
         }
 
         public async Task<BaseResponse<List<CampaignAchievementDto>>> AddAsync(CampaignAchievementInsertRequest request, UserRoleDto userRole)
@@ -418,44 +421,23 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             }
             else 
             {
-                using (var httpClient = new HttpClient()) 
+                string apiResponse = await _remoteService.GetEarningByCustomerAndCampaingData(customerCode, campaignId, lang);
+                if (!string.IsNullOrEmpty(apiResponse))
                 {
-                    string accessToken = await _parameterService.GetAccessToken();
-                    string serviceUrl = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
-                    serviceUrl = serviceUrl.Replace("{customerId}", customerCode);
-                    serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
-                    serviceUrl = serviceUrl.Replace("{lang}", lang);
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    var restResponse = await httpClient.GetAsync(serviceUrl);
-                    if (restResponse.IsSuccessStatusCode)
+                    var earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
+                    if (earningByCustomerAndCampaingList != null && earningByCustomerAndCampaingList.Any())
                     {
-                        if (restResponse.Content != null)
+                        foreach (var earning in earningByCustomerAndCampaingList)
                         {
-                            var apiResponse = await restResponse.Content.ReadAsStringAsync();
-                            if (!string.IsNullOrEmpty(apiResponse))
-                            {
-                                var earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
-                                if (earningByCustomerAndCampaingList != null && earningByCustomerAndCampaingList.Any())
-                                {
-                                    foreach (var earning in earningByCustomerAndCampaingList)
-                                    {
-                                        CustomerAchievement customerAchievement = new CustomerAchievement();
-                                        customerAchievement.IsAchieved = false;
-                                        customerAchievement.AchievementTypeName = earning.EarningType;
-                                        customerAchievement.Description = earning.AchivementDescription;
-                                        customerAchievement.Title = earning.AchivementTitle;
-                                        customerAchievement.AmountStr = Helpers.ConvertNullablePriceString(earning.Amount);
-                                        customerAchievement.CurrencyCode = earning.Currency;
-                                        customerAchievementList.Add(customerAchievement);
-                                    }
-                                }
-                            }
+                            CustomerAchievement customerAchievement = new CustomerAchievement();
+                            customerAchievement.IsAchieved = false;
+                            customerAchievement.AchievementTypeName = earning.EarningType;
+                            customerAchievement.Description = earning.AchivementDescription;
+                            customerAchievement.Title = earning.AchivementTitle;
+                            customerAchievement.AmountStr = Helpers.ConvertNullablePriceString((decimal)earning.Amount);
+                            customerAchievement.CurrencyCode = earning.Currency;
+                            customerAchievementList.Add(customerAchievement);
                         }
-                    }
-                    else
-                    {
-                        throw new Exception("Müşteri kazanım servisinden hata alındı.");
                     }
                 }
 

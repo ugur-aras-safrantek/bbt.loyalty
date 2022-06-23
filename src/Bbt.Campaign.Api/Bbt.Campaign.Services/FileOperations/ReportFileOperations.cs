@@ -24,13 +24,8 @@ namespace Bbt.Campaign.Services.FileOperations
                 HeaderSetsListe(worksheet, "I", "Sözleşme ID", 20);
                 HeaderSetsListe(worksheet, "J", "Sektör", 20);
                 HeaderSetsListe(worksheet, "K", "Sıralama", 20);
-
                 HeaderSetsListe(worksheet, "L", "Görüntüleme", 20);
                 HeaderSetsListe(worksheet, "M", "Dahil Olma Şekli", 20);
-
-
-
-
                 HeaderSetsListe(worksheet, "N", "Katılım Sağlanma Adedi", 20);
                 HeaderSetsListe(worksheet, "O", "Kazanım Tipi", 20);
                 HeaderSetsListe(worksheet, "P", "Kazanım Tutarı", 20);
@@ -152,21 +147,23 @@ namespace Bbt.Campaign.Services.FileOperations
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add($"Müşteri Listesi");
-
-                HeaderSetsListe(worksheet, "A", "Müşteri No", 10);
-                HeaderSetsListe(worksheet, "B", "TCKN", 15);
-                HeaderSetsListe(worksheet, "C", "Müşteri Tipi", 20);
-                HeaderSetsListe(worksheet, "D", "Kazanım Tipi", 20);
-                HeaderSetsListe(worksheet, "E", "Kampanya Başlama Dönemi", 25);
-                HeaderSetsListe(worksheet, "F", "Şube", 20);
-                HeaderSetsListe(worksheet, "G", "İş Kolu", 20);
-                HeaderSetsListe(worksheet, "H", "Kazanımdan Yararlanılan Tarih", 30);
-                HeaderSetsListe(worksheet, "I", "Kampanya Kodu", 20);
-                HeaderSetsListe(worksheet, "J", "Kampanya Adı", 30);
-                HeaderSetsListe(worksheet, "K", "Aktif", 20);
-                HeaderSetsListe(worksheet, "L", "Birleştirilebilir", 20);
-                HeaderSetsListe(worksheet, "M", "Kampanya Yürürlükte Mi?", 25);
-                HeaderSetsListe(worksheet, "N", "Kampanyaya Katıldığı Tarih", 25);
+                
+                
+                HeaderSetsListe(worksheet, "A", "Kampanya Kodu", 20);
+                HeaderSetsListe(worksheet, "B", "Kampanya Adı", 30);
+                HeaderSetsListe(worksheet, "C", "Aktif", 20);
+                HeaderSetsListe(worksheet, "D", "Birleştirilebilir", 20);
+                HeaderSetsListe(worksheet, "E", "Kampanyaya Katıldığı Tarih", 20);
+                HeaderSetsListe(worksheet, "F", "Müşteri No", 20);
+                HeaderSetsListe(worksheet, "G", "TCKN", 20);
+                HeaderSetsListe(worksheet, "H", "Kazanıma Hak Kazandığı Tarih", 20);
+                HeaderSetsListe(worksheet, "I", "Kazanım Tutarı", 20);
+                HeaderSetsListe(worksheet, "J", "Kazanım Oranı", 20);
+                HeaderSetsListe(worksheet, "K", "Müşteri Tipi", 20);
+                HeaderSetsListe(worksheet, "L", "Şube", 20);
+                HeaderSetsListe(worksheet, "M", "İş Kolu", 20);
+                HeaderSetsListe(worksheet, "N", "Kazanım Tipi", 20);
+                HeaderSetsListe(worksheet, "O", "Kazanımdan Yararlanılan Tarih", 20);
 
                 int currentRow = 1;
                 int column = 1;
@@ -175,46 +172,6 @@ namespace Bbt.Campaign.Services.FileOperations
                     currentRow++;
                     column = 1;
 
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerCode;
-                    worksheet.Column($"{column}").Width = 10;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerIdentifier;
-                    worksheet.Column($"{column}").Width = 15;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerTypeName;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementTypeName;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.CampaignStartDateStr;
-                    worksheet.Column($"{column}").Width = 25;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.BranchName;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.BusinessLineName;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementDateStr;
-                    worksheet.Column($"{column}").Width = 30;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
-
-                    column++;
                     worksheet.Cell(currentRow, column).Value = customerCampaign.CampaignCode;
                     worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
@@ -235,13 +192,58 @@ namespace Bbt.Campaign.Services.FileOperations
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.IsContinuingCampaign ? "Evet" : "Hayır";
-                    worksheet.Column($"{column}").Width = 25;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.JoinDateStr;
+                    worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.JoinDateStr;
-                    worksheet.Column($"{column}").Width = 25;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerIdentifier;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerCode;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.EarningReachDateStr;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementAmountStr;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementRateStr;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerTypeName;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.BranchName;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.BusinessLineName;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementTypeName;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.AchievementDateStr;
+                    worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
                 }
 
@@ -251,7 +253,7 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     result = stream.ToArray();
 
-                    //File.WriteAllBytes(@"C:\Files\xxx.xlsx", result);
+                    File.WriteAllBytes(@"C:\Files2\xxx.xlsx", result);
                 }
             }
             return result;

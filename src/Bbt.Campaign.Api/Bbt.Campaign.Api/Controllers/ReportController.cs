@@ -101,12 +101,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// <summary>
         /// Returns the report detail information by Id
         /// </summary>
-        /// <param name="id">Record Id of the line</param>
+        /// <param name="customerCode">Customer Code</param>
+        /// /// <param name="campaignId">Campaign Id</param>
         [HttpGet]
-        [Route("get-customer-report-detail/{id}")]
-        public async Task<IActionResult> GetCustomerReportDetailAsync(int id)
+        [Route("get-customer-report-detail/{customerCode}/{campaignId}")]
+        public async Task<IActionResult> GetCustomerReportDetailAsync(string customerCode, int campaignId)
         {
-            var result = await _reportService.GetCustomerReportDetailAsync(id, await GetUser());
+            var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignId, await GetUser());
             return Ok(result);
         }
 
