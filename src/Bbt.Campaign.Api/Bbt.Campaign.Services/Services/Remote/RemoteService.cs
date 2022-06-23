@@ -1,5 +1,6 @@
 ﻿using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
+using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Parameter;
@@ -170,9 +171,9 @@ namespace Bbt.Campaign.Services.Services.Remote
             return apiResponse;
         }
 
-        public async Task<string> GetCustomerReportData(CustomerReportRequest request) 
+        public async Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request) 
         {
-            string apiResponse = string.Empty;
+            CustomerReportServiceDto customerReportServiceDto = null;
             using (var httpClient = new HttpClient())
             {
                 string accessToken = await _parameterService.GetAccessToken();
@@ -287,7 +288,8 @@ namespace Bbt.Campaign.Services.Services.Remote
                 {
                     if (restResponse.Content != null)
                     {
-                        apiResponse = await restResponse.Content.ReadAsStringAsync();
+                        var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                        customerReportServiceDto = JsonConvert.DeserializeObject<CustomerReportServiceDto>(apiResponse);
                     }
                 }
                 else
@@ -295,7 +297,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     throw new Exception("Rapor servisinden veri çekilemedi.");
                 }
             }
-            return apiResponse;
+            return customerReportServiceDto;
         }
 
         public enum SortTypeEnum
