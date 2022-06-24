@@ -25,9 +25,9 @@ namespace Bbt.Campaign.Services.FileOperations
             workSheet.Cells[2, 1].Value = 1;
             workSheet.Cells[2, 2].Value = "test";
 
-            string p_strPath = @"C:\Files\xxx.xlsx";
-            FileStream objFileStrm = File.Create(p_strPath);
-            objFileStrm.Close();
+            //string p_strPath = @"C:\Files\xxx.xlsx";
+            //FileStream objFileStrm = File.Create(p_strPath);
+            //objFileStrm.Close();
 
 
 
