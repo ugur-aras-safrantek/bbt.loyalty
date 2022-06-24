@@ -49,110 +49,120 @@ namespace Bbt.Campaign.Services.Services.Authorization
             List<int> roleTypeIdList = new List<int>();
             UserModelDto userModel;
 
-            response.Code = code;   
-            response.State = state;
-
-            if (StaticValues.IsDevelopment) 
+            try 
             {
-                userModel2.Tckn = code;
-                userRoleDto.UserId = code;
+                response.Code = code;
+                response.State = state;
 
-                foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == code).ToList()) 
-                { 
-                    switch(item.RoleTypeId)
-                    {
-                        case (int)RoleTypeEnum.IsLoyaltyCreator:
-                            userModel2.Credentials.IsLoyaltyCreator = true;
-                            break;
-                        case (int)RoleTypeEnum.IsLoyaltyRuleCreator:
-                            userModel2.Credentials.IsLoyaltyRuleCreator = true;
-                            break;
-                        case (int)RoleTypeEnum.IsLoyaltyRuleApprover:
-                            userModel2.Credentials.IsLoyaltyRuleApprover = true;
-                            break;
-                        case (int)RoleTypeEnum.IsLoyaltyApprover:
-                            userModel2.Credentials.IsLoyaltyApprover = true;
-                            break;
-                        case (int)RoleTypeEnum.IsLoyaltyReader:
-                            userModel2.Credentials.IsLoyaltyReader = true;
-                            break;
-                        default:
-                            break;
-
-                    }
-                    roleTypeIdList.Add(item.RoleTypeId);
-                }
-            }
-            else 
-            {
-                userModel = await GetUserRoles(code, state);
-
-                //UserModelDto userModel = new UserModelDto();
-                //userModel.Tckn = "11701604572";
-                //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
-
-                userModel2.Tckn = userModel.Tckn;
-                userRoleDto.UserId = userModel.Tckn;
-
-                foreach (string credential in userModel.Credentials)
+                if (StaticValues.IsDevelopment)
                 {
-                    string[] credentialArray = credential.Split("###");
-                    string credentialName = credentialArray[0];
-                    string credentialValue = credentialArray[1];
-                    if (!string.IsNullOrEmpty(credentialValue) && credentialValue == "1")
+                    userModel2.Tckn = code;
+                    userRoleDto.UserId = code;
+
+                    foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == code).ToList())
                     {
-                        switch (credentialName)
+                        switch (item.RoleTypeId)
                         {
-                            case "isLoyaltyCreator":
-                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+                            case (int)RoleTypeEnum.IsLoyaltyCreator:
                                 userModel2.Credentials.IsLoyaltyCreator = true;
                                 break;
-                            case "isLoyaltyRuleCreator":
-                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+                            case (int)RoleTypeEnum.IsLoyaltyRuleCreator:
                                 userModel2.Credentials.IsLoyaltyRuleCreator = true;
                                 break;
-                            case "isLoyaltyRuleApprover":
-                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+                            case (int)RoleTypeEnum.IsLoyaltyRuleApprover:
                                 userModel2.Credentials.IsLoyaltyRuleApprover = true;
                                 break;
-                            case "isLoyaltyApprover":
-                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+                            case (int)RoleTypeEnum.IsLoyaltyApprover:
                                 userModel2.Credentials.IsLoyaltyApprover = true;
                                 break;
-                            case "isLoyaltyReader":
-                                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+                            case (int)RoleTypeEnum.IsLoyaltyReader:
                                 userModel2.Credentials.IsLoyaltyReader = true;
                                 break;
+                            default:
+                                break;
+
+                        }
+                        roleTypeIdList.Add(item.RoleTypeId);
+                    }
+                }
+                else
+                {
+                    userModel = await GetUserRoles(code, state);
+
+                    //UserModelDto userModel = new UserModelDto();
+                    //userModel.Tckn = "11701604572";
+                    //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
+
+                    userModel2.Tckn = userModel.Tckn;
+                    userRoleDto.UserId = userModel.Tckn;
+
+                    foreach (string credential in userModel.Credentials)
+                    {
+                        string[] credentialArray = credential.Split("###");
+                        string credentialName = credentialArray[0];
+                        string credentialValue = credentialArray[1];
+                        if (!string.IsNullOrEmpty(credentialValue) && credentialValue == "1")
+                        {
+                            switch (credentialName)
+                            {
+                                case "isLoyaltyCreator":
+                                    roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
+                                    userModel2.Credentials.IsLoyaltyCreator = true;
+                                    break;
+                                case "isLoyaltyRuleCreator":
+                                    roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
+                                    userModel2.Credentials.IsLoyaltyRuleCreator = true;
+                                    break;
+                                case "isLoyaltyRuleApprover":
+                                    roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
+                                    userModel2.Credentials.IsLoyaltyRuleApprover = true;
+                                    break;
+                                case "isLoyaltyApprover":
+                                    roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
+                                    userModel2.Credentials.IsLoyaltyApprover = true;
+                                    break;
+                                case "isLoyaltyReader":
+                                    roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
+                                    userModel2.Credentials.IsLoyaltyReader = true;
+                                    break;
+                            }
                         }
                     }
                 }
+
+                if (!roleTypeIdList.Any())
+                    throw new Exception("Bu kullanıcı için tanımlı bir yetki bulunamadı.");
+
+                List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
+                if (roleAuthorizationList == null || !roleAuthorizationList.Any())
+                    throw new Exception("Rol tanımları bulunamadı.");
+
+                roleAuthorizationList = roleAuthorizationList.Where(x => roleTypeIdList.Any(p2 => p2 == x.RoleTypeId)).ToList();
+                var moduleTypeList = roleAuthorizationList.Select(x => x.ModuleTypeId).Distinct().ToList();
+                List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
+                foreach (int moduleTypeId in moduleTypeList)
+                {
+                    UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
+                    List<int> authorizationList = new List<int>();
+                    foreach (var roleAuthorization in roleAuthorizationList.Where(x => x.ModuleTypeId == moduleTypeId))
+                        authorizationList.Add(roleAuthorization.AuthorizationTypeId);
+
+                    userAuthorizationDto.ModuleId = moduleTypeId;
+                    userAuthorizationDto.AuthorizationList = authorizationList;
+                    userAuthorizationList.Add(userAuthorizationDto);
+                }
+                response.AuthorizationList = userAuthorizationList;
+
+                Token token = await CreateAccessToken(userModel2);
+                response.AccessToken = token.AccessToken;
             }
-
-            if (!roleTypeIdList.Any())
-                throw new Exception("Bu kullanıcı için tanımlı bir yetki bulunamadı.");
-
-            List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
-            if (roleAuthorizationList == null || !roleAuthorizationList.Any())
-                throw new Exception("Rol tanımları bulunamadı.");
-
-            roleAuthorizationList = roleAuthorizationList.Where(x => roleTypeIdList.Any(p2 => p2 == x.RoleTypeId)).ToList();
-            var moduleTypeList = roleAuthorizationList.Select(x => x.ModuleTypeId).Distinct().ToList();
-            List<UserAuthorizationDto> userAuthorizationList = new List<UserAuthorizationDto>();
-            foreach (int moduleTypeId in moduleTypeList)
+            catch(Exception ex)
             {
-                UserAuthorizationDto userAuthorizationDto = new UserAuthorizationDto();
-                List<int> authorizationList = new List<int>();
-                foreach (var roleAuthorization in roleAuthorizationList.Where(x => x.ModuleTypeId == moduleTypeId))
-                    authorizationList.Add(roleAuthorization.AuthorizationTypeId);
+                throw new Exception(ex.ToString());
 
-                userAuthorizationDto.ModuleId = moduleTypeId;
-                userAuthorizationDto.AuthorizationList = authorizationList;
-                userAuthorizationList.Add(userAuthorizationDto);
             }
-            response.AuthorizationList = userAuthorizationList;
 
-            Token token = await CreateAccessToken(userModel2);
-            response.AccessToken = token.AccessToken;
+            
 
             //await _parameterService.SetUserLastProcessDate(userModel2.Tckn);
 
