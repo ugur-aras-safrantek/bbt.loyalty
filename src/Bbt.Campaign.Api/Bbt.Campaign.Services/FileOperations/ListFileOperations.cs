@@ -1,15 +1,45 @@
 ﻿using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
-using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Dtos.Target;
 using ClosedXML.Excel;
-
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace Bbt.Campaign.Services.FileOperations
 {
     public class ListFileOperations : FileOperations
     {
-        public static  byte[] GetCampaignListExcel(List<CampaignListDto> campaignList)
+
+        public static byte[] GetCampaignListExcel(List<CampaignListDto> campaignList)
+        {
+            ExcelPackage excel = new ExcelPackage();
+            var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
+
+            workSheet.Row(1).Height = 20;
+            workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            workSheet.Row(1).Style.Font.Bold = true;
+
+            workSheet.Cells[1, 1].Value = "Id";
+            workSheet.Cells[1, 2].Value = "Name";
+
+            workSheet.Cells[2, 1].Value = 1;
+            workSheet.Cells[2, 2].Value = "test";
+
+            string p_strPath = @"C:\Files\xxx.xlsx";
+            FileStream objFileStrm = File.Create(p_strPath);
+            objFileStrm.Close();
+
+
+
+            byte[] bt = excel.GetAsByteArray();
+
+            excel.Dispose();
+
+            return bt;
+        }
+
+
+        public static  byte[] GetCampaignListExcel2(List<CampaignListDto> campaignList)
         {
             byte[] result = null;
 
