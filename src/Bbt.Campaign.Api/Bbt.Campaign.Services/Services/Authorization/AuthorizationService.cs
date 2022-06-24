@@ -278,6 +278,13 @@ namespace Bbt.Campaign.Services.Services.Authorization
                     var result = await client.PostAsync(await _parameterService.GetServiceConstantValue("ResourceApiAddress"), content);
 
                     userModel = JsonConvert.DeserializeObject<UserModelDto>(result.Content.ReadAsStringAsync().Result);
+
+                    if(userModel == null)
+                        throw new Exception("Kullanıcı rolleri bulunamadı.");
+
+                    if(userModel.Credentials == null || !userModel.Credentials.Any())
+                        throw new Exception("Kullanıcı rolleri bulunamadı.");
+
                 }
             }
             else { throw new Exception("Invalid state."); }
