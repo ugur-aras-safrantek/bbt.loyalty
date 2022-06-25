@@ -11,7 +11,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         public Task<BaseResponse<CampaignDto>> CreateCampaignCopyAsync(int campaignId, string userid);
         public Task<CampaignProperty> GetCampaignProperties(int campaignId);
         public Task<int> GetCampaignProcessType(int campaignId);
-        public Task<CampaignEntity> CopyCampaignInfo(CampaignEntity campaignEntity, int campaignId, string userid,
+        public Task<CampaignEntity> CopyCampaignInfo(CampaignEntity targetEntity, int sourceCampaignId, string userid,
             bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
             bool isIncludeOrder, bool isIncludeCode, bool isIncludeStatusId);
         public Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo);
