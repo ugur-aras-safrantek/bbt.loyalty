@@ -263,7 +263,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             //Security  Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = 
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("VS7djKZZ79RvVXJgH7RsefzvqtbqsFqLxbCzjwLvtqj4Jq2fJzZ7UMrERz8XtEAE"));
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(StaticValues.SecurityKey));
 
             //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -271,8 +271,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //Oluşturulacak token ayarlarını veriyoruz.
             tokenInstance.Expiration = DateTime.Now.AddMinutes(300);
             JwtSecurityToken securityToken = new JwtSecurityToken(
-                issuer: "Issuer",
-                audience: "Audience",
+                issuer: StaticValues.Issuer,
+                audience: StaticValues.Audience,
                 expires: tokenInstance.Expiration,
                 notBefore: DateTime.Now,//Token üretildikten ne kadar süre sonra devreye girsin ayarlıyouz.
                 signingCredentials: signingCredentials,

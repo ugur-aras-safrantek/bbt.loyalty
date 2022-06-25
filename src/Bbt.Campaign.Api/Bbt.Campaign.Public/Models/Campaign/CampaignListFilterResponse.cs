@@ -10,5 +10,7 @@ namespace Bbt.Campaign.Public.Models.Campaign
             ResponseList = new List<CampaignListDto>();
         }
         public List<CampaignListDto> ResponseList { get; set; }
+
+        public bool IsSentToApprovalRecord { get; set; }
     }
 }

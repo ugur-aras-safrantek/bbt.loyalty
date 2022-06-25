@@ -568,6 +568,12 @@ namespace Bbt.Campaign.Services.Services.Campaign
             await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignListFilterResponse response = new CampaignListFilterResponse();
+
+            var sentToApprovalEntity = _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
+                .FirstOrDefaultAsync();
+            response.IsSentToApprovalRecord = sentToApprovalEntity != null;
+
             List<CampaignListDto> campaignList = await this.GetFilteredCampaignList(request);
             var totalItems = campaignList.Count();
             if (totalItems == 0)
@@ -577,6 +583,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             campaignList = campaignList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             response.ResponseList = campaignList;
             response.Paging = Core.Helper.Helpers.Paging(totalItems, pageNumber, pageSize);
+
             return await BaseResponse<CampaignListFilterResponse>.SuccessAsync(response);
         }
 

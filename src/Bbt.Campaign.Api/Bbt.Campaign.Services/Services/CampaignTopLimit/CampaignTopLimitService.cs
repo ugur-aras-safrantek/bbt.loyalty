@@ -316,6 +316,12 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTopLimitListFilterResponse response = new CampaignTopLimitListFilterResponse();
+
+            var sentToApprovalEntity = _unitOfWork.GetRepository<TopLimitEntity>()
+                .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
+                .FirstOrDefaultAsync();
+            response.IsSentToApprovalRecord = sentToApprovalEntity != null;
+
             List<CampaignTopLimitListDto> campaignList = await GetFilteredCampaignTopLimitList(request); 
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;

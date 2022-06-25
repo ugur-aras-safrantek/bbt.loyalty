@@ -10,5 +10,6 @@ namespace Bbt.Campaign.Public.Models.CampaignTopLimit
             ResponseList = new List<CampaignTopLimitListDto>();
         }
         public List<CampaignTopLimitListDto> ResponseList { get; set; }
+        public bool IsSentToApprovalRecord { get; set; }
     }
 }

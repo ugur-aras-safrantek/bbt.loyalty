@@ -11,5 +11,7 @@ namespace Bbt.Campaign.Public.Models.Target
         }
         public List<TargetListDto> ResponseList { get; set; }
 
+        public bool IsSentToApprovalRecord { get; set; }
+
     }
 }

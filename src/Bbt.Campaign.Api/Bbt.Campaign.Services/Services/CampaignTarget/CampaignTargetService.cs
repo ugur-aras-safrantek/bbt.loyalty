@@ -729,29 +729,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto2;
         }
 
-        //private TargetParameterDto2 CalculateAmounts(TargetParameterDto2 item) 
-        //{
-        //    decimal totalAmount = item.TotalAmount ?? 0;
-        //    int numberOfTransaction = item.NumberOfTransaction ?? 0;
-        //    decimal usedAmount = item.UsedAmount;
-        //    int usedNumberOfTransaction = item.UsedNumberOfTransaction;
-        //    if (totalAmount > 0)
-        //    {
-        //        item.UsedAmountStr = usedAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(usedAmount);
-        //        item.RemainAmountStr = (usedAmount >= totalAmount) ? "0" : Helpers.ConvertNullablePriceString(totalAmount - usedAmount);
-        //        item.Percent = (usedAmount >= totalAmount) ? 100 : (int)((usedAmount / totalAmount) * 100);
-        //    }
-        //    else if (numberOfTransaction > 0)
-        //    {
-        //        item.UsedAmountStr = item.UsedNumberOfTransaction.ToString();
-        //        item.RemainAmountStr = usedNumberOfTransaction > numberOfTransaction ? "0" : (numberOfTransaction - usedNumberOfTransaction).ToString();
-        //        item.Percent = (usedNumberOfTransaction >= numberOfTransaction) ? 100 : (int)(((decimal)usedNumberOfTransaction / (decimal)numberOfTransaction) * 100);
-        //        item.UsedAmountCurrencyCode = null;
-        //    }
-        //    item.IsAchieved = item.Percent == 100;
-
-        //    return item;
-        //}
         public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto userRole)
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.View;
