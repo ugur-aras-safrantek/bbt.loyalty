@@ -11,6 +11,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Authorization;
 using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
@@ -32,22 +33,24 @@ namespace Bbt.Campaign.Services.Services.Authorization
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
         private readonly IRedisDatabaseProvider _redisDatabaseProvider;
+        private readonly IRemoteService _remoteService;
 
         public AuthorizationService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
-            IRedisDatabaseProvider redisDatabaseProvider)
+            IRedisDatabaseProvider redisDatabaseProvider, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _redisDatabaseProvider = redisDatabaseProvider;
+            _remoteService = remoteService;
         }
         public async Task<BaseResponse<UserAuthorizationResponseDto>> LoginAsync(string code, string state) 
         {
             UserAuthorizationResponseDto response = new UserAuthorizationResponseDto();
-            UserModelDto2 userModel2 = new UserModelDto2();
+            UserModel userModel = new UserModel();
             UserRoleDto userRoleDto = new UserRoleDto();
             List<int> roleTypeIdList = new List<int>();
-            UserModelDto userModel;
+            UserModelService userModelService;
 
             try 
             {
@@ -56,7 +59,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
                 if (StaticValues.IsDevelopment)
                 {
-                    userModel2.Tckn = code;
+                    userModel.Tckn = code;
                     userRoleDto.UserId = code;
 
                     foreach (var item in _unitOfWork.GetRepository<UserRoleEntity>().GetAll(x => x.UserId == code).ToList())
@@ -64,19 +67,19 @@ namespace Bbt.Campaign.Services.Services.Authorization
                         switch (item.RoleTypeId)
                         {
                             case (int)RoleTypeEnum.IsLoyaltyCreator:
-                                userModel2.Credentials.IsLoyaltyCreator = true;
+                                userModel.Credentials.IsLoyaltyCreator = true;
                                 break;
                             case (int)RoleTypeEnum.IsLoyaltyRuleCreator:
-                                userModel2.Credentials.IsLoyaltyRuleCreator = true;
+                                userModel.Credentials.IsLoyaltyRuleCreator = true;
                                 break;
                             case (int)RoleTypeEnum.IsLoyaltyRuleApprover:
-                                userModel2.Credentials.IsLoyaltyRuleApprover = true;
+                                userModel.Credentials.IsLoyaltyRuleApprover = true;
                                 break;
                             case (int)RoleTypeEnum.IsLoyaltyApprover:
-                                userModel2.Credentials.IsLoyaltyApprover = true;
+                                userModel.Credentials.IsLoyaltyApprover = true;
                                 break;
                             case (int)RoleTypeEnum.IsLoyaltyReader:
-                                userModel2.Credentials.IsLoyaltyReader = true;
+                                userModel.Credentials.IsLoyaltyReader = true;
                                 break;
                             default:
                                 break;
@@ -87,16 +90,16 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 }
                 else
                 {
-                    userModel = await GetUserRoles(code, state);
+                    userModelService = await _remoteService.GetUserRoles(code, state);
 
                     //UserModelDto userModel = new UserModelDto();
                     //userModel.Tckn = "11701604572";
                     //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
 
-                    userModel2.Tckn = userModel.Tckn;
-                    userRoleDto.UserId = userModel.Tckn;
+                    userModel.Tckn = userModelService.Tckn;
+                    userRoleDto.UserId = userModelService.Tckn;
 
-                    foreach (string credential in userModel.Credentials)
+                    foreach (string credential in userModelService.Credentials)
                     {
                         string[] credentialArray = credential.Split("###");
                         string credentialName = credentialArray[0];
@@ -107,23 +110,23 @@ namespace Bbt.Campaign.Services.Services.Authorization
                             {
                                 case "isLoyaltyCreator":
                                     roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
-                                    userModel2.Credentials.IsLoyaltyCreator = true;
+                                    userModel.Credentials.IsLoyaltyCreator = true;
                                     break;
                                 case "isLoyaltyRuleCreator":
                                     roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
-                                    userModel2.Credentials.IsLoyaltyRuleCreator = true;
+                                    userModel.Credentials.IsLoyaltyRuleCreator = true;
                                     break;
                                 case "isLoyaltyRuleApprover":
                                     roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
-                                    userModel2.Credentials.IsLoyaltyRuleApprover = true;
+                                    userModel.Credentials.IsLoyaltyRuleApprover = true;
                                     break;
                                 case "isLoyaltyApprover":
                                     roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
-                                    userModel2.Credentials.IsLoyaltyApprover = true;
+                                    userModel.Credentials.IsLoyaltyApprover = true;
                                     break;
                                 case "isLoyaltyReader":
                                     roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
-                                    userModel2.Credentials.IsLoyaltyReader = true;
+                                    userModel.Credentials.IsLoyaltyReader = true;
                                     break;
                             }
                         }
@@ -153,7 +156,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 }
                 response.AuthorizationList = userAuthorizationList;
 
-                Token token = await CreateAccessToken(userModel2);
+                Token token = await CreateAccessToken(userModel);
                 response.AccessToken = token.AccessToken;
             }
             catch(Exception ex)
@@ -164,7 +167,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             
 
-            //await _parameterService.SetUserLastProcessDate(userModel2.Tckn);
+            //await _parameterService.SetUserLastProcessDate(userModel.Tckn);
 
             return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
@@ -248,60 +251,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             //await _parameterService.SetUserRoleListAsync(userId, userRoleList);
         }
 
-        private async Task<UserModelDto> GetUserRoles(string code, string state)
-        {
-            UserModelDto userModel;
-            string accessToken = string.Empty;
-
-            if (state == "LoyaltyGondor")
-            {
-                using (var client = new HttpClient())
-                {
-                    string baseAddress = await _parameterService.GetServiceConstantValue("AccessTokenBaseAddress");
-                    string apiAddress = await _parameterService.GetServiceConstantValue("AccessTokenApiAddress");
-                    client.BaseAddress = new Uri(baseAddress);
-
-                    var content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("code", code),
-                        new KeyValuePair<string, string>("client_id", await _parameterService.GetServiceConstantValue("client_id")),
-                        new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                        new KeyValuePair<string, string>("client_secret", await _parameterService.GetServiceConstantValue("client_secret")),
-                        new KeyValuePair<string, string>("redirect_uri", await _parameterService.GetServiceConstantValue("redirect_uri")),
-                    });
-
-                    var result = await client.PostAsync(apiAddress, content);
-                    var responseContent = result.Content.ReadAsStringAsync().Result;
-                    AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
-                    if (token.Access_token == null)
-                        throw new Exception(responseContent);
-                    accessToken = token.Access_token;
-                }
-
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(await _parameterService.GetServiceConstantValue("BaseAddress"));
-                    var content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("access_token", accessToken),
-                    });
-                    var result = await client.PostAsync(await _parameterService.GetServiceConstantValue("ResourceApiAddress"), content);
-
-                    userModel = JsonConvert.DeserializeObject<UserModelDto>(result.Content.ReadAsStringAsync().Result);
-
-                    if(userModel == null)
-                        throw new Exception("Kullanıcı rolleri bulunamadı.");
-
-                    if(userModel.Credentials == null || !userModel.Credentials.Any())
-                        throw new Exception("Kullanıcı rolleri bulunamadı.");
-
-                }
-            }
-            else { throw new Exception("Invalid state."); }
-            return userModel;
-        }
-
-        public async Task<Token> CreateAccessToken(UserModelDto2 user)
+        public async Task<Token> CreateAccessToken(UserModel user)
         {
             var tokenInstance = new Token();
             var claims = new Claim[]{
@@ -352,6 +302,5 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 return Convert.ToBase64String(number);
             }
         }
-
     }
 }

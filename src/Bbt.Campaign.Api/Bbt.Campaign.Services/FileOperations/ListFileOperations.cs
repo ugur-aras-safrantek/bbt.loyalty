@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Services.FileOperations
     public class ListFileOperations : FileOperations
     {
 
-        public static byte[] GetCampaignListExcel(List<CampaignListDto> campaignList)
+        public static byte[] GetCampaignListExcel2(List<CampaignListDto> campaignList)
         {
             ExcelPackage excel = new ExcelPackage();
             var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
@@ -39,7 +39,7 @@ namespace Bbt.Campaign.Services.FileOperations
         }
 
 
-        public static  byte[] GetCampaignListExcel2(List<CampaignListDto> campaignList)
+        public static  byte[] GetCampaignListExcel(List<CampaignListDto> campaignList)
         {
             byte[] result = null;
 
@@ -175,7 +175,7 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     result = stream.ToArray();
 
-                    //File.WriteAllBytes(@"C:\Files\Target.xlsx", result);
+                    File.WriteAllBytes(@"C:\Files2\Target.xlsx", result);
                 }
             }
             return result;

@@ -372,6 +372,11 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
+            if (!campaignEntity.IsBundle && campaignEntity.IsActive) 
+            { 
+                if(campaignEntity.Order == null)
+                    throw new Exception("Sıralama girilmelidir.");
+            }
 
             var campaignRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted).FirstOrDefaultAsync();
             if (campaignRuleEntity == null)
@@ -421,11 +426,10 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             }
             else 
             {
-                string apiResponse = await _remoteService.GetEarningByCustomerAndCampaingData(customerCode, campaignId, lang);
-                if (!string.IsNullOrEmpty(apiResponse))
+                var earningByCustomerAndCampaingList = await _remoteService.GetEarningByCustomerAndCampaingData(customerCode, campaignId, lang);
+                if (earningByCustomerAndCampaingList != null)
                 {
-                    var earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
-                    if (earningByCustomerAndCampaingList != null && earningByCustomerAndCampaingList.Any())
+                    if (earningByCustomerAndCampaingList.Any()) 
                     {
                         foreach (var earning in earningByCustomerAndCampaingList)
                         {
@@ -440,8 +444,6 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                         }
                     }
                 }
-
-
             }
             return customerAchievementList;
         }

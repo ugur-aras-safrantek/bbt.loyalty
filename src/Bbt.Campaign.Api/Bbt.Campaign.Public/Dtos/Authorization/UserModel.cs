@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Dtos.Authorization
 {
-    public class UserModelDto
+    public class UserModelService
     {
         public string Tckn { get; set; }
         public List<string> Credentials { get; set; }
@@ -21,9 +21,9 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
         public bool IsLoyaltyRuleApprover { get; set; } = false;
     }
 
-    public class UserModelDto2 
+    public class UserModel 
     {
-        public UserModelDto2() 
+        public UserModel() 
         {
             Credentials = new Credentials();
         }

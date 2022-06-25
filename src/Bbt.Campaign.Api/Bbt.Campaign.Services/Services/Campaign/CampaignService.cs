@@ -23,6 +23,7 @@ using Bbt.Campaign.Core.Helper;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using Bbt.Campaign.Public.Dtos.Authorization;
+using Bbt.Campaign.Services.Services.Remote;
 
 namespace Bbt.Campaign.Services.Services.Campaign
 {
@@ -34,17 +35,19 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IParameterService _parameterService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
+        private readonly IRemoteService _remoteService;
         private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            IAuthorizationService authorizationService, IDraftService draftService)
+            IAuthorizationService authorizationService, IDraftService draftService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
             _authorizationService = authorizationService;
             _draftService = draftService;
+            _remoteService = remoteService;
         }
 
         public async Task<BaseResponse<CampaignDto>> AddAsync(CampaignInsertRequest campaign, UserRoleDto userRoleDto)
@@ -117,12 +120,12 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     .FirstOrDefault();
                 if(approvedCampaign != null) 
                 {
-                    var topLimitIdList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
+                    var topLimitList = await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
                         .GetAllIncluding(x => x.TopLimit)
                         .Where(x => x.CampaignId == approvedCampaign.Id && !x.IsDeleted && x.TopLimit.IsActive)
-                        .Select(x => x.TopLimitId)
+                        .Select(x => x.CampaignId)
                         .ToListAsync();
-                    if (!topLimitIdList.Contains(approvedCampaign.Id))
+                    if (topLimitList.Contains(approvedCampaign.Id))
                         throw new Exception(@"Pasif hale getirilmek istenen Kampanya, Çatı Limitleri içerisinde bir adet kampanya ile birlikte tanımlıdır.");
                 }
             }
@@ -184,11 +187,6 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await GetCampaignAsync(entity.Id);
         }
 
-        
-        
-        
-        
-        
         public async Task<BaseResponse<CampaignDto>> CreateDraftAsync(int id, UserRoleDto userRole) 
         {
             int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
@@ -406,6 +404,27 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if (string.IsNullOrWhiteSpace(input.Name))
                 throw new Exception("Kampanya Adı girilmelidir.");
 
+            //kampanya adı mükerrer kontrolu
+            bool isNameExists = false;
+            var campaignList = await _unitOfWork.GetRepository<CampaignEntity>()
+                    .GetAll(x => x.Name == input.Name && !x.IsDeleted && (x.StatusId == (int)StatusEnum.Approved || x.StatusId == (int)StatusEnum.SentToApprove))
+                    .ToListAsync();
+            if(campaignList.Any()) 
+            { 
+                if(campaignId == 0)
+                    isNameExists = true;
+                else 
+                {
+                    var entity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+                    var campaign = campaignList.Where(x => x.Code != entity.Code).FirstOrDefault();
+                    if (campaign != null)
+                        isNameExists = true;
+                }
+            }
+            if(isNameExists)
+                throw new Exception("Kampanya adı için onaylanmış veya onayda bekleyen bir kayıt mevcuttur.");
+
+
             //Sözleşme
             if (input.IsContract) 
             {
@@ -498,8 +517,11 @@ namespace Bbt.Campaign.Services.Services.Campaign
             DateTime endDate = Helpers.ConvertUIDateTimeStringForBackEnd(input.EndDate);
             DateTime previousDay  = DateTime.Now.AddDays(-1);
 
-            if (startDate < previousDay)
-                throw new Exception("Başlama Tarihi günün tarihinden küçük olamaz.");
+            if(campaignId == 0)//insert ise 
+            {
+                if (startDate < previousDay)
+                    throw new Exception("Başlama Tarihi günün tarihinden küçük olamaz.");
+            }
             if (endDate < previousDay)
                 throw new Exception("Bitiş Tarihi günün tarihinden küçük olamaz.");
             if (startDate > endDate)
@@ -524,7 +546,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     .GetAll(x => !x.IsDeleted && x.Order != null && x.Order == order 
                         && x.EndDate >= today && x.Id != campaignId 
                         && x.Code != campaignCode
-                        && x.StatusId == (int)StatusEnum.Approved)
+                        && (x.StatusId == (int)StatusEnum.Approved || x.StatusId == (int)StatusEnum.SentToApprove))
                     .FirstOrDefault();
                 if (orderCampaignEntity != null) 
                 {
@@ -685,77 +707,29 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
             else
             {
-                string accessToken = await _parameterService.GetAccessToken();
-
-
-                using (var client = new HttpClient())
+                var document = await _remoteService.GetDocument(id);
+                if (document != null)
                 {
-                    string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
-                    string apiAddress = await _parameterService.GetServiceConstantValue("Document");
-                    apiAddress = apiAddress.Replace("{key}", id.ToString());
-                    string serviceUrl = string.Concat(baseAddress, apiAddress);
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    var restResponse = await client.GetAsync(serviceUrl);
-                    if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (document.Content != null)
                     {
-                        if (restResponse.Content != null) 
+                        getFileResponse = new GetFileResponse()
                         {
-                            var apiResponse = await restResponse.Content.ReadAsStringAsync();
-                            if (!string.IsNullOrEmpty(apiResponse)) 
+                            Document = new Public.Models.CampaignDocument.DocumentModel()
                             {
-                                var document = JsonConvert.DeserializeObject<Document>(apiResponse);
-                                if(document != null) 
-                                { 
-                                    if(document.Content != null) 
-                                    {
-                                        getFileResponse = new GetFileResponse()
-                                        {
-                                            Document = new Public.Models.CampaignDocument.DocumentModel()
-                                            {
-                                                Data = document.Content,
-                                                DocumentName = id.ToString() + "-Sözleşme.html",
-                                                DocumentType = DocumentTypePublicEnum.Contract,
-                                                MimeType = MimeTypeExtensions.ToMimeType("text/html")
-                                            }
-                                        };
-                                    }
-                                    else { throw new Exception("Servise bağlanma başarılı, data boş."); }
-                                }
-                                else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                                Data = document.Content,
+                                DocumentName = id.ToString() + "-Sözleşme.html",
+                                DocumentType = DocumentTypePublicEnum.Contract,
+                                MimeType = MimeTypeExtensions.ToMimeType("text/html")
                             }
-                            else { throw new Exception("Servise bağlanma başarılı, data boş."); }
-                        }
-                        else { throw new Exception("Servise bağlanma başarılı, data boş."); }
+                        };
                     }
-                    else if(restResponse.StatusCode.ToString() == "455")
-                    {
-                        throw new Exception("Document template not found.");
-                    }
-                    else 
-                    {
-                        throw new Exception("Sözleşme servisinden hata döndü.");
-                    }
+                    else { throw new Exception("Doküman içeriği boş."); }
                 }
             }
 
             return getFileResponse;
 
         }
-        
-        //public async Task<bool> IsInvisibleCampaign(int campaignId) 
-        //{
-        //    bool isInvisibleCampaign = false;
-        //    var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
-        //    if (campaignEntity != null)
-        //    {
-        //        int viewOptionId = campaignEntity.ViewOptionId ?? 0;
-        //        isInvisibleCampaign = viewOptionId == (int)ViewOptionsEnum.InvisibleCampaign;
-        //    }
-        //    return isInvisibleCampaign;
-        //}
-
-        
-
         private async Task<List<int>> GetOrderListAsync(int maxCount) 
         {
             List<int> orderList = new List<int>();

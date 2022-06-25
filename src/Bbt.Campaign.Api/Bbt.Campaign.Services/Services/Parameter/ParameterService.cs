@@ -329,20 +329,13 @@ namespace Bbt.Campaign.Services.Services.Parameter
                     var restResponse = await httpClient.GetAsync(serviceUrl);
                     if (restResponse.IsSuccessStatusCode)
                     {
-                        if (restResponse.Content != null)
+                        string apiResponse = await restResponse.Content.ReadAsStringAsync();
+                        serviceResult = JsonConvert.DeserializeObject<List<BranchDto>>(apiResponse);
+                        if (serviceResult != null && serviceResult.Any()) { }
+                        else
                         {
-                            string apiResponse = await restResponse.Content.ReadAsStringAsync();
-                            if (!string.IsNullOrEmpty(apiResponse)) 
-                            {
-                                serviceResult = JsonConvert.DeserializeObject<List<BranchDto>>(apiResponse);
-                                if (serviceResult != null && serviceResult.Any()) { }
-                                else 
-                                { 
-                                    throw new Exception("Şube listesi servisinden veri çekilemedi."); 
-                                }
-                            }
+                            throw new Exception("Şube listesi servisinden veri çekilemedi.");
                         }
-                        else { throw new Exception("Şube listesi servisinden veri çekilemedi."); }
                     }
                     else { throw new Exception("Şube listesi servisinden veri çekilemedi."); }
                 }
@@ -397,13 +390,9 @@ namespace Bbt.Campaign.Services.Services.Parameter
                     var response = await httpClient.GetAsync(serviceUrl);
                     if (response.IsSuccessStatusCode)
                     {
-                        if (response.Content != null)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-                            channelCodeList = JsonConvert.DeserializeObject<List<string>>(apiResponse);
-                            if (channelCodeList != null && channelCodeList.Any()) { }
-                            else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
-                        }
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        channelCodeList = JsonConvert.DeserializeObject<List<string>>(apiResponse);
+                        if (channelCodeList != null && channelCodeList.Any()) { }
                         else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
                     }
                     else { throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); }
@@ -484,27 +473,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
             return retVal;
         }
 
-        public async Task<string> GetAccessToken()
-        {
-            using (var client = new HttpClient())
-            {
-                string accessToken = string.Empty;
-                string baseAddress = await GetServiceConstantValue("BaseAddress");
-                string apiAddress = await GetServiceConstantValue("AccessToken");
-                client.BaseAddress = new Uri(baseAddress); 
-                var content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("client_id", await GetServiceConstantValue("client_id")),
-                    new KeyValuePair<string, string>("grant_type", await GetServiceConstantValue("grant_type")),
-                    new KeyValuePair<string, string>("client_secret", await GetServiceConstantValue("client_secret"))
-                });
-                var result = await client.PostAsync(apiAddress, content);
-                var responseContent = result.Content.ReadAsStringAsync().Result;
-                AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
-                accessToken = token.Access_token;
-                return accessToken;
-            }
-        }
 
         public async Task<string> GetUserRoles(string code, string state)
         {

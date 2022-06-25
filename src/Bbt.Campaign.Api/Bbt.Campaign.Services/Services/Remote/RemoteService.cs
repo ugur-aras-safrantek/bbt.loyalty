@@ -1,11 +1,15 @@
 ﻿using Bbt.Campaign.Core.Helper;
+using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Enums;
+using Bbt.Campaign.Public.Models.Campaign;
+using Bbt.Campaign.Public.Models.CampaignAchievement;
+using Bbt.Campaign.Public.Models.Customer;
+using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using Bbt.Campaign.Shared.Static;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
@@ -21,103 +25,40 @@ namespace Bbt.Campaign.Services.Services.Remote
         {
             _parameterService = parameterService;
         }
-        public async Task<List<string>> GetChannelCodeList() 
+
+        public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode) 
         {
-            List<string> channelCodeList = new List<string>();
+            var goalResultByCustomerIdAndMonthCount = new GoalResultByCustomerIdAndMonthCount();
             using (var httpClient = new HttpClient())
             {
-                string baseAddress = await GetServiceConstantValue("BaseAddress");
-                string apiAddress = await GetServiceConstantValue("Document");
-                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                string accessToken = await GetAccessToken();
+                string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(serviceUrl);
                 if (response.IsSuccessStatusCode)
                 {
                     if (response.Content != null)
                     {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        channelCodeList = JsonConvert.DeserializeObject<List<string>>((JObject.Parse(apiResponse)["data"]).ToString());
-                        if (channelCodeList != null && channelCodeList.Any()) 
-                        { 
-                            return channelCodeList;
-                        }
-                        else 
-                        { 
-                            throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); 
-                        }
-                    }
-                    else 
-                    { 
-                        throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); 
+                        var apiResponse = await response.Content.ReadAsStringAsync();
+                        if (!string.IsNullOrEmpty(apiResponse))
+                            goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse);
                     }
                 }
-                else 
-                { 
-                    throw new Exception("Kazanım kanalı servisinden veri çekilemedi."); 
-                }
-            }
-        }
-        private async Task<string> GetAccessToken() 
-        {
-            string retVal = string.Empty;
-            var serviceConstantList = (await _parameterService.GetServiceConstantListAsync())?.Data;
-            string baseAddress = serviceConstantList?.Where(x => x.Code == "BaseAddress").FirstOrDefault().Name;
-            string tokenAddress = serviceConstantList?.Where(x => x.Code == "Token").FirstOrDefault().Name;
-
-            string client_id_value = serviceConstantList?.Where(x => x.Code == "client_id").FirstOrDefault().Name;
-            string grant_type_value = serviceConstantList?.Where(x => x.Code == "grant_type").FirstOrDefault().Name;
-            string client_secret_value = serviceConstantList?.Where(x => x.Code == "client_secret").FirstOrDefault().Name;
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(baseAddress); 
-                var content = new FormUrlEncodedContent(new[]
+                else
                 {
-
-                        new KeyValuePair<string, string>("client_id", client_id_value),
-                        new KeyValuePair<string, string>("grant_type", grant_type_value),
-                        new KeyValuePair<string, string>("client_secret", client_secret_value)
-                });
-                var result = await client.PostAsync(tokenAddress, content);
-                var responseContent = result.Content.ReadAsStringAsync().Result;
-                //AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
-                //accessToken = token.access_token;
-                return "";
+                    throw new Exception("Müşteri kazanımları servisinden veri çekilemedi.");
+                }
             }
-
+            return goalResultByCustomerIdAndMonthCount;
         }
-        private async Task<string> GetDocument(int id) 
-        {
-            string accessToken = await GetAccessToken();
-            string baseAddress = await GetServiceConstantValue("BaseAddress");
-            string apiAddress = await GetServiceConstantValue("Document");
-            apiAddress = apiAddress.Replace("{key}", id.ToString());
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(baseAddress); 
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var result = await client.GetAsync(apiAddress);
-                var responseContent = result.Content.ReadAsStringAsync().Result;
-            }
-            return string.Empty;
-        }
-        private async Task<string> GetServiceConstantValue(string code) 
-        {
-            string retVal = string.Empty;
-            var serviceConstantList = (await _parameterService.GetServiceConstantListAsync())?.Data;
-            var serviceConstant = serviceConstantList?.Where(x => x.Code == code).FirstOrDefault();
-            if (serviceConstant != null)
-                retVal = serviceConstant.Name;
-            return retVal;
-        }
-
         public async Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang) 
         {
             GoalResultByCustomerAndCampaing goalResultByCustomerAndCampaing = null;
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await _parameterService.GetAccessToken();
+                string accessToken = await GetAccessToken();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -130,27 +71,21 @@ namespace Bbt.Campaign.Services.Services.Remote
                 var restResponse = await httpClient.GetAsync(serviceUrl);
                 if (restResponse.IsSuccessStatusCode)
                 {
-                    if (restResponse.Content != null) 
-                    {
-                        var apiResponse = await restResponse.Content.ReadAsStringAsync();
-                        if(!string.IsNullOrEmpty(apiResponse))
-                            goalResultByCustomerAndCampaing = JsonConvert.DeserializeObject<GoalResultByCustomerAndCampaing>(apiResponse);
-                    }
-                        
-                    else
-                        throw new Exception("Müşteri hedef servisinden veri çekilemedi.");
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(apiResponse))
+                        goalResultByCustomerAndCampaing = JsonConvert.DeserializeObject<GoalResultByCustomerAndCampaing>(apiResponse);
                 }
                 else
                     throw new Exception("Müşteri hedef servisinden veri çekilemedi.");
             }
             return goalResultByCustomerAndCampaing;
         }
-        public async Task<string> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang) 
+        public async Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang) 
         {
-            string apiResponse = string.Empty;
+            var earningByCustomerAndCampaingList = new List<EarningByCustomerAndCampaing>();
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await _parameterService.GetAccessToken();
+                string accessToken = await GetAccessToken();
                 string serviceUrl = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
                 serviceUrl = serviceUrl.Replace("{customerId}", customerId);
                 serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
@@ -160,23 +95,20 @@ namespace Bbt.Campaign.Services.Services.Remote
                 var restResponse = await httpClient.GetAsync(serviceUrl);
                 if (restResponse.IsSuccessStatusCode)
                 {
-                    if (restResponse.Content != null)
-                        apiResponse = await restResponse.Content.ReadAsStringAsync();
-                    else 
-                        throw new Exception("Müşteri kazanım servisinden hata alındı.");
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                    earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
                 }
                 else 
                     throw new Exception("Müşteri kazanım servisinden hata alındı.");
             }
-            return apiResponse;
+            return earningByCustomerAndCampaingList;
         }
-
         public async Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request) 
         {
             CustomerReportServiceDto customerReportServiceDto = null;
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await _parameterService.GetAccessToken();
+                string accessToken = await GetAccessToken();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("CampaignReport");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -286,11 +218,8 @@ namespace Bbt.Campaign.Services.Services.Remote
                 var restResponse = await httpClient.GetAsync(serviceUrl);
                 if (restResponse.IsSuccessStatusCode)
                 {
-                    if (restResponse.Content != null)
-                    {
-                        var apiResponse = await restResponse.Content.ReadAsStringAsync();
-                        customerReportServiceDto = JsonConvert.DeserializeObject<CustomerReportServiceDto>(apiResponse);
-                    }
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                    customerReportServiceDto = JsonConvert.DeserializeObject<CustomerReportServiceDto>(apiResponse);
                 }
                 else
                 {
@@ -299,7 +228,110 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return customerReportServiceDto;
         }
+        public async Task<UserModelService> GetUserRoles(string code, string state)
+        {
+            UserModelService userModel;
+            string accessToken = string.Empty;
 
+            if (state == "LoyaltyGondor")
+            {
+                using (var client = new HttpClient())
+                {
+                    string baseAddress = await _parameterService.GetServiceConstantValue("AccessTokenBaseAddress");
+                    string apiAddress = await _parameterService.GetServiceConstantValue("AccessTokenApiAddress");
+                    client.BaseAddress = new Uri(baseAddress);
+
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("code", code),
+                        new KeyValuePair<string, string>("client_id", await _parameterService.GetServiceConstantValue("client_id")),
+                        new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                        new KeyValuePair<string, string>("client_secret", await _parameterService.GetServiceConstantValue("client_secret")),
+                        new KeyValuePair<string, string>("redirect_uri", await _parameterService.GetServiceConstantValue("redirect_uri")),
+                    });
+
+                    var result = await client.PostAsync(apiAddress, content);
+                    var responseContent = result.Content.ReadAsStringAsync().Result;
+                    AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
+                    if (token.Access_token == null)
+                        throw new Exception(responseContent);
+                    accessToken = token.Access_token;
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(await _parameterService.GetServiceConstantValue("BaseAddress"));
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("access_token", accessToken),
+                    });
+                    var result = await client.PostAsync(await _parameterService.GetServiceConstantValue("ResourceApiAddress"), content);
+
+                    userModel = JsonConvert.DeserializeObject<UserModelService>(result.Content.ReadAsStringAsync().Result);
+
+                    if (userModel == null)
+                        throw new Exception("Kullanıcı rolleri bulunamadı.");
+
+                    if (userModel.Credentials == null || !userModel.Credentials.Any())
+                        throw new Exception("Kullanıcı rolleri bulunamadı.");
+
+                    if (userModel.Tckn == null)
+                        throw new Exception("Tckn bilgisi bulunamadı.");
+                }
+            }
+            else { throw new Exception("Invalid state."); }
+            return userModel;
+        }
+        public async Task<Document> GetDocument(int id) 
+        {
+            var document = new Document();
+            string accessToken = await GetAccessToken();
+
+            using (var client = new HttpClient())
+            {
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("Document");
+                apiAddress = apiAddress.Replace("{key}", id.ToString());
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var response = await client.GetAsync(serviceUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    document = JsonConvert.DeserializeObject<Document>(apiResponse);
+                }
+                else if (response.StatusCode.ToString() == "455")
+                {
+                    throw new Exception("Document template not found.");
+                }
+                else
+                {
+                    throw new Exception("Sözleşme servisine bağlanılamadı.");
+                }
+            }
+            return document;
+        }
+        private async Task<string> GetAccessToken()
+        {
+            using (var client = new HttpClient())
+            {
+                string accessToken = string.Empty;
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("AccessToken");
+                client.BaseAddress = new Uri(baseAddress);
+                var content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("client_id", await _parameterService.GetServiceConstantValue("client_id")),
+                    new KeyValuePair<string, string>("grant_type", await _parameterService.GetServiceConstantValue("grant_type")),
+                    new KeyValuePair<string, string>("client_secret", await _parameterService.GetServiceConstantValue("client_secret"))
+                });
+                var result = await client.PostAsync(apiAddress, content);
+                var responseContent = result.Content.ReadAsStringAsync().Result;
+                AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
+                accessToken = token.Access_token;
+                return accessToken;
+            }
+        }
         public enum SortTypeEnum
         {
             [Description("ASC")]
