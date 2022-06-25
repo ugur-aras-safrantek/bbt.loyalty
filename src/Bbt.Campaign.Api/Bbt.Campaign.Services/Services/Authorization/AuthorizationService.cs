@@ -54,9 +54,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
 
             try 
             {
-                response.Code = code;
-                response.State = state;
-
                 if (StaticValues.IsDevelopment)
                 {
                     userModel.Tckn = code;

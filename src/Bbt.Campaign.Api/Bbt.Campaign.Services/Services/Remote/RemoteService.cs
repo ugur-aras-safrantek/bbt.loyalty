@@ -39,12 +39,9 @@ namespace Bbt.Campaign.Services.Services.Remote
                 var response = await httpClient.GetAsync(serviceUrl);
                 if (response.IsSuccessStatusCode)
                 {
-                    if (response.Content != null)
-                    {
-                        var apiResponse = await response.Content.ReadAsStringAsync();
-                        if (!string.IsNullOrEmpty(apiResponse))
-                            goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse);
-                    }
+                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(apiResponse))
+                        goalResultByCustomerIdAndMonthCount = JsonConvert.DeserializeObject<GoalResultByCustomerIdAndMonthCount>(apiResponse);
                 }
                 else
                 {
@@ -72,8 +69,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 if (restResponse.IsSuccessStatusCode)
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
-                    if (!string.IsNullOrEmpty(apiResponse))
-                        goalResultByCustomerAndCampaing = JsonConvert.DeserializeObject<GoalResultByCustomerAndCampaing>(apiResponse);
+                    goalResultByCustomerAndCampaing = JsonConvert.DeserializeObject<GoalResultByCustomerAndCampaing>(apiResponse);
                 }
                 else
                     throw new Exception("Müşteri hedef servisinden veri çekilemedi.");
@@ -270,7 +266,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     userModel = JsonConvert.DeserializeObject<UserModelService>(result.Content.ReadAsStringAsync().Result);
 
                     if (userModel == null)
-                        throw new Exception("Kullanıcı rolleri bulunamadı.");
+                        throw new Exception("Kullanıcı modeli bulunamadı.");
 
                     if (userModel.Credentials == null || !userModel.Credentials.Any())
                         throw new Exception("Kullanıcı rolleri bulunamadı.");
