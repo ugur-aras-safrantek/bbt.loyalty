@@ -317,7 +317,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             CampaignTopLimitListFilterResponse response = new CampaignTopLimitListFilterResponse();
 
-            var sentToApprovalEntity = _unitOfWork.GetRepository<TopLimitEntity>()
+            var sentToApprovalEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                 .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
                 .FirstOrDefaultAsync();
             response.IsSentToApprovalRecord = sentToApprovalEntity != null;

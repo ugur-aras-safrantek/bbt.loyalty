@@ -569,7 +569,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
 
             CampaignListFilterResponse response = new CampaignListFilterResponse();
 
-            var sentToApprovalEntity = _unitOfWork.GetRepository<CampaignEntity>()
+            var sentToApprovalEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
                 .FirstOrDefaultAsync();
             response.IsSentToApprovalRecord = sentToApprovalEntity != null;

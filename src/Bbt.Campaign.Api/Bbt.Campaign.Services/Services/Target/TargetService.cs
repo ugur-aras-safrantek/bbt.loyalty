@@ -217,7 +217,7 @@ namespace Bbt.Target.Services.Services.Target
             var response = new TargetListFilterResponse();
             try 
             {
-                var sentToApprovalEntity = _unitOfWork.GetRepository<TargetEntity>()
+                var sentToApprovalEntity = await _unitOfWork.GetRepository<TargetEntity>()
                     .GetAll(x => !x.IsDeleted && x.StatusId == (int)StatusEnum.SentToApprove)
                     .FirstOrDefaultAsync();
                 response.IsSentToApprovalRecord = sentToApprovalEntity != null;
