@@ -93,8 +93,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
                     //userModel.Tckn = "11701604572";
                     //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
 
-                    userModel.Tckn = userModelService.Tckn;
-                    userRoleDto.UserId = userModelService.Tckn;
+                    userModel.Tckn = userModelService.CitizenshipNumber;
+                    userRoleDto.UserId = userModelService.CitizenshipNumber;
 
                     foreach (string credential in userModelService.Credentials)
                     {

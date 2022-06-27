@@ -271,7 +271,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     if (userModel.Credentials == null || !userModel.Credentials.Any())
                         throw new Exception("Kullanıcı rolleri bulunamadı.");
 
-                    if (userModel.Tckn == null)
+                    if (userModel.CitizenshipNumber == null)
                         throw new Exception("Tckn bilgisi bulunamadı.");
                 }
             }
