@@ -17,8 +17,6 @@ namespace Bbt.Campaign.Api.Controllers
             _configuration = configuration;
         }
 
-        
-
         /// <summary>
         /// Login of the user
         /// </summary>
@@ -42,13 +40,6 @@ namespace Bbt.Campaign.Api.Controllers
         //[Route("check-authorization")]
         //public async Task<IActionResult> CheckAuthorizationAsync(CheckAuthorizationRequest request)
         //{
-        //    if (User.Claims.Count() > 0) 
-        //    {
-        //        var x = User.Claims.Where(x => x.Value == "cc");
-
-        //    }
-
-
 
         //   var createResult = await _authorizationService.CheckAuthorizationAsync(request);
 
@@ -56,7 +47,7 @@ namespace Bbt.Campaign.Api.Controllers
         //}
 
         /// <summary>
-        /// Updates roles of the user 
+        /// Updates roles of the user for development environment
         /// </summary>
         /// <param name="userId">User Id</param>
         /// <param name="userRoles">Roles of the user</param>
@@ -66,6 +57,18 @@ namespace Bbt.Campaign.Api.Controllers
         public async Task<IActionResult> UpdateUserRolesAsync(string userId, string userRoles)
         {
             var createResult = await _authorizationService.UpdateUserRolesAsync(userId, userRoles);
+            return Ok(createResult);
+        }
+
+        /// <summary>
+        /// Returns the redirt url of the login page
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-redirect-url")]
+        public async Task<IActionResult> GetRedirectUrl()
+        {
+            var createResult = await _authorizationService.GetRedirectUrl();
             return Ok(createResult);
         }
 

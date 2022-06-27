@@ -226,14 +226,6 @@ namespace Bbt.Campaign.Services.Services.Authorization
             return await BaseResponse<SuccessDto>.SuccessAsync(response);
         }
 
-
-
-
-
-
-
-
-
         private async Task UpdateUserProcessDate(string userId)
         {
             //DateTime now = DateTime.Now;
@@ -298,6 +290,14 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 random.GetBytes(number);
                 return Convert.ToBase64String(number);
             }
+        }
+    
+        public async Task<BaseResponse<RedirectUrlDto>> GetRedirectUrl() 
+        {
+            var response = new RedirectUrlDto();
+            string redirectUrl = await _parameterService.GetServiceConstantValue("RedirectUrl");
+            response.RedirectUrl = redirectUrl;
+            return await BaseResponse<RedirectUrlDto>.SuccessAsync(response);
         }
     }
 }
