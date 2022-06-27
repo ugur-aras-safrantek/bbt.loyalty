@@ -226,6 +226,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         }
         public async Task<UserModelService> GetUserRoles(string code, string state)
         {
+            return null;
             UserModelService userModel;
             string accessToken = string.Empty;
 

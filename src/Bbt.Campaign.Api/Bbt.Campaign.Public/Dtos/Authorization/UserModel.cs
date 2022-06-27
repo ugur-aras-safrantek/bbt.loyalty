@@ -12,7 +12,7 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
         public string CustomerNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string IsStaff { get; set; }
+        public bool IsStaff { get; set; }
 
         public List<string> Credentials { get; set; }
     }
