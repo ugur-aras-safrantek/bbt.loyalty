@@ -41,76 +41,85 @@ namespace Bbt.Campaign.Services.FileOperations
 
         public static  byte[] GetCampaignListExcel(List<CampaignListDto> campaignList)
         {
+            
             byte[] result = null;
-
-            using (var workbook = new XLWorkbook())
+            try 
             {
-                var worksheet = workbook.Worksheets.Add($"Kampanya Listesi");
-
-                HeaderSetsListe(worksheet, "A", "Kampanya Adı", 50);
-                HeaderSetsListe(worksheet, "B", "Kampanya Kodu", 20);
-                HeaderSetsListe(worksheet, "C", "Sözleşme ID", 20);
-                HeaderSetsListe(worksheet, "D", "Başlama Tarihi", 20);
-                HeaderSetsListe(worksheet, "E", "Bitiş Tarihi", 20);
-                HeaderSetsListe(worksheet, "F", "Program Tipi", 20);
-                HeaderSetsListe(worksheet, "G", "Aktif", 20);
-                HeaderSetsListe(worksheet, "H", "Birleştirilebilir", 20);
-
-                int currentRow = 1;
-                int column = 1;
-                foreach (var campaign in campaignList) 
+                using (var workbook = new XLWorkbook())
                 {
-                    currentRow++;
-                    column = 1;
+                    var worksheet = workbook.Worksheets.Add($"Kampanya Listesi");
 
-                    worksheet.Cell(currentRow, column).Value = campaign.Name;
-                    worksheet.Column($"{column}").Width = 50;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                    HeaderSetsListe(worksheet, "A", "Kampanya Adı", 50);
+                    HeaderSetsListe(worksheet, "B", "Kampanya Kodu", 20);
+                    HeaderSetsListe(worksheet, "C", "Sözleşme ID", 20);
+                    HeaderSetsListe(worksheet, "D", "Başlama Tarihi", 20);
+                    HeaderSetsListe(worksheet, "E", "Bitiş Tarihi", 20);
+                    HeaderSetsListe(worksheet, "F", "Program Tipi", 20);
+                    HeaderSetsListe(worksheet, "G", "Aktif", 20);
+                    HeaderSetsListe(worksheet, "H", "Birleştirilebilir", 20);
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.Code;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                    int currentRow = 1;
+                    int column = 1;
+                    foreach (var campaign in campaignList)
+                    {
+                        currentRow++;
+                        column = 1;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = ((campaign.ContractId ?? 0) == 0) ? "" : campaign.ContractId.ToString();
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        worksheet.Cell(currentRow, column).Value = campaign.Name;
+                        worksheet.Column($"{column}").Width = 50;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.StartDate;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.Code;
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.EndDate;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = ((campaign.ContractId ?? 0) == 0) ? "" : campaign.ContractId.ToString();
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.ProgramType;
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.StartDate;
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.IsActive ? "Evet" : "Hayır";
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.EndDate;
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
-                    column++;
-                    worksheet.Cell(currentRow, column).Value = campaign.IsBundle ? "Evet" : "Hayır";
-                    worksheet.Column($"{column}").Width = 20;
-                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.ProgramType;
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.IsActive ? "Evet" : "Hayır";
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaign.IsBundle ? "Evet" : "Hayır";
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+
+                        result = stream.ToArray();
+
+                        //File.WriteAllBytes(@"C:\Files\xxx.xlsx", result);
+                    }
                 }
+            }
 
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-
-                    result = stream.ToArray();
-
-                    //File.WriteAllBytes(@"C:\Files\xxx.xlsx", result);
-                }
+            
+            catch(Exception ex) 
+            {
+                throw new Exception(ex.ToString());
             }
             
             return result;
