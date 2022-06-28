@@ -14,7 +14,7 @@ namespace Bbt.Campaign.Services.FileOperations
             worksheet.Range($"{column}1").Style.Alignment.SetWrapText(true);
             worksheet.Range($"{column}1").Style.Alignment.Vertical = (XLAlignmentVerticalValues.Center);
 
-            //worksheet.Columns().AdjustToContents();
+            worksheet.Columns().AdjustToContents();
         }
     }
 }
