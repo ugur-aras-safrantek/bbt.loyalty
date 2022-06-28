@@ -481,8 +481,55 @@ namespace Bbt.Campaign.Services.Services.Approval
                 {
                     var draftRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
                     var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
+                    
                     campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
                     campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
+                    campaignUpdateFields.IsIsEmployeeIncludedUpdated = draftRuleEntity.IsEmployeeIncluded != approvedRuleEntity.IsEmployeeIncluded;
+                    campaignUpdateFields.IsIsPrivateBankingUpdated = draftRuleEntity.IsPrivateBanking != approvedRuleEntity.IsPrivateBanking;
+
+                    if(draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId) 
+                    {
+                        switch (draftRuleEntity.JoinTypeId) 
+                        {
+                            case ((int)JoinTypeEnum.BusinessLine):
+                                campaignUpdateFields.IsRuleBusinessLinesUpdated = true;
+                                break;
+                            case ((int)JoinTypeEnum.CustomerType):
+                                campaignUpdateFields.IsRuleCustomerTypesUpdated = true;
+                                break;
+                            case ((int)JoinTypeEnum.Branch):
+                                campaignUpdateFields.IsRuleBranchesUpdated = true;
+                                break;
+                            case ((int)JoinTypeEnum.Customer):
+                                //campaignUpdateFields.
+                                break; 
+                            default:
+                                break;
+                        }
+                    }
+                    else 
+                    {
+                        switch (draftRuleEntity.JoinTypeId)
+                        {
+                            case ((int)JoinTypeEnum.BusinessLine):
+                                campaignUpdateFields.IsRuleBusinessLinesUpdated = draftRuleEntity.BusinessLines.Select(x => x.BusinessLineId).ToList()
+                                    .Except(approvedRuleEntity.BusinessLines.Select(x => x.BusinessLineId)).ToList().Any();
+                                break;
+                            case ((int)JoinTypeEnum.CustomerType):
+                                campaignUpdateFields.IsRuleCustomerTypesUpdated = draftRuleEntity.CustomerTypes.Select(x=> x.CustomerTypeId).ToList()
+                                    .Except(approvedRuleEntity.CustomerTypes.Select(x => x.CustomerTypeId)).ToList().Any();
+                                break;
+                            case ((int)JoinTypeEnum.Branch):
+                                campaignUpdateFields.IsRuleBranchesUpdated = draftRuleEntity.Branches.Select(x => x.BranchCode).ToList()
+                                    .Except(approvedRuleEntity.Branches.Select(x => x.BranchCode)).ToList().Any(); 
+                                break;
+                            case ((int)JoinTypeEnum.Customer):
+                                //campaignUpdateFields.
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
             response.CampaignUpdateFields = campaignUpdateFields;
