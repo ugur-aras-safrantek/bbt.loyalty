@@ -32,7 +32,9 @@ namespace Bbt.Campaign.Services.Services.Remote
             using (var httpClient = new HttpClient())
             {
                 string accessToken = await GetAccessToken();
-                string serviceUrl = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
                 serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -59,7 +61,6 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
-
                 serviceUrl = serviceUrl.Replace("{customerId}", customerId);
                 serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
@@ -82,7 +83,9 @@ namespace Bbt.Campaign.Services.Services.Remote
             using (var httpClient = new HttpClient())
             {
                 string accessToken = await GetAccessToken();
-                string serviceUrl = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
                 serviceUrl = serviceUrl.Replace("{customerId}", customerId);
                 serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
                 serviceUrl = serviceUrl.Replace("{lang}", lang);

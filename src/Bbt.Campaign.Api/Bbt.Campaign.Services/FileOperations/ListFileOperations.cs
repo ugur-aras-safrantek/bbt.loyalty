@@ -7,7 +7,7 @@ using OfficeOpenXml.Style;
 
 namespace Bbt.Campaign.Services.FileOperations
 {
-    public class ListFileOperations : FileOperations
+    public class ListFileOperations 
     {
 
         public static byte[] GetCampaignListExcel2(List<CampaignListDto> campaignList)
@@ -49,14 +49,14 @@ namespace Bbt.Campaign.Services.FileOperations
                 {
                     var worksheet = workbook.Worksheets.Add($"Kampanya Listesi");
 
-                    HeaderSetsListe(worksheet, "A", "Kampanya Adı", 50);
-                    HeaderSetsListe(worksheet, "B", "Kampanya Kodu", 20);
-                    HeaderSetsListe(worksheet, "C", "Sözleşme ID", 20);
-                    HeaderSetsListe(worksheet, "D", "Başlama Tarihi", 20);
-                    HeaderSetsListe(worksheet, "E", "Bitiş Tarihi", 20);
-                    HeaderSetsListe(worksheet, "F", "Program Tipi", 20);
-                    HeaderSetsListe(worksheet, "G", "Aktif", 20);
-                    HeaderSetsListe(worksheet, "H", "Birleştirilebilir", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "A", "Kampanya Adı", 50);
+                    FileOperations.HeaderSetsListe(worksheet, "B", "Kampanya Kodu", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "C", "Sözleşme ID", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "D", "Başlama Tarihi", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "E", "Bitiş Tarihi", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "F", "Program Tipi", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "G", "Aktif", 20);
+                    FileOperations.HeaderSetsListe(worksheet, "H", "Birleştirilebilir", 20);
 
                     int currentRow = 1;
                     int column = 1;
@@ -133,12 +133,12 @@ namespace Bbt.Campaign.Services.FileOperations
             {
                 var worksheet = workbook.Worksheets.Add($"Hedef Listesi");
 
-                HeaderSetsListe(worksheet, "A", "Hedef Tanımı İsmi", 50);
-                HeaderSetsListe(worksheet, "B", "Hedef ID", 20);
-                HeaderSetsListe(worksheet, "C", "Hedef Gösterim Tipi", 20);
-                HeaderSetsListe(worksheet, "D", "Akış", 20);
-                HeaderSetsListe(worksheet, "E", "Sorgu", 20);
-                HeaderSetsListe(worksheet, "F", "Aktif", 20);
+                FileOperations.HeaderSetsListe(worksheet, "A", "Hedef Tanımı İsmi", 50);
+                FileOperations.HeaderSetsListe(worksheet, "B", "Hedef ID", 20);
+                FileOperations.HeaderSetsListe(worksheet, "C", "Hedef Gösterim Tipi", 20);
+                FileOperations.HeaderSetsListe(worksheet, "D", "Akış", 20);
+                FileOperations.HeaderSetsListe(worksheet, "E", "Sorgu", 20);
+                FileOperations.HeaderSetsListe(worksheet, "F", "Aktif", 20);
 
                 int currentRow = 1;
                 int column = 1;
@@ -184,7 +184,7 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     result = stream.ToArray();
 
-                    File.WriteAllBytes(@"C:\Files2\Target.xlsx", result);
+                    //File.WriteAllBytes(@"C:\Files2\Target.xlsx", result);
                 }
             }
             return result;
@@ -198,15 +198,15 @@ namespace Bbt.Campaign.Services.FileOperations
             {
                 var worksheet = workbook.Worksheets.Add($"Çatı Limiti Listesi");
 
-                HeaderSetsListe(worksheet, "A", "Çatı Limiti Adı", 50);
-                HeaderSetsListe(worksheet, "B", "Kazanım Sıklığı", 20);
-                HeaderSetsListe(worksheet, "C", "Para Birimi", 20);
-                HeaderSetsListe(worksheet, "D", "Çatı Max Tutar", 20);
-                HeaderSetsListe(worksheet, "E", "Çatı Max Yararlanma", 20);
-                HeaderSetsListe(worksheet, "F", "Çatı Oranı", 20);
-                HeaderSetsListe(worksheet, "G", "Tutar", 20);
-                HeaderSetsListe(worksheet, "H", "Oran", 20);
-                HeaderSetsListe(worksheet, "I", "Aktif", 20);
+                FileOperations.HeaderSetsListe(worksheet, "A", "Çatı Limiti Adı", 50);
+                FileOperations.HeaderSetsListe(worksheet, "B", "Kazanım Sıklığı", 20);
+                FileOperations.HeaderSetsListe(worksheet, "C", "Para Birimi", 20);
+                FileOperations.HeaderSetsListe(worksheet, "D", "Çatı Max Tutar", 20);
+                FileOperations.HeaderSetsListe(worksheet, "E", "Çatı Max Yararlanma", 20);
+                FileOperations.HeaderSetsListe(worksheet, "F", "Çatı Oranı", 20);
+                FileOperations.HeaderSetsListe(worksheet, "G", "Tutar", 20);
+                FileOperations.HeaderSetsListe(worksheet, "H", "Oran", 20);
+                FileOperations.HeaderSetsListe(worksheet, "I", "Aktif", 20);
 
                 int currentRow = 1;
                 int column = 1;

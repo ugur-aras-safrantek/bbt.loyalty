@@ -3,7 +3,7 @@
 
 namespace Bbt.Campaign.Services.FileOperations
 {
-    public class FileOperations
+    public static class FileOperations
     {
         public static void HeaderSetsListe(IXLWorksheet worksheet, string column, string headerValue, int width)
         {

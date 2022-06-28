@@ -422,7 +422,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 }
             }
             if(isNameExists)
-                throw new Exception("Kampanya adı için onaylanmış veya onayda bekleyen bir kayıt mevcuttur.");
+                throw new Exception("Aynı kampanya adı ile birden fazla kayıt oluşturulamaz.");
 
 
             //Sözleşme

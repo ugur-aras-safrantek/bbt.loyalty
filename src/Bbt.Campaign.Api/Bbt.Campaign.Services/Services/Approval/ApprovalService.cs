@@ -6,17 +6,10 @@ using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.Approval;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Campaign;
-using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Dtos.CampaignDetail;
-using Bbt.Campaign.Public.Dtos.CampaignRule;
-using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
-using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Dtos.Target;
-using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
-using Bbt.Campaign.Public.Models.CampaignAchievement;
-using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
@@ -454,37 +447,43 @@ namespace Bbt.Campaign.Services.Services.Approval
             CampaignUpdateFields campaignUpdateFields = new CampaignUpdateFields();
             if (!response.isNewRecord) 
             {
-                campaignUpdateFields.IsNameUpdated = draftCampaignEntity.Name != approvedCampaignEntity.Name;
-                campaignUpdateFields.IsDescriptionTrUpdated = draftCampaignEntity.DescriptionTr != approvedCampaignEntity.DescriptionTr;
-                campaignUpdateFields.IsDescriptionEnUpdated = draftCampaignEntity.DescriptionEn != approvedCampaignEntity.DescriptionEn;
-                campaignUpdateFields.IsTitleTrUpdated = draftCampaignEntity.TitleTr != approvedCampaignEntity.TitleTr;
-                campaignUpdateFields.IsTitleEnUpdated = draftCampaignEntity.TitleEn != approvedCampaignEntity.TitleEn;
-                campaignUpdateFields.IsStartDateUpdated = draftCampaignEntity.StartDate != approvedCampaignEntity.StartDate;
-                campaignUpdateFields.IsEndDateUpdated = draftCampaignEntity.EndDate != approvedCampaignEntity.EndDate;
-                campaignUpdateFields.IsOrderUpdated = draftCampaignEntity.Order != approvedCampaignEntity.Order;
-                campaignUpdateFields.IsMaxNumberOfUserUpdated = draftCampaignEntity.MaxNumberOfUser != approvedCampaignEntity.MaxNumberOfUser;
-                campaignUpdateFields.IsIsActiveUpdated = draftCampaignEntity.IsActive != approvedCampaignEntity.IsActive;
-                campaignUpdateFields.IsIsBundleUpdated = draftCampaignEntity.IsBundle != approvedCampaignEntity.IsBundle;
-                campaignUpdateFields.IsIsContractUpdated = draftCampaignEntity.IsContract != approvedCampaignEntity.IsContract;
-                campaignUpdateFields.IsContractIdUpdated = draftCampaignEntity.ContractId != approvedCampaignEntity.ContractId;
-                campaignUpdateFields.IsSectorIdUpdated = draftCampaignEntity.SectorId != approvedCampaignEntity.SectorId;
-                campaignUpdateFields.IsViewOptionIdUpdated = draftCampaignEntity.ViewOptionId != approvedCampaignEntity.ViewOptionId;
-                campaignUpdateFields.IsProgramTypeIdUpdated = draftCampaignEntity.ProgramTypeId != approvedCampaignEntity.ProgramTypeId;
-                campaignUpdateFields.IsParticipationTypeIdUpdated = draftCampaignEntity.ParticipationTypeId != approvedCampaignEntity.ParticipationTypeId;
+                if (campaignUpdatePages.IsCampaignUpdated) 
+                {
+                    campaignUpdateFields.IsNameUpdated = draftCampaignEntity.Name != approvedCampaignEntity.Name;
+                    campaignUpdateFields.IsDescriptionTrUpdated = draftCampaignEntity.DescriptionTr != approvedCampaignEntity.DescriptionTr;
+                    campaignUpdateFields.IsDescriptionEnUpdated = draftCampaignEntity.DescriptionEn != approvedCampaignEntity.DescriptionEn;
+                    campaignUpdateFields.IsTitleTrUpdated = draftCampaignEntity.TitleTr != approvedCampaignEntity.TitleTr;
+                    campaignUpdateFields.IsTitleEnUpdated = draftCampaignEntity.TitleEn != approvedCampaignEntity.TitleEn;
+                    campaignUpdateFields.IsStartDateUpdated = draftCampaignEntity.StartDate != approvedCampaignEntity.StartDate;
+                    campaignUpdateFields.IsEndDateUpdated = draftCampaignEntity.EndDate != approvedCampaignEntity.EndDate;
+                    campaignUpdateFields.IsOrderUpdated = draftCampaignEntity.Order != approvedCampaignEntity.Order;
+                    campaignUpdateFields.IsMaxNumberOfUserUpdated = draftCampaignEntity.MaxNumberOfUser != approvedCampaignEntity.MaxNumberOfUser;
+                    campaignUpdateFields.IsIsActiveUpdated = draftCampaignEntity.IsActive != approvedCampaignEntity.IsActive;
+                    campaignUpdateFields.IsIsBundleUpdated = draftCampaignEntity.IsBundle != approvedCampaignEntity.IsBundle;
+                    campaignUpdateFields.IsIsContractUpdated = draftCampaignEntity.IsContract != approvedCampaignEntity.IsContract;
+                    campaignUpdateFields.IsContractIdUpdated = draftCampaignEntity.ContractId != approvedCampaignEntity.ContractId;
+                    campaignUpdateFields.IsSectorIdUpdated = draftCampaignEntity.SectorId != approvedCampaignEntity.SectorId;
+                    campaignUpdateFields.IsViewOptionIdUpdated = draftCampaignEntity.ViewOptionId != approvedCampaignEntity.ViewOptionId;
+                    campaignUpdateFields.IsProgramTypeIdUpdated = draftCampaignEntity.ProgramTypeId != approvedCampaignEntity.ProgramTypeId;
+                    campaignUpdateFields.IsParticipationTypeIdUpdated = draftCampaignEntity.ParticipationTypeId != approvedCampaignEntity.ParticipationTypeId;
 
-                campaignUpdateFields.IsCampaignListImageUrlUpdated = draftCampaignEntity.CampaignDetail.CampaignListImageUrl != approvedCampaignEntity.CampaignDetail.CampaignListImageUrl;
-                campaignUpdateFields.IsCampaignDetailImageUrlUpdated = draftCampaignEntity.CampaignDetail.CampaignDetailImageUrl != approvedCampaignEntity.CampaignDetail.CampaignDetailImageUrl;
-                campaignUpdateFields.IsSummaryTrUpdated = draftCampaignEntity.CampaignDetail.SummaryTr != approvedCampaignEntity.CampaignDetail.SummaryTr;
-                campaignUpdateFields.IsSummaryEnUpdated = draftCampaignEntity.CampaignDetail.SummaryEn != approvedCampaignEntity.CampaignDetail.SummaryEn;
-                campaignUpdateFields.IsContentTrUpdated = draftCampaignEntity.CampaignDetail.ContentTr != approvedCampaignEntity.CampaignDetail.ContentTr;
-                campaignUpdateFields.IsContentEnUpdated = draftCampaignEntity.CampaignDetail.ContentEn != approvedCampaignEntity.CampaignDetail.ContentEn;
-                campaignUpdateFields.IsDetailTrUpdated = draftCampaignEntity.CampaignDetail.DetailTr != approvedCampaignEntity.CampaignDetail.DetailTr;
-                campaignUpdateFields.IsDetailEnUpdated = draftCampaignEntity.CampaignDetail.DetailEn != approvedCampaignEntity.CampaignDetail.DetailEn;
+                    campaignUpdateFields.IsCampaignListImageUrlUpdated = draftCampaignEntity.CampaignDetail.CampaignListImageUrl != approvedCampaignEntity.CampaignDetail.CampaignListImageUrl;
+                    campaignUpdateFields.IsCampaignDetailImageUrlUpdated = draftCampaignEntity.CampaignDetail.CampaignDetailImageUrl != approvedCampaignEntity.CampaignDetail.CampaignDetailImageUrl;
+                    campaignUpdateFields.IsSummaryTrUpdated = draftCampaignEntity.CampaignDetail.SummaryTr != approvedCampaignEntity.CampaignDetail.SummaryTr;
+                    campaignUpdateFields.IsSummaryEnUpdated = draftCampaignEntity.CampaignDetail.SummaryEn != approvedCampaignEntity.CampaignDetail.SummaryEn;
+                    campaignUpdateFields.IsContentTrUpdated = draftCampaignEntity.CampaignDetail.ContentTr != approvedCampaignEntity.CampaignDetail.ContentTr;
+                    campaignUpdateFields.IsContentEnUpdated = draftCampaignEntity.CampaignDetail.ContentEn != approvedCampaignEntity.CampaignDetail.ContentEn;
+                    campaignUpdateFields.IsDetailTrUpdated = draftCampaignEntity.CampaignDetail.DetailTr != approvedCampaignEntity.CampaignDetail.DetailTr;
+                    campaignUpdateFields.IsDetailEnUpdated = draftCampaignEntity.CampaignDetail.DetailEn != approvedCampaignEntity.CampaignDetail.DetailEn;
+                }
 
-                var draftRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
-                var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
-                campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
-                campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
+                if (campaignUpdatePages.IsCampaignRuleUpdated) 
+                {
+                    var draftRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
+                    var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
+                    campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
+                    campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
+                }
             }
             response.CampaignUpdateFields = campaignUpdateFields;
 
