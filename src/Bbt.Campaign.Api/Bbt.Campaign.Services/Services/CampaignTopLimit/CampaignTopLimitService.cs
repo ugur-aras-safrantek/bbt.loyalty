@@ -206,7 +206,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         {
             var campaignTopLimitEntity = await _unitOfWork.GetRepository<TopLimitEntity>()
                                                           .GetAll(x => x.Id == id && x.IsDeleted == false)
-                                                          .Include(x => x.TopLimitCampaigns).ThenInclude(x => x.Campaign)
+                                                          .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted)).ThenInclude(x => x.Campaign)
                                                           .Include(x => x.Currency)
                                                           .Include(x => x.AchievementFrequency).FirstOrDefaultAsync();
             if (campaignTopLimitEntity != null)
@@ -242,7 +242,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 if (campaignTopLimitEntity.TopLimitCampaigns.Any())
                 {
                     mappedCampaignTopLimit.CampaignNamesStr = string.Empty;
-                    foreach (var topLimitCampaign in campaignTopLimitEntity.TopLimitCampaigns)
+                    foreach (var topLimitCampaign in campaignTopLimitEntity.TopLimitCampaigns.Where(x => !x.IsDeleted))
                         mappedCampaignTopLimit.CampaignNamesStr += "," + topLimitCampaign.Campaign.Name;
                     if (mappedCampaignTopLimit.CampaignNamesStr.Length > 0)
                         mappedCampaignTopLimit.CampaignNamesStr = mappedCampaignTopLimit.CampaignNamesStr.Remove(0, 1);

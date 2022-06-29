@@ -510,11 +510,11 @@ namespace Bbt.Campaign.Services.Services.Draft
         {
             List<CampaignTopLimitEntity> campaignTopLimitList = new List<CampaignTopLimitEntity>();
             var sourceEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == topLimitId)
-                .Include(x => x.TopLimitCampaigns)
+                .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted))
                 .FirstOrDefaultAsync();
             if (sourceEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
-            foreach (var item in sourceEntity.TopLimitCampaigns)
+            foreach (var item in sourceEntity.TopLimitCampaigns.Where(x => !x.IsDeleted))
             {
                 CampaignTopLimitEntity campaignTopLimitEntity = new CampaignTopLimitEntity();
                 campaignTopLimitEntity.TopLimit = targetEntity;
