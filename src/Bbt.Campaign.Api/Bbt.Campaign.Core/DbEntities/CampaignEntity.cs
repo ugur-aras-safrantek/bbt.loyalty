@@ -57,5 +57,7 @@ namespace Bbt.Campaign.Core.DbEntities
         [ForeignKey("Statuses")]
         public int StatusId { get; set; }
         public StatusEntity Status { get; set; }
+
+        public virtual CampaignRuleEntity CampaignRule { get; set; }
     }
 }
