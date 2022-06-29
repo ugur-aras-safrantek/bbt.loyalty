@@ -125,6 +125,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             entity.MaxTopLimitUtilization = request.MaxTopLimitUtilization;
             entity.Name = request.Name;
             entity.Type = request.Type;
+            entity.StatusId = (int)StatusEnum.SentToApprove;
             if (!isCreateDraft) 
             { 
                 entity.LastModifiedBy = userid;
@@ -150,7 +151,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                     CreatedBy = userid,
                     LastModifiedBy = userid,
                     CreatedOn = now,
-                    LastModifiedOn = now
                 });
             }
 

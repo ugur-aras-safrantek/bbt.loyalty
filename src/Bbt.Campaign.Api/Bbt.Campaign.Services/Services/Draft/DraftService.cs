@@ -410,7 +410,6 @@ namespace Bbt.Campaign.Services.Services.Draft
             }
             return campaignRuleCustomerTypeList;
         }
-
         public async Task<List<CampaignRuleIdentityEntity>> CopyCampaignRuleIdentites(CampaignRuleEntity campaignRuleDraftEntity, CampaignRuleEntity campaignRuleEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo)
         {
             List<CampaignRuleIdentityEntity> campaignRuleIdentityList = new List<CampaignRuleIdentityEntity>();
@@ -448,7 +447,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             targetEntity.MaxTopLimitUtilization = sourceEntity.MaxTopLimitUtilization;
             targetEntity.Name = sourceEntity.Name;
             targetEntity.Type = sourceEntity.Type;
-            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.SentToApprove; 
+            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.Draft; 
             targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
             targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
             targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.UtcNow;
