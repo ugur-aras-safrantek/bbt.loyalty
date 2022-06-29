@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal AS base
-RUN apt-get update && apt-get install -y apt-utils libgdiplus libc6-dev
+RUN echo "Acquire::http::Pipeline-Depth 0;" >> /etc/apt/apt.conf.d/99fixconnection \
+       && echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixconnection \
+       && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils libgdiplus libc6-dev
 WORKDIR /app
 EXPOSE 5070
 
