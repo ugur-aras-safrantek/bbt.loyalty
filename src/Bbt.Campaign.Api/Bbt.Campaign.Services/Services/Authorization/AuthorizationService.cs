@@ -261,7 +261,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             //Oluşturulacak token ayarlarını veriyoruz.
-            tokenInstance.Expiration = DateTime.Now.AddMinutes(300);
+            tokenInstance.Expiration = DateTime.Now.AddMinutes(540);
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 issuer: StaticValues.Issuer,
                 audience: StaticValues.Audience,
