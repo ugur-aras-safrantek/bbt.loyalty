@@ -644,13 +644,14 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             if (campaignRuleEntity.JoinTypeId != (int)JoinTypeEnum.Customer)
                 throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
 
-            if (campaignRuleEntity.RuleIdentities.Count < 2)
-                throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
+            //if (campaignRuleEntity.RuleIdentities.Count < 2)
+            //    throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
 
             var ruleDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>()
                        .GetAll(x => x.CampaignId == campaignId
                            && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN
                            && !x.IsDeleted)
+                       .OrderByDescending(x=>x.CreatedOn)
                        .FirstOrDefaultAsync();
             if(ruleDocument == null)
                 throw new Exception("Kampanya kuralı VKN/TCKN dosyası bulunamadı.");
@@ -660,7 +661,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 Document = new Public.Models.CampaignDocument.DocumentModel()
                 {
                     Data = Convert.ToBase64String(ruleDocument.Content, 0, ruleDocument.Content.Length),
-                    DocumentName = campaignId.ToString() + "-KampanyaKuralıTCKN.xlsx",
+                    DocumentName = ruleDocument.DocumentName,
                     DocumentType = DocumentTypePublicEnum.CampaignRuleTCKN,
                     MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
                 }
