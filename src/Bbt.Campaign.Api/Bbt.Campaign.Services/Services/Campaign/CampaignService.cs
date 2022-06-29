@@ -320,9 +320,22 @@ namespace Bbt.Campaign.Services.Services.Campaign
                 }
             }
 
-            //if(response.Campaign.IsContract && (response.Campaign.ContractId ?? 0) > 0)
-            //    response.ContractFile = await GetContractFile(response.Campaign.ContractId ?? 0, contentRootPath);
-
+            if (response.Campaign.IsContract && (response.Campaign.ContractId ?? 0) > 0) 
+            {
+                response.ContractFile = new GetFileResponse()
+                {
+                    Document = new Public.Models.CampaignDocument.DocumentModel()
+                    {
+                        Data = null,
+                        DocumentName = id.ToString() + "-Sözleşme.html",
+                        DocumentType = DocumentTypePublicEnum.Contract,
+                        MimeType = MimeTypeExtensions.ToMimeType(".html")
+                    }
+                };
+                
+                //response.ContractFile = await GetContractFile(response.Campaign.ContractId ?? 0, contentRootPath);
+            }
+                
             CampaignProperty campaignProperty = await _draftService.GetCampaignProperties(id);
             response.IsUpdatableCampaign = campaignProperty.IsUpdatableCampaign;
 
