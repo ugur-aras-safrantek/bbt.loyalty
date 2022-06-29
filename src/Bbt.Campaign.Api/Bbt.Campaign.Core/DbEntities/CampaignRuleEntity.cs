@@ -17,6 +17,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public int CampaignStartTermId { get; set; }
         public bool IsEmployeeIncluded { get; set; }
         public bool IsPrivateBanking { get; set; }
+        public bool IsSingleIdentity { get; set; }
         public CampaignStartTermEntity  CampaignStartTerm { get; set; }
         public virtual ICollection<CampaignRuleBranchEntity> Branches { get; set; }
         public virtual ICollection<CampaignRuleBusinessLineEntity>  BusinessLines { get; set; }

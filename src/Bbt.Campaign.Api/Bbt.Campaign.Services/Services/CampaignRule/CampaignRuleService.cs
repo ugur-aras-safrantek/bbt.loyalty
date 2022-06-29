@@ -60,6 +60,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                 JoinTypeId = campaignRule.JoinTypeId,
                 IsEmployeeIncluded = campaignRule.IsEmployeeIncluded,
                 IsPrivateBanking = campaignRule.IsPrivateBanking,
+                IsSingleIdentity = campaignRule.IsSingleIdentity,
                 CreatedBy = userid,
             };
 
@@ -90,35 +91,35 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         CreatedBy = userid,
                     });
 
-                    using (var excelWorkbook = new XLWorkbook(memoryStream))
-                    {
-                        entity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
+                    //using (var excelWorkbook = new XLWorkbook(memoryStream))
+                    //{
+                    //    entity.RuleIdentities = new List<CampaignRuleIdentityEntity>();
 
-                        var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
+                    //    var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
 
-                        //List<string> identityList = new List<string>();
+                    //    //List<string> identityList = new List<string>();
 
-                        foreach (var dataRow in nonEmptyDataRows)
-                        {
-                            string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
+                    //    foreach (var dataRow in nonEmptyDataRows)
+                    //    {
+                    //        string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
 
-                            //if (identityList.Contains(identity))
-                            //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
+                    //        //if (identityList.Contains(identity))
+                    //        //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
 
-                            //identityList.Add(identity);
+                    //        //identityList.Add(identity);
 
-                            //CheckSingleIdentiy(identity);
+                    //        //CheckSingleIdentiy(identity);
 
-                            if (!await IsValidIdentiy(identity))
-                                continue;
+                    //        if (!await IsValidIdentiy(identity))
+                    //            continue;
 
-                            entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
-                            {
-                                Identities = identity,
-                                CreatedBy = userid,
-                            });
-                        }
-                    }
+                    //        entity.RuleIdentities.Add(new CampaignRuleIdentityEntity()
+                    //        {
+                    //            Identities = identity,
+                    //            CreatedBy = userid,
+                    //        });
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -224,7 +225,7 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             entity.JoinTypeId = campaignRule.JoinTypeId;
             entity.IsEmployeeIncluded = campaignRule.IsEmployeeIncluded;
             entity.IsPrivateBanking = campaignRule.IsPrivateBanking;
-            entity.LastModifiedBy = userid;
+            entity.IsSingleIdentity = campaignRule.IsSingleIdentity;
 
             foreach (var x in entity.Branches)
             {
@@ -280,37 +281,36 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
                         CreatedBy = userid,
                     });
 
+                    //using (var excelWorkbook = new XLWorkbook(memoryStream))
+                    //{
+                    //    var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
 
-                    using (var excelWorkbook = new XLWorkbook(memoryStream))
-                    {
-                        var nonEmptyDataRows = excelWorkbook.Worksheet(1).RowsUsed();
+                    //    //List<string> identityList = new List<string>();
 
-                        //List<string> identityList = new List<string>();
+                    //    foreach (var dataRow in nonEmptyDataRows)
+                    //    {
+                    //        string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
 
-                        foreach (var dataRow in nonEmptyDataRows)
-                        {
-                            string identity = dataRow.Cell(1).Value == null ? string.Empty : dataRow.Cell(1).Value.ToString().Trim();
+                    //        //if(identityList.Contains(identity))
+                    //        //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
 
-                            //if(identityList.Contains(identity))
-                            //    throw new Exception("Dosya içerisinde bazı kayıtlar çoklanmış.");
+                    //        //identityList.Add(identity);
 
-                            //identityList.Add(identity);
+                    //        //CheckSingleIdentiy(identity);
+                    //        if (!await IsValidIdentiy(identity))
+                    //            continue;
 
-                            //CheckSingleIdentiy(identity);
-                            if (!await IsValidIdentiy(identity))
-                                continue;
+                    //        var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity() 
+                    //        { 
+                    //            Identities = identity,
+                    //            CampaignRuleId = campaignRuleId,
+                    //            CreatedBy = userid,
+                    //            LastModifiedBy = userid,
+                    //        };
 
-                            var campaignRuleIdentityEntity = new CampaignRuleIdentityEntity() 
-                            { 
-                                Identities = identity,
-                                CampaignRuleId = campaignRuleId,
-                                CreatedBy = userid,
-                                LastModifiedBy = userid,
-                            };
-
-                            await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
-                        }
-                    }
+                    //        await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().AddAsync(campaignRuleIdentityEntity);
+                    //    }
+                    //}
                 }
             }
             else if (campaignRule.JoinTypeId == (int)JoinTypeEnum.BusinessLine) 
@@ -471,16 +471,15 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
 
             string documentName = null;
             string identityNumber = null;
-            bool isSingleIdentity = false;
+            bool isSingleIdentity = campaignRuleEntity.IsSingleIdentity;
             if (campaignRuleEntity.JoinTypeId == (int)JoinTypeEnum.Customer)
             {
-                var identityList = await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>()
-                    .GetAll(x => x.CampaignRuleId == campaignRuleEntity.Id && !x.IsDeleted)
-                    .Select(x => x.Identities)
-                    .ToListAsync();
-                if (campaignRuleEntity.RuleIdentities.Count == 1)
+                if (isSingleIdentity)
                 {
-                    isSingleIdentity = true;
+                    var identityList = await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>()
+                        .GetAll(x => x.CampaignRuleId == campaignRuleEntity.Id && !x.IsDeleted)
+                        .Select(x => x.Identities)
+                        .ToListAsync();
                     identityNumber = identityList[0];
                 }
                 else 

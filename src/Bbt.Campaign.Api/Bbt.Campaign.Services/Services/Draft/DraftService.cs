@@ -3,34 +3,13 @@ using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
-using Bbt.Campaign.Public.Dtos.Approval;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Campaign;
-using Bbt.Campaign.Public.Dtos.CampaignAchievement;
-using Bbt.Campaign.Public.Dtos.CampaignDetail;
-using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
-using Bbt.Campaign.Public.Models.CampaignAchievement;
-using Bbt.Campaign.Public.Models.CampaignChannelCode;
-using Bbt.Campaign.Public.Models.CampaignRule;
-using Bbt.Campaign.Public.Models.CampaignTarget;
-using Bbt.Campaign.Public.Models.Draft;
 using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
-using Bbt.Campaign.Services.Services.CampaignRule;
-using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Parameter;
-using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using Bbt.Campaign.Shared.Static;
-using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Services.Services.Draft
 {
@@ -260,7 +239,8 @@ namespace Bbt.Campaign.Services.Services.Draft
         {
             List<CampaignDocumentEntity> campaignDocumentlist = new List<CampaignDocumentEntity>();
 
-            var documents = _unitOfWork.GetRepository<CampaignDocumentEntity>().GetAll(x => x.CampaignId == campaignId && !x.IsDeleted);
+            var documents = _unitOfWork.GetRepository<CampaignDocumentEntity>()
+                .GetAll(x => x.CampaignId == campaignId && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN && !x.IsDeleted);
             foreach (var x in documents)
             {
                 campaignDocumentlist.Add(new CampaignDocumentEntity()
@@ -272,8 +252,6 @@ namespace Bbt.Campaign.Services.Services.Draft
                     MimeType = x.MimeType,
                     CreatedBy = isIncludeUpdateInfo ? x.CreatedBy : userid,
                     CreatedOn = isIncludeUpdateInfo ? x.CreatedOn : DateTime.UtcNow,
-                    LastModifiedBy = isIncludeUpdateInfo ? x.LastModifiedBy : userid,
-                    LastModifiedOn = isIncludeUpdateInfo ? x.LastModifiedOn : DateTime.UtcNow,
                 });
             }
 
@@ -363,6 +341,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             campaignRuleEntity.JoinTypeId = campaignRuleDraftEntity.JoinTypeId;
             campaignRuleEntity.IsEmployeeIncluded = campaignRuleDraftEntity.IsEmployeeIncluded;
             campaignRuleEntity.IsPrivateBanking = campaignRuleDraftEntity.IsPrivateBanking;
+            campaignRuleEntity.IsSingleIdentity = campaignRuleDraftEntity.IsSingleIdentity;
             campaignRuleEntity.CreatedBy = isIncludeCreateInfo ? campaignRuleDraftEntity.CreatedBy : userid;
             campaignRuleEntity.CreatedOn = isIncludeCreateInfo ? campaignRuleDraftEntity.CreatedOn : DateTime.UtcNow;
             return campaignRuleEntity;
