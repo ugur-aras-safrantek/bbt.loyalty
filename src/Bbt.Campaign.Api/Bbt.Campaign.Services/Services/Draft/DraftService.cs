@@ -452,11 +452,6 @@ namespace Bbt.Campaign.Services.Services.Draft
             targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
             targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
             targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.UtcNow;
-            if (isIncludeUpdateInfo) 
-            {
-                targetEntity.LastModifiedBy = sourceEntity.LastModifiedBy;
-                targetEntity.LastModifiedOn = sourceEntity.LastModifiedOn;
-            }
             if (isIncludeApproveInfo)
             {
                 targetEntity.ApprovedBy = sourceEntity.ApprovedBy;

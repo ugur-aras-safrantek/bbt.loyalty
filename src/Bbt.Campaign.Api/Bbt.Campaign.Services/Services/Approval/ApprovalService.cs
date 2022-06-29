@@ -1051,7 +1051,15 @@ namespace Bbt.Campaign.Services.Services.Approval
             
             TopLimitEntity entity = new TopLimitEntity();
             entity = await _draftService.CopyTopLimitInfo(refId, entity, userRole.UserId, false, false, false, false, false);
+            entity.Name = entity.Name + "Copy";
             await _unitOfWork.GetRepository<TopLimitEntity>().AddAsync(entity);
+
+            foreach (var campaignTopLimit in await _draftService.CopyCampaignTopLimits(refId, entity, userRole.UserId, true, true))
+            {
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(campaignTopLimit);
+            }
+
+
             await _unitOfWork.SaveChangesAsync();
 
             var mappedTopLimit = _mapper.Map<TopLimitDto>(entity);
