@@ -46,7 +46,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             //int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
-            await CheckValidationAsync(campaignTopLimit);
+            await CheckValidationAsync(campaignTopLimit, 0);
 
             DateTime now = DateTime.UtcNow;
 
@@ -95,7 +95,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
-            await CheckValidationAsync(request);
+            await CheckValidationAsync(request, request.Id);
 
             if (request.Id <= 0)
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
@@ -461,10 +461,31 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             return await BaseResponse<CampaignTopLimitFilterParameterResponse>.SuccessAsync(response);
         }
-        async Task CheckValidationAsync(CampaignTopLimitInsertBaseRequest input)
+        async Task CheckValidationAsync(CampaignTopLimitInsertBaseRequest input, int topLimitId)
         {
             if (string.IsNullOrWhiteSpace(input.Name))
                 throw new Exception("Çatı Limiti Adı girilmelidir.");
+
+            //çatı limiti adı mükerrer kontrolu
+            bool isNameExists = false;
+            var topLimitList = await _unitOfWork.GetRepository<TopLimitEntity>()
+                    .GetAll(x => x.Name == input.Name && !x.IsDeleted
+                                && (x.StatusId == (int)StatusEnum.Approved || x.StatusId == (int)StatusEnum.SentToApprove))
+                    .ToListAsync();
+            if (topLimitList.Any())
+            {
+                if (topLimitId == 0)
+                    isNameExists = true;
+                else
+                {
+                    var entity = await _unitOfWork.GetRepository<TopLimitEntity>().GetByIdAsync(topLimitId);
+                    var topLimit = topLimitList.Where(x => x.Code != entity.Code).FirstOrDefault();
+                    if (topLimit != null)
+                        isNameExists = true;
+                }
+            }
+            if (isNameExists)
+                throw new Exception("Aynı çatı limiti adı ile birden fazla kayıt oluşturulamaz.");
 
             if (input.AchievementFrequencyId <= 0)
                 throw new Exception("Kazanım sıklığı seçilmelidir.");

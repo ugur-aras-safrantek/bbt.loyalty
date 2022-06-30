@@ -46,7 +46,7 @@ namespace Bbt.Target.Services.Services.Target
 
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
-            await CheckValidationAsync(Target);
+            await CheckValidationAsync(Target, 0);
 
             DateTime now = DateTime.UtcNow;
             var entity = _mapper.Map<TargetEntity>(Target);
@@ -153,7 +153,8 @@ namespace Bbt.Target.Services.Services.Target
 
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
-            await CheckValidationAsync(Target);
+            await CheckValidationAsync(Target, Target.Id);
+
             var entity = _unitOfWork.GetRepository<TargetEntity>()
                 .GetAll().Where(x => x.Id == Target.Id).FirstOrDefault();
             if (entity != null)
@@ -200,12 +201,35 @@ namespace Bbt.Target.Services.Services.Target
             return await BaseResponse<TargetDto>.FailAsync("Hedef bulunamadı.");
         }
 
-        async Task CheckValidationAsync(TargetInsertRequest input)
+        async Task CheckValidationAsync(TargetInsertRequest input, int targetId)
         {
-            //if (string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrEmpty(input.Name))
-            //    throw new Exception("Hedef Adı girilmelidir.");
+            //Hedef Adı
+            if (string.IsNullOrWhiteSpace(input.Name))
+                throw new Exception("Hedef Tanım İsmi girilmelidir.");
 
-            //file eklenmeli
+            if (string.IsNullOrWhiteSpace(input.Title))
+                throw new Exception("Görüntülenecek Hedef Başlığı girilmelidir..");
+
+            //hedef adı mükerrer kontrolu
+            bool isNameExists = false;
+            var targetList = await _unitOfWork.GetRepository<TargetEntity>()
+                    .GetAll(x => x.Name == input.Name && !x.IsDeleted 
+                                && (x.StatusId == (int)StatusEnum.Approved || x.StatusId == (int)StatusEnum.SentToApprove))
+                    .ToListAsync();
+            if (targetList.Any())
+            {
+                if (targetId == 0)
+                    isNameExists = true;
+                else
+                {
+                    var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
+                    var target = targetList.Where(x => x.Code != entity.Code).FirstOrDefault();
+                    if (target != null)
+                        isNameExists = true;
+                }
+            }
+            if (isNameExists)
+                throw new Exception("Aynı hedef adı ile birden fazla kayıt oluşturulamaz.");
         }
 
         public async Task<BaseResponse<TargetListFilterResponse>> GetByFilterAsync(TargetListFilterRequest request, string userId)
