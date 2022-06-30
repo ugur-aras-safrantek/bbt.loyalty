@@ -243,15 +243,40 @@ namespace Bbt.Campaign.Services.Services.Authorization
         public async Task<Token> CreateAccessToken(UserModel user)
         {
             var tokenInstance = new Token();
-            var claims = new Claim[]{
-                new Claim(JwtRegisteredClaimNames.NameId,Guid.NewGuid().ToString()),
-                new Claim("UserId",user.Tckn.ToString()),
-                new Claim("IsLoyaltyCreator",user.Credentials.IsLoyaltyCreator.ToString()),
-                new Claim("IsLoyaltyApprover",user.Credentials.IsLoyaltyApprover.ToString()),
-                new Claim("IsLoyaltyReader",user.Credentials.IsLoyaltyReader.ToString()),
-                new Claim("IsLoyaltyRuleCreator",user.Credentials.IsLoyaltyRuleCreator.ToString()),
-                new Claim("IsLoyaltyRuleApprover",user.Credentials.IsLoyaltyRuleApprover.ToString())
-            };
+            //var claims = new Claim[]{
+            //    new Claim(JwtRegisteredClaimNames.NameId,Guid.NewGuid().ToString()),
+            //    new Claim("UserId",user.Tckn.ToString()),
+            //    new Claim("IsLoyaltyCreator",user.Credentials.IsLoyaltyCreator.ToString()),
+            //    new Claim("IsLoyaltyApprover",user.Credentials.IsLoyaltyApprover.ToString()),
+            //    new Claim("IsLoyaltyReader",user.Credentials.IsLoyaltyReader.ToString()),
+            //    new Claim("IsLoyaltyRuleCreator",user.Credentials.IsLoyaltyRuleCreator.ToString()),
+            //    new Claim("IsLoyaltyRuleApprover",user.Credentials.IsLoyaltyRuleApprover.ToString())
+            //};
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim(JwtRegisteredClaimNames.NameId, Guid.NewGuid().ToString()));
+            claims.Add(new Claim("UserId", user.Tckn.ToString()));
+
+            //silinecek
+            claims.Add(new Claim("IsLoyaltyCreator", user.Credentials.IsLoyaltyCreator.ToString()));
+            claims.Add(new Claim("IsLoyaltyApprover", user.Credentials.IsLoyaltyApprover.ToString()));
+            claims.Add(new Claim("IsLoyaltyReader", user.Credentials.IsLoyaltyReader.ToString()));
+            claims.Add(new Claim("IsLoyaltyRuleCreator", user.Credentials.IsLoyaltyRuleCreator.ToString()));
+            claims.Add(new Claim("IsLoyaltyRuleApprover", user.Credentials.IsLoyaltyRuleApprover.ToString()));
+            //
+
+
+            if (user.Credentials.IsLoyaltyCreator)
+                claims.Add(new Claim(ClaimTypes.Role, "IsLoyaltyCreator"));
+            if (user.Credentials.IsLoyaltyApprover)
+                claims.Add(new Claim(ClaimTypes.Role, "IsLoyaltyApprover"));
+            if (user.Credentials.IsLoyaltyReader)
+                claims.Add(new Claim(ClaimTypes.Role, "IsLoyaltyReader"));
+            if (user.Credentials.IsLoyaltyRuleCreator)
+                claims.Add(new Claim(ClaimTypes.Role, "IsLoyaltyRuleCreator"));
+            if (user.Credentials.IsLoyaltyRuleApprover)
+                claims.Add(new Claim(ClaimTypes.Role, "IsLoyaltyRuleApprover"));
+
 
             //Security  Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = 

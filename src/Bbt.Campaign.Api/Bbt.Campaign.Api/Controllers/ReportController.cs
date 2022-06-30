@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Api.Extensions;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Report;
@@ -29,6 +30,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaign-report-form")]
         public async Task<IActionResult> FillCampaignFormAsync()
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.FillCampaignFormAsync(await GetUser());
             return Ok(result);
         }
@@ -42,6 +46,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaignreport-by-filter")]
         public async Task<IActionResult> GetCampaignReportByFilterAsync(CampaignReportRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.GetCampaignReportByFilterAsync(request, await GetUser());
             return Ok(result);
         }
@@ -55,6 +62,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaign-report-by-filter-excel")]
         public async Task<IActionResult> GetByFilterExcel(CampaignReportRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.GetCampaignReportExcelAsync(request, await GetUser());
             return Ok(result);
         }
@@ -67,6 +77,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-customer-report-form")]
         public async Task<IActionResult> FillCustomerFormAsync()
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.FillCustomerFormAsync(await GetUser());
             return Ok(result);
         }
@@ -80,6 +93,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-customer-report-by-filter")]
         public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.GetCustomerReportByFilterAsync(request, await GetUser());
             return Ok(result);
         }
@@ -94,6 +110,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-customer-report-by-filter-excel")]
         public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerReportRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _reportService.GetCustomerReportExcelAsync(request, await GetUser());
             return Ok(result);
         }

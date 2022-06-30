@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Api.Extensions;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignChannelCode;
@@ -28,6 +29,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignChannelCodeUpdateRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignChannelCodeService.UpdateAsync(request, await GetUser());
             return Ok(result);
         }
@@ -42,6 +46,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignChannelCodeUpdateRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignChannelCodeService.UpdateAsync(request, await GetUser());
             return Ok(result);
         }
@@ -55,6 +62,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm(int campaignId)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignChannelCodeService.GetInsertFormAsync(campaignId, await GetUser());
             return Ok(result);
         }
@@ -68,6 +78,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int campaignId)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignChannelCodeService.GetUpdateFormAsync(campaignId, await GetUser());
             return Ok(result);
         }

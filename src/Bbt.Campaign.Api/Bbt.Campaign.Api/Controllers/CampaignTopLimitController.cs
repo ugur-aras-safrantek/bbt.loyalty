@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Api.Extensions;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignTopLimit;
@@ -31,6 +32,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var adminSektor = await _campaignTopLimitService.GetCampaignTopLimitAsync(id);
             return Ok(adminSektor);
         }
@@ -43,6 +47,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignTopLimitInsertRequest campaignTopLimit)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var createResult = await _campaignTopLimitService.AddAsync(campaignTopLimit, await GetUser());
             return Ok(createResult);
         }
@@ -55,6 +62,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignTopLimitUpdateRequest campaignTopLimit)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.UpdateAsync(campaignTopLimit, await GetUser());
             return Ok(result);
         }
@@ -67,6 +77,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.DeleteAsync(id);
             return Ok(result);
         }
@@ -78,6 +91,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("getall")]
         public async Task<IActionResult> GetList()
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.GetListAsync();
             return Ok(result);
         }
@@ -89,6 +105,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm()
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.GetInsertForm(await GetUser());
             return Ok(result);
         }
@@ -101,6 +120,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int id)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.GetUpdateForm(id, await GetUser());
             return Ok(result);
         }
@@ -124,6 +146,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignTopLimitListFilterRequest request) 
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.GetByFilterAsync(request, await GetUser());
             return Ok(result);
         }
@@ -137,6 +162,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter-excel")]
         public async Task<IActionResult> GetExcelAsync(CampaignTopLimitListFilterRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignTopLimitService.GetExcelAsync(request, await GetUser());
             return Ok(result);
         }

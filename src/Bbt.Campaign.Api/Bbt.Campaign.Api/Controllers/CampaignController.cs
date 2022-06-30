@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Api.Extensions;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
@@ -32,6 +33,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var adminSektor = await _campaignService.GetCampaignAsync(id);
             return Ok(adminSektor);
         }
@@ -44,6 +48,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("add")]
         public async Task<IActionResult> Add(CampaignInsertRequest campaign)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var createResult = await _campaignService.AddAsync(campaign, await GetUser());
             return Ok(createResult);
         }
@@ -56,6 +63,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("update")]
         public async Task<IActionResult> Update(CampaignUpdateRequest campaign)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.UpdateAsync(campaign, await GetUser());
             return Ok(result);
         }
@@ -68,6 +78,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.DeleteAsync(id, await GetUser());
             return Ok(result);
         }
@@ -79,6 +92,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("getall")]
         public async Task<IActionResult> GetList()
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetListAsync(await GetUser());
             return Ok(result);
         }
@@ -90,6 +106,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-insert-form")]
         public async Task<IActionResult> GetInsertForm()
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetInsertFormAsync(await GetUser());
             return Ok(result);
         }
@@ -102,6 +121,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm(int id)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetUpdateFormAsync(id, _webHostEnvironment.ContentRootPath, await GetUser());
             return Ok(result);
         }
@@ -114,6 +136,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignListFilterRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetByFilterAsync(request, await GetUser());
             return Ok(result);
         }
@@ -126,6 +151,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter-excel")]
         public async Task<IActionResult> GetByFilterExcel(CampaignListFilterRequest request)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetByFilterExcelAsync(request, await GetUser());
             return Ok(result);
         }
@@ -139,6 +167,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-contract-file")]
         public async Task<IActionResult> GetContractFileAsync(int id)
         {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.GetContractFileAsync(id, _webHostEnvironment.ContentRootPath);
             return Ok(result);
         }
@@ -152,6 +183,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("create-draft")]
         public async Task<IActionResult> CreateDraftAsync(int campaignId)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _campaignService.CreateDraftAsync(campaignId, await GetUser());
             return Ok(result);
         }
