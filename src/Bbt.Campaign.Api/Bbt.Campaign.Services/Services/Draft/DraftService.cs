@@ -488,12 +488,8 @@ namespace Bbt.Campaign.Services.Services.Draft
             bool isIncludeCreateInfo, bool isIncludeUpdateInfo) 
         {
             List<CampaignTopLimitEntity> campaignTopLimitList = new List<CampaignTopLimitEntity>();
-            var sourceEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == topLimitId)
-                .Include(x => x.TopLimitCampaigns.Where(x => !x.IsDeleted))
-                .FirstOrDefaultAsync();
-            if (sourceEntity == null)
-                throw new Exception("Çatı limiti bulunamadı.");
-            foreach (var item in sourceEntity.TopLimitCampaigns.Where(x => !x.IsDeleted))
+            foreach (var item in await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
+                .GetAll(x => !x.IsDeleted && x.TopLimitId == topLimitId).ToListAsync())
             {
                 CampaignTopLimitEntity campaignTopLimitEntity = new CampaignTopLimitEntity();
                 campaignTopLimitEntity.TopLimit = targetEntity;

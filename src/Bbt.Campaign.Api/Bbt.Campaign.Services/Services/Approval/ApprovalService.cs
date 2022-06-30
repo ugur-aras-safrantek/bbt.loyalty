@@ -633,6 +633,12 @@ namespace Bbt.Campaign.Services.Services.Approval
             approvedEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(approvedEntity);
 
+            foreach(var itemToDelete in await _unitOfWork.GetRepository<CampaignTopLimitEntity>().GetAll(x => !x.IsDeleted && x.TopLimitId == approvedEntity.Id).ToListAsync())
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().DeleteAsync(itemToDelete);
+            foreach (var campaignTopLimit in await _draftService.CopyCampaignTopLimits(draftId, approvedEntity, userid, false, false))
+                await _unitOfWork.GetRepository<CampaignTopLimitEntity>().AddAsync(campaignTopLimit);
+
+
             draftEntity.ApprovedBy = userid;
             draftEntity.ApprovedDate = now;
             draftEntity.StatusId = (int)StatusEnum.History;
