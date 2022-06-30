@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Api.Base;
+using Bbt.Campaign.Api.Extensions;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Services.Services.Approval;
@@ -28,6 +29,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("campaign/{id}")]
         public async Task<IActionResult> ApproveCampaign(int id)
         {
+            if (!User.IsInRole("IsLoyaltyApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.ApproveCampaignAsync(id, await GetUser());
             return Ok(result);
         }
@@ -41,35 +45,12 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("campaign-disapprove/{id}")]
         public async Task<IActionResult> DisApproveCampaign(int id)
         {
+            if (!User.IsInRole("IsLoyaltyApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.DisApproveCampaignAsync(id, await GetUser());
             return Ok(result);
         }
-
-        /// <summary>
-        /// Approves the target by draft Id.
-        /// </summary>
-        /// <param name="id">Record Id of the draft</param>
-        /// <returns></returns>
-        //[HttpGet]
-        //[Route("target/{id}")]
-        //public async Task<IActionResult> ApproveTarget(int id)
-        //{
-        //    var result = await _approvalService.ApproveTargetAsync(id);
-        //    return Ok(result);
-        //}
-
-        /// <summary>
-        /// Approves the top limit by draft Id.
-        /// </summary>
-        /// <param name="id">Record Id of the draft</param>
-        /// <returns></returns>
-        //[HttpGet]
-        //[Route("toplimit/{id}")]
-        //public async Task<IActionResult> ApproveTopLimit(int id)
-        //{
-        //    var result = await _approvalService.ApproveTopLimitAsync(id);
-        //    return Ok(result);
-        //}
 
         /// <summary>
         /// Returns the form data for campaign approval page
@@ -80,6 +61,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-campaign-form")]
         public async Task<IActionResult> GetCampaignApprovalFormAsync(int id)
         {
+            if (!User.IsInRole("IsLoyaltyApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.GetCampaignApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
@@ -93,6 +77,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-target-form")]
         public async Task<IActionResult> GetTargetApprovalFormAsync(int id)
         {
+            if (!User.IsInRole("IsLoyaltyRuleApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.GetTargetApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
@@ -107,6 +94,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("target/{id}/{isApproved}")]
         public async Task<IActionResult> ApproveTargetAsync(int id, bool isApproved)
         {
+            if (!User.IsInRole("IsLoyaltyRuleApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.ApproveTargetAsync(id, isApproved, await GetUser());
             return Ok(result);
         }
@@ -120,6 +110,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-toplimit-form")]
         public async Task<IActionResult> GetTopLimitApprovalFormAsync(int id)
         {
+            if (!User.IsInRole("IsLoyaltyApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.GetTopLimitApprovalFormAsync(id, await GetUser());
             return Ok(result);
         }
@@ -134,6 +127,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("toplimit/{id}/{isApproved}")]
         public async Task<IActionResult> ApproveTopLimit(int id, bool isApproved)
         {
+            if (!User.IsInRole("IsLoyaltyApprover"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.ApproveTopLimitAsync(id, isApproved, await GetUser());
             return Ok(result);
         }
@@ -160,6 +156,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-campaign")]
         public async Task<IActionResult> CampaignCopyAsync(int campaignId)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.CampaignCopyAsync(campaignId, await GetUser());
             return Ok(result);
         }
@@ -173,6 +172,9 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-top-limit")]
         public async Task<IActionResult> TopLimitCopyAsync(int topLimitId)
         {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.TopLimitCopyAsync(topLimitId, await GetUser());
             return Ok(result);
         }
@@ -186,23 +188,27 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("copy-target")]
         public async Task<IActionResult> TargetCopyAsync(int targetId)
         {
+            if (!User.IsInRole("IsLoyaltyRuleCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
             var result = await _approvalService.TargetCopyAsync(targetId, await GetUser());
             return Ok(result);
         }
 
+        /*
         /// <summary>
         /// convert
         /// </summary>
         /// <param name="date"></param>
         /// /// <param name="format"></param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("ConvertWithInvariantCulture")]
-        public async Task<IActionResult> ConvertWithInvariantCulture(string date, string format)
-        {
-            var result = _approvalService.ConvertWithInvariantCulture(date, format);
-            return Ok(result);
-        }
+        //[HttpGet]
+        //[Route("ConvertWithInvariantCulture")]
+        //public async Task<IActionResult> ConvertWithInvariantCulture(string date, string format)
+        //{
+        //    var result = _approvalService.ConvertWithInvariantCulture(date, format);
+        //    return Ok(result);
+        //}
 
         /// <summary>
         /// convert
@@ -211,13 +217,13 @@ namespace Bbt.Campaign.Api.Controllers
         /// <param name="format"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("ConvertWithCulture")]
-        public async Task<IActionResult> ConvertWithCulture(string date, string format, string culture)
-        {
-            var result = _approvalService.ConvertWithCulture(date, format, culture);
-            return Ok(result);
-        }
+        //[HttpGet]
+        //[Route("ConvertWithCulture")]
+        //public async Task<IActionResult> ConvertWithCulture(string date, string format, string culture)
+        //{
+        //    var result = _approvalService.ConvertWithCulture(date, format, culture);
+        //    return Ok(result);
+        //}
 
         /// <summary>
         /// convert
@@ -230,36 +236,14 @@ namespace Bbt.Campaign.Api.Controllers
         {
             var result = _approvalService.ConvertWithNewDateTime(date);
             return Ok(result);
-        }
+        }*/
 
-        private async Task<UserRoleDto> GetUser()
+        private async Task<string> GetUser()
         {
-            UserRoleDto userRoleDto2 = new UserRoleDto();
-
-            List<int> roleTypeIdList = new List<int>();
-            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
-
-            if (!roleTypeIdList.Any())
-                throw new Exception("Kullanıcının yetkisi yoktur.");
-
-            userRoleDto2.RoleTypeIdList = roleTypeIdList;
-
-            return userRoleDto2;
+            string userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            if (string.IsNullOrEmpty(userId))
+                throw new Exception(ControllerStatics.UserNotFoundAlert);
+            return userId;
         }
 
     }

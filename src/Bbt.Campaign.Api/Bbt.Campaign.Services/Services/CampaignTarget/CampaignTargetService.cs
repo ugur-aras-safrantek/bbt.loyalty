@@ -47,28 +47,28 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             _draftService = draftService;
             _remoteService = remoteService;
         }
-        public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, UserRoleDto userRole) 
+        public async Task<BaseResponse<CampaignTargetDto>> AddAsync(CampaignTargetInsertRequest request, string userId) 
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Insert;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(request);
 
-            await Update(request, userRole.UserId);
+            await Update(request, userId);
 
             return await this.GetListByCampaignAsync(request.CampaignId);
         }
 
-        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, UserRoleDto userRole)
+        public async Task<BaseResponse<CampaignTargetDto>> UpdateAsync(CampaignTargetInsertRequest request, string userId)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.Update;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             await CheckValidationsAsync(request);
 
-            await Update(request, userRole.UserId);
+            await Update(request, userId);
 
             return await this.GetListByCampaignAsync(request.CampaignId);
         }
@@ -246,11 +246,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return null;
         }
 
-        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(UserRoleDto userRole)
+        public async Task<BaseResponse<CampaignTargetInsertFormDto>> GetInsertForm(string userId)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTargetInsertFormDto response = new CampaignTargetInsertFormDto();
 
@@ -729,11 +729,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto2;
         }
 
-        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, UserRoleDto userRole)
+        public async Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, string userId)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignTargetUpdateFormDto response = new CampaignTargetUpdateFormDto();
 

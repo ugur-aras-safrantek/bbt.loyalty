@@ -175,11 +175,11 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return campaignList;
         }
-        public async Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request, UserRoleDto userRole)
+        public async Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignReportResponse response = new CampaignReportResponse();
 
@@ -201,11 +201,11 @@ namespace Bbt.Campaign.Services.Services.Report
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CampaignReportResponse>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request, UserRoleDto userRole)
+        public async Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             GetFileResponse response = new GetFileResponse();
 
@@ -233,11 +233,11 @@ namespace Bbt.Campaign.Services.Services.Report
             
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync(UserRoleDto userRole)
+        public async Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync()
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignReportFormDto response = new CampaignReportFormDto();
             await FillCampaignFormAsync(response);
@@ -252,11 +252,11 @@ namespace Bbt.Campaign.Services.Services.Report
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
-        public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync(UserRoleDto userRole)
+        public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync()
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CustomerReportFormDto response = new CustomerReportFormDto();
             await FillCustomerFormAsync(response);
@@ -269,10 +269,10 @@ namespace Bbt.Campaign.Services.Services.Report
             response.BusinessLineList = (await _parameterService.GetBusinessLineListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }       
-        public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request, UserRoleDto userRole)
+        public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request)
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CustomerReportResponse response = new CustomerReportResponse();
             List<CustomerReportListDto> customerReportList = await GetCustomerReportData(request);
@@ -285,7 +285,6 @@ namespace Bbt.Campaign.Services.Services.Report
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
         }
-
         private async Task<List<CustomerReportListDto>> GetCustomerReportData(CustomerReportRequest request) 
         {
             List<CustomerReportListDto> customerReportList = new List<CustomerReportListDto>();
@@ -382,13 +381,11 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return customerReportList;
         }
-
-
-        public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request, UserRoleDto userRole) 
+        public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request) 
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             GetFileResponse response = new GetFileResponse();
 
@@ -556,11 +553,11 @@ namespace Bbt.Campaign.Services.Services.Report
             
             return customerCampaignList;
         }
-        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, int campaignId, UserRoleDto userRole) 
+        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, int campaignId) 
         {
-            int authorizationTypeId = (int)AuthorizationTypeEnum.View;
+            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
-            await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
+            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CustomerReportDetailDto response = new CustomerReportDetailDto();
             if (StaticValues.IsDevelopment) 

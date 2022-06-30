@@ -33,7 +33,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.FillCampaignFormAsync(await GetUser());
+            var result = await _reportService.FillCampaignFormAsync();
             return Ok(result);
         }
 
@@ -49,7 +49,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.GetCampaignReportByFilterAsync(request, await GetUser());
+            var result = await _reportService.GetCampaignReportByFilterAsync(request);
             return Ok(result);
         }
 
@@ -65,7 +65,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.GetCampaignReportExcelAsync(request, await GetUser());
+            var result = await _reportService.GetCampaignReportExcelAsync(request);
             return Ok(result);
         }
 
@@ -80,7 +80,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.FillCustomerFormAsync(await GetUser());
+            var result = await _reportService.FillCustomerFormAsync();
             return Ok(result);
         }
 
@@ -96,7 +96,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.GetCustomerReportByFilterAsync(request, await GetUser());
+            var result = await _reportService.GetCustomerReportByFilterAsync(request);
             return Ok(result);
         }
 
@@ -113,7 +113,7 @@ namespace Bbt.Campaign.Api.Controllers
             if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.GetCustomerReportExcelAsync(request, await GetUser());
+            var result = await _reportService.GetCustomerReportExcelAsync(request);
             return Ok(result);
         }
 
@@ -126,38 +126,8 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-customer-report-detail/{customerCode}/{campaignId}")]
         public async Task<IActionResult> GetCustomerReportDetailAsync(string customerCode, int campaignId)
         {
-            var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignId, await GetUser());
+            var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignId);
             return Ok(result);
-        }
-
-        private async Task<UserRoleDto> GetUser()
-        {
-            UserRoleDto userRoleDto2 = new UserRoleDto();
-
-            List<int> roleTypeIdList = new List<int>();
-            userRoleDto2.UserId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyCreator").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyCreator);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyApprover").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyApprover);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyReader").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyReader);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleCreator").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleCreator);
-
-            if (Convert.ToBoolean(User.Claims.FirstOrDefault(c => c.Type == "IsLoyaltyRuleApprover").Value))
-                roleTypeIdList.Add((int)RoleTypeEnum.IsLoyaltyRuleApprover);
-
-            if (!roleTypeIdList.Any())
-                throw new Exception("Kullanıcının yetkisi yoktur.");
-
-            userRoleDto2.RoleTypeIdList = roleTypeIdList;
-
-            return userRoleDto2;
         }
     }
 }

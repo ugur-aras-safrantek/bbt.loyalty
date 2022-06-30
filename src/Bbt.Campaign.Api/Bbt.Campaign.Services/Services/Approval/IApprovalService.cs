@@ -14,27 +14,27 @@ namespace Bbt.Campaign.Services.Services.Approval
 {
     public interface IApprovalService
     {
-        public Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id,  UserRoleDto userRoleDto);
-        public Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, UserRoleDto userRoleDto);      
-        public Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int id, UserRoleDto userRoleDto);
+        public Task<BaseResponse<CampaignDto>> ApproveCampaignAsync(int id,  string userId);
+        public Task<BaseResponse<CampaignDto>> DisApproveCampaignAsync(int id, string userId);      
+        public Task<BaseResponse<CampaignApproveFormDto>> GetCampaignApprovalFormAsync(int id, string userId);
         public Task<BaseResponse<CampaignViewFormDto>> GetCampaignViewFormAsync(int campaignId);
         
         
         
 
 
-        public Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, UserRoleDto userRoleDto);
-        public Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, UserRoleDto userRoleDto);
+        public Task<BaseResponse<TopLimitDto>> ApproveTopLimitAsync(int id, bool isApproved, string userId);
+        public Task<BaseResponse<TopLimitApproveFormDto>> GetTopLimitApprovalFormAsync(int id, string userId);
 
 
-        public Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, UserRoleDto userRoleDto);
-        public Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, UserRoleDto userRoleDto);
+        public Task<BaseResponse<TargetDto>> ApproveTargetAsync(int id, bool isApproved, string userId);
+        public Task<BaseResponse<TargetApproveFormDto>> GetTargetApprovalFormAsync(int id, string userId);
 
 
 
-        public Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId, UserRoleDto userRoleDto);
-        public Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int topLimitId, UserRoleDto userRoleDto);
-        public Task<BaseResponse<TargetDto>> TargetCopyAsync(int targetId, UserRoleDto userRoleDto);
+        public Task<BaseResponse<CampaignDto>> CampaignCopyAsync(int campaignId, string userId);
+        public Task<BaseResponse<TopLimitDto>> TopLimitCopyAsync(int topLimitId, string userId);
+        public Task<BaseResponse<TargetDto>> TargetCopyAsync(int targetId, string userId);
 
 
 

@@ -169,6 +169,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
             return await BaseResponse<UserAuthorizationResponseDto>.SuccessAsync(response);
         }
   
+        /*
         public async Task CheckAuthorizationAsync(UserRoleDto userRoleDto, int moduleTypeId, int authorizationTypeId)
         {
             List<RoleAuthorizationDto> roleAuthorizationList = (await _parameterService.GetRoleAuthorizationListAsync())?.Data;
@@ -196,7 +197,7 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 .ToList();
             if (!userRoleAuthorizationList.Any())
                 throw new Exception(StaticFormValues.UnAuthorizedUserAlert);
-        }
+        }*/
 
         public async Task<BaseResponse<SuccessDto>> UpdateUserRolesAsync(string userId, string userRoles)
         {

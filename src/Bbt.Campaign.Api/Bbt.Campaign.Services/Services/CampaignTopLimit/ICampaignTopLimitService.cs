@@ -9,15 +9,15 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
     public interface ICampaignTopLimitService
     {
         public Task<BaseResponse<TopLimitDto>> GetCampaignTopLimitAsync(int id);
-        public Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, UserRoleDto userRole);
-        public Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest campaignTopLimit, UserRoleDto userRole);
+        public Task<BaseResponse<TopLimitDto>> AddAsync(CampaignTopLimitInsertRequest campaignTopLimit, string userId);
+        public Task<BaseResponse<TopLimitDto>> UpdateAsync(CampaignTopLimitUpdateRequest campaignTopLimit, string userId);
         public Task<BaseResponse<List<TopLimitDto>>> GetListAsync();
         public Task<BaseResponse<TopLimitDto>> DeleteAsync(int id);
-        public Task<BaseResponse<CampaignTopLimitInsertFormDto>> GetInsertForm(UserRoleDto userRole);
+        public Task<BaseResponse<CampaignTopLimitInsertFormDto>> GetInsertForm(string userId);
         public Task<BaseResponse<CampaignTopLimitFilterParameterResponse>> GetFilterParameterList();
-        public Task<BaseResponse<CampaignTopLimitUpdateFormDto>> GetUpdateForm(int id, UserRoleDto userRole);
-        public Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, UserRoleDto userRole);
-        public Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, UserRoleDto userRole);
+        public Task<BaseResponse<CampaignTopLimitUpdateFormDto>> GetUpdateForm(int id, string userId);
+        public Task<BaseResponse<CampaignTopLimitListFilterResponse>> GetByFilterAsync(CampaignTopLimitListFilterRequest request, string userId);
+        public Task<BaseResponse<GetFileResponse>> GetExcelAsync(CampaignTopLimitListFilterRequest request, string userId);
         public Task<bool> IsActiveTopLimit(int id);
         public Task<TopLimitDto> GetTopLimitDto(int id);
     }
