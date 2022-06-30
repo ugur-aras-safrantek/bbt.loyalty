@@ -42,15 +42,11 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public bool IsCampaignRuleJoinTypeIdUpdated { get; set; } = false;
         public bool IsIsEmployeeIncludedUpdated { get; set; } = false;
         public bool IsIsPrivateBankingUpdated { get; set; } = false;
-
-
         public bool IsRuleBusinessLinesUpdated { get; set; } = false;
         public bool IsRuleBranchesUpdated { get; set; } = false;
         public bool IsRuleCustomerTypesUpdated { get; set; } = false;
+        public bool IsRuleIdentityUpdated { get; set; } = false;
         public bool IsRuleDocumentUpdated { get; set; } = false;
-
-
-        //RuleBusinessLines, RuleBranches, RuleCustomerTypes, RuleDocument
 
     }
 }

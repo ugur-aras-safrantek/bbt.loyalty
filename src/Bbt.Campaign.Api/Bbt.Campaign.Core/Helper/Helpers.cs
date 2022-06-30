@@ -567,7 +567,41 @@ namespace Bbt.Campaign.Core.Helper
         { 
             return input.All(char.IsDigit);
         }
-        
+
+        public static bool IsTwoIntegerListEqual(List<int> sourceList, List<int> targetList) 
+        { 
+            bool retVal;
+
+            if(sourceList == null)
+                sourceList = new List<int>();
+            if(targetList == null)
+                targetList = new List<int>();
+
+            if(sourceList.Count != targetList.Count)
+                retVal = true;
+            else 
+                retVal = sourceList.Except(targetList).Any(); 
+
+            return retVal;
+        }
+
+        public static bool IsTwoStringListEqual(List<string> sourceList, List<string> targetList)
+        {
+            bool retVal;
+
+            if (sourceList == null)
+                sourceList = new List<string>();
+            if (targetList == null)
+                targetList = new List<string>();
+
+            if (sourceList.Count != targetList.Count)
+                retVal = true;
+            else
+                retVal = sourceList.Except(targetList).Any();
+
+            return retVal;
+        }
+
         #endregion
     }
 }

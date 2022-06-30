@@ -487,8 +487,20 @@ namespace Bbt.Campaign.Services.Services.Approval
 
                 if (campaignUpdatePages.IsCampaignRuleUpdated) 
                 {
-                    var draftRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
-                    var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted).FirstOrDefaultAsync();
+                    var draftRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
+                        .GetAll(x => x.CampaignId == draftCampaignEntity.Id && !x.IsDeleted)
+                        .Include(x => x.Branches.Where(t => t.IsDeleted != true))
+                        .Include(x => x.BusinessLines.Where(t => t.IsDeleted != true))
+                        .Include(x => x.CustomerTypes.Where(t => t.IsDeleted != true))
+                        .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
+                        .FirstOrDefaultAsync();
+                    var approvedRuleEntity = await _unitOfWork.GetRepository<CampaignRuleEntity>()
+                        .GetAll(x => x.CampaignId == approvedCampaignEntity.Id && !x.IsDeleted)
+                        .Include(x => x.Branches.Where(t => t.IsDeleted != true))
+                        .Include(x => x.BusinessLines.Where(t => t.IsDeleted != true))
+                        .Include(x => x.CustomerTypes.Where(t => t.IsDeleted != true))
+                        .Include(x => x.RuleIdentities.Where(t => t.IsDeleted != true))
+                        .FirstOrDefaultAsync();
                     
                     campaignUpdateFields.IsCampaignRuleStartTermIdUpdated = draftRuleEntity.CampaignStartTermId != approvedRuleEntity.CampaignStartTermId;
                     campaignUpdateFields.IsCampaignRuleJoinTypeIdUpdated = draftRuleEntity.JoinTypeId != approvedRuleEntity.JoinTypeId;
@@ -509,7 +521,10 @@ namespace Bbt.Campaign.Services.Services.Approval
                                 campaignUpdateFields.IsRuleBranchesUpdated = true;
                                 break;
                             case ((int)JoinTypeEnum.Customer):
-                                //campaignUpdateFields.
+                                if (draftRuleEntity.IsSingleIdentity)
+                                    campaignUpdateFields.IsRuleIdentityUpdated = true;
+                                else
+                                    campaignUpdateFields.IsRuleDocumentUpdated = true;
                                 break; 
                             default:
                                 break;
@@ -520,19 +535,31 @@ namespace Bbt.Campaign.Services.Services.Approval
                         switch (draftRuleEntity.JoinTypeId)
                         {
                             case ((int)JoinTypeEnum.BusinessLine):
-                                campaignUpdateFields.IsRuleBusinessLinesUpdated = draftRuleEntity.BusinessLines.Select(x => x.BusinessLineId).ToList()
-                                    .Except(approvedRuleEntity.BusinessLines.Select(x => x.BusinessLineId)).ToList().Any();
+                                campaignUpdateFields.IsRuleBusinessLinesUpdated = 
+                                    Helpers.IsTwoIntegerListEqual(draftRuleEntity.BusinessLines.Select(x => x.BusinessLineId).ToList(), approvedRuleEntity.BusinessLines.Select(x => x.BusinessLineId).ToList());
                                 break;
                             case ((int)JoinTypeEnum.CustomerType):
-                                campaignUpdateFields.IsRuleCustomerTypesUpdated = draftRuleEntity.CustomerTypes.Select(x=> x.CustomerTypeId).ToList()
-                                    .Except(approvedRuleEntity.CustomerTypes.Select(x => x.CustomerTypeId)).ToList().Any();
+                                campaignUpdateFields.IsRuleCustomerTypesUpdated =
+                                    Helpers.IsTwoIntegerListEqual(draftRuleEntity.CustomerTypes.Select(x=> x.CustomerTypeId).ToList(), approvedRuleEntity.CustomerTypes.Select(x => x.CustomerTypeId).ToList());
                                 break;
                             case ((int)JoinTypeEnum.Branch):
-                                campaignUpdateFields.IsRuleBranchesUpdated = draftRuleEntity.Branches.Select(x => x.BranchCode).ToList()
-                                    .Except(approvedRuleEntity.Branches.Select(x => x.BranchCode)).ToList().Any(); 
+                                campaignUpdateFields.IsRuleBranchesUpdated =
+                                    Helpers.IsTwoStringListEqual(draftRuleEntity.Branches.Select(x => x.BranchCode).ToList(), approvedRuleEntity.Branches.Select(x => x.BranchCode).ToList()); 
                                 break;
                             case ((int)JoinTypeEnum.Customer):
-                                //campaignUpdateFields.
+                                if (draftRuleEntity.IsSingleIdentity && approvedRuleEntity.IsSingleIdentity)
+                                    campaignUpdateFields.IsRuleIdentityUpdated = draftRuleEntity.RuleIdentities.FirstOrDefault()?.Identities != approvedRuleEntity.RuleIdentities.FirstOrDefault()?.Identities;
+                                if (draftRuleEntity.IsSingleIdentity && !approvedRuleEntity.IsSingleIdentity)
+                                    campaignUpdateFields.IsRuleIdentityUpdated = true;
+                                else if (!draftRuleEntity.IsSingleIdentity && approvedRuleEntity.IsSingleIdentity)
+                                    campaignUpdateFields.IsRuleDocumentUpdated = true;
+                                else
+                                {
+                                    var draftDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>().GetAll(x => x.CampaignId == draftId && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN && !x.IsDeleted).FirstOrDefaultAsync();
+                                    var appovedDocument = await _unitOfWork.GetRepository<CampaignDocumentEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN && !x.IsDeleted).FirstOrDefaultAsync();
+                                    if (draftDocument != null && appovedDocument != null)
+                                        campaignUpdateFields.IsRuleDocumentUpdated = draftDocument.Content.Length != appovedDocument.Content.Length;
+                                }
                                 break;
                             default:
                                 break;
