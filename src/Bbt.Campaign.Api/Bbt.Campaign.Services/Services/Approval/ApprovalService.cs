@@ -343,8 +343,13 @@ namespace Bbt.Campaign.Services.Services.Approval
                     await _unitOfWork.GetRepository<CampaignRuleBusinessLineEntity>().DeleteAsync(x);
                 foreach (var x in campaignRuleEntity.RuleIdentities)
                     await _unitOfWork.GetRepository<CampaignRuleIdentityEntity>().DeleteAsync(x);
+                foreach(var x in _unitOfWork.GetRepository<CampaignDocumentEntity>()
+                    .GetAll(x => x.CampaignId == campaignId && x.DocumentType == Core.Enums.DocumentTypeDbEnum.CampaignRuleTCKN && !x.IsDeleted))
+                    await _unitOfWork.GetRepository<CampaignDocumentEntity>().DeleteAsync(x);
+
                 campaignRuleEntity = await _draftService.CopyCampaignRuleInfo(campaignRuleDraftEntity, campaignRuleEntity, campaignEntity, userid, true, true);
                 await _unitOfWork.GetRepository<CampaignRuleEntity>().UpdateAsync(campaignRuleEntity);
+                
                 if (campaignRuleDraftEntity.JoinTypeId == (int)JoinTypeEnum.Customer) 
                 {
                     foreach (var campaignRuleIdentityEntity in await _draftService.CopyCampaignRuleIdentites(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
@@ -366,6 +371,10 @@ namespace Bbt.Campaign.Services.Services.Approval
                     foreach (var campaignRuleCustomerTypeEntity in await _draftService.CopyCampaignRuleCustomerTypes(campaignRuleDraftEntity, campaignRuleEntity, userid, true, true))
                         await _unitOfWork.GetRepository<CampaignRuleCustomerTypeEntity>().AddAsync(campaignRuleCustomerTypeEntity);
                 }
+
+                foreach (var campaignDocumentEntity in await _draftService.CopyCampaignDocumentInfo(draftId, campaignEntity, userid, false))
+                    await _unitOfWork.GetRepository<CampaignDocumentEntity>().AddAsync(campaignDocumentEntity);
+
             }
 
             if (campaignUpdatePageEntity.IsCampaignTargetUpdated) 
@@ -397,8 +406,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             campaignDraftEntity.StatusId = (int)StatusEnum.History;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignDraftEntity);
 
-            try { await _unitOfWork.SaveChangesAsync(); }
-            catch(Exception ex) { throw new Exception(ex.ToString()); }
+            await _unitOfWork.SaveChangesAsync();
 
             var mappedCampaign = _mapper.Map<CampaignDto>(campaignEntity);
 
