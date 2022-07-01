@@ -505,6 +505,8 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
             campaignRuleDto.IdentityNumber = identityNumber;
             campaignRuleDto.IsSingleIdentity = isSingleIdentity;
             campaignRuleDto.DocumentName = documentName;
+            campaignRuleDto.IsPrivateBanking = campaignRuleEntity.IsPrivateBanking;
+            campaignRuleDto.IsEmployeeIncluded = campaignRuleEntity.IsEmployeeIncluded;
             campaignRuleDto.RuleBusinessLines = campaignRuleEntity.BusinessLines.Where(c => !c.IsDeleted).Select(c => c.BusinessLineId).ToList();
             campaignRuleDto.RuleCustomerTypes = campaignRuleEntity.CustomerTypes.Where(c => !c.IsDeleted).Select(c => c.CustomerTypeId).ToList();
             campaignRuleDto.RuleBranches = campaignRuleEntity.Branches.Where(c => !c.IsDeleted).Select(c => c.BranchCode).ToList();
