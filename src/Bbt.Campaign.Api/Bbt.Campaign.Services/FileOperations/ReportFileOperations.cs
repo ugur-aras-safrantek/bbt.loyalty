@@ -253,7 +253,7 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     result = stream.ToArray();
 
-                    File.WriteAllBytes(@"C:\Files2\xxx.xlsx", result);
+                    //File.WriteAllBytes(@"C:\Files2\xxx.xlsx", result);
                 }
             }
             return result;

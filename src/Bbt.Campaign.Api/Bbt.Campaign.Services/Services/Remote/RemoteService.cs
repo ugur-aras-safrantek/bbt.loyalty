@@ -182,12 +182,11 @@ namespace Bbt.Campaign.Services.Services.Remote
                     serviceUrl += "&SortBy=CustomerJoinDate";
                     serviceUrl += "&SortType=" + (int)SortTypeEnum.Descending;
                 }
-
-
                 if (!string.IsNullOrEmpty(request.CustomerCode))
-                    serviceUrl += "&CustomerNumber=" + request.CustomerCode;
+                    serviceUrl += "&CustomerId=" + request.CustomerCode;
+                    
                 if (!string.IsNullOrEmpty(request.CustomerIdentifier))
-                    serviceUrl += "&CustomerId=" + request.CustomerIdentifier;
+                    serviceUrl += "&CustomerNumber=" + request.CustomerIdentifier;
                 if (request.CustomerTypeId.HasValue)
                 {
                     int customerTypeId = request.CustomerTypeId ?? 0;

@@ -75,6 +75,8 @@ namespace Bbt.Campaign.Services.Services.Report
                 campaignQuery = campaignQuery.Where(x => x.JoinTypeId == request.JoinTypeId.Value);
             if (request.SectorId.HasValue)
                 campaignQuery = campaignQuery.Where(x => x.SectorId == request.SectorId.Value);
+            if (request.StatusId.HasValue)
+                campaignQuery = campaignQuery.Where(x => x.StatusId == request.StatusId.Value);
 
             if (string.IsNullOrEmpty(request.SortBy))
             {
