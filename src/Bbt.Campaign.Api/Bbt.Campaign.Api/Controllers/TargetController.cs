@@ -32,7 +32,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            if (!User.IsInRole("IsLoyaltyReader")  || !User.IsInRole("IsLoyaltyCreator"))
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var adminSektor = await _targetService.GetTargetAsync(id);
@@ -93,7 +93,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(TargetListFilterRequest request)
         {
-            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _targetService.GetByFilterAsync(request, await GetUser());
@@ -108,7 +108,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get-list-excel")]
         public async Task<IActionResult> GetExcelAsync(TargetListFilterRequest request)
         {
-            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _targetService.GetExcelAsync(request, await GetUser());
@@ -124,7 +124,7 @@ namespace Bbt.Target.Api.Controllers
         [Route("get-view-form")]
         public async Task<IActionResult> GetTargetViewFormAsync(int id)
         {
-            if (!User.IsInRole("IsLoyaltyReader") || !User.IsInRole("IsLoyaltyCreator"))
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _targetService.GetTargetViewFormAsync(id);

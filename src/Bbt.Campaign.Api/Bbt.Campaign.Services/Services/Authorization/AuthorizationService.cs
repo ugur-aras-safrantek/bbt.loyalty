@@ -259,11 +259,11 @@ namespace Bbt.Campaign.Services.Services.Authorization
             claims.Add(new Claim("UserId", user.Tckn.ToString()));
 
             //silinecek
-            claims.Add(new Claim("IsLoyaltyCreator", user.Credentials.IsLoyaltyCreator.ToString()));
-            claims.Add(new Claim("IsLoyaltyApprover", user.Credentials.IsLoyaltyApprover.ToString()));
-            claims.Add(new Claim("IsLoyaltyReader", user.Credentials.IsLoyaltyReader.ToString()));
-            claims.Add(new Claim("IsLoyaltyRuleCreator", user.Credentials.IsLoyaltyRuleCreator.ToString()));
-            claims.Add(new Claim("IsLoyaltyRuleApprover", user.Credentials.IsLoyaltyRuleApprover.ToString()));
+            //claims.Add(new Claim("IsLoyaltyCreator", user.Credentials.IsLoyaltyCreator.ToString()));
+            //claims.Add(new Claim("IsLoyaltyApprover", user.Credentials.IsLoyaltyApprover.ToString()));
+            //claims.Add(new Claim("IsLoyaltyReader", user.Credentials.IsLoyaltyReader.ToString()));
+            //claims.Add(new Claim("IsLoyaltyRuleCreator", user.Credentials.IsLoyaltyRuleCreator.ToString()));
+            //claims.Add(new Claim("IsLoyaltyRuleApprover", user.Credentials.IsLoyaltyRuleApprover.ToString()));
             //
 
 
