@@ -138,6 +138,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
 
+            if (campaignEntity.CreatedBy == userId)
+                throw new Exception("Kampanya kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
             campaignEntity.StatusId = (int)StatusEnum.Draft;
             campaignEntity.LastModifiedBy = userId;
 
@@ -566,6 +569,13 @@ namespace Bbt.Campaign.Services.Services.Approval
                         }
                     }
                 }
+
+                if (campaignUpdatePages.IsCampaignChannelCodeUpdated) 
+                {
+                    var draftChannelCodeList = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && x.IsDeleted != true).Select(x => x.ChannelCode).ToListAsync();
+                    var approvedChannelCodeList = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && x.IsDeleted != true).Select(x => x.ChannelCode).ToListAsync();
+                    campaignUpdateFields.IsCampaignChannelCodeListUpdated = Helpers.IsTwoStringListEqual(draftChannelCodeList, approvedChannelCodeList);
+                }
             }
             response.CampaignUpdateFields = campaignUpdateFields;
 
@@ -690,6 +700,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (entity is null)
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
 
+            if (entity.CreatedBy == userid)
+                throw new Exception("Çatı limiti kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
             entity.StatusId = (int)StatusEnum.Draft;
             entity.LastModifiedBy = userid;
 
@@ -726,21 +739,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 topLimitUpdateFields.IsCurrencyIdUpdated = draftEntity.CurrencyId != approvedEntity.CurrencyId;
                 topLimitUpdateFields.IsMaxTopLimitRateUpdated = draftEntity.MaxTopLimitRate != approvedEntity.MaxTopLimitRate;
                 topLimitUpdateFields.IsMaxTopLimitUtilizationUpdated = draftEntity.MaxTopLimitUtilization != approvedEntity.MaxTopLimitUtilization;
-
-                if (draftEntity.TopLimitCampaigns.Count != approvedEntity.TopLimitCampaigns.Count)
-                    topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
-                else 
-                { 
-                    foreach(var draftTopLimitCampaign in draftEntity.TopLimitCampaigns) 
-                    { 
-                        var approvedTopLimitCampaign = approvedEntity.TopLimitCampaigns.Where(x=>x.CampaignId == draftTopLimitCampaign.Id);
-                        if(approvedTopLimitCampaign == null) 
-                        {
-                            topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
-                            break;
-                        }
-                    }
-                }
+                topLimitUpdateFields.IsTopLimitCampaignsUpdated =
+                                    Helpers.IsTwoIntegerListEqual(draftEntity.TopLimitCampaigns.Select(x => x.CampaignId).ToList(), approvedEntity.TopLimitCampaigns.Select(x => x.CampaignId).ToList());
             }
             response.TopLimitUpdateFields = topLimitUpdateFields;
 
@@ -804,6 +804,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
             if (entity is null)
                 throw new Exception("Hedef bulunamadı.");
+
+            if (entity.CreatedBy == userid)
+                throw new Exception("Hedef kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             entity.StatusId = (int)StatusEnum.Draft;
             entity.LastModifiedOn = DateTime.UtcNow;

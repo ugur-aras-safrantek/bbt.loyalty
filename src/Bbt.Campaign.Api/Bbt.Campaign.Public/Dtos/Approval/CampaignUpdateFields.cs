@@ -48,5 +48,7 @@ namespace Bbt.Campaign.Public.Dtos.Approval
         public bool IsRuleIdentityUpdated { get; set; } = false;
         public bool IsRuleDocumentUpdated { get; set; } = false;
 
+        public bool IsCampaignChannelCodeListUpdated { get; set; } = false;
+
     }
 }

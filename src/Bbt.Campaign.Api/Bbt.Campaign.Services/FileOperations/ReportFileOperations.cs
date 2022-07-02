@@ -197,7 +197,7 @@ namespace Bbt.Campaign.Services.FileOperations
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerIdentifier;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerIdentifier; 
                     worksheet.Column($"{column}").Width = 20;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
