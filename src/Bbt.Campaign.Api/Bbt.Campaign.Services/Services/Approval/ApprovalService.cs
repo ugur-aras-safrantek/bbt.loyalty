@@ -588,6 +588,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
                 if(_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = campaignHistory.CreatedBy;
+                historyApproveDto.CreatedOn = campaignHistory.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(campaignHistory.CreatedOn);
                 response.HistoryList.Add(historyApproveDto);
             }
 
@@ -753,10 +756,14 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
                 if (_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = campaignHistory.CreatedBy;
+                historyApproveDto.CreatedOn = campaignHistory.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(campaignHistory.CreatedOn);
                 response.HistoryList.Add(historyApproveDto);
             }
 
             return await BaseResponse<TopLimitApproveFormDto>.SuccessAsync(response);
+
         }
         
         #endregion
@@ -923,6 +930,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = historyEntity.ApprovedDate ?? DateTime.MinValue;
                 if (_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = historyEntity.CreatedBy;
+                historyApproveDto.CreatedOn = historyEntity.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(historyEntity.CreatedOn);
                 historyList.Add(historyApproveDto);
             }
             response.HistoryList = historyList;
