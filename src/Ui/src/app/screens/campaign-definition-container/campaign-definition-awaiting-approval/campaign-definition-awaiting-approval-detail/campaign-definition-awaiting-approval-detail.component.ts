@@ -67,6 +67,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
 
     this.campaignDefinitionFormGroup = this.fb.group({
       isActive: false,
+      isBundle: false,
       isContract: false,
       contractId: '',
       contractName: '',
@@ -126,6 +127,7 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   private populateCampaignDefinitionForm(data, campaignDetail) {
     this.campaignDefinitionFormGroup.patchValue({
       isActive: data.isActive,
+      isBundle: data.isBundle,
       isContract: data.isContract,
       contractId: data.contractId,
       contractName: data.contractId + '-Sözleşme.html',
