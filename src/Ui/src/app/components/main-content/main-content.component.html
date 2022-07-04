@@ -9,7 +9,8 @@
           <a [routerLink]="[createRoute]" class="btn btn-white px-5 float-end">{{newButtonText}}</a>
         </app-auth-check>
         <app-auth-check [authorization]="authorization.approve">
-          <a [routerLink]="[awaitingApprovalListRoute]" class="btn btn-orange me-2 px-5 float-end">Onay Bekleyenler</a>
+          <a [routerLink]="[awaitingApprovalListRoute]" *ngIf="isSentToApprovalRecord"
+             class="btn btn-orange me-2 px-5 float-end">Onay Bekleyenler</a>
         </app-auth-check>
       </div>
     </div>

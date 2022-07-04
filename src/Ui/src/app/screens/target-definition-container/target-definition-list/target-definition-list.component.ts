@@ -41,6 +41,8 @@ export class TargetDefinitionListComponent implements OnInit {
     isActive: null
   };
 
+  isSentToApprovalRecord: boolean = false;
+
   constructor(private targetDefinitionService: TargetDefinitionService,
               private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
@@ -132,6 +134,7 @@ export class TargetDefinitionListComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data && res.data.responseList.length > 0) {
+            this.isSentToApprovalRecord = res.data.isSentToApprovalRecord;
             this.listService.setList(this.columns, this.setRouterLinks(res.data.responseList), res.data.paging);
           } else {
             this.listService.setError("Listeleme için uygun kayıt bulunamadı");

@@ -1,6 +1,7 @@
 <app-main-content blockTitle="Kampanya Çatı Limitleri"
                   createRoute="../create/limit"
                   newButtonText="Yeni Çatı Limiti"
+                  [isSentToApprovalRecord]="isSentToApprovalRecord"
                   [authorization]="currentUserAuthorizations.campaignLimitsModuleAuthorizations">
   <app-list (getListEvent)="campaignLimitsListGetByFilter()"
             (downloadExcelFileEvent)="campaignLimitsListGetByFilterExcelFile()">
