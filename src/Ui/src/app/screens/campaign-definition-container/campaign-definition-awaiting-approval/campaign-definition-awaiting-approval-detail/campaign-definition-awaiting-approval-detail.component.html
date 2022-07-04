@@ -264,6 +264,30 @@
         <button class="title-button"
                 [ngClass]="{'change-bgc':campaignUpdatePages.isCampaignRuleUpdated}">Kampanya Kuralları
         </button>
+        <div class="row mt-3 px-2">
+          <div class="col">
+            <div class="form-group">
+              <div class="form-check">
+                <input class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isIsEmployeeIncludedUpdated}"
+                       type="checkbox" id="isEmployeeIncluded" name="isEmployeeIncluded"
+                       formControlName="isEmployeeIncluded">
+                <label class="form-check-label ms-2" for="isEmployeeIncluded">Personel Dahil mi?</label>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <div class="form-check">
+                <input class="form-check-input scale-2x"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isIsPrivateBankingUpdated}"
+                       type="checkbox" id="isPrivateBanking " name="isPrivateBanking "
+                       formControlName="isPrivateBanking">
+                <label class="form-check-label ms-2" for="isPrivateBanking ">Özel Bankacılık mı?</label>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-6 form-group mt-3">
             <label for="joinTypeName">Dahil Olma Şekli</label>
@@ -279,7 +303,7 @@
                 <label for="identityNumber">{{ campaignRulesDocument ? 'Dosya Adı' : 'TCKN' }}</label>
                 <input type="text"
                        class="form-control"
-                       [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleIdentityNumberUpdated}"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isRuleIdentityUpdated}"
                        name="identityNumber" id="identityNumber"
                        formControlName="identityNumber">
               </div>
@@ -294,7 +318,7 @@
             <label for="ruleBusinessLinesStr">İş Kolu</label>
             <input type="text"
                    class="form-control"
-                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleBusinessLinesUpdated}"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isRuleBusinessLinesUpdated}"
                    name="ruleBusinessLinesStr" id="ruleBusinessLinesStr"
                    formControlName="ruleBusinessLinesStr">
           </div>
@@ -302,7 +326,7 @@
             <label for="ruleBranchesStr">Şube</label>
             <input type="text"
                    class="form-control"
-                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleBranchesUpdated}"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isRuleBranchesUpdated}"
                    name="ruleBranchesStr" id="ruleBranchesStr"
                    formControlName="ruleBranchesStr">
           </div>
@@ -310,9 +334,19 @@
             <label for="ruleCustomerTypesStr">Müşteri Tipi</label>
             <input type="text"
                    class="form-control"
-                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleCustomerTypesUpdated}"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isRuleCustomerTypesUpdated}"
                    name="ruleCustomerTypesStr" id="ruleCustomerTypesStr"
                    formControlName="ruleCustomerTypesStr">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 form-group mt-3">
+            <label for="startTermName">Kampanya Başlama Dönemi</label>
+            <input type="text"
+                   class="form-control"
+                   [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignRuleStartTermIdUpdated}"
+                   name="startTermName" id="startTermName"
+                   formControlName="startTermName">
           </div>
         </div>
       </form>

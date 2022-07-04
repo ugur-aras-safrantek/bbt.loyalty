@@ -90,11 +90,14 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
     this.campaignDefinitionFormGroup.disable();
 
     this.campaignRulesFormGroup = this.fb.group({
+      isEmployeeIncluded: false,
+      isPrivateBanking: false,
       joinTypeName: '',
       identityNumber: '',
       ruleBusinessLinesStr: '',
       ruleBranchesStr: '',
       ruleCustomerTypesStr: '',
+      startTermName: '',
     });
     this.campaignRulesFormGroup.disable();
 
@@ -147,11 +150,14 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
 
   private populateCampaignRulesForm(data) {
     this.campaignRulesFormGroup.patchValue({
+      isEmployeeIncluded: data.isEmployeeIncluded,
+      isPrivateBanking: data.isPrivateBanking,
       joinTypeName: data.joinType?.name,
       identityNumber: data.identityNumber ?? data.documentName,
       ruleBusinessLinesStr: data.ruleBusinessLinesStr,
       ruleBranchesStr: data.ruleBranchesStr,
       ruleCustomerTypesStr: data.ruleCustomerTypesStr,
+      startTermName: data.campaignStartTerm?.name,
     });
     this.campaignRulesDocument = !!data.documentName;
     switch (data.joinTypeId) {

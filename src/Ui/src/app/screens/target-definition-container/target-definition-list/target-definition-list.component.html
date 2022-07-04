@@ -1,6 +1,7 @@
 <app-main-content blockTitle="Hedef Tanımı"
                   createRoute="../create/definition"
                   newButtonText="Yeni Hedef Tanımı"
+                  [isSentToApprovalRecord]="isSentToApprovalRecord"
                   [authorization]="currentUserAuthorizations.targetDefinitionModuleAuthorizations">
   <app-list (getListEvent)="targetDefinitionListGetByFilter()"
             (downloadExcelFileEvent)="targetDefinitionListGetByFilterExcelFile()">

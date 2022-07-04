@@ -26,14 +26,14 @@ export class ReportsByCustomerComponent implements OnInit {
     {columnName: 'Kampanyaya Katıldığı Tarih', propertyName: 'joinDateStr', isBoolean: false, sortDir: null},
     {columnName: 'Müşteri No', propertyName: 'customerCode', isBoolean: false, sortDir: null},
     {columnName: 'TCKN', propertyName: 'customerIdentifier', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanıma Hak Kazandığı Tarih', propertyName: 'eklenecek', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmount', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Oranı', propertyName: 'achievementRate', isBoolean: false, sortDir: null},
     {columnName: 'Müşteri Tipi', propertyName: 'customerTypeName', isBoolean: false, sortDir: null},
     {columnName: 'Şube', propertyName: 'branchName', isBoolean: false, sortDir: null},
     {columnName: 'İş Kolu', propertyName: 'businessLineName', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanıma Hak Kazandığı Tarih', propertyName: 'earningReachDateStr', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmount', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Oranı', propertyName: 'achievementRate', isBoolean: false, sortDir: null},
     {columnName: 'Kazanım Tipi', propertyName: 'achievementTypeName', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanımdan Yararlanma Tarihi', propertyName: 'achievementDateStr', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanımdan Yararlanılan Tarih', propertyName: 'achievementDateStr', isBoolean: false, sortDir: null},
   ];
 
   customerTypeList: DropdownListModel[];
@@ -177,8 +177,8 @@ export class ReportsByCustomerComponent implements OnInit {
       });
   }
 
-  showDetail(event){
-    this.reportsService.getCustomerDetail(event.id)
+  showDetail(event) {
+    this.reportsService.getCustomerDetail({customerCode: event.customerCode, campaignId: event.campaignId})
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {

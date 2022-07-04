@@ -208,6 +208,31 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
       sectorId: data.sectorId,
       viewOptionId: data.viewOptionId,
     })
+
+    let startDateParts = data.startDate.split("-");
+    this.dpOptions = {
+      dateRange: false,
+      dateFormat: 'dd-mm-yyyy',
+      disableUntil: {
+        year: parseInt(startDateParts[2]),
+        month: parseInt(startDateParts[1]),
+        day: parseInt(startDateParts[0]) - 1
+      },
+    };
+
+    this.formGroup.controls.startDate.clearValidators();
+    this.formGroup.controls.startDate.setValidators([
+      Validators.required,
+      this.utilityService.EndDateGreaterThanStartDateValidator(this.formGroup)
+    ]);
+    this.formGroup.controls.startDate.updateValueAndValidity();
+
+    this.formGroup.controls.endDate.clearValidators();
+    this.formGroup.controls.endDate.setValidators([
+      Validators.required,
+      this.utilityService.EndDateGreaterThanStartDateValidator(this.formGroup)
+    ]);
+    this.formGroup.controls.endDate.updateValueAndValidity();
   }
 
   populateLists(data) {
@@ -262,6 +287,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
       this.f.contractId.setValidators(Validators.required);
     } else {
       this.contractDocument = null;
+      this.contractDocumentId = null;
       this.contractIdDisable = false;
       this.formGroup.patchValue({contractId: ''});
       this.f.contractId.clearValidators();
@@ -400,7 +426,6 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
           if (!res.hasError && res.data) {
             this.populateLists(res.data);
             this.populateForm(res.data.campaign);
-            this.contractDocument = res.data.contractFile?.document;
             this.contractIdDisable = true;
             this.contractDocumentId = res.data.campaign.contractId;
             this.formGroup.patchValue({contractId: res.data.contractFile?.document.documentName});
@@ -560,7 +585,27 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
       const fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
     } else {
-      this.toastrHandleService.warning("Sözleşme bulunamadı.");
+      if (this.contractDocumentId) {
+        this.campaignDefinitionService.campaignDefinitionGetContractFile(this.contractDocumentId)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: res => {
+              if (!res.hasError && res.data?.document) {
+                this.contractDocument = res.data.document;
+                this.showDocumentFile();
+              } else {
+                this.toastrHandleService.error(res.errorMessage);
+              }
+            },
+            error: err => {
+              if (err.error) {
+                this.toastrHandleService.error(err.error);
+              }
+            }
+          });
+      } else {
+        this.toastrHandleService.warning("Sözleşme bulunamadı.");
+      }
     }
   }
 }
