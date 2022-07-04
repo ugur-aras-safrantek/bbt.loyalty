@@ -118,6 +118,45 @@
             </div>
           </div>
         </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group">
+              <label for="titleTr">Başlık (Türkçe)</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isTitleTrUpdated}"
+                     name="titleTr" id="titleTr" formControlName="titleTr">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="titleEn">Başlık (İngilizce)</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isTitleEnUpdated}"
+                     name="titleEn" id="titleEn" formControlName="titleEn">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="form-group">
+              <label for="descriptionTr">Açıklama (Türkçe)</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isDescriptionTrUpdated}"
+                     name="descriptionTr" id="descriptionTr" formControlName="descriptionTr">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="descriptionEn">Açıklama (İngilizce)</label>
+              <input type="text" class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isDescriptionEnUpdated}"
+                     name="descriptionEn" id="descriptionEn" formControlName="descriptionEn">
+            </div>
+          </div>
+        </div>
         <div class="accordion mt-3" id="accordionSummary">
           <div class="accordion-item">
             <h2 class="accordion-header"
@@ -158,76 +197,116 @@
             </div>
           </div>
         </div>
-        <div class="accordion mt-3" id="accordionContent">
-          <div class="accordion-item">
-            <h2 class="accordion-header"
-                [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated || campaignUpdateFields.isContentEnUpdated}"
-                id="headingContent">
-              <button class="accordion-button collapsed accordion-custom" type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseContent"
-                      aria-expanded="true"
-                      aria-controls="collapseContent">
-                İçerik
-              </button>
-            </h2>
-            <div id="collapseContent" class="accordion-collapse collapse" aria-labelledby="headingContent"
-                 data-bs-parent="#accordionContent">
-              <div class="accordion-body">
-                <div class="row">
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="contentTr">Türkçe</label>
-                      <angular-editor [config]="editorConfig" formControlName="contentTr" id="contentTr"
-                                      [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated}"
-                                      placeholder="İçerik (Türkçe)">
-                      </angular-editor>
+        <div *ngIf="campaignDefinitionF.viewOptionId.value != 4">
+          <div class="accordion mt-3" id="accordionContent">
+            <div class="accordion-item">
+              <h2 class="accordion-header"
+                  [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated || campaignUpdateFields.isContentEnUpdated}"
+                  id="headingContent">
+                <button class="accordion-button collapsed accordion-custom" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseContent"
+                        aria-expanded="true"
+                        aria-controls="collapseContent">
+                  İçerik
+                </button>
+              </h2>
+              <div id="collapseContent" class="accordion-collapse collapse" aria-labelledby="headingContent"
+                   data-bs-parent="#accordionContent">
+                <div class="accordion-body">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="contentTr">Türkçe</label>
+                        <angular-editor [config]="editorConfig" formControlName="contentTr" id="contentTr"
+                                        [ngClass]="{'change-bgc':campaignUpdateFields.isContentTrUpdated}"
+                                        placeholder="İçerik (Türkçe)">
+                        </angular-editor>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="contentEn">İngilizce</label>
-                      <angular-editor [config]="editorConfig" formControlName="contentEn" id="contentEn"
-                                      [ngClass]="{'change-bgc':campaignUpdateFields.isContentEnUpdated}"
-                                      placeholder="İçerik (İngilizce)">
-                      </angular-editor>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="contentEn">İngilizce</label>
+                        <angular-editor [config]="editorConfig" formControlName="contentEn" id="contentEn"
+                                        [ngClass]="{'change-bgc':campaignUpdateFields.isContentEnUpdated}"
+                                        placeholder="İçerik (İngilizce)">
+                        </angular-editor>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col">
-            <div class="form-group">
-              <label for="campaignListImageUrl" class="form-label">Kampanya Liste Görseli</label>
-              <input type="text"
-                     class="form-control"
-                     [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignListImageUrlUpdated}"
-                     name="campaignListImageUrl" id="campaignListImageUrl"
-                     formControlName="campaignListImageUrl">
+          <div class="accordion mt-3" id="accordionDetail">
+            <div class="accordion-item">
+              <h2 class="accordion-header"
+                  [ngClass]="{'change-bgc':campaignUpdateFields.isDetailTrUpdated || campaignUpdateFields.isDetailEnUpdated}"
+                  id="headingDetail">
+                <button class="accordion-button collapsed accordion-custom" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseDetail"
+                        aria-expanded="true"
+                        aria-controls="collapseDetail">
+                  Detay
+                </button>
+              </h2>
+              <div id="collapseDetail" class="accordion-collapse collapse" aria-labelledby="headingDetail"
+                   data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="detailTr">Türkçe</label>
+                        <angular-editor [config]="editorConfig" formControlName="detailTr" id="detailTr"
+                                        [ngClass]="{'change-bgc':campaignUpdateFields.isDetailTrUpdated}"
+                                        placeholder="Detay (Türkçe)"></angular-editor>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="detailEn">İngilizce</label>
+                        <angular-editor [config]="editorConfig" formControlName="detailEn" id="detailEn"
+                                        [ngClass]="{'change-bgc':campaignUpdateFields.isDetailTrUpdated}"
+                                        placeholder="Detay (İngilizce)"></angular-editor>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <a target="_blank"
-               *ngIf="campaignDefinitionF.campaignListImageDownloadUrl.value && campaignDefinitionF.campaignListImageDownloadUrl.value != ''"
-               [href]="campaignDefinitionF.campaignListImageDownloadUrl.value">
-              Görüntüle
-            </a>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <label for="campaignDetailImageUrl" class="form-label">Kampanya Detay Görseli</label>
-              <input type="text"
-                     class="form-control"
-                     [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignDetailImageUrlUpdated}"
-                     name="campaignDetailImageUrl" id="campaignDetailImageUrl"
-                     formControlName="campaignDetailImageUrl">
+          <div class="row mt-3">
+            <div class="col">
+              <div class="form-group">
+                <label for="campaignListImageUrl" class="form-label">Kampanya Liste Görseli</label>
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignListImageUrlUpdated}"
+                       name="campaignListImageUrl" id="campaignListImageUrl"
+                       formControlName="campaignListImageUrl">
+              </div>
+              <a target="_blank"
+                 *ngIf="campaignDefinitionF.campaignListImageDownloadUrl.value && campaignDefinitionF.campaignListImageDownloadUrl.value != ''"
+                 [href]="campaignDefinitionF.campaignListImageDownloadUrl.value">
+                Görüntüle
+              </a>
             </div>
-            <a target="_blank"
-               *ngIf="campaignDefinitionF.campaignDetailImageDownloadUrl.value && campaignDefinitionF.campaignDetailImageDownloadUrl.value != ''"
-               [href]="campaignDefinitionF.campaignDetailImageDownloadUrl.value">
-              Görüntüle
-            </a>
+            <div class="col">
+              <div class="form-group">
+                <label for="campaignDetailImageUrl" class="form-label">Kampanya Detay Görseli</label>
+                <input type="text"
+                       class="form-control"
+                       [ngClass]="{'change-bgc':campaignUpdateFields.isCampaignDetailImageUrlUpdated}"
+                       name="campaignDetailImageUrl" id="campaignDetailImageUrl"
+                       formControlName="campaignDetailImageUrl">
+              </div>
+              <a target="_blank"
+                 *ngIf="campaignDefinitionF.campaignDetailImageDownloadUrl.value && campaignDefinitionF.campaignDetailImageDownloadUrl.value != ''"
+                 [href]="campaignDefinitionF.campaignDetailImageDownloadUrl.value">
+                Görüntüle
+              </a>
+            </div>
           </div>
         </div>
         <div class="row mt-3">
@@ -261,7 +340,7 @@
                      formControlName="maxNumberOfUser">
             </div>
           </div>
-          <div class="col">
+          <div class="col" *ngIf="!campaignDefinitionF.isBundle.value">
             <div class="form-group">
               <label for="order">Sıralama</label>
               <input type="text"
@@ -269,6 +348,28 @@
                      [ngClass]="{'change-bgc':campaignUpdateFields.isOrderUpdated}"
                      name="order" id="order"
                      formControlName="order">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col" *ngIf="campaignDefinitionF.programTypeId.value != 1">
+            <div class="form-group">
+              <label for="sectorName">Sektör</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isSectorIdUpdated}"
+                     name="sectorName" id="sectorName"
+                     formControlName="sectorName">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="participationTypeName">Katılım Şekli</label>
+              <input type="text"
+                     class="form-control"
+                     [ngClass]="{'change-bgc':campaignUpdateFields.isParticipationTypeIdUpdated}"
+                     name="participationTypeName" id="participationTypeName"
+                     formControlName="participationTypeName">
             </div>
           </div>
         </div>
@@ -445,8 +546,8 @@
         </div>
         <hr class="blue mt-2 mb-0">
         <div class="history-row" *ngFor="let item of history">
-          <div class="col d-flex justify-content-start">{{item.approvedBy}}</div>
-          <div class="col d-flex justify-content-end">{{item.approvedDateStr}}</div>
+          <div class="col d-flex justify-content-start">{{item.createdBy}}</div>
+          <div class="col d-flex justify-content-end">{{item.createdOnStr}}</div>
         </div>
       </div>
     </div>
