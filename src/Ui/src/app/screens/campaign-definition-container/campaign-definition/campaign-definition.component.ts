@@ -208,6 +208,31 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
       sectorId: data.sectorId,
       viewOptionId: data.viewOptionId,
     })
+
+    let startDateParts = data.startDate.split("-");
+    this.dpOptions = {
+      dateRange: false,
+      dateFormat: 'dd-mm-yyyy',
+      disableUntil: {
+        year: parseInt(startDateParts[2]),
+        month: parseInt(startDateParts[1]),
+        day: parseInt(startDateParts[0]) - 1
+      },
+    };
+
+    this.formGroup.controls.startDate.clearValidators();
+    this.formGroup.controls.startDate.setValidators([
+      Validators.required,
+      this.utilityService.EndDateGreaterThanStartDateValidator(this.formGroup)
+    ]);
+    this.formGroup.controls.startDate.updateValueAndValidity();
+
+    this.formGroup.controls.endDate.clearValidators();
+    this.formGroup.controls.endDate.setValidators([
+      Validators.required,
+      this.utilityService.EndDateGreaterThanStartDateValidator(this.formGroup)
+    ]);
+    this.formGroup.controls.endDate.updateValueAndValidity();
   }
 
   populateLists(data) {
