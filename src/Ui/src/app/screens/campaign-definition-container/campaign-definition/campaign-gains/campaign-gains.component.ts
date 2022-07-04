@@ -59,6 +59,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
   isInvisibleCampaign = false;
   buttonTypeIsContinue = false;
   crudButtonVisible = true;
+  campaignAchievementListChange: boolean = false;
 
   alertModalText = '';
 
@@ -227,7 +228,11 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   save() {
     if (this.campaignAchievementList.length > 0) {
-      this.campaignDefinitionGainsUpdate();
+      if (this.campaignAchievementListChange) {
+        this.campaignDefinitionGainsUpdate();
+      } else {
+        this.campaignDefinitionGainsUnchangingUpdate();
+      }
     } else {
       this.toastrHandleService.warning("Kazanım girilmelidir.");
     }
@@ -396,11 +401,13 @@ export class CampaignGainsComponent implements OnInit, FormChange {
 
   addAchievement(achievement) {
     this.campaignAchievementList.push(achievement);
+    this.campaignAchievementListChange = true;
   }
 
   updateAchievement(achievement) {
     this.campaignAchievementList.splice(
       this.campaignAchievementList.findIndex(x => x.fakeId == achievement.fakeId), 1, achievement);
+    this.campaignAchievementListChange = true;
   }
 
   openDeleteAlertModal(achievement) {
@@ -422,6 +429,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.nextButtonVisible = true;
     this.formChangeState = true;
     this.checkAddButtonVisibleState();
+    this.campaignAchievementListChange = true;
   }
 
   copyCampaign(event) {
@@ -457,6 +465,26 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       campaignAchievementList: this.campaignAchievementList
     };
     this.campaignDefinitionService.campaignDefinitionGainsUpdate(requestModel)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data) {
+            this.id = res.data[0].campaignId;
+            this.finish();
+            this.crudButtonVisible = false;
+            this.toastrHandleService.success();
+          } else
+            this.toastrHandleService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
+  private campaignDefinitionGainsUnchangingUpdate() {
+    this.campaignDefinitionService.campaignDefinitionGainsUnchangingUpdate(this.id ?? this.newId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {

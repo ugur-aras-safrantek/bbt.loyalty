@@ -33,6 +33,19 @@
                 <div class="form-group">
                   <div class="form-check">
                     <input class="form-check-input scale-2x"
+                           [ngClass]="{'change-bgc':campaignUpdateFields.isIsBundleUpdated}"
+                           type="checkbox" id="isBundle" name="isBundle"
+                           formControlName="isBundle">
+                    <label class="form-check-label ms-2" for="isBundle">
+                      Birleştirilebilir
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input scale-2x"
                            [ngClass]="{'change-bgc':campaignUpdateFields.isIsContractUpdated}"
                            type="checkbox" id="isContract" name="isContract"
                            formControlName="isContract">

@@ -210,4 +210,12 @@ export class CampaignDefinitionService {
     const url = `${this.baseUrl}/${ApiPaths.CampaignGainsUpdate}`;
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
+
+  campaignDefinitionGainsUnchangingUpdate(campaignId: any) {
+    let params = new HttpParams();
+    params = params.append('campaignId', campaignId);
+
+    const url = `${this.baseUrl}/${ApiPaths.CampaignGainsUnchangingUpdate}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url, {params: params});
+  }
 }

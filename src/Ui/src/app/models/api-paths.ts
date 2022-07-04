@@ -25,6 +25,7 @@ export enum ApiPaths {
   CampaignGainChannelsUpdate = 'CampaignChannelCode/update',
   CampaignGainsGetUpdateForm = 'CampainAchievement/get-update-form',
   CampaignGainsUpdate = 'CampainAchievement/update',
+  CampaignGainsUnchangingUpdate = 'CampainAchievement/send-to-approval',
 
   CampaignLimitsGetParameterList = 'CampaignTopLimit/get-parameter-list',
   CampaignLimitsGetByFilter = 'CampaignTopLimit/get-by-filter',
