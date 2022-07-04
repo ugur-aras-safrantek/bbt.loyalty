@@ -12,6 +12,7 @@ interface ICampaignReportRequestModel {
   achievementTypeId?: any;
   joinTypeId?: any;
   sectorId?: any;
+  statusId?: any;
 }
 
 export class CampaignReportRequestModel implements ICampaignReportRequestModel, IPagingRequestModel {
@@ -30,6 +31,7 @@ export class CampaignReportRequestModel implements ICampaignReportRequestModel, 
   achievementTypeId?: any;
   joinTypeId?: any;
   sectorId?: any;
+  statusId?: any;
 }
 
 interface ICustomerReportRequestModel {

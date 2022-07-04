@@ -45,8 +45,8 @@ export class ReportsService {
     return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 
-  getCustomerDetail(id: any) {
-    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${id}`;
+  getCustomerDetail(data: any) {
+    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${data.customerCode}/${data.campaignId}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
   }
 }
