@@ -87,7 +87,8 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 }
                 else
                 {
-                    userModelService = await _remoteService.GetUserRoles(code, state);
+                    //userModelService = await _remoteService.GetUserRoles(code, state);
+                    userModelService = new UserModelService();
 
                     //UserModelDto userModel = new UserModelDto();
                     //userModel.Tckn = "11701604572";
