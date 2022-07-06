@@ -117,6 +117,7 @@ export class ReportsByCampaignComponent implements OnInit {
       achievementTypeId: this.filterForm.achievementTypeId,
       joinTypeId: this.filterForm.joinTypeId,
       sectorId: this.filterForm.sectorId,
+      statusId: 4,
     };
     this.reportsService.campaignReportGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -153,6 +154,7 @@ export class ReportsByCampaignComponent implements OnInit {
       achievementTypeId: this.filterForm.achievementTypeId,
       joinTypeId: this.filterForm.joinTypeId,
       sectorId: this.filterForm.sectorId,
+      statusId: 4,
     };
     this.reportsService.campaignReportGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))

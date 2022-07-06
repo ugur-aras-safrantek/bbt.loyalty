@@ -11,6 +11,7 @@ export class MainContentComponent implements OnInit {
   @Input('createRoute') createRoute = '';
   @Input('newButtonText') newButtonText = '';
   @Input('isAwaitingApprovalListPage') isAwaitingApprovalListPage: boolean = false;
+  @Input('isSentToApprovalRecord') isSentToApprovalRecord: boolean = false;
   @Input('authorization') authorization: AuthorizationModel = new AuthorizationModel();
   @Input('isReportsPage') isReportsPage: boolean = false;
 

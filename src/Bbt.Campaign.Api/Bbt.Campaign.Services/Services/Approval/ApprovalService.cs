@@ -138,6 +138,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı");
 
+            if (campaignEntity.CreatedBy == userId)
+                throw new Exception("Kampanya kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
             campaignEntity.StatusId = (int)StatusEnum.Draft;
             campaignEntity.LastModifiedBy = userId;
 
@@ -566,6 +569,13 @@ namespace Bbt.Campaign.Services.Services.Approval
                         }
                     }
                 }
+
+                if (campaignUpdatePages.IsCampaignChannelCodeUpdated) 
+                {
+                    var draftChannelCodeList = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => x.CampaignId == draftCampaignEntity.Id && x.IsDeleted != true).Select(x => x.ChannelCode).ToListAsync();
+                    var approvedChannelCodeList = await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().GetAll(x => x.CampaignId == approvedCampaignEntity.Id && x.IsDeleted != true).Select(x => x.ChannelCode).ToListAsync();
+                    campaignUpdateFields.IsCampaignChannelCodeListUpdated = Helpers.IsTwoStringListEqual(draftChannelCodeList, approvedChannelCodeList);
+                }
             }
             response.CampaignUpdateFields = campaignUpdateFields;
 
@@ -578,6 +588,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
                 if(_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = campaignHistory.CreatedBy;
+                historyApproveDto.CreatedOn = campaignHistory.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(campaignHistory.CreatedOn);
                 response.HistoryList.Add(historyApproveDto);
             }
 
@@ -690,6 +703,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             if (entity is null)
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
 
+            if (entity.CreatedBy == userid)
+                throw new Exception("Çatı limiti kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
+
             entity.StatusId = (int)StatusEnum.Draft;
             entity.LastModifiedBy = userid;
 
@@ -726,21 +742,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 topLimitUpdateFields.IsCurrencyIdUpdated = draftEntity.CurrencyId != approvedEntity.CurrencyId;
                 topLimitUpdateFields.IsMaxTopLimitRateUpdated = draftEntity.MaxTopLimitRate != approvedEntity.MaxTopLimitRate;
                 topLimitUpdateFields.IsMaxTopLimitUtilizationUpdated = draftEntity.MaxTopLimitUtilization != approvedEntity.MaxTopLimitUtilization;
-
-                if (draftEntity.TopLimitCampaigns.Count != approvedEntity.TopLimitCampaigns.Count)
-                    topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
-                else 
-                { 
-                    foreach(var draftTopLimitCampaign in draftEntity.TopLimitCampaigns) 
-                    { 
-                        var approvedTopLimitCampaign = approvedEntity.TopLimitCampaigns.Where(x=>x.CampaignId == draftTopLimitCampaign.Id);
-                        if(approvedTopLimitCampaign == null) 
-                        {
-                            topLimitUpdateFields.IsTopLimitCampaignsUpdated = true;
-                            break;
-                        }
-                    }
-                }
+                topLimitUpdateFields.IsTopLimitCampaignsUpdated =
+                                    Helpers.IsTwoIntegerListEqual(draftEntity.TopLimitCampaigns.Select(x => x.CampaignId).ToList(), approvedEntity.TopLimitCampaigns.Select(x => x.CampaignId).ToList());
             }
             response.TopLimitUpdateFields = topLimitUpdateFields;
 
@@ -753,10 +756,14 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = campaignHistory.ApprovedDate ?? DateTime.MinValue;
                 if (_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = campaignHistory.CreatedBy;
+                historyApproveDto.CreatedOn = campaignHistory.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(campaignHistory.CreatedOn);
                 response.HistoryList.Add(historyApproveDto);
             }
 
             return await BaseResponse<TopLimitApproveFormDto>.SuccessAsync(response);
+
         }
         
         #endregion
@@ -804,6 +811,9 @@ namespace Bbt.Campaign.Services.Services.Approval
             var entity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(id);
             if (entity is null)
                 throw new Exception("Hedef bulunamadı.");
+
+            if (entity.CreatedBy == userid)
+                throw new Exception("Hedef kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             entity.StatusId = (int)StatusEnum.Draft;
             entity.LastModifiedOn = DateTime.UtcNow;
@@ -896,8 +906,8 @@ namespace Bbt.Campaign.Services.Services.Approval
                 targetUpdateFields.IsTargetSourceIdUpdated = draftEntity.TargetDetail.TargetSourceId != approvedEntity.TargetDetail.TargetSourceId;
                 targetUpdateFields.IsTargetViewTypeIdUpdated = draftEntity.TargetDetail.TargetViewTypeId != approvedEntity.TargetDetail.TargetViewTypeId;
                 targetUpdateFields.IsTriggerTimeIdUpdated = draftEntity.TargetDetail.TriggerTimeId != approvedEntity.TargetDetail.TriggerTimeId;
-                targetUpdateFields.IsVerificationTimeIdUpdated = draftEntity.TargetDetail.VerificationTime != approvedEntity.TargetDetail.VerificationTime;
-                targetUpdateFields.IsFlowNameUpdated = draftEntity.TargetDetail.VerificationTimeId != approvedEntity.TargetDetail.VerificationTimeId;
+                targetUpdateFields.IsVerificationTimeIdUpdated = draftEntity.TargetDetail.VerificationTimeId != approvedEntity.TargetDetail.VerificationTimeId;
+                targetUpdateFields.IsFlowNameUpdated = draftEntity.TargetDetail.FlowName != approvedEntity.TargetDetail.FlowName;
                 targetUpdateFields.IsTargetDetailEnUpdated = draftEntity.TargetDetail.TargetDetailEn != approvedEntity.TargetDetail.TargetDetailEn;
                 targetUpdateFields.IsTargetDetailTrUpdated = draftEntity.TargetDetail.TargetDetailTr != approvedEntity.TargetDetail.TargetDetailTr;
                 targetUpdateFields.IsDescriptionEnUpdated = draftEntity.TargetDetail.DescriptionEn != approvedEntity.TargetDetail.DescriptionEn;
@@ -920,6 +930,9 @@ namespace Bbt.Campaign.Services.Services.Approval
                 DateTime _approvedDate = historyEntity.ApprovedDate ?? DateTime.MinValue;
                 if (_approvedDate != DateTime.MinValue)
                     historyApproveDto.ApprovedDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(_approvedDate);
+                historyApproveDto.CreatedBy = historyEntity.CreatedBy;
+                historyApproveDto.CreatedOn = historyEntity.CreatedOn;
+                historyApproveDto.CreatedOnStr = Helpers.ConvertBackEndDateTimeToStringForUI(historyEntity.CreatedOn);
                 historyList.Add(historyApproveDto);
             }
             response.HistoryList = historyList;

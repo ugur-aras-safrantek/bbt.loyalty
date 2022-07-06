@@ -67,17 +67,26 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
 
     this.campaignDefinitionFormGroup = this.fb.group({
       isActive: false,
+      isBundle: false,
       isContract: false,
       contractId: '',
       contractName: '',
       programTypeName: '',
+      programTypeId: '',
       viewOptionName: '',
+      viewOptionId: '',
       name: '',
       code: '',
+      titleTr: '',
+      titleEn: '',
+      descriptionTr: '',
+      descriptionEn: '',
       summaryTr: '',
       summaryEn: '',
       contentTr: '',
       contentEn: '',
+      detailTr: '',
+      detailEn: '',
       campaignListImageUrl: '',
       campaignListImageDownloadUrl: '',
       campaignDetailImageUrl: '',
@@ -86,15 +95,20 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       endDateStr: '',
       maxNumberOfUser: '',
       order: '',
+      sectorName: '',
+      participationTypeName: '',
     });
     this.campaignDefinitionFormGroup.disable();
 
     this.campaignRulesFormGroup = this.fb.group({
+      isEmployeeIncluded: false,
+      isPrivateBanking: false,
       joinTypeName: '',
       identityNumber: '',
       ruleBusinessLinesStr: '',
       ruleBranchesStr: '',
       ruleCustomerTypesStr: '',
+      startTermName: '',
     });
     this.campaignRulesFormGroup.disable();
 
@@ -123,17 +137,26 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
   private populateCampaignDefinitionForm(data, campaignDetail) {
     this.campaignDefinitionFormGroup.patchValue({
       isActive: data.isActive,
+      isBundle: data.isBundle,
       isContract: data.isContract,
       contractId: data.contractId,
       contractName: data.contractId + '-Sözleşme.html',
       programTypeName: data.programTypeName,
+      programTypeId: data.programTypeId,
       viewOptionName: data.viewOptionName,
+      viewOptionId: data.viewOptionId,
       name: data.name,
       code: data.code,
+      titleTr: campaignDetail.titleTr,
+      titleEn: campaignDetail.titleEn,
+      descriptionTr: campaignDetail.descriptionTr,
+      descriptionEn: campaignDetail.descriptionEn,
       summaryTr: campaignDetail.summaryTr,
       summaryEn: campaignDetail.summaryEn,
       contentTr: campaignDetail.contentTr,
       contentEn: campaignDetail.contentEn,
+      detailTr: campaignDetail.detailTr,
+      detailEn: campaignDetail.detailEn,
       campaignListImageUrl: campaignDetail.campaignListImageUrl,
       campaignListImageDownloadUrl: campaignDetail.campaignListImageUrl,
       campaignDetailImageUrl: campaignDetail.campaignDetailImageUrl,
@@ -142,16 +165,21 @@ export class CampaignDefinitionAwaitingApprovalDetailComponent implements OnInit
       endDateStr: data.endDateStr,
       maxNumberOfUser: data.maxNumberOfUser,
       order: data.order,
+      sectorName: data.sectorName,
+      participationTypeName: data.participationTypeName,
     })
   }
 
   private populateCampaignRulesForm(data) {
     this.campaignRulesFormGroup.patchValue({
+      isEmployeeIncluded: data.isEmployeeIncluded,
+      isPrivateBanking: data.isPrivateBanking,
       joinTypeName: data.joinType?.name,
       identityNumber: data.identityNumber ?? data.documentName,
       ruleBusinessLinesStr: data.ruleBusinessLinesStr,
       ruleBranchesStr: data.ruleBranchesStr,
       ruleCustomerTypesStr: data.ruleCustomerTypesStr,
+      startTermName: data.campaignStartTerm?.name,
     });
     this.campaignRulesDocument = !!data.documentName;
     switch (data.joinTypeId) {
