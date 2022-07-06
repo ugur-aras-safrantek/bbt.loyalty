@@ -399,6 +399,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             campaignEntity.StatusId = (int)StatusEnum.SentToApprove;
             campaignEntity.LastModifiedBy = userId;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
+            await _unitOfWork.SaveChangesAsync();
             return await BaseResponse<bool>.SuccessAsync(true);
         }
 
