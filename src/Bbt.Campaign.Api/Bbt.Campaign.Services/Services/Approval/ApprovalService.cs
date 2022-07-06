@@ -906,7 +906,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 targetUpdateFields.IsTargetSourceIdUpdated = draftEntity.TargetDetail.TargetSourceId != approvedEntity.TargetDetail.TargetSourceId;
                 targetUpdateFields.IsTargetViewTypeIdUpdated = draftEntity.TargetDetail.TargetViewTypeId != approvedEntity.TargetDetail.TargetViewTypeId;
                 targetUpdateFields.IsTriggerTimeIdUpdated = draftEntity.TargetDetail.TriggerTimeId != approvedEntity.TargetDetail.TriggerTimeId;
-                targetUpdateFields.IsVerificationTimeIdUpdated = draftEntity.TargetDetail.VerificationTime != approvedEntity.TargetDetail.VerificationTime;
+                targetUpdateFields.IsVerificationTimeIdUpdated = draftEntity.TargetDetail.VerificationTimeId != approvedEntity.TargetDetail.VerificationTimeId;
                 targetUpdateFields.IsFlowNameUpdated = draftEntity.TargetDetail.FlowName != approvedEntity.TargetDetail.FlowName;
                 targetUpdateFields.IsTargetDetailEnUpdated = draftEntity.TargetDetail.TargetDetailEn != approvedEntity.TargetDetail.TargetDetailEn;
                 targetUpdateFields.IsTargetDetailTrUpdated = draftEntity.TargetDetail.TargetDetailTr != approvedEntity.TargetDetail.TargetDetailTr;
