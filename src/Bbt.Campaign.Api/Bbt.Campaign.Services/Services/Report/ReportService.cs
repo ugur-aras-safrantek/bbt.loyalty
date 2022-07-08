@@ -173,6 +173,12 @@ namespace Bbt.Campaign.Services.Services.Report
                 StatusId = x.StatusId,
                 StatusName = x.StatusName,
                 MaxNumberOfUser = x.MaxNumberOfUser,
+                DescriptionTr = x.DescriptionTr,
+                DescriptionEn = x.DescriptionEn,
+                TitleTr = x.TitleTr,
+                TitleEn = x.TitleEn,
+                ParticipationTypeId = x.ParticipationTypeId,
+                ParticipationTypeName = x.ParticipationTypeName
             }).ToList();
 
             return campaignList;

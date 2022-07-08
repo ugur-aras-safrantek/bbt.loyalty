@@ -35,5 +35,12 @@ namespace Bbt.Campaign.Core.DbEntities
         public int StatusId { get; set; }
         public string StatusName { get; set; }
         public int? MaxNumberOfUser { get; set; }
+        public string DescriptionTr { get; set; }
+        public string DescriptionEn { get; set; }
+        public string? TitleTr { get; set; } //başlık
+        public string? TitleEn { get; set; }
+        public int ParticipationTypeId { get; set; }
+        public string ParticipationTypeName { get; set; }
+
     }
 }
