@@ -9,6 +9,7 @@ namespace Bbt.Campaign.Public.Dtos.Authorization
     public class UserAuthorizationResponseDto
     {
         public string AccessToken { get; set; }
+        public string Credentials { get; set; }
         public List<UserAuthorizationDto> AuthorizationList { get; set; }
     }
 }

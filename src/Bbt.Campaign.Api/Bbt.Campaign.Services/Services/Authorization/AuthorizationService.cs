@@ -88,16 +88,16 @@ namespace Bbt.Campaign.Services.Services.Authorization
                 else
                 {
                     userModelService = await _remoteService.GetUserRoles(code, state);
+
+                    //test
                     //userModelService = new UserModelService();
-
-
-
-                    //UserModelDto userModel = new UserModelDto();
-                    //userModel.Tckn = "11701604572";
-                    //userModel.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1","isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1"};
+                    //userModelService.CitizenshipNumber = "11701604572";
+                    //userModelService.Credentials = new List<string>() { "isLoyaltyCreator###0", "isLoyaltyRuleCreator###1", "isLoyaltyRuleApprover###1", "isLoyaltyApprover###1", "isLoyaltyReader###1" };
 
                     userModel.Tckn = userModelService.CitizenshipNumber;
                     userRoleDto.UserId = userModelService.CitizenshipNumber;
+
+                    response.Credentials = string.Join(",", userModelService.Credentials);
 
                     foreach (string credential in userModelService.Credentials)
                     {
