@@ -588,6 +588,11 @@ namespace Bbt.Campaign.Services.Services.Report
                     foreach (var target in campaignTargetDto2.ProgressBarlist)
                         targetList2.Add(target);
 
+                    campaignTargetDto.TargetAmountStr = campaignTargetDto2.TargetAmountStr;
+                    campaignTargetDto.RemainAmountStr = campaignTargetDto2.RemainAmountStr;
+                    campaignTargetDto.TargetAmountCurrencyCode = campaignTargetDto2.TargetAmountCurrencyCode;
+                    campaignTargetDto.RemainAmountCurrencyCode = campaignTargetDto2.RemainAmountCurrencyCode;
+
                     var groupList = targetList2.Select(x => x.TargetGroupId).Distinct().ToList();
                     if (groupList.Any()) 
                     {
