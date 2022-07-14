@@ -178,7 +178,7 @@ export class ReportsByCustomerComponent implements OnInit {
   }
 
   showDetail(event) {
-    this.reportsService.getCustomerDetail({customerCode: event.customerCode, campaignId: event.campaignId})
+    this.reportsService.getCustomerDetail({customerCode: event.customerCode, campaignId: event.campaignCode})
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {

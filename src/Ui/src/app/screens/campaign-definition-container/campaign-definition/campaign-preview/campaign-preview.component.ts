@@ -63,7 +63,7 @@ export class CampaignPreviewComponent implements OnInit {
             this.campaignAchievement = res.data.campaignAchievementList;
             let document = res.data.contractFile?.document;
             if (document) {
-              let blob = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+              let blob = this.utilityService.convertBase64ToFile(document.data, document.documentName, 'text/html');
               let url = window.URL.createObjectURL(blob);
               this.contractFileUrl = url;
             }
