@@ -581,7 +581,7 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
   showDocumentFile() {
     let document = this.contractDocument;
     if (document) {
-      let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, document.mimeType);
+      let file = this.utilityService.convertBase64ToFile(document.data, document.documentName, 'text/html');
       const fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
     } else {
