@@ -3,10 +3,8 @@ using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
-using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Enums;
-using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.FileOperations;
@@ -15,13 +13,7 @@ using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Shared.Static;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
 using Bbt.Campaign.Services.Services.CampaignTarget;
-using Bbt.Campaign.Public.Dtos.Authorization;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.ComponentModel;
 using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target;
@@ -37,7 +29,6 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IAuthorizationService _authorizationService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly IRemoteService _remoteService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
         public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             IAuthorizationService authorizationService, ICampaignTargetService campaignTargetService, IRemoteService remoteService)
@@ -568,7 +559,6 @@ namespace Bbt.Campaign.Services.Services.Report
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CustomerReportDetailDto response = new CustomerReportDetailDto();
-
 
             var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
                    .Where(x => !x.IsDeleted && x.Code == campaignCode && x.StatusId == (int)StatusEnum.Approved)
