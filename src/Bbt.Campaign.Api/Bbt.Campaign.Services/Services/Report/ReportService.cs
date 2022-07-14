@@ -3,10 +3,8 @@ using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
-using Bbt.Campaign.Public.Dtos.Campaign;
 using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Enums;
-using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.FileOperations;
@@ -15,13 +13,7 @@ using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Shared.Static;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
 using Bbt.Campaign.Services.Services.CampaignTarget;
-using Bbt.Campaign.Public.Dtos.Authorization;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.ComponentModel;
 using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target;
@@ -37,7 +29,6 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IAuthorizationService _authorizationService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly IRemoteService _remoteService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
         public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
             IAuthorizationService authorizationService, ICampaignTargetService campaignTargetService, IRemoteService remoteService)
@@ -561,28 +552,35 @@ namespace Bbt.Campaign.Services.Services.Report
             
             return customerCampaignList;
         }
-        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, int campaignId) 
+        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, string campaignCode) 
         {
             //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CustomerReportDetailDto response = new CustomerReportDetailDto();
+
+            var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
+                   .Where(x => !x.IsDeleted && x.Code == campaignCode && x.StatusId == (int)StatusEnum.Approved)
+                   .FirstOrDefault();
+            if (approvedCampaign == null)
+                throw new Exception("Kampanya bulunamadı.");
+
             if (StaticValues.IsDevelopment) 
             {
                 decimal usedAmount = 1000;
                 int usedNumberOfTransaction = 0;
-                var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(campaignId, usedAmount, usedNumberOfTransaction);
+                var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(approvedCampaign.Id, usedAmount, usedNumberOfTransaction);
                 response.CampaignTarget = campaignTargetDto;
             }
             else 
             {
                 CampaignTargetDto campaignTargetDto = new CampaignTargetDto();
 
-                campaignTargetDto.CampaignId = campaignId;
+                campaignTargetDto.CampaignId = approvedCampaign.Id;
                 campaignTargetDto.GroupCount = 0;
                 List<TargetParameterDto2> targetList2 = new List<TargetParameterDto2>();
-                CampaignTargetDto2 campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, "tr", false);
+                CampaignTargetDto2 campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(approvedCampaign.Id, customerCode, "tr", false);
                 if(campaignTargetDto2.Informationlist.Any() || campaignTargetDto2.ProgressBarlist.Any()) 
                 {
                     foreach (var target in campaignTargetDto2.Informationlist)
