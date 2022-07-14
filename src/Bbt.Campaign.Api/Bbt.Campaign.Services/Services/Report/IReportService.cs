@@ -21,7 +21,7 @@ namespace Bbt.Campaign.Services.Services.Report
         public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request);
         public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request);
         public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request);
-        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, int campaignId);
+        public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, string campaignCode);
         public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
     }
 }
