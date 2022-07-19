@@ -41,6 +41,7 @@ export class ReportsByCustomerComponent implements OnInit {
   achievementTypes: DropdownListModel[];
   businessLineList: DropdownListModel[];
 
+  customerDetailCampaignTarget: any = {};
   customerDetailTargetGroupList: any[] = [];
 
   filterForm = {
@@ -183,6 +184,7 @@ export class ReportsByCustomerComponent implements OnInit {
       .subscribe({
         next: res => {
           if (!res.hasError && res.data?.campaignTarget) {
+            this.customerDetailCampaignTarget = res.data.campaignTarget;
             this.customerDetailTargetGroupList = res.data.campaignTarget.targetGroupList;
             this.modalService.getModal('customerReportModal').open();
           } else

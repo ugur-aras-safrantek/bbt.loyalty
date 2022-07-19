@@ -14,11 +14,17 @@
         </div>
       </div>
       <div class="row mt-2">
-        <b>Koşul {{i + 1}} için harcama hedefi: {{targetGroup.targetAmountStr}} {{targetGroup.targetAmountCurrencyCode}}</b>
+        <b>Koşul {{i + 1}} için harcama
+          hedefi: {{customerDetailCampaignTarget.targetAmountStr}} {{customerDetailCampaignTarget.targetAmountCurrencyCode}}</b>
+      </div>
+      <div class="row mt-2">
+        <b>Koşul {{i + 1}} için yapılan
+          harcama: {{customerDetailCampaignTarget.usedAmountStr}} {{customerDetailCampaignTarget.usedAmountCurrencyCode}}</b>
       </div>
       <div class="row">
         <b [ngStyle]="{'color': i%2 == 0 ? '#676beb' : '#00aeef'}">
-          Kalan harcama tutarı: {{targetGroup.remainAmountStr}} {{targetGroup.targetAmountCurrencyCode}}</b>
+          Kazanım için kalan
+          harcama: {{customerDetailCampaignTarget.remainAmountStr}} {{customerDetailCampaignTarget.remainAmountCurrencyCode}}</b>
       </div>
       <hr *ngIf="targetGroup != customerDetailTargetGroupList[customerDetailTargetGroupList.length-1]">
     </div>
