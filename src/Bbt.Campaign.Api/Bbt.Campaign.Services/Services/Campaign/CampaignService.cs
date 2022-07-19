@@ -321,7 +321,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                     Document = new Public.Models.CampaignDocument.DocumentModel()
                     {
                         Data = null,
-                        DocumentName = id.ToString() + "-Sözleşme.html",
+                        DocumentName = response.Campaign.ContractId.ToString() + "-Sözleşme.html",
                         DocumentType = DocumentTypePublicEnum.Contract,
                         MimeType = MimeTypeExtensions.ToMimeType(".html")
                     }
@@ -733,7 +733,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
                                 Data = document.Content,
                                 DocumentName = id.ToString() + "-Sözleşme.html",
                                 DocumentType = DocumentTypePublicEnum.Contract,
-                                MimeType = MimeTypeExtensions.ToMimeType("text/html")
+                                MimeType = "text/html"
                             }
                         };
                     }
