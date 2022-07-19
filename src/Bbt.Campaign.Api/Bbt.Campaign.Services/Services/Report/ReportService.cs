@@ -592,6 +592,8 @@ namespace Bbt.Campaign.Services.Services.Report
                     campaignTargetDto.RemainAmountStr = campaignTargetDto2.RemainAmountStr;
                     campaignTargetDto.TargetAmountCurrencyCode = campaignTargetDto2.TargetAmountCurrencyCode;
                     campaignTargetDto.RemainAmountCurrencyCode = campaignTargetDto2.RemainAmountCurrencyCode;
+                    campaignTargetDto.UsedAmountStr = campaignTargetDto2.UsedAmountStr;
+                    campaignTargetDto.UsedAmountCurrencyCode = campaignTargetDto2.UsedAmountCurrencyCode;
 
                     var groupList = targetList2.Select(x => x.TargetGroupId).Distinct().ToList();
                     if (groupList.Any()) 

@@ -51,19 +51,20 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
             //    new CampaignChannelEntity() { Id = 13, Name = "Web Mevduat", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false }
             //);
 
-//            modelBuilder.Entity<BranchEntity>().HasData(
-//    new BranchEntity() { Id = 1, Code = "9530", Name = "Merkez", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-//    new BranchEntity() { Id = 2, Code = "9531", Name = "Çamlıca Şubesi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
-//);
-
-
-            //    modelBuilder.Entity<CustomerTypeEntity>().HasData(
-            //    new CustomerTypeEntity() { Id = 1, Name = "Gerçek", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-            //    new CustomerTypeEntity() { Id = 2, Name = "Tüzel", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-            //    new CustomerTypeEntity() { Id = 3, Name = "Ortak", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-            //    new CustomerTypeEntity() { Id = 4, Name = "Reşit Olmayan", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-            //    new CustomerTypeEntity() { Id = 5, Name = "Adi Ortaklık", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            //            modelBuilder.Entity<BranchEntity>().HasData(
+            //    new BranchEntity() { Id = 1, Code = "9530", Name = "Merkez", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            //    new BranchEntity() { Id = 2, Code = "9531", Name = "Çamlıca Şubesi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             //);
+
+
+            modelBuilder.Entity<CustomerTypeEntity>().HasData(
+            new CustomerTypeEntity() { Id = 1, Name = "Gerçek", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            new CustomerTypeEntity() { Id = 2, Name = "Tüzel", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            new CustomerTypeEntity() { Id = 3, Name = "Ortak", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            new CustomerTypeEntity() { Id = 4, Name = "Reşit Olmayan", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            new CustomerTypeEntity() { Id = 5, Name = "Adi Ortaklık", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+            new CustomerTypeEntity() { Id = 6, Name = "Vesayete Tabi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+        );
 
             modelBuilder.Entity<LanguageEntity>().HasData(
                 new LanguageEntity() { Id = 1, Code = "TR", Name = "Türkçe", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },

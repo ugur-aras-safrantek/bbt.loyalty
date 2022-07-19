@@ -685,6 +685,8 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                     campaignTargetDto2.TargetAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
                                     campaignTargetDto2.RemainAmountStr = targetParameterDto2.RemainAmountStr;
                                     campaignTargetDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                    campaignTargetDto2.UsedAmountStr = targetParameterDto2.UsedAmountStr;
+                                    campaignTargetDto2.UsedAmountCurrencyCode = targetParameterDto2.UsedAmountCurrencyCode;
                                 }
                                 index++;
                             }

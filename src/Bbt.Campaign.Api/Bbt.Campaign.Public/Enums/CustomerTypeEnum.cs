@@ -13,7 +13,9 @@ namespace Bbt.Campaign.Public.Enums
         [Description("Reşit Olmayan")]
         Underage = 4,
         [Description("Adi Ortaklık")]
-        OrdinaryPartnership = 5
+        OrdinaryPartnership = 5,
+        [Description("Vesayete Tabi")]
+        TutelaryDependant = 6
 
     }
 }
