@@ -19,6 +19,24 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
+        /// Updates campaign identities
+        /// </summary>
+        /// <param name="request">Campaign identitiy request</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("update")]
+        [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
+        public async Task<IActionResult> Update([FromForm] UpdateCampaignIdentityRequest request)
+        //public async Task<IActionResult> Update(UpdateCampaignIdentityRequest request)
+        {
+            //if (!User.IsInRole("IsLoyaltyCreator"))
+            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _campaignIdentityService.UpdateAsync(request, await GetUser());
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Returns the form data for update page
         /// </summary>
         /// <returns></returns>
@@ -47,6 +65,14 @@ namespace Bbt.Campaign.Api.Controllers
 
             var result = await _campaignIdentityService.GetByFilterAsync(request);
             return Ok(result);
+        }
+
+        private async Task<string> GetUser()
+        {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            if (string.IsNullOrEmpty(userId))
+                throw new Exception(ControllerStatics.UserNotFoundAlert);
+            return userId;
         }
     }
 }
