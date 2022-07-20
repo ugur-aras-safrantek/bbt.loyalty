@@ -40,13 +40,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
         public Task<BaseResponse<List<ParameterDto>>> GetChannelCodeSelectDateListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetServiceConstantListAsync();
         public Task<BaseResponse<List<ParameterDto>>> GetStatusListAsync();
-
         public Task<string> GetUserLastProcessDate(string userId);
         public Task<string> SetUserLastProcessDate(string userId);
-
-
-
         public Task<string> GetServiceData(string serviceUrl);
         public Task<string> GetServiceConstantValue(string code);
+        public Task<BaseResponse<List<ParameterDto>>> GetIdentitySubTypeListAsync();
     }
 }

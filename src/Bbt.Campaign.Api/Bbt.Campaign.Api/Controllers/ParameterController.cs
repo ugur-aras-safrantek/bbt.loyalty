@@ -354,5 +354,17 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _parameterService.GetServiceData(url);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns Identity Sub Type List.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-identity-sub-types")]
+        public async Task<IActionResult> GetIdentitySubTypeListAsync()
+        {
+            var result = await _parameterService.GetIdentitySubTypeListAsync();
+            return Ok(result);
+        }
     }
 }

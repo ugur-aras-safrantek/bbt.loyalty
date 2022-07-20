@@ -41,6 +41,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
             //modelBuilder.Ignore<CampaignDetailListEntity>();
             //modelBuilder.Ignore<CampaignTargetListEntity>();
             //modelBuilder.Ignore<CustomerReportEntity>();
+            //modelBuilder.Ignore<CampaignIdentityListEntity>();
 
             // one to one relation 
             modelBuilder.Entity<CampaignEntity>()
@@ -126,5 +127,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<ConstantsEntity> ServiceConstants { get; set; }
         public DbSet<StatusEntity> Statuses { get; set; }
         public DbSet<CampaignUpdatePageEntity> CampaignUpdatePages { get; set; }
+        public DbSet<CampaignIdentityEntity> CampaignIdentities { get; set; }
+        public DbSet<IdentitySubTypeEntity> IdentitySubTypes { get; set; }
+        public DbSet<CampaignIdentityListEntity> CampaignIdentityList { get; set; }
     }
 }

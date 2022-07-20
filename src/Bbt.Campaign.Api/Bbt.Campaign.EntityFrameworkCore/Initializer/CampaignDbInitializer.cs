@@ -208,6 +208,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new StatusEntity() { Id = 2, Name = "Onaya Gönderildi", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                new StatusEntity() { Id = 1, Name = "Taslak", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
+
+            modelBuilder.Entity<IdentitySubTypeEntity>().HasData(
+                new LanguageEntity() { Id = 1, Code = "1", Name = "Harcama Koşulsuz Dönem", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new LanguageEntity() { Id = 2, Code = "2", Name = "Destek Harcama Tutarı", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            );
         }
     }
 }

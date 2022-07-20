@@ -462,7 +462,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
 
             return retVal;
         }
-
         public async Task<string> GetServiceConstantValue(string code)
         {
             string retVal = string.Empty;
@@ -472,8 +471,6 @@ namespace Bbt.Campaign.Services.Services.Parameter
                 retVal = serviceConstant.Name;
             return retVal;
         }
-
-
         public async Task<string> GetUserRoles(string code, string state)
         {
             string accessToken = string.Empty;
@@ -515,6 +512,10 @@ namespace Bbt.Campaign.Services.Services.Parameter
             }
             else { throw new Exception("Invalid state."); }
             return accessToken;
+        }
+        public Task<BaseResponse<List<ParameterDto>>> GetIdentitySubTypeListAsync()
+        {
+            return GetListAsync<IdentitySubTypeEntity>(CacheKeys.IdentitySubTypeList);
         }
     }
 }

@@ -27,17 +27,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.TopLimit;
 
-        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService
-            , IAuthorizationService authorizationservice, IDraftService draftService)
+        public CampaignTopLimitService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
         }
 

@@ -69,5 +69,7 @@
         public const string StatusList = "StatusList";
 
         public const string LastProcessDate = "LastProcessDate";
+
+        public const string IdentitySubTypeList = "IdentitySubTypeList";
     }
 }
