@@ -12,5 +12,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignIdentity
         public int CampaignId { get; set; }
         public int? IdentitySubTypeId { get; set; }
         public string Identities { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

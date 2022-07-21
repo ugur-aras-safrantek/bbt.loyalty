@@ -26,14 +26,47 @@ namespace Bbt.Campaign.Api.Controllers
         [HttpPost]
         [Route("update")]
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
-        public async Task<IActionResult> Update([FromForm] UpdateCampaignIdentityRequest request)
-        //public async Task<IActionResult> Update(UpdateCampaignIdentityRequest request)
+        //public async Task<IActionResult> Update([FromForm] UpdateCampaignIdentityRequest request)
+        public async Task<IActionResult> Update(UpdateCampaignIdentityRequest request)
         {
             //if (!User.IsInRole("IsLoyaltyCreator"))
             //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _campaignIdentityService.UpdateAsync(request, await GetUser());
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Removes the campaign identity by Recor Id List.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("delete")]
+        public async Task<IActionResult> Delete(CampaignIdentityDeleteRequest request)
+        {
+            //if (!User.IsInRole("IsLoyaltyCreator"))
+            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _campaignIdentityService.DeleteAsync(request, await GetUser());
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the campaign identity information by Id
+        /// </summary>
+        /// <param name="id">Campaign identity Id</param>
+        /// <returns></returns>
+        //[HttpGet("{id}")]
+        [HttpGet]
+        [Route("get/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            if (!User.IsInRole("IsLoyaltyReader"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var adminSektor = await _campaignIdentityService.GetCampaignIdentityAsync(id);
+            return Ok(adminSektor);
         }
 
         /// <summary>

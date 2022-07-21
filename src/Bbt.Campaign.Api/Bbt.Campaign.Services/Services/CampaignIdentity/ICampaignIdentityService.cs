@@ -12,6 +12,8 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
     public interface ICampaignIdentityService
     {
         public Task<BaseResponse<List<CampaignIdentityDto>>> UpdateAsync(UpdateCampaignIdentityRequest request, string userId);
+        public Task<BaseResponse<List<CampaignIdentityDto>>> DeleteAsync(CampaignIdentityDeleteRequest request, string userId);
+        public Task<BaseResponse<CampaignIdentityDto>> GetCampaignIdentityAsync(int id);
         public Task<BaseResponse<CampaignIdentityUpdateFormDto>> GetUpdateFormAsync();
         public Task<BaseResponse<CampaignIdentityListFilterResponse>> GetByFilterAsync(CampaignIdentityListFilterRequest request);
     }
