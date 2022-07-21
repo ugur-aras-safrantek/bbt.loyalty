@@ -170,7 +170,8 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new ModuleTypeEntity() { Id = 1, Name = "Campaign", Code = "1", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                new ModuleTypeEntity() { Id = 2, Name = "TopLimit", Code = "2", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                new ModuleTypeEntity() { Id = 3, Name = "Target",   Code = "3", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-               new ModuleTypeEntity() { Id = 4, Name = "Report",   Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+               new ModuleTypeEntity() { Id = 4, Name = "Report",   Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new ModuleTypeEntity() { Id = 5, Name = "Identity", Code = "5", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
 
             modelBuilder.Entity<AuthorizationTypeEntity>().HasData(
@@ -200,7 +201,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
                new RoleAuthorizationEntity() { Id = 13, RoleTypeId = 4, ModuleTypeId = 3, AuthorizationTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                new RoleAuthorizationEntity() { Id = 14, RoleTypeId = 4, ModuleTypeId = 3, AuthorizationTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                //isLoyaltyRuleApprover
-               new RoleAuthorizationEntity() { Id = 15, RoleTypeId = 5, ModuleTypeId = 3, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+               new RoleAuthorizationEntity() { Id = 15, RoleTypeId = 5, ModuleTypeId = 3, AuthorizationTypeId = 4, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               //isLoyaltyCreator
+               new RoleAuthorizationEntity() { Id = 16, RoleTypeId = 1, ModuleTypeId = 5, AuthorizationTypeId = 1, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 17, RoleTypeId = 1, ModuleTypeId = 5, AuthorizationTypeId = 2, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+               new RoleAuthorizationEntity() { Id = 18, RoleTypeId = 1, ModuleTypeId = 5, AuthorizationTypeId = 3, CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             );
             modelBuilder.Entity<StatusEntity>().HasData(
                new StatusEntity() { Id = 4, Name = "Onaylandı", Code = "4", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },

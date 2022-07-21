@@ -29,8 +29,8 @@ namespace Bbt.Campaign.Api.Controllers
         //public async Task<IActionResult> Update([FromForm] UpdateCampaignIdentityRequest request)
         public async Task<IActionResult> Update(UpdateCampaignIdentityRequest request)
         {
-            //if (!User.IsInRole("IsLoyaltyCreator"))
-            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _campaignIdentityService.UpdateAsync(request, await GetUser());
             return Ok(result);
@@ -45,8 +45,8 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete(CampaignIdentityDeleteRequest request)
         {
-            //if (!User.IsInRole("IsLoyaltyCreator"))
-            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _campaignIdentityService.DeleteAsync(request, await GetUser());
             return Ok(result);
@@ -62,7 +62,7 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            if (!User.IsInRole("IsLoyaltyReader"))
+            if (!User.IsInRole("IsLoyaltyCreator"))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var adminSektor = await _campaignIdentityService.GetCampaignIdentityAsync(id);
@@ -77,8 +77,8 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-update-form")]
         public async Task<IActionResult> GetUpdateForm()
         {
-            //if (!User.IsInRole("isLoyaltyCreator"))
-            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _campaignIdentityService.GetUpdateFormAsync();
             return Ok(result);
@@ -93,8 +93,8 @@ namespace Bbt.Campaign.Api.Controllers
         [Route("get-by-filter")]
         public async Task<IActionResult> GetByFilter(CampaignIdentityListFilterRequest request)
         {
-            //if (!User.IsInRole("isLoyaltyCreator"))
-            //    throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
             var result = await _campaignIdentityService.GetByFilterAsync(request);
             return Ok(result);

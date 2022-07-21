@@ -11,6 +11,8 @@ namespace Bbt.Campaign.Public.Enums
         [Description("Hedef")]
         Target = 3,
         [Description("Rapor")]
-        Report = 4
+        Report = 4,
+        [Description("Vkn/Tckn")]
+        Identity = 5
     }
 }
