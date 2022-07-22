@@ -67,4 +67,10 @@ export enum ApiPaths {
 
   TargetDefinitionApproveForm = 'Approve/get-target-form',
   TargetDefinitionApproveState = 'Approve/target',
+
+  CustomerDefinitionList = 'CampaignIdentity/get-by-filter',
+  CustomerDefinitionListGetExcelFile = 'CampaignIdentity/get-by-filter-excel',
+  CustomerDefinitionGetUpdateForm = 'CampaignIdentity/get-update-form',
+  CustomerDefinitionAddUpdate = 'CampaignIdentity/update',
+  CustomerDefinitionDelete = 'CampaignIdentity/delete',
 }

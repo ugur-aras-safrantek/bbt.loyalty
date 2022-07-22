@@ -24,6 +24,7 @@ export class AuthorizationModel implements IAuthorizationModel {
 
 export interface IUserAuthorizationsModel {
   campaignDefinitionModuleAuthorizations: IAuthorizationModel;
+  customerDefinitionModuleAuthorizations: IAuthorizationModel;
   campaignLimitsModuleAuthorizations: IAuthorizationModel;
   targetDefinitionModuleAuthorizations: IAuthorizationModel;
   reportsModuleAuthorizations: IAuthorizationModel;
@@ -31,6 +32,7 @@ export interface IUserAuthorizationsModel {
 
 export class UserAuthorizationsModel implements IUserAuthorizationsModel {
   campaignDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
+  customerDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
   campaignLimitsModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
   targetDefinitionModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
   reportsModuleAuthorizations: AuthorizationModel = new AuthorizationModel();
