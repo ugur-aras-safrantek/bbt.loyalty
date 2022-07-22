@@ -7,7 +7,10 @@ using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.CampaignIdentity;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignIdentity;
+using Bbt.Campaign.Public.Models.File;
+using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
@@ -134,6 +137,29 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
 
             return await BaseResponse<CampaignIdentityListFilterResponse>.SuccessAsync(response);
+        }
+
+        public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignIdentityListFilterRequest request) 
+        {
+            GetFileResponse response = new GetFileResponse();
+            IQueryable<CampaignIdentityListEntity> query = await GetQueryAsync(request);
+            if (query.Count() == 0)
+                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Kayıt bulunamadı");
+            
+            var campaignIdentityList = ConvertCampaignIdentityList(query);
+            byte[] data = ListFileOperations.GetCampaignIdentityListExcel(campaignIdentityList);
+
+            response = new GetFileResponse()
+            {
+                Document = new Public.Models.CampaignDocument.DocumentModel()
+                {
+                    Data = Convert.ToBase64String(data, 0, data.Length),
+                    DocumentName = "Kampanya TCKN Listesi.xlsx",
+                    DocumentType = DocumentTypePublicEnum.ExcelReport,
+                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                }
+            };
+            return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
 
         private async Task<List<string>> CheckValidationsAsync(UpdateCampaignIdentityRequest input)

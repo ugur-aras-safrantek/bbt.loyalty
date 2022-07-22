@@ -1,4 +1,5 @@
 ﻿using Bbt.Campaign.Public.Dtos.Campaign;
+using Bbt.Campaign.Public.Dtos.CampaignIdentity;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
 using Bbt.Campaign.Public.Dtos.Target;
 using ClosedXML.Excel;
@@ -274,6 +275,58 @@ namespace Bbt.Campaign.Services.FileOperations
             return result;
         }
 
-        
+        public static byte[] GetCampaignIdentityListExcel(List<CampaignIdentityListDto> campaignIdentityList) 
+        {
+            byte[] result = null;
+            try 
+            {
+                using (var workbook = new XLWorkbook()) 
+                {
+                    var worksheet = workbook.Worksheets.Add($"Kampanya TCKN Listesi");
+
+                    FileOperations.HeaderSetsListe(worksheet, "A", "Kampanya/Program", 50);
+                    FileOperations.HeaderSetsListe(worksheet, "B", "Alt Kırılım", 30);
+                    FileOperations.HeaderSetsListe(worksheet, "C", "TCKN", 20);
+
+                    int currentRow = 1;
+                    int column = 1;
+                    foreach (var campaignIdentity in campaignIdentityList) 
+                    {
+                        currentRow++;
+                        column = 1;
+
+                        worksheet.Cell(currentRow, column).Value = campaignIdentity.CampaignName;
+                        worksheet.Column($"{column}").Width = 50;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaignIdentity.IdentitySubTypeName;
+                        worksheet.Column($"{column}").Width = 30;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                        column++;
+                        worksheet.Cell(currentRow, column).Value = campaignIdentity.Identities;
+                        worksheet.Column($"{column}").Width = 20;
+                        worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+
+                        result = stream.ToArray();
+
+                        //File.WriteAllBytes(@"C:\Files\TCKN-Listesi.xlsx", result);
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            return result;
+        }
     }
 }

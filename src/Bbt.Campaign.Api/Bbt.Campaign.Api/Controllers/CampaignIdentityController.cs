@@ -100,6 +100,22 @@ namespace Bbt.Campaign.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Returns the campaign identity list excel file data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-by-filter-excel")]
+        public async Task<IActionResult> GetByFilterExcel(CampaignIdentityListFilterRequest request)
+        {
+            if (!User.IsInRole("IsLoyaltyCreator"))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _campaignIdentityService.GetByFilterExcelAsync(request);
+            return Ok(result);
+        }
+
         private async Task<string> GetUser()
         {
             string userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;

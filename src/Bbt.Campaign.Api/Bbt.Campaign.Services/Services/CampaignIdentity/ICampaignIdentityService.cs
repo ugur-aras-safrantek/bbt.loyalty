@@ -1,6 +1,7 @@
 ﻿using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos.CampaignIdentity;
 using Bbt.Campaign.Public.Models.CampaignIdentity;
+using Bbt.Campaign.Public.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
         public Task<BaseResponse<CampaignIdentityDto>> GetCampaignIdentityAsync(int id);
         public Task<BaseResponse<CampaignIdentityUpdateFormDto>> GetUpdateFormAsync();
         public Task<BaseResponse<CampaignIdentityListFilterResponse>> GetByFilterAsync(CampaignIdentityListFilterRequest request);
+        public Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignIdentityListFilterRequest request);
     }
 }
