@@ -156,7 +156,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
                     Data = Convert.ToBase64String(data, 0, data.Length),
                     DocumentName = "Kampanya TCKN Listesi.xlsx",
                     DocumentType = DocumentTypePublicEnum.ExcelReport,
-                    MimeType = MimeTypeExtensions.ToMimeType(".xlsx")
+                    MimeType = ".xlsx"
                 }
             };
             return await BaseResponse<GetFileResponse>.SuccessAsync(response);
