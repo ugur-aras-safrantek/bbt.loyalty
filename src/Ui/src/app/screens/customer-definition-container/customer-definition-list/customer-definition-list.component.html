@@ -30,9 +30,6 @@
             <option *ngFor="let i of identitySubTypeList"
                     [value]="i.id">{{i.name}}</option>
           </select>
-          <div *ngIf="submitted && f.identitySubTypeId.errors" class="invalid-feedback">
-            <div *ngIf="f.identitySubTypeId.errors.required">Alt Kırılım seçilmelidir.</div>
-          </div>
         </div>
       </div>
     </div>

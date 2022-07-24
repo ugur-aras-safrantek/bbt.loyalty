@@ -93,7 +93,7 @@ export class CustomerDefinitionListComponent implements OnInit {
   clearAddUpdateModalForm() {
     this.formGroup = this.fb.group({
       campaignId: [null, Validators.required],
-      identitySubTypeId: [null, Validators.required],
+      identitySubTypeId: null,
       identity: '',
       file: '',
     });
@@ -275,6 +275,7 @@ export class CustomerDefinitionListComponent implements OnInit {
 
   showAddUpdateModal() {
     this.clearAddUpdateModalForm();
+    this.file.nativeElement.value = '';
     this.modalService.getModal('customerDefinitionAddUpdateModal').open();
   }
 
