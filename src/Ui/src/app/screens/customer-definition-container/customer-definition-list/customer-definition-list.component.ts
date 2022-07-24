@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import {LoginService} from 'src/app/services/login.service';
 import {CustomerDefinitionService} from "../../../services/customer-definition.service";
 import {
-  CustomerDefinitionAddUpdateRequestModel,
+  CustomerDefinitionAddUpdateRequestModel, CustomerDefinitionDeleteRequestModel,
   CustomerDefinitionListRequestModel
 } from 'src/app/models/customer-definition';
 import {NgxSmartModalService} from "ngx-smart-modal";
@@ -127,6 +127,9 @@ export class CustomerDefinitionListComponent implements OnInit {
             this.listHasError = false;
             this.listErrorMessage = '';
             this.campaignIdentityList = res.data.campaignIdentityList;
+            this.campaignIdentityList.map(x => {
+              x.checked = false;
+            });
             this.paging = res.data.paging;
           } else {
             this.clearList();
@@ -198,6 +201,37 @@ export class CustomerDefinitionListComponent implements OnInit {
       });
   }
 
+  private customerDefinitionDelete() {
+    let requestModel: CustomerDefinitionDeleteRequestModel = {idList: []};
+    this.campaignIdentityList.map(x => {
+      if (x.checked) {
+        requestModel.idList.push(x.id);
+      }
+    });
+    this.customerDefinitionService.customerDefinitionDelete(requestModel)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data) {
+            this.toastrHandleService.success();
+            this.customerDefinitionListGetByFilter();
+            this.modalService.getModal('customerDefinitionDeleteAlertModal').close();
+          } else
+            this.toastrHandleService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
+  selectAllCheckbox(event) {
+    this.campaignIdentityList.map(x => {
+      x.checked = event.target.checked;
+    });
+  }
+
   getFilterForm() {
     this.customerDefinitionService.getFilterFormByList()
       .pipe(takeUntil(this.destroy$))
@@ -217,7 +251,18 @@ export class CustomerDefinitionListComponent implements OnInit {
   }
 
   openDeleteAlertModal() {
-    this.modalService.getModal('customerDefinitionDeleteAlertModal').open();
+    let isThereSelectedItem = false;
+    this.campaignIdentityList.map(x => {
+      if (x.checked) {
+        isThereSelectedItem = true;
+        return;
+      }
+    });
+    if (isThereSelectedItem) {
+      this.modalService.getModal('customerDefinitionDeleteAlertModal').open();
+    } else {
+      this.toastrHandleService.warning("Silme işlemi için en az bir kayıt seçilmiş olmalıdır.");
+    }
   }
 
   closeDeleteAlertModal() {
@@ -225,7 +270,7 @@ export class CustomerDefinitionListComponent implements OnInit {
   }
 
   deleteAlertModalOk() {
-    this.modalService.getModal('customerDefinitionDeleteAlertModal').close();
+    this.customerDefinitionDelete();
   }
 
   showAddUpdateModal() {

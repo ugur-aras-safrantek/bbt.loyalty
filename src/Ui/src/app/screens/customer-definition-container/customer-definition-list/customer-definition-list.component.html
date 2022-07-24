@@ -157,7 +157,7 @@
             <th class="add-update-button">
               <app-auth-check
                 [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
-                <input class="form-check-input" type="checkbox">
+                <input class="form-check-input" type="checkbox" (change)="selectAllCheckbox($event)">
               </app-auth-check>
             </th>
             <th>Kampanya / Program</th>
@@ -176,7 +176,7 @@
             <td>
               <app-auth-check
                 [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
-                <input class="form-check-input" type="checkbox">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="campaignIdentity.checked">
               </app-auth-check>
             </td>
             <td>{{campaignIdentity.campaignName}}</td>
