@@ -8,7 +8,10 @@ import {UserAuthorizationsModel} from "../../../models/login.model";
 import * as _ from 'lodash';
 import {LoginService} from 'src/app/services/login.service';
 import {CustomerDefinitionService} from "../../../services/customer-definition.service";
-import {CustomerDefinitionListRequestModel} from 'src/app/models/customer-definition';
+import {
+  CustomerDefinitionAddUpdateRequestModel,
+  CustomerDefinitionListRequestModel
+} from 'src/app/models/customer-definition';
 import {NgxSmartModalService} from "ngx-smart-modal";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {PagingResponseModel} from "../../../models/paging.model";
@@ -58,13 +61,12 @@ export class CustomerDefinitionListComponent implements OnInit {
               private utilityService: UtilityService,
               private modalService: NgxSmartModalService) {
     this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations();
-
-    this.clearAddUpdateModalForm();
   }
 
   ngOnInit(): void {
     this.getFilterForm();
     this.clearFilterForm();
+    this.clearAddUpdateModalForm();
   }
 
   ngOnDestroy() {
@@ -93,7 +95,7 @@ export class CustomerDefinitionListComponent implements OnInit {
       campaignId: [null, Validators.required],
       identitySubTypeId: [null, Validators.required],
       identity: '',
-      file: null,
+      file: '',
     });
 
     this.f.identity.setValidators([
@@ -169,6 +171,33 @@ export class CustomerDefinitionListComponent implements OnInit {
       });
   }
 
+  private customerDefinitionAddUpdate() {
+    let formGroup = this.formGroup.getRawValue();
+    let requestModel: CustomerDefinitionAddUpdateRequestModel = {
+      campaignId: formGroup.campaignId,
+      identitySubTypeId: formGroup.identitySubTypeId,
+      isSingleIdentity: !this.disableIdentity,
+      identity: formGroup.identity,
+      file: formGroup.file,
+    };
+    this.customerDefinitionService.customerDefinitionAddUpdate(requestModel)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (!res.hasError && res.data) {
+            this.toastrHandleService.success();
+            this.customerDefinitionListGetByFilter();
+            this.modalService.getModal('customerDefinitionAddUpdateModal').close();
+          } else
+            this.toastrHandleService.error(res.errorMessage);
+        },
+        error: err => {
+          if (err.error)
+            this.toastrHandleService.error(err.error);
+        }
+      });
+  }
+
   getFilterForm() {
     this.customerDefinitionService.getFilterFormByList()
       .pipe(takeUntil(this.destroy$))
@@ -207,7 +236,7 @@ export class CustomerDefinitionListComponent implements OnInit {
   addUpdate() {
     this.submitted = true;
     if (this.formGroup.valid) {
-      this.modalService.getModal('customerDefinitionAddUpdateModal').close();
+      this.customerDefinitionAddUpdate();
     }
   }
 
@@ -250,7 +279,7 @@ export class CustomerDefinitionListComponent implements OnInit {
     } else {
       this.formGroup.patchValue({
         identity: '',
-        file: null,
+        file: '',
       });
       this.disableIdentity = false;
       this.f.identity.setValidators([
@@ -278,9 +307,9 @@ export class CustomerDefinitionListComponent implements OnInit {
     if (this.disableIdentity) {
       this.formGroup.patchValue({
         identity: '',
-        file: null,
+        file: '',
       });
-      this.file.nativeElement.value = null;
+      this.file.nativeElement.value = '';
       this.disableIdentity = false;
       this.f.identity.setValidators([
         Validators.required,
