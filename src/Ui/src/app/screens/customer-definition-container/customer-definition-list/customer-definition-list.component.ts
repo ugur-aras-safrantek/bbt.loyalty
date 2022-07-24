@@ -1,15 +1,16 @@
-import {Component, OnInit,} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DropdownListModel} from "../../../models/dropdown-list.model";
 import {Subject, takeUntil} from "rxjs";
 import {saveAs} from 'file-saver';
 import {UtilityService} from "../../../services/utility.service";
 import {ToastrHandleService} from 'src/app/services/toastr-handle.service';
 import {UserAuthorizationsModel} from "../../../models/login.model";
+import * as _ from 'lodash';
 import {LoginService} from 'src/app/services/login.service';
 import {CustomerDefinitionService} from "../../../services/customer-definition.service";
-import { CustomerDefinitionListRequestModel } from 'src/app/models/customer-definition';
+import {CustomerDefinitionListRequestModel} from 'src/app/models/customer-definition';
 import {NgxSmartModalService} from "ngx-smart-modal";
-import {FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {PagingResponseModel} from "../../../models/paging.model";
 
 @Component({
@@ -29,14 +30,11 @@ export class CustomerDefinitionListComponent implements OnInit {
     totalPages: 1,
     totalItems: 0,
   };
+  listHasError: any;
+  listErrorMessage: any;
 
   campaignList: DropdownListModel[];
   identitySubTypeList: DropdownListModel[];
-
-  formGroup: FormGroup;
-
-  listHasError: any;
-  listErrorMessage: any;
 
   filterForm = {
     campaignId: null,
@@ -44,17 +42,29 @@ export class CustomerDefinitionListComponent implements OnInit {
     identities: '',
   };
 
+  formGroup: FormGroup;
+  disableIdentity: boolean = false;
+  submitted = false;
+  @ViewChild('file') file;
+  allowedFileTypes = [
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ];
+
   constructor(private customerDefinitionService: CustomerDefinitionService,
+              private fb: FormBuilder,
               private loginService: LoginService,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private modalService: NgxSmartModalService) {
     this.currentUserAuthorizations = this.loginService.getCurrentUserAuthorizations();
+
+    this.clearAddUpdateModalForm();
   }
 
   ngOnInit(): void {
     this.getFilterForm();
-    this.clear();
+    this.clearFilterForm();
   }
 
   ngOnDestroy() {
@@ -62,7 +72,11 @@ export class CustomerDefinitionListComponent implements OnInit {
     this.destroy$.unsubscribe();
   }
 
-  clear() {
+  get f() {
+    return this.formGroup.controls;
+  }
+
+  clearFilterForm() {
     this.filterForm = {
       campaignId: null,
       identitySubTypeId: null,
@@ -72,6 +86,27 @@ export class CustomerDefinitionListComponent implements OnInit {
     this.clearList();
 
     this.customerDefinitionListGetByFilter();
+  }
+
+  clearAddUpdateModalForm() {
+    this.formGroup = this.fb.group({
+      campaignId: [null, Validators.required],
+      identitySubTypeId: [null, Validators.required],
+      identity: '',
+      file: null,
+    });
+
+    this.f.identity.setValidators([
+      Validators.required,
+      Validators.minLength(10),
+      this.utilityService.tcknValidator(),
+      this.utilityService.vknValidator()
+    ]);
+
+    this.f.identity.updateValueAndValidity();
+
+    this.disableIdentity = false;
+    this.submitted = false;
   }
 
   customerDefinitionListGetByFilter() {
@@ -89,7 +124,6 @@ export class CustomerDefinitionListComponent implements OnInit {
           if (!res.hasError && res.data && res.data.campaignIdentityList.length > 0) {
             this.listHasError = false;
             this.listErrorMessage = '';
-
             this.campaignIdentityList = res.data.campaignIdentityList;
             this.paging = res.data.paging;
           } else {
@@ -166,11 +200,15 @@ export class CustomerDefinitionListComponent implements OnInit {
   }
 
   showAddUpdateModal() {
+    this.clearAddUpdateModalForm();
     this.modalService.getModal('customerDefinitionAddUpdateModal').open();
   }
 
-  addUpdate(){
-
+  addUpdate() {
+    this.submitted = true;
+    if (this.formGroup.valid) {
+      this.modalService.getModal('customerDefinitionAddUpdateModal').close();
+    }
   }
 
   clearList() {
@@ -191,5 +229,66 @@ export class CustomerDefinitionListComponent implements OnInit {
 
   counter(i: number) {
     return new Array(i);
+  }
+
+  fileSelected(e: Event) {
+    const element = e.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList!.length > 0) {
+      this.formGroup.patchValue({
+        identity: fileList![0].name
+      });
+      this.disableIdentity = true;
+      this.f.identity.clearValidators();
+      if (!_.includes(this.allowedFileTypes, fileList![0].type)) {
+        this.f.identity.setValidators([
+          this.utilityService.fileTypeValidator()
+        ]);
+      } else {
+        this.convertFileToBase64ForFileString(fileList![0]);
+      }
+    } else {
+      this.formGroup.patchValue({
+        identity: '',
+        file: null,
+      });
+      this.disableIdentity = false;
+      this.f.identity.setValidators([
+        Validators.required,
+        Validators.minLength(10),
+        this.utilityService.tcknValidator(),
+        this.utilityService.vknValidator()
+      ]);
+    }
+    this.f.identity.updateValueAndValidity();
+  }
+
+  private convertFileToBase64ForFileString(file: File) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as Blob);
+    reader.onloadend = () => {
+      let result = reader.result as string;
+      this.formGroup.patchValue({
+        file: result.split(",")[1]
+      });
+    };
+  }
+
+  identityClicked() {
+    if (this.disableIdentity) {
+      this.formGroup.patchValue({
+        identity: '',
+        file: null,
+      });
+      this.file.nativeElement.value = null;
+      this.disableIdentity = false;
+      this.f.identity.setValidators([
+        Validators.required,
+        Validators.minLength(10),
+        this.utilityService.tcknValidator(),
+        this.utilityService.vknValidator()
+      ]);
+      this.f.identity.updateValueAndValidity();
+    }
   }
 }
