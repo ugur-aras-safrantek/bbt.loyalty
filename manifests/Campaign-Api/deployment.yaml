@@ -6,7 +6,7 @@ metadata:
   labels:
     app: loyalty-campaign-api
 spec:
-  replicas: 2
+  replicas: 0
   selector:
     matchLabels:
       app: loyalty-campaign-api
