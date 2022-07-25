@@ -334,7 +334,7 @@ namespace Bbt.Campaign.Services.FileOperations
 
                     result = stream.ToArray();
 
-                    File.WriteAllBytes(@"C:\Files\TargetReport.xlsx", result);
+                    //File.WriteAllBytes(@"C:\Files\TargetReport.xlsx", result);
                 }
             }
             return result;
