@@ -652,7 +652,6 @@ namespace Bbt.Campaign.Services.Services.Report
                 .GetAll(x => x.IsActive && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
                 .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
-
         public async Task<BaseResponse<TargetReportResponse>> GetTargetReportByFilterAsync(TargetReportRequest request) 
         {
             TargetReportResponse response = new TargetReportResponse();
@@ -668,7 +667,6 @@ namespace Bbt.Campaign.Services.Services.Report
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<TargetReportResponse>.SuccessAsync(response);
         }
-
         private async Task<List<TargetReportListDto>> GetTargetReportData(TargetReportRequest request) 
         {
             List<TargetReportListDto> targetReportList = new List<TargetReportListDto>();
@@ -683,7 +681,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 targetReportListDto.CustomerCode = "1234567890";
                 targetReportListDto.IdentitySubTypeName = "Harcama Koşulsuz Dönem";
                 targetReportListDto.TargetAmount = 1000;
-                targetReportListDto.TargetAmountStr = "1.000";
+                targetReportListDto.TargetAmountStr = "1000";
                 targetReportListDto.IsTargetSuccess = true;
                 targetReportListDto.RemainAmount = 0;
                 targetReportListDto.RemainAmountStr = "0";
@@ -706,6 +704,28 @@ namespace Bbt.Campaign.Services.Services.Report
             }
 
             return targetReportList; 
+        }
+        public async Task<BaseResponse<GetFileResponse>> GetTargetReportExcelAsync(TargetReportRequest request)
+        {
+            GetFileResponse response = new GetFileResponse();
+
+            List<TargetReportListDto> targetReportList = await GetTargetReportData(request);
+            if (!targetReportList.Any())
+                return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+
+            byte[] data = ReportFileOperations.GetTargetReportListExcel(targetReportList);
+
+            response = new GetFileResponse()
+            {
+                Document = new Public.Models.CampaignDocument.DocumentModel()
+                {
+                    Data = Convert.ToBase64String(data, 0, data.Length),
+                    DocumentName = "Hedef Raporu.xlsx",
+                    DocumentType = DocumentTypePublicEnum.ExcelReport,
+                    MimeType = ".xlsx"
+                }
+            };
+            return await BaseResponse<GetFileResponse>.SuccessAsync(response);
         }
 
         #endregion

@@ -258,5 +258,86 @@ namespace Bbt.Campaign.Services.FileOperations
             }
             return result;
         }
+
+        public static byte[] GetTargetReportListExcel(List<TargetReportListDto> targetReportList) 
+        {
+            byte[] result = null;
+            using (var workbook = new XLWorkbook()) 
+            {
+                var worksheet = workbook.Worksheets.Add($"Hedef Raporu");
+
+                FileOperations.HeaderSetsListe(worksheet, "A", "Hedef Adı", 50);
+                FileOperations.HeaderSetsListe(worksheet, "B", "Kampanya / Program", 50);
+                FileOperations.HeaderSetsListe(worksheet, "C", "Programa Dahil Mi?", 20);
+                FileOperations.HeaderSetsListe(worksheet, "D", "Müşteri No", 20);
+                FileOperations.HeaderSetsListe(worksheet, "E", "Alt Kırılım", 30);
+                FileOperations.HeaderSetsListe(worksheet, "F", "Harcama Hedefi", 20);
+                FileOperations.HeaderSetsListe(worksheet, "G", "Hedef Tuttu Mu?", 20);
+                FileOperations.HeaderSetsListe(worksheet, "H", "Kalan Harcama", 20);
+                FileOperations.HeaderSetsListe(worksheet, "I", "Hedefin Gerçekleştiği Tarih", 30);
+
+                int currentRow = 1;
+                int column = 1;
+                foreach (var item in targetReportList) 
+                {
+                    currentRow++;
+                    column = 1;
+
+                    worksheet.Cell(currentRow, column).Value = item.TargetName;
+                    worksheet.Column($"{column}").Width = 50;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.CampaignName;
+                    worksheet.Column($"{column}").Width = 50;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.IsJoin ? "Evet" : "Hayır";
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.CustomerCode;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.IdentitySubTypeName;
+                    worksheet.Column($"{column}").Width = 30;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.TargetAmountStr;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.IsTargetSuccess ? "Evet" : "Hayır";
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.RemainAmountStr;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = item.TargetSuccessStartDateStr;
+                    worksheet.Column($"{column}").Width = 30;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+
+                    result = stream.ToArray();
+
+                    File.WriteAllBytes(@"C:\Files\TargetReport.xlsx", result);
+                }
+            }
+            return result;
+        }
     }
 }

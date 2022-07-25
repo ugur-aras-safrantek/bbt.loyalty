@@ -25,5 +25,6 @@ namespace Bbt.Campaign.Services.Services.Report
         public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
         public Task<BaseResponse<TargetReportFormDto>> FillTargetFormAsync();
         public Task<BaseResponse<TargetReportResponse>> GetTargetReportByFilterAsync(TargetReportRequest request);
+        public Task<BaseResponse<GetFileResponse>> GetTargetReportExcelAsync(TargetReportRequest request);
     }
 }

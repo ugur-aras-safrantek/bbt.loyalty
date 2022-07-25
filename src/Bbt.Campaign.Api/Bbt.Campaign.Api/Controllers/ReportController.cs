@@ -160,5 +160,21 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _reportService.GetTargetReportByFilterAsync(request);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns the target report excel data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-target-report-by-filter-excel")]
+        public async Task<IActionResult> GetTargetReportExcelAsync(TargetReportRequest request)
+        {
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _reportService.GetTargetReportExcelAsync(request);
+            return Ok(result);
+        }
     }
 }
