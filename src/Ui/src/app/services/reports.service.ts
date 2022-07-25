@@ -3,7 +3,7 @@ import {environment} from 'src/environments/environment';
 import {ApiPaths} from '../models/api-paths';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {ApiBaseResponseModel} from '../models/api-base-response.model';
-import {CampaignReportRequestModel, CustomerReportRequestModel} from "../models/reports";
+import {CampaignReportRequestModel, CustomerReportRequestModel, TargetReportRequestModel} from "../models/reports";
 
 @Injectable({
   providedIn: 'root'
@@ -48,5 +48,20 @@ export class ReportsService {
   getCustomerDetail(data: any) {
     const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${data.customerCode}/${data.campaignId}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
+  }
+
+  getTargetReportFilterForm() {
+    const url = `${this.baseUrl}/${ApiPaths.TargetReportFilterForm}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url);
+  }
+
+  targetReportGetByFilter(data: TargetReportRequestModel) {
+    const url = `${this.baseUrl}/${ApiPaths.TargetReportGetByFilter}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, data);
+  }
+
+  targetReportGetByFilterExcelFile(data: TargetReportRequestModel) {
+    const url = `${this.baseUrl}/${ApiPaths.TargetReportGetByFilterExcelFile}`;
+    return this.httpClient.post<ApiBaseResponseModel>(url, data);
   }
 }

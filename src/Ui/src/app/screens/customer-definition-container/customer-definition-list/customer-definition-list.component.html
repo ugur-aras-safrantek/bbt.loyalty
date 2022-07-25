@@ -1,0 +1,207 @@
+<ngx-smart-modal #customerDefinitionAddUpdateModal identifier="customerDefinitionAddUpdateModal">
+  <h1>TCKN Yükleme</h1>
+  <hr class="blue">
+  <form [formGroup]="formGroup" class="p-2">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label>Kampanya / Program</label>
+          <select name="campaignId" formControlName="campaignId"
+                  class="form-select"
+                  [ngClass]="{ 'is-invalid': submitted && f.campaignId.invalid }">
+            <option [ngValue]="null">Seçiniz</option>
+            <option *ngFor="let i of campaignList"
+                    [value]="i.id">{{i.name}}</option>
+          </select>
+          <div *ngIf="submitted && f.campaignId.errors" class="invalid-feedback">
+            <div *ngIf="f.campaignId.errors.required">Kampanya / Program seçilmelidir.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="form-group">
+          <label>Alt Kırılım</label>
+          <select name="identitySubTypeId" formControlName="identitySubTypeId"
+                  class="form-select"
+                  [ngClass]="{ 'is-invalid': submitted && f.identitySubTypeId.invalid }">
+            <option [ngValue]="null">Seçiniz</option>
+            <option *ngFor="let i of identitySubTypeList"
+                    [value]="i.id">{{i.name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="form-group">
+          <label>TCKN / VKN</label>
+          <input type="text" class="form-control" name="identity"
+                 formControlName="identity" maxlength="11" onlyNumber
+                 (click)="identityClicked()" [readonly]="disableIdentity"
+                 [ngClass]="{ 'is-invalid': submitted && f.identity.invalid }">
+        </div>
+      </div>
+      <div class="col-auto d-flex align-items-end">
+        <input #file type="file" (change)="fileSelected($event)" hidden
+               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+        <button type="button" class="btn btn-secondary px-5"
+                (click)="file.click()">
+          Dosya Yükle
+        </button>
+      </div>
+      <div *ngIf="submitted && f.identity.errors" class="d-block invalid-feedback">
+        <div *ngIf="f.identity.errors.required">TCKN girilmelidir.</div>
+        <div *ngIf="f.identity.errors.minlength">TCKN 11, VKN 10 haneli olmalıdır.</div>
+        <div *ngIf="f.identity.errors.fileTypeValidator">
+          Sadece .xls ya da .xlsx formatında dosya yüklenebilir.
+        </div>
+        <div *ngIf="f.identity.errors.tcknValidator">
+          Geçersiz TCKN.
+        </div>
+        <div *ngIf="f.identity.errors.vknValidator">
+          Geçersiz VKN.
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="mt-4 d-flex justify-content-center">
+    <app-auth-check [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+      <button class="btn btn-orange px-5" type="button" (click)="addUpdate()">Kaydet</button>
+    </app-auth-check>
+  </div>
+</ngx-smart-modal>
+<ngx-smart-modal #customerDefinitionDeleteAlertModal identifier="customerDefinitionDeleteAlertModal">
+  <h1>Bilgilendirme</h1>
+  <p>Seçtiğiniz kayıtlar silinecektir, emin misiniz?</p>
+
+  <div class="button-container">
+    <button class="btn btn-primary" (click)="deleteAlertModalOk()">Evet</button>
+    <button class="btn btn-outline-primary" (click)="closeDeleteAlertModal()">İptal</button>
+  </div>
+</ngx-smart-modal>
+<app-main-content blockTitle="TCKN Tanımlama"
+                  [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations">
+  <div class="container">
+    <div class="box">
+      <div class="p-4">
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label>Kampanya / Program</label>
+              <select name="campaignId" class="form-select form-select-sm"
+                      [(ngModel)]="filterForm.campaignId">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of campaignList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label>Alt Kırılım</label>
+              <select name="identitySubTypeId" class="form-select form-select-sm"
+                      [(ngModel)]="filterForm.identitySubTypeId">
+                <option [ngValue]="null">Seçiniz</option>
+                <option *ngFor="let i of identitySubTypeList"
+                        [value]="i.id">{{i.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label>TCKN</label>
+              <input type="text" class="form-control form-control-sm" maxlength="11" onlyNumber
+                     [(ngModel)]="filterForm.identities">
+            </div>
+          </div>
+          <div class="col pt-4">
+            <button class="btn btn-sm btn-outline-primary w-100" (click)="clearFilterForm()">Temizle</button>
+          </div>
+          <div class="col pt-4">
+            <button class="btn btn-sm btn-primary w-100" (click)="customerDefinitionListGetByFilter()">Filtrele
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-4" *ngIf="listHasError">
+    <div class="box">
+      <div class="ps-4 pe-4 pt-2 pb-2 d-flex alert-warning">{{listErrorMessage}}</div>
+    </div>
+  </div>
+  <div class="container mt-4" *ngIf="campaignIdentityList.length > 0">
+    <div class="box">
+      <div class="ps-4 pe-4 pt-2 d-flex">
+        <div class="col d-flex justify-content-start">
+          <app-auth-check
+            [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+            <i class="bi bi-trash" (click)="openDeleteAlertModal()"></i>
+          </app-auth-check>
+        </div>
+        <div class="col d-flex justify-content-end">
+          <i>
+            <img src="/assets/img/excel-icon.png" (click)="customerDefinitionListGetByFilterExcelFile()">
+          </i>
+        </div>
+      </div>
+      <div class="mt-2 overflow-x-auto">
+        <table class="table table-hover table-custom">
+          <thead>
+          <tr class="table-primary">
+            <th class="add-update-button">
+              <app-auth-check
+                [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+                <input class="form-check-input" type="checkbox" (change)="selectAllCheckbox($event)">
+              </app-auth-check>
+            </th>
+            <th>Kampanya / Program</th>
+            <th>Alt Kırılım</th>
+            <th>TCKN</th>
+            <th class="add-update-button">
+              <app-auth-check
+                [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+                <i class="bi bi-plus-circle-fill" (click)="showAddUpdateModal()"></i>
+              </app-auth-check>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor='let campaignIdentity of campaignIdentityList'>
+            <td>
+              <app-auth-check
+                [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="campaignIdentity.checked">
+              </app-auth-check>
+            </td>
+            <td>{{campaignIdentity.campaignName}}</td>
+            <td>{{campaignIdentity.identitySubTypeName}}</td>
+            <td>{{campaignIdentity.identities}}</td>
+            <td></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="container d-flex align-items-center justify-content-end mt-3"
+       *ngIf="campaignIdentityList.length > 0">
+    <span>Page:</span>
+    <select class="form-control-sm ms-2 me-2" [(ngModel)]="paging.currentPage"
+            (change)="customerDefinitionListGetByFilter()">
+      <option *ngFor='let i of counter(paging.totalPages); let val = index'
+              [value]="val+1">{{val + 1}}</option>
+    </select>
+    <span class="me-3">of {{paging.totalPages}}</span>
+    <button class="bi-chevron-left paging-button-left me-2"
+            (click)="changePage(-1)"
+            [disabled]="paging.currentPage <= 1"
+            [ngClass]="{ 'disable-paging-button' : paging.currentPage == 1 }"></button>
+    <button class="bi-chevron-right paging-button-right"
+            (click)="changePage(+1)"
+            [disabled]="paging.currentPage == paging.totalPages"
+            [ngClass]="{ 'disable-paging-button' : paging.currentPage >= paging.totalPages }"></button>
+  </div>
+</app-main-content>

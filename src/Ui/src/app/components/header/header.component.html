@@ -20,6 +20,13 @@
             </app-auth-check>
           </li>
           <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.view">
+              <a [routerLink]="['customer-definition']" class="nav-link" aria-current="page" routerLinkActive="active">
+                TCKN Tanımlama
+              </a>
+            </app-auth-check>
+          </li>
+          <li class="nav-item">
             <app-auth-check [authorization]="currentUserAuthorizations.campaignLimitsModuleAuthorizations.view">
               <a [routerLink]="['campaign-limits']" class="nav-link" routerLinkActive="active">
                 Kampanya Çatı Limitleri

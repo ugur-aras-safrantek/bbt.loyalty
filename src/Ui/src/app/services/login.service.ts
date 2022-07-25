@@ -59,6 +59,8 @@ export class LoginService {
 
     if (this.currentUserAuthorizations.campaignDefinitionModuleAuthorizations.view) {
       route = '/campaign-definition';
+    } else if (this.currentUserAuthorizations.customerDefinitionModuleAuthorizations.view) {
+      route = '/customer-definition';
     } else if (this.currentUserAuthorizations.campaignLimitsModuleAuthorizations.view) {
       route = '/campaign-limits';
     } else if (this.currentUserAuthorizations.targetDefinitionModuleAuthorizations.view) {
@@ -83,6 +85,9 @@ export class LoginService {
         break;
       case 4:
         this.currentUserAuthorizations.reportsModuleAuthorizations = this.setAuthorizationModel(module.authorizationList);
+        break;
+      case 5:
+        this.currentUserAuthorizations.customerDefinitionModuleAuthorizations = this.setAuthorizationModel(module.authorizationList);
         break;
     }
   }

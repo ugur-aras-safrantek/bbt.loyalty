@@ -57,6 +57,9 @@ export enum ApiPaths {
   CustomerReportGetByFilter = 'Report/get-customer-report-by-filter',
   CustomerReportGetByFilterExcelFile = 'Report/get-customer-report-by-filter-excel',
   CustomerDetail = 'Report/get-customer-report-detail',
+  TargetReportFilterForm = 'Report/get-target-report-form',
+  TargetReportGetByFilter = 'Report/get-target-report-by-filter',
+  TargetReportGetByFilterExcelFile = 'Report/get-target-report-by-filter-excel',
 
   CampaignDefinitionApproveForm = 'Approve/get-campaign-form',
   CampaignDefinitionApprove = 'Approve/campaign',
@@ -67,4 +70,10 @@ export enum ApiPaths {
 
   TargetDefinitionApproveForm = 'Approve/get-target-form',
   TargetDefinitionApproveState = 'Approve/target',
+
+  CustomerDefinitionList = 'CampaignIdentity/get-by-filter',
+  CustomerDefinitionListGetExcelFile = 'CampaignIdentity/get-by-filter-excel',
+  CustomerDefinitionGetUpdateForm = 'CampaignIdentity/get-update-form',
+  CustomerDefinitionAddUpdate = 'CampaignIdentity/update',
+  CustomerDefinitionDelete = 'CampaignIdentity/delete',
 }

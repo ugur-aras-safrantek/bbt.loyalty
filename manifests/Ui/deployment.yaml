@@ -6,7 +6,7 @@ metadata:
   labels:
     app: loyalty-ui
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: loyalty-ui

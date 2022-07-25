@@ -59,3 +59,29 @@ export class CustomerReportRequestModel implements ICustomerReportRequestModel, 
   businessLineId?: any;
   isActive?: any;
 }
+
+interface ITargetReportRequestModel {
+  campaignId?: any;
+  targetId?: any;
+  identitySubTypeId?: any;
+  isIncludedProgram?: any;
+  customerNo?: any;
+  startDate?: any;
+  endDate?: any;
+  statusId?: any;
+}
+
+export class TargetReportRequestModel implements ITargetReportRequestModel, IPagingRequestModel {
+  pageNumber: number;
+  pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
+  campaignId?: any;
+  targetId?: any;
+  identitySubTypeId?: any;
+  isIncludedProgram?: any;
+  customerNo?: any;
+  startDate?: any;
+  endDate?: any;
+  statusId?: any;
+}

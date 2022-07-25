@@ -17,6 +17,12 @@ const routes: Routes = [
         canActivate: [AuthorityGuard]
       },
       {
+        path: 'customer-definition',
+        loadChildren: () => import('./screens/customer-definition-container/customer-definition-container.module').then(m => m.CustomerDefinitionContainerModule),
+        data: {module: 'customer-definition', moduleName: 'TCKN Tanımlama'},
+        canActivate: [AuthorityGuard]
+      },
+      {
         path: 'campaign-limits',
         loadChildren: () => import('./screens/campaign-limits-container/campaign-limits-container.module').then(m => m.CampaignLimitsContainerModule),
         data: {module: 'campaign-limits', moduleName: 'Kampanya Çatı Limitleri'},
