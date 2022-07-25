@@ -18,6 +18,7 @@ using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Group;
+using Bbt.Campaign.Public.Dtos;
 
 namespace Bbt.Campaign.Services.Services.Report
 {
@@ -40,6 +41,8 @@ namespace Bbt.Campaign.Services.Services.Report
             _campaignTargetService = campaignTargetService;
             _remoteService = remoteService;
         }
+
+        #region Campaign Report
         private async Task<IQueryable<CampaignReportEntity>> GetCampaignQueryAsync(CampaignReportRequest request) 
         {
             var campaignQuery = _unitOfWork.GetRepository<CampaignReportEntity>().GetAll();
@@ -251,6 +254,10 @@ namespace Bbt.Campaign.Services.Services.Report
             response.JoinTypeList = (await _parameterService.GetJoinTypeListAsync())?.Data;
             response.AchievementTypes = (await _parameterService.GetAchievementTypeListAsync())?.Data;
         }
+
+        #endregion
+
+        #region Customer Report
         public async Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync()
         {
             //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
@@ -270,9 +277,6 @@ namespace Bbt.Campaign.Services.Services.Report
         }       
         public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request)
         {
-            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
-            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
-
             CustomerReportResponse response = new CustomerReportResponse();
             List<CustomerReportListDto> customerReportList = await GetCustomerReportData(request);
             if (!customerReportList.Any())
@@ -382,10 +386,6 @@ namespace Bbt.Campaign.Services.Services.Report
         }
         public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request) 
         {
-            //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
-
-            //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
-
             GetFileResponse response = new GetFileResponse();
 
             Helpers.ListByFilterCheckValidation(request);
@@ -632,5 +632,82 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return await BaseResponse<CustomerReportDetailDto>.SuccessAsync(response);
         }
+
+        #endregion
+
+        #region Target Report
+        public async Task<BaseResponse<TargetReportFormDto>> FillTargetFormAsync()
+        {
+            TargetReportFormDto response = new TargetReportFormDto();
+            await FillTargetFormAsync(response);
+            return await BaseResponse<TargetReportFormDto>.SuccessAsync(response);
+        }
+        private async Task FillTargetFormAsync(TargetReportFormDto response)
+        {
+            response.IdentitySubTypeList = (await _parameterService.GetIdentitySubTypeListAsync())?.Data;
+            response.CampaignList = _unitOfWork.GetRepository<CampaignEntity>()
+                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.UtcNow))
+                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+            response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
+                .GetAll(x => x.IsActive && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)
+                .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
+        }
+
+        public async Task<BaseResponse<TargetReportResponse>> GetTargetReportByFilterAsync(TargetReportRequest request) 
+        {
+            TargetReportResponse response = new TargetReportResponse();
+
+            List<TargetReportListDto> targetReportList = await GetTargetReportData(request);
+            if (!targetReportList.Any())
+                return await BaseResponse<TargetReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
+
+            response.TargetReportList = targetReportList;
+            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            var totalItems = targetReportList.Count();
+            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+            return await BaseResponse<TargetReportResponse>.SuccessAsync(response);
+        }
+
+        private async Task<List<TargetReportListDto>> GetTargetReportData(TargetReportRequest request) 
+        {
+            List<TargetReportListDto> targetReportList = new List<TargetReportListDto>();
+            if (StaticValues.IsDevelopment)
+            {
+                Helpers.ListByFilterCheckValidation(request);
+
+                TargetReportListDto targetReportListDto = new TargetReportListDto();
+                targetReportListDto.TargetName = "1000 TL Harcama Yap";
+                targetReportListDto.CampaignName = "Kıyafet Harcamalarına 150 TL İade";
+                targetReportListDto.IsJoin = true;
+                targetReportListDto.CustomerCode = "1234567890";
+                targetReportListDto.IdentitySubTypeName = "Harcama Koşulsuz Dönem";
+                targetReportListDto.TargetAmount = 1000;
+                targetReportListDto.TargetAmountStr = "1.000";
+                targetReportListDto.IsTargetSuccess = true;
+                targetReportListDto.RemainAmount = 0;
+                targetReportListDto.RemainAmountStr = "0";
+                targetReportListDto.TargetSuccessStartDateStr = "25-07-2022";
+                targetReportList.Add(targetReportListDto);
+
+                targetReportListDto = new TargetReportListDto();
+                targetReportListDto.TargetName = "23";
+                targetReportListDto.CampaignName = "Test 50";
+                targetReportListDto.IsJoin = true;
+                targetReportListDto.CustomerCode = "1234567892";
+                targetReportListDto.IdentitySubTypeName = "Harcama Koşulsuz Dönem";
+                targetReportListDto.TargetAmount = 44;
+                targetReportListDto.TargetAmountStr = "44";
+                targetReportListDto.IsTargetSuccess = false;
+                targetReportListDto.RemainAmount = 20;
+                targetReportListDto.RemainAmountStr = "20";
+                targetReportListDto.TargetSuccessStartDateStr = null;
+                targetReportList.Add(targetReportListDto);
+            }
+
+            return targetReportList; 
+        }
+
+        #endregion
     }
 }

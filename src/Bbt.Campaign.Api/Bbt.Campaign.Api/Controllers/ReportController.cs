@@ -129,5 +129,36 @@ namespace Bbt.Campaign.Api.Controllers
             var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignCode);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns the form data for target report form
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-target-report-form")]
+        public async Task<IActionResult> FillTargetFormAsync()
+        {
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _reportService.FillTargetFormAsync();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the target report data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-targetreport-by-filter")]
+        public async Task<IActionResult> GetTargetReportByFilterAsync(TargetReportRequest request)
+        {
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _reportService.GetTargetReportByFilterAsync(request);
+            return Ok(result);
+        }
     }
 }
