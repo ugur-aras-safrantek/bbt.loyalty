@@ -15,9 +15,11 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? IdentitySubTypeName { get; set; }
         public double? TargetAmount { get; set; }
         public string? TargetAmountStr { get; set; }
+        public string? TargetAmountCurrency { get; set; }
         public bool IsTargetSuccess { get; set; }
         public double? RemainAmount { get; set; }
         public string? RemainAmountStr { get; set; }
-        public string? TargetSuccessStartDateStr { get; set; }
+        public string? RemainAmountCurrency { get; set; }
+        public string? TargetSuccessDateStr { get; set; }
     }
 }

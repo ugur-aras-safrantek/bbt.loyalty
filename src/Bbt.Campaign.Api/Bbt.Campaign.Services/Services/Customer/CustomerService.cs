@@ -483,7 +483,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 if (month == 13)
                     month = 1;
 
-                monthName = Helpers.GetEnumDescription<JoinTypeEnum>(month);
+                monthName = Helpers.GetEnumDescription<MonthsEnum>(month);
 
                 if (response.IsAchieved)
                 {

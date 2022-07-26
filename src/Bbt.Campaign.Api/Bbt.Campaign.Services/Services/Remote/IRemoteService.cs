@@ -17,6 +17,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request);
         public Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang);
         public Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang);
+        public Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request);
         public Task<Document> GetDocument(int id);
         public Task<UserModelService> GetUserRoles(string code, string state);
 
