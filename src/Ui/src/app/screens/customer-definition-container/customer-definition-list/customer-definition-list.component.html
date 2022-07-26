@@ -129,12 +129,20 @@
   </div>
   <div class="container mt-4" *ngIf="listHasError">
     <div class="box">
-      <div class="ps-4 pe-4 pt-2 pb-2 d-flex alert-warning">{{listErrorMessage}}</div>
+      <div class="px-4 py-2 d-flex alert-warning">
+        <div class="col d-flex justify-content-start">{{listErrorMessage}}</div>
+        <div class="col d-flex justify-content-end">
+          <app-auth-check
+            [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
+            <i class="bi bi-plus-circle-fill color-blue" (click)="showAddUpdateModal()"></i>
+          </app-auth-check>
+        </div>
+      </div>
     </div>
   </div>
   <div class="container mt-4" *ngIf="campaignIdentityList.length > 0">
     <div class="box">
-      <div class="ps-4 pe-4 pt-2 d-flex">
+      <div class="px-4 pt-2 d-flex">
         <div class="col d-flex justify-content-start">
           <app-auth-check
             [authorization]="currentUserAuthorizations.customerDefinitionModuleAuthorizations.create">
