@@ -200,14 +200,15 @@ namespace Bbt.Campaign.Services.FileOperations
                 var worksheet = workbook.Worksheets.Add($"Çatı Limiti Listesi");
 
                 FileOperations.HeaderSetsListe(worksheet, "A", "Çatı Limiti Adı", 50);
-                FileOperations.HeaderSetsListe(worksheet, "B", "Kazanım Sıklığı", 20);
-                FileOperations.HeaderSetsListe(worksheet, "C", "Para Birimi", 20);
-                FileOperations.HeaderSetsListe(worksheet, "D", "Çatı Max Tutar", 20);
-                FileOperations.HeaderSetsListe(worksheet, "E", "Çatı Max Yararlanma", 20);
-                FileOperations.HeaderSetsListe(worksheet, "F", "Çatı Oranı", 20);
-                FileOperations.HeaderSetsListe(worksheet, "G", "Tutar", 20);
-                FileOperations.HeaderSetsListe(worksheet, "H", "Oran", 20);
-                FileOperations.HeaderSetsListe(worksheet, "I", "Aktif", 20);
+                FileOperations.HeaderSetsListe(worksheet, "B", "Kampanya Adı", 50);
+                FileOperations.HeaderSetsListe(worksheet, "C", "Kazanım Sıklığı", 20);
+                FileOperations.HeaderSetsListe(worksheet, "D", "Para Birimi", 20);
+                FileOperations.HeaderSetsListe(worksheet, "E", "Çatı Max Tutar", 20);
+                FileOperations.HeaderSetsListe(worksheet, "F", "Çatı Max Yararlanma", 20);
+                FileOperations.HeaderSetsListe(worksheet, "G", "Çatı Oranı", 20);
+                FileOperations.HeaderSetsListe(worksheet, "H", "Tutar", 20);
+                FileOperations.HeaderSetsListe(worksheet, "I", "Oran", 20);
+                FileOperations.HeaderSetsListe(worksheet, "J", "Aktif", 20);
 
                 int currentRow = 1;
                 int column = 1;
@@ -218,6 +219,11 @@ namespace Bbt.Campaign.Services.FileOperations
 
 
                     worksheet.Cell(currentRow, column).Value = topLimit.Name;
+                    worksheet.Column($"{column}").Width = 50;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = topLimit.CampaignNames;
                     worksheet.Column($"{column}").Width = 50;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 

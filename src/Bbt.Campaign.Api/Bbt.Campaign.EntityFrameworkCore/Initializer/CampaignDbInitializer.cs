@@ -91,7 +91,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
 
             modelBuilder.Entity<JoinTypeEntity>().HasData(
                 new JoinTypeEntity() { Id = 1, Code = "SK", Name = "Tüm Müşteriler", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-                new JoinTypeEntity() { Id = 2, Code = "SK", Name = "Müşteri Özelinde", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                //new JoinTypeEntity() { Id = 2, Code = "SK", Name = "Müşteri Özelinde", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                 new JoinTypeEntity() { Id = 3, Code = "SK", Name = "İş Kolu Özelinde", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                 new JoinTypeEntity() { Id = 4, Code = "SK", Name = "Şube Özelinde", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
                 new JoinTypeEntity() { Id = 5, Code = "SK", Name = "Müşteri Tipi Özelinde", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
