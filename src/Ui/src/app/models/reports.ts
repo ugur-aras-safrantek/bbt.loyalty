@@ -64,11 +64,10 @@ interface ITargetReportRequestModel {
   campaignId?: any;
   targetId?: any;
   identitySubTypeId?: any;
-  isIncludedProgram?: any;
-  customerNo?: any;
-  startDate?: any;
-  endDate?: any;
-  statusId?: any;
+  isJoin?: any;
+  customerCode?: any;
+  targetSuccessStartDate?: any;
+  targetSuccessEndDate?: any;
 }
 
 export class TargetReportRequestModel implements ITargetReportRequestModel, IPagingRequestModel {
@@ -79,9 +78,8 @@ export class TargetReportRequestModel implements ITargetReportRequestModel, IPag
   campaignId?: any;
   targetId?: any;
   identitySubTypeId?: any;
-  isIncludedProgram?: any;
-  customerNo?: any;
-  startDate?: any;
-  endDate?: any;
-  statusId?: any;
+  isJoin?: any;
+  customerCode?: any;
+  targetSuccessStartDate?: any;
+  targetSuccessEndDate?: any;
 }
