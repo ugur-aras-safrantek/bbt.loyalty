@@ -27,13 +27,18 @@ export class ReportsByTargetComponent implements OnInit {
   columns = [
     {columnName: 'Hedef Adı', propertyName: 'targetName', isBoolean: false, sortDir: null},
     {columnName: 'Kampanya / Program', propertyName: 'campaignName', isBoolean: false, sortDir: null},
-    {columnName: 'Programa Dahil Mi?', propertyName: 'isIncludedProgram', isBoolean: false, sortDir: null},
-    {columnName: 'Müşteri No', propertyName: 'customerNo', isBoolean: false, sortDir: null},
+    {columnName: 'Programa Dahil Mi?', propertyName: 'isJoin', isBoolean: true, sortDir: null},
+    {columnName: 'Müşteri No', propertyName: 'customerCode', isBoolean: false, sortDir: null},
     {columnName: 'Alt Kırılım', propertyName: 'identitySubTypeName', isBoolean: false, sortDir: null},
-    {columnName: 'Harcama Hedefi', propertyName: '', isBoolean: false, sortDir: null},
-    {columnName: 'Hedef Tuttu Mu?', propertyName: '', isBoolean: false, sortDir: null},
-    {columnName: 'Kalan Harcama', propertyName: '', isBoolean: false, sortDir: null},
-    {columnName: 'Hedefin Gerçekleştiği Tarih', propertyName: '', isBoolean: false, sortDir: null},
+    {columnName: 'Harcama Hedefi', propertyName: 'targetAmountStr', isBoolean: false, sortDir: null},
+    {columnName: 'Hedef Tuttu Mu?', propertyName: 'isTargetSuccess', isBoolean: true, sortDir: null},
+    {columnName: 'Kalan Harcama', propertyName: 'remainAmountStr', isBoolean: false, sortDir: null},
+    {
+      columnName: 'Hedefin Gerçekleştiği Tarih',
+      propertyName: 'targetSuccessStartDateStr',
+      isBoolean: false,
+      sortDir: null
+    },
   ];
 
   campaignList: DropdownListModel[];
@@ -44,11 +49,11 @@ export class ReportsByTargetComponent implements OnInit {
     campaignId: null,
     targetId: null,
     identitySubTypeId: null,
-    isIncludedProgram: null,
-    customerNo: '',
+    isJoin: null,
+    customerCode: '',
   };
-  startDate: any;
-  endDate: any;
+  targetSuccessStartDate: any;
+  targetSuccessEndDate: any;
 
   constructor(private reportsService: ReportsService,
               private toastrHandleService: ToastrHandleService,
@@ -71,11 +76,11 @@ export class ReportsByTargetComponent implements OnInit {
       campaignId: null,
       targetId: null,
       identitySubTypeId: null,
-      isIncludedProgram: null,
-      customerNo: '',
+      isJoin: null,
+      customerCode: '',
     };
-    this.startDate = '';
-    this.endDate = '';
+    this.targetSuccessStartDate = '';
+    this.targetSuccessEndDate = '';
 
     this.listService.clearList();
 
@@ -91,18 +96,17 @@ export class ReportsByTargetComponent implements OnInit {
       campaignId: this.filterForm.campaignId,
       targetId: this.filterForm.targetId,
       identitySubTypeId: this.filterForm.identitySubTypeId,
-      isIncludedProgram: this.filterForm.isIncludedProgram,
-      customerNo: this.filterForm.customerNo,
-      startDate: this.startDate?.singleDate?.formatted,
-      endDate: this.endDate?.singleDate?.formatted,
-      statusId: 4,
+      isJoin: this.filterForm.isJoin,
+      customerCode: this.filterForm.customerCode,
+      targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
+      targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
     };
     this.reportsService.targetReportGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
-          if (!res.hasError && res.data && res.data.targetList.length > 0) {
-            this.listService.setList(this.columns, res.data.targetList, res.data.paging);
+          if (!res.hasError && res.data && res.data.targetReportList.length > 0) {
+            this.listService.setList(this.columns, res.data.targetReportList, res.data.paging);
           } else {
             this.listService.setError("Listeleme için uygun kayıt bulunamadı");
           }
@@ -124,11 +128,10 @@ export class ReportsByTargetComponent implements OnInit {
       campaignId: this.filterForm.campaignId,
       targetId: this.filterForm.targetId,
       identitySubTypeId: this.filterForm.identitySubTypeId,
-      isIncludedProgram: this.filterForm.isIncludedProgram,
-      customerNo: this.filterForm.customerNo,
-      startDate: this.startDate?.singleDate?.formatted,
-      endDate: this.endDate?.singleDate?.formatted,
-      statusId: 4,
+      isJoin: this.filterForm.isJoin,
+      customerCode: this.filterForm.customerCode,
+      targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
+      targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
     };
     this.reportsService.targetReportGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))

@@ -40,7 +40,7 @@
           <div class="form-group">
             <label>Programa Dahil mi?</label>
             <select name="isIncludedProgram" class="form-select form-select-sm"
-                    [(ngModel)]="filterForm.isIncludedProgram">
+                    [(ngModel)]="filterForm.isJoin">
               <option [ngValue]="null">Seçiniz</option>
               <option [ngValue]="true">Evet</option>
               <option [ngValue]="false">Hayır</option>
@@ -51,7 +51,7 @@
           <div class="form-group">
             <label>Müşteri No</label>
             <input type="text" class="form-control form-control-sm"
-                   [(ngModel)]="filterForm.customerNo">
+                   [(ngModel)]="filterForm.customerCode">
           </div>
         </div>
 
@@ -64,7 +64,7 @@
                    angular-mydatepicker
                    #startDateDp="angular-mydatepicker"
                    [options]="dpOptions" [locale]="locale"
-                   [(ngModel)]="startDate"
+                   [(ngModel)]="targetSuccessStartDate"
                    (click)="startDateDp.toggleCalendar()"/>
           </div>
         </div>
@@ -75,7 +75,7 @@
                    angular-mydatepicker
                    #endDateDp="angular-mydatepicker"
                    [options]="dpOptions" [locale]="locale"
-                   [(ngModel)]="endDate"
+                   [(ngModel)]="targetSuccessEndDate"
                    (click)="endDateDp.toggleCalendar()"/>
           </div>
         </div>
