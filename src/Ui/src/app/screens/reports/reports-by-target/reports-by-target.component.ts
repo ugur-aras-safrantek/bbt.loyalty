@@ -8,6 +8,7 @@ import {UtilityService} from "../../../services/utility.service";
 import {ListService} from "../../../services/list.service";
 import {ReportsService} from "../../../services/reports.service";
 import {TargetReportRequestModel} from "../../../models/reports";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-reports-by-target',
@@ -35,7 +36,7 @@ export class ReportsByTargetComponent implements OnInit {
     {columnName: 'Kalan Harcama', propertyName: 'remainAmountStr', isBoolean: false, sortDir: null},
     {
       columnName: 'Hedefin Gerçekleştiği Tarih',
-      propertyName: 'targetSuccessStartDateStr',
+      propertyName: 'targetSuccessDateStr',
       isBoolean: false,
       sortDir: null
     },
@@ -45,20 +46,24 @@ export class ReportsByTargetComponent implements OnInit {
   targetList: DropdownListModel[];
   identitySubTypeList: DropdownListModel[];
 
-  filterForm = {
-    campaignId: null,
-    targetId: null,
-    identitySubTypeId: null,
-    isJoin: null,
-    customerCode: '',
-  };
+  formGroup: FormGroup;
   targetSuccessStartDate: any;
   targetSuccessEndDate: any;
 
+  submitted = false;
+
   constructor(private reportsService: ReportsService,
+              private fb: FormBuilder,
               private toastrHandleService: ToastrHandleService,
               private utilityService: UtilityService,
               private listService: ListService) {
+    this.formGroup = this.fb.group({
+      campaignId: null,
+      targetId: [null, Validators.required],
+      identitySubTypeId: null,
+      isJoin: null,
+      customerCode: '',
+    });
   }
 
   ngOnInit(): void {
@@ -71,65 +76,74 @@ export class ReportsByTargetComponent implements OnInit {
     this.destroy$.unsubscribe();
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
+
   clear() {
-    this.filterForm = {
+    this.formGroup.patchValue({
       campaignId: null,
       targetId: null,
       identitySubTypeId: null,
       isJoin: null,
       customerCode: '',
-    };
+    });
     this.targetSuccessStartDate = '';
     this.targetSuccessEndDate = '';
 
-    this.listService.clearList();
+    this.submitted = false;
 
-    this.targetReportGetByFilter();
+    this.listService.clearList();
   }
 
   targetReportGetByFilter() {
-    let requestModel: TargetReportRequestModel = {
-      pageNumber: this.listService.paging.currentPage,
-      pageSize: 10,
-      sortBy: this.listService.currentSortBy,
-      sortDir: this.listService.currentSortDir,
-      campaignId: this.filterForm.campaignId,
-      targetId: this.filterForm.targetId,
-      identitySubTypeId: this.filterForm.identitySubTypeId,
-      isJoin: this.filterForm.isJoin,
-      customerCode: this.filterForm.customerCode,
-      targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
-      targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
-    };
-    this.reportsService.targetReportGetByFilter(requestModel)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (!res.hasError && res.data && res.data.targetReportList.length > 0) {
-            this.listService.setList(this.columns, res.data.targetReportList, res.data.paging);
-          } else {
-            this.listService.setError("Listeleme için uygun kayıt bulunamadı");
+    this.submitted = true;
+    if (this.formGroup.valid) {
+      let formGroup = this.formGroup.getRawValue();
+      let requestModel: TargetReportRequestModel = {
+        pageNumber: this.listService.paging.currentPage,
+        pageSize: 10,
+        sortBy: this.listService.currentSortBy,
+        sortDir: this.listService.currentSortDir,
+        campaignId: formGroup.campaignId,
+        targetId: formGroup.targetId,
+        identitySubTypeId: formGroup.identitySubTypeId,
+        isJoin: formGroup.isJoin,
+        customerCode: formGroup.customerCode,
+        targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
+        targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
+      };
+      this.reportsService.targetReportGetByFilter(requestModel)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: res => {
+            if (!res.hasError && res.data && res.data.targetReportList.length > 0) {
+              this.listService.setList(this.columns, res.data.targetReportList, res.data.paging);
+            } else {
+              this.listService.setError("Listeleme için uygun kayıt bulunamadı");
+            }
+          },
+          error: err => {
+            if (err.error) {
+              this.toastrHandleService.error(err.error);
+            }
           }
-        },
-        error: err => {
-          if (err.error) {
-            this.toastrHandleService.error(err.error);
-          }
-        }
-      });
+        });
+    }
   }
 
   targetReportGetByFilterExcelFile() {
+    let formGroup = this.formGroup.getRawValue();
     let requestModel: TargetReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
       sortDir: this.listService.currentSortDir,
-      campaignId: this.filterForm.campaignId,
-      targetId: this.filterForm.targetId,
-      identitySubTypeId: this.filterForm.identitySubTypeId,
-      isJoin: this.filterForm.isJoin,
-      customerCode: this.filterForm.customerCode,
+      campaignId: formGroup.campaignId,
+      targetId: formGroup.targetId,
+      identitySubTypeId: formGroup.identitySubTypeId,
+      isJoin: formGroup.isJoin,
+      customerCode: formGroup.customerCode,
       targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
       targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
     };
