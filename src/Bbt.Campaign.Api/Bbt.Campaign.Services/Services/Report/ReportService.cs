@@ -685,7 +685,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 targetReportListDto.IsTargetSuccess = true;
                 targetReportListDto.RemainAmount = 0;
                 targetReportListDto.RemainAmountStr = "0";
-                targetReportListDto.TargetSuccessStartDateStr = "25-07-2022";
+                targetReportListDto.TargetSuccessDateStr = "25-07-2022";
                 targetReportList.Add(targetReportListDto);
 
                 targetReportListDto = new TargetReportListDto();
@@ -699,8 +699,55 @@ namespace Bbt.Campaign.Services.Services.Report
                 targetReportListDto.IsTargetSuccess = false;
                 targetReportListDto.RemainAmount = 20;
                 targetReportListDto.RemainAmountStr = "20";
-                targetReportListDto.TargetSuccessStartDateStr = null;
+                targetReportListDto.TargetSuccessDateStr = null;
                 targetReportList.Add(targetReportListDto);
+            }
+            else 
+            {
+                var getTargetReport = await _remoteService.GetTargetReportData(request);
+                if (getTargetReport != null && getTargetReport.ReportData != null && getTargetReport.ReportData.Any()) 
+                {
+                    foreach (var x in getTargetReport.ReportData) 
+                    {
+                        TargetReportListDto targetReportListDto = new TargetReportListDto();
+
+                        targetReportListDto.TargetName = x.TargetName;
+                        targetReportListDto.CampaignName = x.CampaignName;
+                        targetReportListDto.IsJoin = x.IsJoin;
+                        targetReportListDto.CustomerCode = x.CustomerNumber;
+
+                        int identitySubTypeId = x.SubSegment ?? 0;
+                        if(identitySubTypeId > 0)
+                            targetReportListDto.IdentitySubTypeName = Helpers.GetEnumDescription<IdentitySubTypeEnum>(identitySubTypeId);
+
+                        targetReportListDto.TargetAmount = x.TargetAmount;
+                        targetReportListDto.TargetAmountStr = Helpers.ConvertNullablePriceString(x.TargetAmount == null ? null : (decimal)x.TargetAmount);
+                        targetReportListDto.TargetAmountCurrency = x.TargetAmountCurrency;
+
+                        targetReportListDto.IsTargetSuccess = x.IsCompleted;
+
+                        targetReportListDto.RemainAmount = x.RemainingAmount;
+                        targetReportListDto.RemainAmountStr = Helpers.ConvertNullablePriceString(x.RemainingAmount == null ? null : (decimal)x.RemainingAmount);
+                        targetReportListDto.RemainAmountCurrency = x.RemainingAmountCurrency;
+
+                        string targetSuccessDateStr = x.CompletedAt == null ? null :  x.CompletedAt.ToString();
+                        if (!string.IsNullOrEmpty(targetSuccessDateStr))
+                        {
+                            string[] targetSuccessDateArray = targetSuccessDateStr.Split('T');
+                            if (targetSuccessDateArray.Length == 2)
+                            {
+                                targetSuccessDateArray = targetSuccessDateArray[0].Split('-');
+                                if (targetSuccessDateArray.Length == 3)
+                                {
+                                    targetSuccessDateStr = targetSuccessDateArray[2] + "-" + targetSuccessDateArray[1] + "-" + targetSuccessDateArray[0];
+                                }
+                            }
+                        }
+                        targetReportListDto.TargetSuccessDateStr = targetSuccessDateStr;
+
+                        targetReportList.Add(targetReportListDto);
+                    }
+                }
             }
 
             return targetReportList; 

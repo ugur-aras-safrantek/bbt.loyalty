@@ -469,6 +469,42 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             response.IsAchieved = response.CampaignTarget.IsAchieved;
 
+            //targetResultDefinition
+            string targetResultDefinition = string.Empty;
+            var campaignTarget = response.CampaignTarget.ProgressBarlist.FirstOrDefault();
+            if(campaignTarget != null) 
+            {
+                string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
+                string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
+                string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode ?? "";
+                string campaignName = campaignEntity.Name;
+                string monthName = string.Empty;
+                int month = DateTime.Now.Month + 1;
+                if (month == 13)
+                    month = 1;
+
+                monthName = Helpers.GetEnumDescription<MonthsEnum>(month);
+
+                if (response.IsAchieved)
+                {
+                    targetResultDefinition = string.Format(@"{0} {1} ve üzeri harcama yaparak hedefinizi tutturduğunuz için {2} ayında {3} avantajlarından faydalanabilirsiniz."
+                                                , targetAmountStr
+                                                , targetCurrencyCode
+                                                , monthName
+                                                , campaignName);
+                }
+                else
+                {
+                    targetResultDefinition = string.Format(@"Sadece {0} {1} harcama yaparak {2} ayında {3} avantajlarından faydalanmaya başlayabilirsiniz."
+                                        , remainAmountStr
+                                        , targetCurrencyCode
+                                        , monthName
+                                        , campaignName);
+                }
+            }
+            
+            response.TargetResultDefinition = targetResultDefinition;
+
             //achievement
             var campaignAchievementList = await _campaignAchievementService.GetCustomerAchievementsAsync(campaignId, customerCode, language);
             foreach (var campaignAchievement in campaignAchievementList)
@@ -505,6 +541,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                 CampaignListImageUrl = x.CampaignListImageUrl,
                 CampaignDetailImageUrl = x.CampaignDetailImageUrl,
                 EndDate = x.EndDate,
+                ContentEn = x.ContentEn,
+                ContentTr = x.ContentTr,
             }).ToList();
 
             if(!campaignList.Any())

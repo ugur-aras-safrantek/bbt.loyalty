@@ -1,5 +1,6 @@
 ﻿
 using Bbt.Campaign.Public.Dtos.Campaign;
+using Bbt.Campaign.Public.Dtos.CampaignDetail;
 
 namespace Bbt.Campaign.Public.Dtos.Customer
 {

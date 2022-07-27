@@ -33,11 +33,12 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
         public async Task<BaseResponse<List<CampaignIdentityDto>>> UpdateAsync(UpdateCampaignIdentityRequest request, string userId) 
         {
             List<string>  identityList = await CheckValidationsAsync(request);
-            foreach (var x in await _unitOfWork.GetRepository<CampaignIdentityEntity>()
-                .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true).ToListAsync()) 
-            {
-                await _unitOfWork.GetRepository<CampaignIdentityEntity>().DeleteAsync(x);
-            }
+
+            //foreach (var x in await _unitOfWork.GetRepository<CampaignIdentityEntity>()
+            //    .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true).ToListAsync()) 
+            //{
+            //    await _unitOfWork.GetRepository<CampaignIdentityEntity>().DeleteAsync(x);
+            //}
 
             foreach(string identity in identityList) 
             {

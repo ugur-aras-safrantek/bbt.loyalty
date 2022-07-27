@@ -1,4 +1,6 @@
-﻿using Bbt.Campaign.Core.Helper;
+﻿using Bbt.Campaign.Core.DbEntities;
+using Bbt.Campaign.Core.Helper;
+using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Report;
@@ -20,9 +22,11 @@ namespace Bbt.Campaign.Services.Services.Remote
     public class RemoteService : IRemoteService, IScopedService
     {
         private readonly IParameterService _parameterService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RemoteService(IParameterService parameterService)
+        public RemoteService(IUnitOfWork unitOfWork, IParameterService parameterService)
         {
+            _unitOfWork = unitOfWork;
             _parameterService = parameterService;
         }
 
@@ -226,6 +230,122 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return customerReportServiceDto;
         }
+
+        public async Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request) 
+        {
+            TargetReportServiceDto targetReportServiceDto = null;
+            using (var httpClient = new HttpClient()) 
+            {
+                string accessToken = await GetAccessToken();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("TargetReport");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+
+                int pageNumber = (request.PageNumber - 1) ?? 0;
+                serviceUrl += "?PageNumber=" + pageNumber;
+                int pageSize = (request.PageSize) ?? 25;
+                serviceUrl += "&PageSize=" + pageSize;
+                if (!string.IsNullOrEmpty(request.SortBy)) 
+                {
+                    if (request.SortBy.EndsWith("Str"))
+                        request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
+
+                    string sortBy = request.SortBy;
+                    switch (request.SortBy)
+                    {
+                        case "TargetName":
+                            sortBy = "TargetName";
+                            break;
+                        case "CampaignName":
+                            sortBy = "CampaignName";
+                            break;
+                        case "IsJoin":
+                            sortBy = "IsJoin";
+                            break;
+                        case "CustomerCode":
+                            sortBy = "CustomerNumber";
+                            break;
+                        case "IdentitySubTypeId":
+                            sortBy = "SubSegment";
+                            break;
+                        case "TargetAmount":
+                            sortBy = "TargetAmount";
+                            break;
+                        case "TargetAmountCurrency":
+                            sortBy = "TargetAmountCurrency";
+                            break;
+                        case "RemainAmount":
+                            sortBy = "RemainingAmount";
+                            break;
+                        case "RemainAmountCurrency":
+                            sortBy = "RemainingAmountCurrency";
+                            break;
+                        case "IsTargetSuccess":
+                            sortBy = "IsCompleted";
+                            break;
+                        case "TargetSuccessStartDate":
+                            sortBy = "CompletedAt";
+                            break;
+                    }
+
+                    serviceUrl += "&SortBy=" + sortBy;
+
+                    bool isDescending = request.SortDir?.ToLower() == "desc";
+
+                    serviceUrl += "&SortType=" + (isDescending ? (int)SortTypeEnum.Descending : (int)SortTypeEnum.Ascending);
+
+                }
+                else
+                {
+                    serviceUrl += "&SortBy=CompletedAt";
+                    serviceUrl += "&SortType=" + (int)SortTypeEnum.Descending;
+                }
+
+                if (request.CampaignId.HasValue) 
+                {
+                    int campaignId = request.CampaignId ?? 0;
+                    var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+                    serviceUrl += "&CampaignCode=" + campaignEntity.Code;
+                }
+
+                var targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(request.TargetId);
+                serviceUrl += "&TargetCode=" + targetEntity.Code;
+
+                if (!string.IsNullOrEmpty(request.CustomerCode))
+                    serviceUrl += "&CustomerNumber=" + request.CustomerCode;
+                if (request.IdentitySubTypeId.HasValue) 
+                {
+                    int identitySubTypeId = request.IdentitySubTypeId ?? 0;
+                    serviceUrl += "&SubSegment=" + identitySubTypeId;
+                }
+                if (request.IsJoin.HasValue)
+                    serviceUrl += "&IsJoin=" + request.IsJoin;
+
+                if (!string.IsNullOrEmpty(request.TargetSuccessStartDate))
+                    serviceUrl += "&StartDate=" + request.TargetSuccessStartDate;
+
+                if (!string.IsNullOrEmpty(request.TargetSuccessEndDate))
+                    serviceUrl += "&EndDate=" + request.TargetSuccessEndDate;
+
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var restResponse = await httpClient.GetAsync(serviceUrl);
+                if (restResponse.IsSuccessStatusCode)
+                {
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                    targetReportServiceDto = JsonConvert.DeserializeObject<TargetReportServiceDto>(apiResponse);
+                }
+                else
+                {
+                    throw new Exception("Hedef raporu servisinden veri çekilemedi.");
+                }
+            }
+            return targetReportServiceDto;
+        }
+
+
+
+
         public async Task<UserModelService> GetUserRoles(string code, string state)
         {
             UserModelService userModel;

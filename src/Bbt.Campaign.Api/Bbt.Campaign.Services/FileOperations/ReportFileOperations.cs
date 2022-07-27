@@ -323,7 +323,7 @@ namespace Bbt.Campaign.Services.FileOperations
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
 
                     column++;
-                    worksheet.Cell(currentRow, column).Value = item.TargetSuccessStartDateStr;
+                    worksheet.Cell(currentRow, column).Value = item.TargetSuccessDateStr;
                     worksheet.Column($"{column}").Width = 30;
                     worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
                 }
