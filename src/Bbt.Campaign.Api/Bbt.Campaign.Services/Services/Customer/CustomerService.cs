@@ -11,7 +11,6 @@ using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.CampaignAchievement;
 using Bbt.Campaign.Services.Services.CampaignRule;
 using Bbt.Campaign.Services.Services.CampaignTarget;
-using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
@@ -23,20 +22,18 @@ namespace Bbt.Campaign.Services.Services.Customer
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly IRemoteService _remoteService;
 
-        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
+        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, 
             ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignTargetService campaignTargetService,
             ICampaignAchievementService campaignAchievementService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _parameterService = parameterService;
             _campaignService = campaignService;
             _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
