@@ -41,9 +41,11 @@ namespace Bbt.Campaign.Services.Services.Customer
             _remoteService = remoteService;
         }
 
-        public async Task<BaseResponse<CustomerCampaignDto>> SetJoin(SetJoinRequest request) 
+        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request) 
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
+
+            CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
             var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
@@ -74,9 +76,39 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             await _unitOfWork.SaveChangesAsync();
 
-            var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
+            //response
+            var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                        .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && !x.IsDeleted)
+                        .FirstOrDefaultAsync();
+            if (customerJoin == null)
+                throw new Exception("Müşteri kampanyaya katılmamış.");
 
-            return await BaseResponse<CustomerCampaignDto>.SuccessAsync(mappedCustomerCampaign);
+            if (!customerJoin.IsJoin)
+                throw new Exception("Müşteri kampanyaya katılmamış.");
+
+            var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
+                .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
+            campaignQuery = campaignQuery.Take(1);
+
+            var campaignList = campaignQuery.Select(x => new CampaignMinDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                TitleEn = x.TitleEn,
+                TitleTr = x.TitleTr,
+                CampaignListImageUrl = x.CampaignListImageUrl,
+                CampaignDetailImageUrl = x.CampaignDetailImageUrl,
+                EndDate = x.EndDate,
+                ContentEn = x.ContentEn,
+                ContentTr = x.ContentTr,
+            }).ToList();
+
+            if (!campaignList.Any())
+                throw new Exception("Kampanya bulunamadı.");
+
+            response.Campaign = campaignList[0];
+
+            return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
         }
         public async Task<BaseResponse<CustomerCampaignDto>> SetFavorite(SetFavoriteRequest request)
         {
@@ -510,8 +542,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
         }
-
-
         public async Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode) 
         {
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();

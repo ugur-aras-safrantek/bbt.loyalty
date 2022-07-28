@@ -11,7 +11,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 {
     public interface ICustomerService
     {
-        public Task<BaseResponse<CustomerCampaignDto>> SetJoin(SetJoinRequest request);
+        public Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request);
         public Task<BaseResponse<CustomerCampaignDto>> SetFavorite(SetFavoriteRequest request);
         public Task<BaseResponse<CustomerCampaignDto>> DeleteAsync(int id);
         public Task<BaseResponse<CustomerCampaignDto>> GetCustomerCampaignAsync(int id);
