@@ -166,10 +166,10 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (campaignQuery.Count() == 0)
                 return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response, "Kampanya bulunamadı");
 
-            var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
-            var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = campaignQuery.Count();
-            campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            //var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
+            //var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
+            //var totalItems = campaignQuery.Count();
+            //campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
            
             var campaignList = campaignQuery.Select(x => new CampaignMinDto
             {
@@ -234,7 +234,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             response.CustomerCampaignList = returnList;
-            response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
+            //response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             
             return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
         }
