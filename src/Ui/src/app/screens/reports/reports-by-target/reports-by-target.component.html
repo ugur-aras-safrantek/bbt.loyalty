@@ -2,66 +2,60 @@
   <app-list (getListEvent)="targetReportGetByFilter()"
             (downloadExcelFileEvent)="targetReportGetByFilterExcelFile()">
     <div filterForm class="p-4">
-      <form [formGroup]="formGroup">
-        <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <label>Kampanya / Program</label>
-              <select name="campaignId" class="form-select form-select-sm"
-                      formControlName="campaignId">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of campaignList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-            </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <label>Kampanya / Program</label>
+            <select name="campaignId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.campaignId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of campaignList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <label>Hedef Adı</label>
-              <select name="targetId" class="form-select form-select-sm"
-                      [ngClass]="{ 'is-invalid': submitted && f.targetId.invalid }"
-                      formControlName="targetId">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of targetList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-              <div *ngIf="submitted && f.targetId.errors" class="invalid-feedback">
-                <div *ngIf="f.targetId.errors.required">Hedef seçilmelidir.</div>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label>Alt Kırılım</label>
-              <select name="identitySubTypeId" class="form-select form-select-sm"
-                      formControlName="identitySubTypeId">
-                <option [ngValue]="null">Seçiniz</option>
-                <option *ngFor="let i of identitySubTypeList"
-                        [value]="i.id">{{i.name}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label>Programa Dahil mi?</label>
-              <select name="isIncludedProgram" class="form-select form-select-sm"
-                      formControlName="isJoin">
-                <option [ngValue]="null">Seçiniz</option>
-                <option [ngValue]="true">Evet</option>
-                <option [ngValue]="false">Hayır</option>
-              </select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label>Müşteri No</label>
-              <input type="text" class="form-control form-control-sm"
-                     formControlName="customerCode">
-            </div>
-          </div>
-
         </div>
-      </form>
+        <div class="col">
+          <div class="form-group">
+            <label>Hedef Adı</label>
+            <select name="targetId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.targetId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of targetList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Alt Kırılım</label>
+            <select name="identitySubTypeId" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.identitySubTypeId">
+              <option [ngValue]="null">Seçiniz</option>
+              <option *ngFor="let i of identitySubTypeList"
+                      [value]="i.id">{{i.name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Programa Dahil mi?</label>
+            <select name="isIncludedProgram" class="form-select form-select-sm"
+                    [(ngModel)]="filterForm.isJoin">
+              <option [ngValue]="null">Seçiniz</option>
+              <option [ngValue]="true">Evet</option>
+              <option [ngValue]="false">Hayır</option>
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>Müşteri No</label>
+            <input type="text" class="form-control form-control-sm"
+                   [(ngModel)]="filterForm.customerCode">
+          </div>
+        </div>
+
+      </div>
       <div class="row mt-3">
         <div class="col">
           <div class="form-group calendar">
