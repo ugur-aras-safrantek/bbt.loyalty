@@ -308,8 +308,12 @@ namespace Bbt.Campaign.Services.Services.Remote
                     serviceUrl += "&CampaignCode=" + campaignEntity.Code;
                 }
 
-                var targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(request.TargetId);
-                serviceUrl += "&TargetCode=" + targetEntity.Code;
+                if (request.TargetId.HasValue) 
+                {
+                    int targetId = request.TargetId ?? 0;
+                    var targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
+                    serviceUrl += "&TargetCode=" + targetEntity.Code;
+                }
 
                 if (!string.IsNullOrEmpty(request.CustomerCode))
                     serviceUrl += "&CustomerNumber=" + request.CustomerCode;
