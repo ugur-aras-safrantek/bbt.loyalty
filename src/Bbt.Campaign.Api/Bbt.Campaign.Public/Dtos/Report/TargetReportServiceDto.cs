@@ -18,7 +18,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? CampaignName { get; set; }
         public string? TargetCode { get; set; }
         public string? TargetName { get; set; }
-        public bool IsJoin { get; set; }    
+        public bool IsJoined { get; set; }    
         public string? CustomerNumber { get; set; }
         public int? SubSegment { get; set; }
         public double? TargetAmount { get; set; }

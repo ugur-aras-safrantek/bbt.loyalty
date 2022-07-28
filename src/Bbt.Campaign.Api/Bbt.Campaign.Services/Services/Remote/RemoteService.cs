@@ -325,11 +325,23 @@ namespace Bbt.Campaign.Services.Services.Remote
                 if (request.IsJoin.HasValue)
                     serviceUrl += "&IsJoin=" + request.IsJoin;
 
-                if (!string.IsNullOrEmpty(request.TargetSuccessStartDate))
-                    serviceUrl += "&StartDate=" + request.TargetSuccessStartDate;
+                if (!string.IsNullOrEmpty(request.TargetSuccessStartDate)) 
+                {
+                    string[] startDateArray = request.TargetSuccessStartDate.Split('-');
+                    if(startDateArray.Length == 3) 
+                    {
+                        serviceUrl += "&StartDate=" + startDateArray[2] + "-" + startDateArray[1] + "-" + startDateArray[0];
+                    } 
+                }
 
                 if (!string.IsNullOrEmpty(request.TargetSuccessEndDate))
-                    serviceUrl += "&EndDate=" + request.TargetSuccessEndDate;
+                {
+                    string[] endDateArray = request.TargetSuccessEndDate.Split('-');
+                    if (endDateArray.Length == 3)
+                    {
+                        serviceUrl += "&EndDate=" + endDateArray[2] + "-" + endDateArray[1] + "-" + endDateArray[0];
+                    }
+                }
 
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

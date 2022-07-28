@@ -713,7 +713,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
                         targetReportListDto.TargetName = x.TargetName;
                         targetReportListDto.CampaignName = x.CampaignName;
-                        targetReportListDto.IsJoin = x.IsJoin;
+                        targetReportListDto.IsJoin = x.IsJoined;
                         targetReportListDto.CustomerCode = x.CustomerNumber;
 
                         int identitySubTypeId = x.SubSegment ?? 0;
@@ -733,14 +733,15 @@ namespace Bbt.Campaign.Services.Services.Report
                         string targetSuccessDateStr = x.CompletedAt == null ? null :  x.CompletedAt.ToString();
                         if (!string.IsNullOrEmpty(targetSuccessDateStr))
                         {
-                            string[] targetSuccessDateArray = targetSuccessDateStr.Split('T');
+                            string[] targetSuccessDateArray = targetSuccessDateStr.Split(' ');
                             if (targetSuccessDateArray.Length == 2)
                             {
-                                targetSuccessDateArray = targetSuccessDateArray[0].Split('-');
-                                if (targetSuccessDateArray.Length == 3)
-                                {
-                                    targetSuccessDateStr = targetSuccessDateArray[2] + "-" + targetSuccessDateArray[1] + "-" + targetSuccessDateArray[0];
-                                }
+                                targetSuccessDateStr = targetSuccessDateArray[0].Replace(".", "-");
+                                //targetSuccessDateArray = targetSuccessDateArray[0].Split('-');
+                                //if (targetSuccessDateArray.Length == 3)
+                                //{
+                                //    targetSuccessDateStr = targetSuccessDateArray[2] + "-" + targetSuccessDateArray[1] + "-" + targetSuccessDateArray[0];
+                                //}
                             }
                         }
                         targetReportListDto.TargetSuccessDateStr = targetSuccessDateStr;
