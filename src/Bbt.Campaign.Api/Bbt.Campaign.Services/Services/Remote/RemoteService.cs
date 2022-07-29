@@ -323,7 +323,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     serviceUrl += "&SubSegment=" + identitySubTypeId;
                 }
                 if (request.IsJoin.HasValue)
-                    serviceUrl += "&IsJoin=" + request.IsJoin;
+                    serviceUrl += "&IsJoined=" + request.IsJoin;
 
                 if (!string.IsNullOrEmpty(request.TargetSuccessStartDate)) 
                 {
