@@ -440,7 +440,9 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                             customerAchievement.Description = earning.AchivementDescription;
                             customerAchievement.Title = earning.AchivementTitle;
                             customerAchievement.AmountStr = Helpers.ConvertNullablePriceString((decimal)earning.Amount);
-                            customerAchievement.CurrencyCode = earning.Currency;
+                            customerAchievement.CurrencyCode = earning.Currency == null ? null : 
+                                earning.Currency == "TRY" ? "TL":
+                                earning.Currency;
                             customerAchievementList.Add(customerAchievement);
                         }
                     }

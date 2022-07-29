@@ -664,17 +664,23 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                 targetAmount = targetParameterDto2.TotalAmount ?? 0;
                                 targetParameterDto2.TargetAmount = targetAmount;
                                 targetParameterDto2.TargetAmountStr = Helpers.ConvertNullablePriceString(targetAmount);
-                                targetParameterDto2.TargetAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                targetParameterDto2.TargetAmountCurrencyCode = goalResult.Detail.StreamResult.Currency == null ? null :
+                                    goalResult.Detail.StreamResult.Currency == "TRY" ? "TL" :
+                                    goalResult.Detail.StreamResult.Currency;
 
                                 usedAmount = (decimal)goalResult.Detail.StreamResult.Amount;
                                 targetParameterDto2.UsedAmount = usedAmount;
                                 targetParameterDto2.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
-                                targetParameterDto2.UsedAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                targetParameterDto2.UsedAmountCurrencyCode = goalResult.Detail.StreamResult.Currency == null ? null :
+                                    goalResult.Detail.StreamResult.Currency == "TRY" ? "TL" :
+                                    goalResult.Detail.StreamResult.Currency;
 
                                 remainAmount = (decimal)goalResult.Detail.StreamResult.RemainingAmount;
                                 targetParameterDto2.RemainAmount = remainAmount;
                                 targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
-                                targetParameterDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                targetParameterDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency == null ? null :
+                                    goalResult.Detail.StreamResult.Currency == "TRY" ? "TL" :
+                                    goalResult.Detail.StreamResult.Currency;
 
                                 targetParameterDto2.IsAchieved = isAchieved;
                                 targetParameterDto2.Percent = (int)goalResult.Detail.StreamResult.AmountPercent;
