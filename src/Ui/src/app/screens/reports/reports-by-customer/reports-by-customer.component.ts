@@ -30,8 +30,8 @@ export class ReportsByCustomerComponent implements OnInit {
     {columnName: 'Şube', propertyName: 'branchName', isBoolean: false, sortDir: null},
     {columnName: 'İş Kolu', propertyName: 'businessLineName', isBoolean: false, sortDir: null},
     {columnName: 'Kazanıma Hak Kazandığı Tarih', propertyName: 'earningReachDateStr', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmount', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Oranı', propertyName: 'achievementRate', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmountStr', isBoolean: false, sortDir: null},
+    {columnName: 'Kazanım Oranı', propertyName: 'achievementRateStr', isBoolean: false, sortDir: null},
     {columnName: 'Kazanım Tipi', propertyName: 'achievementTypeName', isBoolean: false, sortDir: null},
     {columnName: 'Kazanımdan Yararlanılan Tarih', propertyName: 'achievementDateStr', isBoolean: false, sortDir: null},
   ];
