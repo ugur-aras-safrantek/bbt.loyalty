@@ -54,6 +54,52 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    window.location.href = environment.loginUrl;
+    // window.location.href = environment.loginUrl;
+    this.loginService.setCurrentUserAuthorizations('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxOWY0OWE3Ni00NmQ4LTRiNDEtODdiMy0wMmEzOGM2NTVlNGMiLCJVc2VySWQiOiIyNzMwNzk3NzMxNiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJJc0xveWFsdHlDcmVhdG9yIiwiSXNMb3lhbHR5QXBwcm92ZXIiLCJJc0xveWFsdHlSZWFkZXIiLCJJc0xveWFsdHlSdWxlQ3JlYXRvciIsIklzTG95YWx0eVJ1bGVBcHByb3ZlciJdLCJuYmYiOjE2NTkxMDE5MjUsImV4cCI6MTY1OTEzNDMyNSwiaXNzIjoiVE9LRU5fSVNTVUVSIiwiYXVkIjoiVE9LRU5fQVVESUVOQ0UifQ.V_yzSGr_4EmP2FI_lO9PVPyKZGdT3-qr_PnWv72z7Lg', [
+      {
+          "moduleId": 1,
+          "authorizationList": [
+              1,
+              2,
+              4,
+              3
+          ]
+      },
+      {
+          "moduleId": 2,
+          "authorizationList": [
+              1,
+              2,
+              4,
+              3
+          ]
+      },
+      {
+          "moduleId": 3,
+          "authorizationList": [
+              3,
+              3,
+              1,
+              2,
+              4
+          ]
+      },
+      {
+          "moduleId": 4,
+          "authorizationList": [
+              3,
+              3
+          ]
+      },
+      {
+          "moduleId": 5,
+          "authorizationList": [
+              1,
+              2,
+              3
+          ]
+      }
+  ]);
+    this.router.navigate([this.loginService.setRoute()]);
   }
 }
