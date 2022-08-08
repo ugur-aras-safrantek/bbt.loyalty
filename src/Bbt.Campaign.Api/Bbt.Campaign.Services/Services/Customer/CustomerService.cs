@@ -47,66 +47,102 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
+            bool isFavorite = false;
             var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .FirstOrDefaultAsync();
-            if (entity != null)
+            if(entity != null) 
             {
-                if(entity.IsJoin)
+                if (request.IsJoin && entity.IsJoin)
                     throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
-
-                entity.IsJoin = request.IsJoin;
-                entity.StartDate = request.IsJoin ? DateTime.Now : null;
-                entity.LastModifiedBy = request.CustomerCode;
-
-                await _unitOfWork.GetRepository<CustomerCampaignEntity>().UpdateAsync(entity);
+                if (!request.IsJoin && !entity.IsJoin)
+                    throw new Exception("Müşteri bu kampayaya henüz katılmamış.");
+                
+                isFavorite = entity.IsFavorite;
             }
-            else
+            else 
             {
-                entity = new CustomerCampaignEntity();
-                entity.CustomerCode = request.CustomerCode;
-                entity.CampaignId = request.CampaignId;
-                entity.IsFavorite = false;
-                entity.IsJoin = request.IsJoin;
-                entity.StartDate = request.IsJoin ? Helpers.ConvertDateTimeToShortDate(DateTime.Now) : null;
-                entity.CreatedBy = request.CustomerCode;
-
-                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+                if (!request.IsJoin)
+                    throw new Exception("Müşteri bu kampayaya henüz katılmamış.");
             }
 
+            foreach(var deleteEntity in _unitOfWork.GetRepository<CustomerCampaignEntity>()
+               .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
+               .ToList())
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
+            
+            if(isFavorite || request.IsJoin) 
+            {
+                var newEntity = new CustomerCampaignEntity();
+                newEntity.CustomerCode = request.CustomerCode;
+                newEntity.CampaignId = request.CampaignId;
+                newEntity.IsFavorite = isFavorite;
+                newEntity.IsJoin = request.IsJoin;
+                newEntity.StartDate = request.IsJoin ? Helpers.ConvertDateTimeToShortDate(DateTime.Now) : null;
+                newEntity.CreatedBy = request.CustomerCode;
+
+                newEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(newEntity);
+            }
+            
             await _unitOfWork.SaveChangesAsync();
 
             //response
-            var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                        .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && !x.IsDeleted)
-                        .FirstOrDefaultAsync();
-            if (customerJoin == null)
-                throw new Exception("Müşteri kampanyaya katılmamış.");
 
-            if (!customerJoin.IsJoin)
-                throw new Exception("Müşteri kampanyaya katılmamış.");
-
-            var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
-                .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
-            campaignQuery = campaignQuery.Take(1);
-
-            var campaignList = campaignQuery.Select(x => new CampaignMinDto
+            if (request.IsJoin) 
             {
-                Id = x.Id,
-                Name = x.Name,
-                TitleEn = x.TitleEn,
-                TitleTr = x.TitleTr,
-                CampaignListImageUrl = x.CampaignListImageUrl,
-                CampaignDetailImageUrl = x.CampaignDetailImageUrl,
-                EndDate = x.EndDate,
-                ContentEn = x.ContentEn,
-                ContentTr = x.ContentTr,
-            }).ToList();
+                var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                        .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && !x.IsDeleted)
+                        .OrderByDescending(x => x.Id)
+                        .FirstOrDefaultAsync();
+                if (customerJoin == null)
+                    throw new Exception("Müşteri kampanyaya katılmamış.");
 
-            if (!campaignList.Any())
-                throw new Exception("Kampanya bulunamadı.");
+                if (!customerJoin.IsJoin)
+                    throw new Exception("Müşteri kampanyaya katılmamış.");
 
-            response.Campaign = campaignList[0];
+                var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
+                    .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
+                campaignQuery = campaignQuery.Take(1);
+
+                var campaignList = campaignQuery.Select(x => new CampaignMinDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    TitleEn = x.TitleEn,
+                    TitleTr = x.TitleTr,
+                    CampaignListImageUrl = x.CampaignListImageUrl,
+                    CampaignDetailImageUrl = x.CampaignDetailImageUrl,
+                    EndDate = x.EndDate,
+                    ContentEn = x.ContentEn,
+                    ContentTr = x.ContentTr,
+                }).ToList();
+
+                if (!campaignList.Any())
+                    throw new Exception("Kampanya bulunamadı.");
+
+                response.Campaign = campaignList[0];
+            }
+            else 
+            {
+                var deletedEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                        .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && x.IsDeleted)
+                        .Include(x => x.Campaign)
+                        .OrderByDescending(x => x.Id)
+                        .FirstOrDefaultAsync();
+                if(deletedEntity != null) 
+                {
+                    CampaignMinDto campaignMinDto = new CampaignMinDto()
+                    {
+                        Id = deletedEntity.Campaign.Id,
+                        Name = deletedEntity.Campaign.Name,
+                        TitleTr = deletedEntity.Campaign.TitleTr,
+                        TitleEn = deletedEntity.Campaign.TitleEn,
+                        EndDate = deletedEntity.Campaign.EndDate,
+                    };
+                    
+                    response.Campaign = campaignMinDto;
+                }
+            }
 
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
         }
@@ -115,7 +151,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
             var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-               .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted != true)
+               .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .FirstOrDefaultAsync();
             if (entity != null)
             {
@@ -133,7 +169,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 entity.IsJoin = false;
                 entity.CreatedBy = request.CustomerCode;
 
-                entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -152,7 +188,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             var campaignEntity = _unitOfWork.GetRepository<CampaignEntity>()
-                    .GetAll(x => x.Id == campaignId && !x.IsDeleted && x.IsActive && x.EndDate >= today)
+                    .GetAll(x => x.Id == campaignId && !x.IsDeleted && x.IsActive && x.EndDate >= today && x.StatusId == (int)StatusEnum.Approved)
                     .FirstOrDefault();
             if (campaignEntity == null)
             {
@@ -467,7 +503,9 @@ namespace Bbt.Campaign.Services.Services.Customer
                     if (goalResultByCustomerIdAndMonthCount.Total != null)
                     {
                         response.TotalAchievementStr = Helpers.ConvertNullablePriceString(goalResultByCustomerIdAndMonthCount.Total.Amount);
-                        response.TotalAchievementCurrencyCode = goalResultByCustomerIdAndMonthCount.Total.Currency;
+                        response.TotalAchievementCurrencyCode = goalResultByCustomerIdAndMonthCount.Total.Currency == null ? null :
+                                goalResultByCustomerIdAndMonthCount.Total.Currency == "TRY" ? "TL" :
+                                goalResultByCustomerIdAndMonthCount.Total.Currency;
                     }
                     if (goalResultByCustomerIdAndMonthCount.Months != null && goalResultByCustomerIdAndMonthCount.Months.Any())
                     {
@@ -488,7 +526,9 @@ namespace Bbt.Campaign.Services.Services.Customer
                         if (monthAchievent != null)
                         {
                             response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(monthAchievent.Amount);
-                            response.PreviousMonthAchievementCurrencyCode = monthAchievent.Currency;
+                            response.PreviousMonthAchievementCurrencyCode = monthAchievent.Currency == null ? null :
+                                monthAchievent.Currency == "TRY" ? "TL" :
+                                monthAchievent.Currency;
                         }
                     }
                 }
@@ -505,7 +545,9 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
-                string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode ?? "";
+                string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode == null ? null :
+                                    campaignTarget.TargetAmountCurrencyCode == "TRY" ? "TL" :
+                                    campaignTarget.TargetAmountCurrencyCode;
                 string campaignName = campaignEntity.Name;
                 string monthName = string.Empty;
                 int month = DateTime.Now.Month + 1;
