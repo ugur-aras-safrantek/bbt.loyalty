@@ -688,9 +688,11 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                                 if (index == 0)
                                 {
                                     campaignTargetDto2.TargetAmountStr = targetParameterDto2.TargetAmountStr;
-                                    campaignTargetDto2.TargetAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                    campaignTargetDto2.TargetAmountCurrencyCode = targetParameterDto2.TargetAmountCurrencyCode;
+
                                     campaignTargetDto2.RemainAmountStr = targetParameterDto2.RemainAmountStr;
-                                    campaignTargetDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency;
+                                    campaignTargetDto2.RemainAmountCurrencyCode = targetParameterDto2.RemainAmountCurrencyCode;
+
                                     campaignTargetDto2.UsedAmountStr = targetParameterDto2.UsedAmountStr;
                                     campaignTargetDto2.UsedAmountCurrencyCode = targetParameterDto2.UsedAmountCurrencyCode;
                                 }
