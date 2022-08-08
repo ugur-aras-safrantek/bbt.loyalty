@@ -15,6 +15,7 @@ using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using Bbt.Campaign.Services.Services.Remote;
+using System.Text;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -576,11 +577,39 @@ namespace Bbt.Campaign.Services.Services.Customer
             
             response.TargetResultDefinition = targetResultDefinition;
 
+            //campaignLeftDefinition
+
             //achievement
             var campaignAchievementList = await _campaignAchievementService.GetCustomerAchievementsAsync(campaignId, customerCode, language);
             foreach (var campaignAchievement in campaignAchievementList)
                 campaignAchievement.IsAchieved = response.IsAchieved;
             response.CampaignAchievementList = campaignAchievementList;
+
+            string campaignLeftDefinition = string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(campaignEntity.Name + " programından ayrılma talebin bulunuyor. ");
+            sb.Append("İşlemini onaylaman doğrultusunda ");
+            for(int t = 0; t < campaignAchievementList.Count; t++) 
+            { 
+                if(campaignAchievementList.Count == 1) 
+                {
+                    sb.Append(campaignAchievementList[t].Description + " ");
+                }
+                else 
+                {
+                    if (t == campaignAchievementList.Count - 1)
+                        sb.Append(campaignAchievementList[t].Description + " ");
+                    else if (t == campaignAchievementList.Count - 2)
+                        sb.Append(campaignAchievementList[t].Description + " ve ");
+                    else
+                        sb.Append(campaignAchievementList[t].Description + ", ");
+                }
+            }
+            sb.Append("kazanamayacaksın. ");
+            sb.Append(campaignEntity.Name + " programından ayrılma talebin onaylıyor musun?");
+            campaignLeftDefinition = sb.ToString();
+            response.CampaignLeftDefinition = campaignLeftDefinition;
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
         }
