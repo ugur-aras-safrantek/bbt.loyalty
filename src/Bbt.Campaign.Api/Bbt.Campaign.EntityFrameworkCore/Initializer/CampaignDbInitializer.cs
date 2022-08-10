@@ -17,9 +17,9 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
 
         public void Seed()
         {
-            modelBuilder.Entity<BusinessLineEntity>().HasData(Helpers.EnumToObjectList<BusinessLineEnum>());
+            //modelBuilder.Entity<BusinessLineEntity>().HasData(Helpers.EnumToObjectList<BusinessLineEnum>());
 
-            modelBuilder.Entity<CustomerTypeEntity>().HasData(Helpers.EnumToObjectList<CustomerTypeEnum>());
+            //modelBuilder.Entity<CustomerTypeEntity>().HasData(Helpers.EnumToObjectList<CustomerTypeEnum>());
 
             modelBuilder.Entity<AchievementTypeEntity>().HasData(Helpers.EnumToObjectList<AchievementTypeEnum>());
 
@@ -56,15 +56,26 @@ namespace Bbt.Campaign.EntityFrameworkCore.Initializer
             //    new BranchEntity() { Id = 2, Code = "9531", Name = "Çamlıca Şubesi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
             //);
 
+            modelBuilder.Entity<BusinessLineEntity>().HasData(
+                new BusinessLineEntity() { Id = 1, Code = "B", Name = "Bireysel (B)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 2, Code = "T", Name = "Ticari (T)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 3, Code = "X", Name = "Dijital (X)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 4, Code = "I", Name = "Ticari 1 (I)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 5, Code = "P", Name = "Ticari 2 (P)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 6, Code = "M", Name = "Ticari 3 (M)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 7, Code = "K", Name = "Kurumsal (K)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new BusinessLineEntity() { Id = 8, Code = "A", Name = "Kurumsal 1 (A)", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            );
 
-        //    modelBuilder.Entity<CustomerTypeEntity>().HasData(
-        //    new CustomerTypeEntity() { Id = 1, Name = "Gerçek", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-        //    new CustomerTypeEntity() { Id = 2, Name = "Tüzel", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-        //    new CustomerTypeEntity() { Id = 3, Name = "Ortak", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-        //    new CustomerTypeEntity() { Id = 4, Name = "Reşit Olmayan", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-        //    new CustomerTypeEntity() { Id = 5, Name = "Adi Ortaklık", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
-        //    new CustomerTypeEntity() { Id = 6, Name = "Vesayete Tabi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
-        //);
+
+            modelBuilder.Entity<CustomerTypeEntity>().HasData(
+                new CustomerTypeEntity() { Id = 1, Code = 1, Name = "Gerçek", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new CustomerTypeEntity() { Id = 2, Code = 2, Name = "Tüzel", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new CustomerTypeEntity() { Id = 3, Code = 3, Name = "Ortak", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new CustomerTypeEntity() { Id = 4, Code = 4, Name = "Reşit Olmayan", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new CustomerTypeEntity() { Id = 5, Code = 5, Name = "Adi Ortaklık", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
+                new CustomerTypeEntity() { Id = 6, Code = 6, Name = "Vesayete Tabi", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, }
+            );
 
             modelBuilder.Entity<LanguageEntity>().HasData(
                 new LanguageEntity() { Id = 1, Code = "TR", Name = "Türkçe", CreatedBy = "1", CreatedOn = DateTime.Now, IsDeleted = false, },
