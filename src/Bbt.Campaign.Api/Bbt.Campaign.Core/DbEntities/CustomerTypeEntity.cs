@@ -7,5 +7,6 @@ namespace Bbt.Campaign.Core.DbEntities
     {
         [MaxLength(250), Required]
         public string Name { get; set; }
+        public int Code { get; set; }
     }
 }
