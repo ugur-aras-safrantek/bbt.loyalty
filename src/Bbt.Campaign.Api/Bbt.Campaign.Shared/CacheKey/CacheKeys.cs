@@ -71,5 +71,7 @@
         public const string LastProcessDate = "LastProcessDate";
 
         public const string IdentitySubTypeList = "IdentitySubTypeList";
+
+        public const string AccessToken = "AccessToken";
     }
 }

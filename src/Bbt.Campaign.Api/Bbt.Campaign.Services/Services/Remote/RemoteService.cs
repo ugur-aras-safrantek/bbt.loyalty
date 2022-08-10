@@ -1,6 +1,8 @@
 ﻿using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
+using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
+using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Report;
@@ -11,9 +13,9 @@ using Bbt.Campaign.Public.Models.Customer;
 using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.Net.Http.Headers;
 
@@ -23,11 +25,13 @@ namespace Bbt.Campaign.Services.Services.Remote
     {
         private readonly IParameterService _parameterService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRedisDatabaseProvider _redisDatabaseProvider;
 
-        public RemoteService(IUnitOfWork unitOfWork, IParameterService parameterService)
+        public RemoteService(IUnitOfWork unitOfWork, IParameterService parameterService, IRedisDatabaseProvider redisDatabaseProvider)
         {
             _unitOfWork = unitOfWork;
             _parameterService = parameterService;
+            _redisDatabaseProvider = redisDatabaseProvider;
         }
 
         public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode, int campaignId) 
@@ -35,7 +39,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             var goalResultByCustomerIdAndMonthCount = new GoalResultByCustomerIdAndMonthCount();
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await GetAccessToken();
+                string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -43,6 +47,10 @@ namespace Bbt.Campaign.Services.Services.Remote
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(serviceUrl);
+                
+                
+                
+                
                 if (response.IsSuccessStatusCode)
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();
@@ -61,7 +69,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             GoalResultByCustomerAndCampaing goalResultByCustomerAndCampaing = null;
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await GetAccessToken();
+                string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerAndCampaing");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -70,7 +78,15 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                
                 var restResponse = await httpClient.GetAsync(serviceUrl);
+                if(restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) 
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.GetAsync(serviceUrl);
+                }
+
                 if (restResponse.IsSuccessStatusCode)
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
@@ -86,7 +102,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             var earningByCustomerAndCampaingList = new List<EarningByCustomerAndCampaing>();
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await GetAccessToken();
+                string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("EarningByCustomerAndCampaing");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -95,7 +111,15 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+               
                 var restResponse = await httpClient.GetAsync(serviceUrl);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.GetAsync(serviceUrl);
+                }
+
                 if (restResponse.IsSuccessStatusCode)
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
@@ -111,7 +135,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             CustomerReportServiceDto customerReportServiceDto = null;
             using (var httpClient = new HttpClient())
             {
-                string accessToken = await GetAccessToken();
+                string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("CampaignReport");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -218,6 +242,14 @@ namespace Bbt.Campaign.Services.Services.Remote
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var restResponse = await httpClient.GetAsync(serviceUrl);
+
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.GetAsync(serviceUrl);
+                }
+
                 if (restResponse.IsSuccessStatusCode)
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
@@ -236,7 +268,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             TargetReportServiceDto targetReportServiceDto = null;
             using (var httpClient = new HttpClient()) 
             {
-                string accessToken = await GetAccessToken();
+                string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("TargetReport");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
@@ -346,6 +378,14 @@ namespace Bbt.Campaign.Services.Services.Remote
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var restResponse = await httpClient.GetAsync(serviceUrl);
+
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.GetAsync(serviceUrl);
+                }
+
                 if (restResponse.IsSuccessStatusCode)
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
@@ -358,9 +398,6 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return targetReportServiceDto;
         }
-
-
-
 
         public async Task<UserModelService> GetUserRoles(string code, string state)
         {
@@ -419,22 +456,30 @@ namespace Bbt.Campaign.Services.Services.Remote
         public async Task<Document> GetDocument(int id) 
         {
             var document = new Document();
-            string accessToken = await GetAccessToken();
+            string accessToken = await GetAccessTokenFromCache();
 
-            using (var client = new HttpClient())
+            using (var httpClient = new HttpClient())
             {
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("Document");
                 apiAddress = apiAddress.Replace("{key}", id.ToString());
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await client.GetAsync(serviceUrl);
-                if (response.IsSuccessStatusCode)
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var restResponse = await httpClient.GetAsync(serviceUrl);
+
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.GetAsync(serviceUrl);
+                }
+
+                if (restResponse.IsSuccessStatusCode)
+                {
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
                     document = JsonConvert.DeserializeObject<Document>(apiResponse);
                 }
-                else if (response.StatusCode.ToString() == "455")
+                else if (restResponse.StatusCode.ToString() == "455")
                 {
                     throw new Exception("Document template not found.");
                 }
@@ -445,7 +490,25 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return document;
         }
-        private async Task<string> GetAccessToken()
+
+        private async Task<string> GetAccessTokenFromCache()
+        {
+            string result = string.Empty;
+            var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.AccessToken);
+            if (!string.IsNullOrEmpty(cache)) 
+            { 
+                var accessTokenList = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
+                if (accessTokenList != null && accessTokenList.Count == 1)
+                    result = accessTokenList[0].Name;
+            }
+            else 
+            {
+                result = await GetAccessTokenFromService();
+            }
+            return result;
+        }
+
+        private async Task<string> GetAccessTokenFromService()
         {
             using (var client = new HttpClient())
             {
@@ -463,6 +526,13 @@ namespace Bbt.Campaign.Services.Services.Remote
                 var responseContent = result.Content.ReadAsStringAsync().Result;
                 AccessToken token = JsonConvert.DeserializeObject<AccessToken>(result.Content.ReadAsStringAsync().Result);
                 accessToken = token.Access_token;
+
+                //set cache
+                var accessTokenList = new List<ParameterDto>();
+                accessTokenList.Add(new ParameterDto() { Id = 1, Code = CacheKeys.AccessToken, Name = accessToken });
+                var cacheValue = JsonConvert.SerializeObject(accessTokenList);
+                await _redisDatabaseProvider.SetAsync(CacheKeys.AccessToken, cacheValue);
+
                 return accessToken;
             }
         }
