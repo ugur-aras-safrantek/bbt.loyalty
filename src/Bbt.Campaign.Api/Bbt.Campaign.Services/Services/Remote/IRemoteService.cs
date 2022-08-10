@@ -13,7 +13,7 @@ namespace Bbt.Campaign.Services.Services.Remote
     {
         //public Task<List<string>> GetChannelCodeList();
 
-        public Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode);
+        public Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode, int campaignId);
         public Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request);
         public Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang);
         public Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang);

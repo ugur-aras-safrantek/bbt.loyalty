@@ -30,7 +30,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             _parameterService = parameterService;
         }
 
-        public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode) 
+        public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode, int campaignId) 
         {
             var goalResultByCustomerIdAndMonthCount = new GoalResultByCustomerIdAndMonthCount();
             using (var httpClient = new HttpClient())
@@ -39,7 +39,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
                 string apiAddress = await _parameterService.GetServiceConstantValue("GoalResultByCustomerIdAndMonthCount");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
-                serviceUrl = serviceUrl.Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString()).Replace("{customerId}", customerCode).Replace("{monthCount}", "2");
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(serviceUrl);
@@ -51,7 +51,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 }
                 else
                 {
-                    throw new Exception("Müşteri kazanımları servisinden veri çekilemedi.");
+                    throw new Exception("GoalResultByCustomerIdAndMonthCount servisinden veri çekilemedi.");
                 }
             }
             return goalResultByCustomerIdAndMonthCount;

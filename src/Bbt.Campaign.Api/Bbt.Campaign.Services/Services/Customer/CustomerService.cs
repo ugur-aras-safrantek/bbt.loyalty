@@ -503,7 +503,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else 
             {
-                var goalResultByCustomerIdAndMonthCount = await _remoteService.GetGoalResultByCustomerIdAndMonthCountData(customerCode);
+                var goalResultByCustomerIdAndMonthCount = await _remoteService.GetGoalResultByCustomerIdAndMonthCountData(customerCode, campaignId);
                 if (goalResultByCustomerIdAndMonthCount != null)
                 {
                     if (goalResultByCustomerIdAndMonthCount.Total != null)
