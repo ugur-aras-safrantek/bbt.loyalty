@@ -9,7 +9,7 @@ namespace Bbt.Campaign.Core.DbEntities
         [MaxLength(250), Required]
         public string Name { get; set; }
 
-        [MaxLength(3)]
-        public string? Code { get; set; }
+        [MaxLength(3), Required]
+        public string Code { get; set; }
     }
 }
