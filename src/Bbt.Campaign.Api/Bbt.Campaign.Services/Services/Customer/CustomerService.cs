@@ -46,6 +46,13 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
+            if (request.IsJoin) 
+            {
+                bool ismaxNumberOfUserReach = await IsMaxNumberOfUserReach(request.CampaignId);
+                if(ismaxNumberOfUserReach)
+                    throw new Exception("Bu kampanyaya için maximum kullanıcı sayısına ulaşılmıstır.");
+            }
+
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
             bool isFavorite = false;
@@ -184,6 +191,29 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerCampaignDto>.SuccessAsync(mappedCustomerCampaign);
         }
+        
+        private async Task<bool> IsMaxNumberOfUserReach(int campaignId) 
+        {
+            bool isMaxNumberOfUserReach = false;
+
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
+
+            if (campaignEntity != null)
+            {
+                int maxNumberOfUser = campaignEntity.MaxNumberOfUser ?? 0;
+
+                if (maxNumberOfUser > 0)
+                {
+                    var customerCount = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                       .GetAll(x => x.CampaignId == campaignId && x.IsJoin && !x.IsDeleted)
+                       .CountAsync();
+                    if (customerCount == maxNumberOfUser)
+                        isMaxNumberOfUserReach = true;
+                }
+            }
+            return isMaxNumberOfUserReach;
+        }
+
         private async Task CheckValidationAsync(string customerCode, int campaignId) 
         {
             if(string.IsNullOrEmpty(customerCode))
@@ -454,6 +484,8 @@ namespace Bbt.Campaign.Services.Services.Customer
             //var campaignAchievementList = await _campaignAchievementService.GetCampaignAchievementListDto(campaignId);
 
             //response.CampaignAchievementList = campaignAchievementList;
+
+            response.IsMaxNumberOfUserReach = await IsMaxNumberOfUserReach(campaignId);
 
             return await BaseResponse<CustomerJoinFormDto>.SuccessAsync(response);
         }
