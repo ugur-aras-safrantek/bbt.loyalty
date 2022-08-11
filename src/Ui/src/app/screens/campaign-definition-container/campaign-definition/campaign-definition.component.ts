@@ -70,7 +70,8 @@ export class CampaignDefinitionComponent implements OnInit, FormChange {
   nextButtonAuthority = false;
 
   editorConfig: AngularEditorConfig = {
-    editable: true
+    editable: true,
+    sanitize: false
   }
 
   constructor(private fb: FormBuilder,
