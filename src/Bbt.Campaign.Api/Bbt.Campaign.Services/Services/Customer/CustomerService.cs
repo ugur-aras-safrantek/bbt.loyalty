@@ -46,12 +46,12 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
-            //if (request.IsJoin) 
-            //{
-            //    bool ismaxNumberOfUserReach = await IsMaxNumberOfUserReach(request.CampaignId);
-            //    if(ismaxNumberOfUserReach)
-            //        throw new Exception("Bu kampanyaya için maximum kullanıcı sayısına ulaşılmıstır.");
-            //}
+            if (request.IsJoin)
+            {
+                bool ismaxNumberOfUserReach = await IsMaxNumberOfUserReach(request.CampaignId);
+                if (ismaxNumberOfUserReach)
+                    throw new Exception("Bu kampanya için maximum kullanıcı sayısına ulaşılmıstır.");
+            }
 
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
@@ -274,7 +274,16 @@ namespace Bbt.Campaign.Services.Services.Customer
             //var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
             //var totalItems = campaignQuery.Count();
             //campaignQuery = campaignQuery.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-           
+
+            DateTime previousDay = DateTime.Now.AddDays(-1);
+            var customerCampaignCountList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => x.IsJoin && !x.IsDeleted)
+                .Include(x => x.Campaign)
+                .Where(x => x.Campaign.IsActive && !x.Campaign.IsDeleted && ((x.Campaign.MaxNumberOfUser ?? 0) > 0) && x.Campaign.EndDate > previousDay)
+                .GroupBy(x => x.CampaignId)
+                .Select(group => Tuple.Create(group.Key, group.Count()))
+                .ToListAsync();
+
             var campaignList = campaignQuery.Select(x => new CampaignMinDto
             {
                 Id = x.Id,
@@ -284,6 +293,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 CampaignListImageUrl = x.CampaignListImageUrl,
                 CampaignDetailImageUrl = x.CampaignDetailImageUrl,
                 EndDate = x.EndDate,
+                MaxNumberOfUser = x.MaxNumberOfUser,
             }).ToList();
 
             var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
@@ -307,6 +317,22 @@ namespace Bbt.Campaign.Services.Services.Customer
                     customerCampaignListDto.Id = customerCampaign.Id;
                     customerCampaignListDto.IsJoin = customerCampaign.IsJoin;
                     customerCampaignListDto.IsFavorite = customerCampaign.IsFavorite;
+                }
+
+                if(!customerCampaignListDto.IsJoin && !customerCampaignListDto.IsFavorite) 
+                {
+                    int maxNumberOfUser = campaign.MaxNumberOfUser ?? 0;
+                    if(maxNumberOfUser > 0) 
+                    {
+                        var customerCampaignCountEntity = customerCampaignCountList
+                            .Where(x => x.Item1 == customerCampaignListDto.CampaignId).FirstOrDefault();
+                        if (customerCampaignCountEntity != null)
+                        {
+                            int campaignUserCount = customerCampaignCountEntity.Item2;
+                            if (campaignUserCount >= maxNumberOfUser)
+                                continue;
+                        }
+                    }
                 }
 
                 if (campaign.EndDate > today)
