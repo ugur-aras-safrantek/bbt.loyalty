@@ -47,10 +47,14 @@ namespace Bbt.Campaign.Services.Services.Remote
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(serviceUrl);
-                
-                
-                
-                
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    response = await httpClient.GetAsync(serviceUrl);
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();

@@ -48,6 +48,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public double RemainingAmount { get; set; }
         public double AmountPercent { get; set; }
         public int RemainingTimes { get; set; }
-        public double TimesPercent { get; set; }       
+        public double? TimesPercent { get; set; }       
     }
 }

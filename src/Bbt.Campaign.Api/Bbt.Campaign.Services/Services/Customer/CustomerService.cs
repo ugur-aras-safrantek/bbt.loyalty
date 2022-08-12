@@ -46,12 +46,12 @@ namespace Bbt.Campaign.Services.Services.Customer
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
-            if (request.IsJoin) 
-            {
-                bool ismaxNumberOfUserReach = await IsMaxNumberOfUserReach(request.CampaignId);
-                if(ismaxNumberOfUserReach)
-                    throw new Exception("Bu kampanyaya için maximum kullanıcı sayısına ulaşılmıstır.");
-            }
+            //if (request.IsJoin) 
+            //{
+            //    bool ismaxNumberOfUserReach = await IsMaxNumberOfUserReach(request.CampaignId);
+            //    if(ismaxNumberOfUserReach)
+            //        throw new Exception("Bu kampanyaya için maximum kullanıcı sayısına ulaşılmıstır.");
+            //}
 
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
@@ -160,6 +160,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
             bool isJoin = false;
+            DateTime? startDate = null;
             var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .OrderByDescending(x => x.Id)
@@ -167,6 +168,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if(entity != null) 
             { 
                 isJoin = entity.IsJoin;
+                startDate = entity.StartDate;
             }
 
             foreach (var deleteEntity in _unitOfWork.GetRepository<CustomerCampaignEntity>()
@@ -175,14 +177,15 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             if (request.IsFavorite || isJoin) 
             {
-                entity = new CustomerCampaignEntity();
-                entity.CustomerCode = request.CustomerCode;
-                entity.CampaignId = request.CampaignId;
-                entity.IsFavorite = request.IsFavorite;
-                entity.IsJoin = isJoin;
-                entity.CreatedBy = request.CustomerCode;
+                var newEntity = new CustomerCampaignEntity();
+                newEntity.CustomerCode = request.CustomerCode;
+                newEntity.CampaignId = request.CampaignId;
+                newEntity.IsFavorite = request.IsFavorite;
+                newEntity.IsJoin = isJoin;
+                newEntity.StartDate = startDate;
+                newEntity.CreatedBy = request.CustomerCode;
 
-                await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(entity);
+                await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(newEntity);
             }
            
             await _unitOfWork.SaveChangesAsync();
@@ -207,7 +210,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     var customerCount = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                        .GetAll(x => x.CampaignId == campaignId && x.IsJoin && !x.IsDeleted)
                        .CountAsync();
-                    if (customerCount == maxNumberOfUser)
+                    if (customerCount >= maxNumberOfUser)
                         isMaxNumberOfUserReach = true;
                 }
             }
