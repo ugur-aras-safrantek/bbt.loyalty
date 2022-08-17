@@ -62,12 +62,12 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 {
                     case EntityState.Added:
                         if(entry.Entity.CreatedOn == DateTime.MinValue)
-                            entry.Entity.CreatedOn = DateTime.UtcNow;
+                            entry.Entity.CreatedOn = DateTime.Now;
                         entry.Entity.IsDeleted = false;
                         break;
                     //case EntityState.Modified:
                     //    if(entry.Entity.LastModifiedOn == null) 
-                    //        entry.Entity.LastModifiedOn = DateTime.UtcNow; 
+                    //        entry.Entity.LastModifiedOn = DateTime.Now; 
                     //    break;
                 }
             }

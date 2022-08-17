@@ -72,7 +72,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
                     throw new Exception("Kayıt bulunamadı");
 
                 entity.IsDeleted = true;
-                entity.LastModifiedOn = DateTime.UtcNow;
+                entity.LastModifiedOn = DateTime.Now;
                 entity.LastModifiedBy = userId;
 
                 await _unitOfWork.GetRepository<CampaignIdentityEntity>().UpdateAsync(entity);
@@ -222,7 +222,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
         {
             response.IdentitySubTypeList = (await _parameterService.GetIdentitySubTypeListAsync())?.Data;
             response.CampaignList = _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.UtcNow))
+                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.Now))
                 .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
         

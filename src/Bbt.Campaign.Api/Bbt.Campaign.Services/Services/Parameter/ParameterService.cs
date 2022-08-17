@@ -8,12 +8,10 @@ using Bbt.Campaign.Public.Dtos;
 using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Branch;
 using Bbt.Campaign.Public.Models.Parameter;
-using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 
 namespace Bbt.Campaign.Services.Services.Parameter

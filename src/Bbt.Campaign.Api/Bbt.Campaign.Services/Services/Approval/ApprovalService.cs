@@ -151,7 +151,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         private async Task<BaseResponse<CampaignDto>> ApproveCampaignAddAsync(int id, string userid)
         { 
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var draftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == id && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
@@ -235,7 +235,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         public async Task<BaseResponse<CampaignDto>> ApproveCampaignUpdateAsync(int draftId, int campaignId, string userid) 
         {
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var campaignDraftEntity = await _unitOfWork.GetRepository<CampaignEntity>()
                 .GetAll(x => x.Id == draftId && !x.IsDeleted)
                 .Include(x => x.CampaignDetail)
@@ -315,7 +315,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 campaignEntity = await _draftService.CopyCampaignInfo(campaignEntity, draftId, userid, true, true, false, true, true, false);
             }
             campaignEntity.StatusId = (int)StatusEnum.Approved;
-            campaignEntity.ApprovedDate = DateTime.UtcNow;
+            campaignEntity.ApprovedDate = DateTime.Now;
             campaignEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<CampaignEntity>().UpdateAsync(campaignEntity);
 
@@ -637,7 +637,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         private async Task<BaseResponse<TopLimitDto>> ApproveTopLimitAddAsync(int id, string userid) 
         {
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == id && !x.IsDeleted).FirstOrDefaultAsync();
             if (draftEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
@@ -667,7 +667,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         private async Task<BaseResponse<TopLimitDto>> ApproveTopLimitUpdateAsync(int draftId, int topLimitId, string userid) 
         {
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var draftEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == draftId && !x.IsDeleted).FirstOrDefaultAsync();
             var approvedEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => x.Id == topLimitId && !x.IsDeleted).FirstOrDefaultAsync();
 
@@ -677,7 +677,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             approvedEntity = await _draftService.CopyTopLimitInfo(draftId, approvedEntity, userid, true, true, true, true, true);
             approvedEntity.StatusId = (int)StatusEnum.Approved;
-            approvedEntity.ApprovedDate = DateTime.UtcNow;
+            approvedEntity.ApprovedDate = DateTime.Now;
             approvedEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<TopLimitEntity>().UpdateAsync(approvedEntity);
 
@@ -816,7 +816,7 @@ namespace Bbt.Campaign.Services.Services.Approval
                 throw new Exception("Hedef kaydını oluşturan kullanıcı ile onaylayan kullanıcı aynı kişi olamaz.");
 
             entity.StatusId = (int)StatusEnum.Draft;
-            entity.LastModifiedOn = DateTime.UtcNow;
+            entity.LastModifiedOn = DateTime.Now;
             entity.LastModifiedBy = userid;
 
             await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(entity);
@@ -827,7 +827,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
         private async Task<BaseResponse<TargetDto>> ApproveTargetAddAsync(int id, string userid)
         {
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var draftEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == id && !x.IsDeleted).FirstOrDefaultAsync();
             if (draftEntity == null)
                 throw new Exception("Çatı limiti bulunamadı.");
@@ -855,7 +855,7 @@ namespace Bbt.Campaign.Services.Services.Approval
         }
         private async Task<BaseResponse<TargetDto>> ApproveTargetUpdateAsync(int draftId, int targetId, string userid)
         {
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var draftEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == draftId && !x.IsDeleted).FirstOrDefaultAsync();
             var approvedEntity = await _unitOfWork.GetRepository<TargetEntity>().GetAll(x => x.Id == targetId && !x.IsDeleted)
                 .Include(x=>x.TargetDetail).FirstOrDefaultAsync();
@@ -865,7 +865,7 @@ namespace Bbt.Campaign.Services.Services.Approval
 
             approvedEntity = await _draftService.CopyTargetInfo(draftId, approvedEntity, userid, true, true, true, true, true);
             approvedEntity.StatusId = (int)StatusEnum.Approved;
-            approvedEntity.ApprovedDate = DateTime.UtcNow;
+            approvedEntity.ApprovedDate = DateTime.Now;
             approvedEntity.ApprovedBy = userid;
             await _unitOfWork.GetRepository<TargetEntity>().UpdateAsync(approvedEntity);
 

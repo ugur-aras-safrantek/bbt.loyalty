@@ -24,19 +24,17 @@ namespace Bbt.Campaign.Services.Services.Customer
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICampaignService _campaignService;
-        private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly IRemoteService _remoteService;
 
         public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, 
-            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignTargetService campaignTargetService,
+            ICampaignService campaignService, ICampaignTargetService campaignTargetService,
             ICampaignAchievementService campaignAchievementService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _campaignService = campaignService;
-            _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
             _campaignAchievementService = campaignAchievementService;
             _remoteService = remoteService;
@@ -356,7 +354,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
                 {
-                    if (DateTime.UtcNow > campaign.EndDate)
+                    if (DateTime.Now > campaign.EndDate)
                         returnList.Add(customerCampaignListDto);
                 }
             }

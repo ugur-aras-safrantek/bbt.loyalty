@@ -3,16 +3,11 @@ using Bbt.Campaign.Core.DbEntities;
 using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
-using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.Target;
-using Bbt.Campaign.Public.Dtos.Target.Detail;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Public.Models.Target;
 using Bbt.Campaign.Services.FileOperations;
-using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
@@ -26,17 +21,13 @@ namespace Bbt.Target.Services.Services.Target
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Target;
 
-        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            IAuthorizationService authorizationservice, IDraftService draftService)
+        public TargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
         }
 
@@ -48,7 +39,7 @@ namespace Bbt.Target.Services.Services.Target
 
             await CheckValidationAsync(Target, 0);
 
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             var entity = _mapper.Map<TargetEntity>(Target);
             entity.Code = Helpers.CreateCampaignCode();
             entity.StatusId = (int)StatusEnum.Draft;

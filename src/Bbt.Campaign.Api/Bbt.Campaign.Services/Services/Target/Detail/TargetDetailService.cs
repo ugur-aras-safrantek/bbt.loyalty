@@ -327,7 +327,7 @@ namespace Bbt.Campaign.Services.Services.Target.Detail
                 {
                     CronExpression expression = CronExpression.Parse(request.FlowFrequency);
 
-                    DateTime? nextUtc = expression.GetNextOccurrence(DateTime.UtcNow);
+                    DateTime? nextUtc = expression.GetNextOccurrence(DateTime.Now);
                 }
                 catch (CronFormatException ex)
                 {
