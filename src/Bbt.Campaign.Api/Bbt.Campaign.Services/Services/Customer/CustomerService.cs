@@ -42,7 +42,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             _remoteService = remoteService;
         }
 
-        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request) 
+        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request)
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
@@ -193,8 +193,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
 
             return await BaseResponse<CustomerCampaignDto>.SuccessAsync(mappedCustomerCampaign);
-        }
-        
+        }      
         private async Task<bool> IsMaxNumberOfUserReach(int campaignId) 
         {
             bool isMaxNumberOfUserReach = false;
@@ -216,7 +215,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             return isMaxNumberOfUserReach;
         }
-
         private async Task CheckValidationAsync(string customerCode, int campaignId) 
         {
             if(string.IsNullOrEmpty(customerCode))
