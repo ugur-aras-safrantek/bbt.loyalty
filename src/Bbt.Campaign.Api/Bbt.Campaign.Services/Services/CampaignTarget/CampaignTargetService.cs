@@ -665,7 +665,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
                                 remainAmount = (decimal)goalResult.Detail.StreamResult.RemainingAmount;
                                 targetParameterDto2.RemainAmount = remainAmount;
-                                targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
+                                targetParameterDto2.RemainAmountStr = Helpers.ConvertNullablePriceString(remainAmount);
                                 targetParameterDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency == null ? null :
                                     goalResult.Detail.StreamResult.Currency == "TRY" ? "TL" :
                                     goalResult.Detail.StreamResult.Currency;
