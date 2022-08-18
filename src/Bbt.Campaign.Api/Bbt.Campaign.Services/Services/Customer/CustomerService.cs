@@ -574,7 +574,18 @@ namespace Bbt.Campaign.Services.Services.Customer
                     {
                         int month = DateTime.Now.Month;
                         int year = DateTime.Now.Year;
+                        
+                        //this month
+                        var currentMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        if (currentMonthAchievent != null)
+                        {
+                            response.CurrentMonthAchievementStr = Helpers.ConvertNullablePriceString(currentMonthAchievent.Amount);
+                            response.CurrentMonthAchievementCurrencyCode = currentMonthAchievent.Currency == null ? null :
+                                currentMonthAchievent.Currency == "TRY" ? "TL" :
+                                currentMonthAchievent.Currency;
+                        }
 
+                        //previous month
                         if (month == 1)
                         {
                             month = 12;
@@ -585,13 +596,13 @@ namespace Bbt.Campaign.Services.Services.Customer
                             month = month - 1;
                         }
 
-                        var monthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
-                        if (monthAchievent != null)
+                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        if (previousMonthAchievent != null)
                         {
-                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(monthAchievent.Amount);
-                            response.PreviousMonthAchievementCurrencyCode = monthAchievent.Currency == null ? null :
-                                monthAchievent.Currency == "TRY" ? "TL" :
-                                monthAchievent.Currency;
+                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievent.Amount);
+                            response.PreviousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
+                                previousMonthAchievent.Currency == "TRY" ? "TL" :
+                                previousMonthAchievent.Currency;
                         }
                     }
                 }
