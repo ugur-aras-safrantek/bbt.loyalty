@@ -19,7 +19,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -30,18 +29,13 @@ namespace Bbt.Campaign.Services.Services.Authorization
     public class AuthorizationService : IAuthorizationService, IScopedService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IRedisDatabaseProvider _redisDatabaseProvider;
         private readonly IRemoteService _remoteService;
 
-        public AuthorizationService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
-            IRedisDatabaseProvider redisDatabaseProvider, IRemoteService remoteService)
+        public AuthorizationService(IUnitOfWork unitOfWork, IParameterService parameterService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _parameterService = parameterService;
-            _redisDatabaseProvider = redisDatabaseProvider;
             _remoteService = remoteService;
         }
         public async Task<BaseResponse<UserAuthorizationResponseDto>> LoginAsync(string code, string state) 

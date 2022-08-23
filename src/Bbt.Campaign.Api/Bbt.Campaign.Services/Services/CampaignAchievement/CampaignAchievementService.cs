@@ -4,20 +4,17 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignAchievement;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Bbt.Campaign.Services.Services.CampaignAchievement
 {
@@ -26,18 +23,14 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private readonly IRemoteService _remoteService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IAuthorizationService authorizationservice
-            , IDraftService draftService, IRemoteService remoteService)
+        public CampaignAchievementService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IDraftService draftService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
             _remoteService = remoteService;
         }

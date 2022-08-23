@@ -4,7 +4,6 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignTarget;
 using Bbt.Campaign.Public.Dtos.Target;
 using Bbt.Campaign.Public.Dtos.Target.Group;
@@ -18,10 +17,7 @@ using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
 
 namespace Bbt.Campaign.Services.Services.CampaignTarget
 {
@@ -29,21 +25,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private readonly IRemoteService _remoteService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            ICampaignService campaignService, IAuthorizationService authorizationservice, IDraftService draftService, IRemoteService remoteService)
+        public CampaignTargetService(IUnitOfWork unitOfWork, IMapper mapper, IDraftService draftService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _parameterService = parameterService;
-            _campaignService = campaignService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
             _remoteService = remoteService;
         }
@@ -677,7 +665,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
 
                                 remainAmount = (decimal)goalResult.Detail.StreamResult.RemainingAmount;
                                 targetParameterDto2.RemainAmount = remainAmount;
-                                targetParameterDto2.RemainAmountStr = remainAmount == 0 ? "0" : Helpers.ConvertNullablePriceString(remainAmount);
+                                targetParameterDto2.RemainAmountStr = Helpers.ConvertNullablePriceString(remainAmount);
                                 targetParameterDto2.RemainAmountCurrencyCode = goalResult.Detail.StreamResult.Currency == null ? null :
                                     goalResult.Detail.StreamResult.Currency == "TRY" ? "TL" :
                                     goalResult.Detail.StreamResult.Currency;

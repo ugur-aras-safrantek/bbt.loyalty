@@ -24,25 +24,23 @@ namespace Bbt.Campaign.Services.Services.Customer
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICampaignService _campaignService;
-        private readonly ICampaignRuleService _campaignRuleService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly IRemoteService _remoteService;
 
         public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, 
-            ICampaignService campaignService, ICampaignRuleService campaignRuleService, ICampaignTargetService campaignTargetService,
+            ICampaignService campaignService, ICampaignTargetService campaignTargetService,
             ICampaignAchievementService campaignAchievementService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _campaignService = campaignService;
-            _campaignRuleService = campaignRuleService;
             _campaignTargetService = campaignTargetService;
             _campaignAchievementService = campaignAchievementService;
             _remoteService = remoteService;
         }
 
-        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request) 
+        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> SetJoin(SetJoinRequest request)
         {
             await CheckValidationAsync(request.CustomerCode, request.CampaignId);
 
@@ -193,8 +191,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
 
             return await BaseResponse<CustomerCampaignDto>.SuccessAsync(mappedCustomerCampaign);
-        }
-        
+        }      
         private async Task<bool> IsMaxNumberOfUserReach(int campaignId) 
         {
             bool isMaxNumberOfUserReach = false;
@@ -216,7 +213,6 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             return isMaxNumberOfUserReach;
         }
-
         private async Task CheckValidationAsync(string customerCode, int campaignId) 
         {
             if(string.IsNullOrEmpty(customerCode))
@@ -358,7 +354,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
                 else if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.OverDue)
                 {
-                    if (DateTime.UtcNow > campaign.EndDate)
+                    if (DateTime.Now > campaign.EndDate)
                         returnList.Add(customerCampaignListDto);
                 }
             }
@@ -578,7 +574,18 @@ namespace Bbt.Campaign.Services.Services.Customer
                     {
                         int month = DateTime.Now.Month;
                         int year = DateTime.Now.Year;
+                        
+                        //this month
+                        var currentMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        if (currentMonthAchievent != null)
+                        {
+                            response.CurrentMonthAchievementStr = Helpers.ConvertNullablePriceString(currentMonthAchievent.Amount);
+                            response.CurrentMonthAchievementCurrencyCode = currentMonthAchievent.Currency == null ? null :
+                                currentMonthAchievent.Currency == "TRY" ? "TL" :
+                                currentMonthAchievent.Currency;
+                        }
 
+                        //previous month
                         if (month == 1)
                         {
                             month = 12;
@@ -589,13 +596,13 @@ namespace Bbt.Campaign.Services.Services.Customer
                             month = month - 1;
                         }
 
-                        var monthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
-                        if (monthAchievent != null)
+                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        if (previousMonthAchievent != null)
                         {
-                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(monthAchievent.Amount);
-                            response.PreviousMonthAchievementCurrencyCode = monthAchievent.Currency == null ? null :
-                                monthAchievent.Currency == "TRY" ? "TL" :
-                                monthAchievent.Currency;
+                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievent.Amount);
+                            response.PreviousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
+                                previousMonthAchievent.Currency == "TRY" ? "TL" :
+                                previousMonthAchievent.Currency;
                         }
                     }
                 }

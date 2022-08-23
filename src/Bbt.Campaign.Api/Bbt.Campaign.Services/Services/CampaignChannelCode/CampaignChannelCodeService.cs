@@ -7,8 +7,6 @@ using Bbt.Campaign.Public.Dtos.CampaignChannelCode;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignChannelCode;
-using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.ServiceDependencies;
@@ -19,19 +17,13 @@ namespace Bbt.Campaign.Services.Services.CampaignChannelCode
     public class CampaignChannelCodeService : ICampaignChannelCodeService, IScopedService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignChannelCodeService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            IAuthorizationService authorizationservice, IDraftService draftService)
+        public CampaignChannelCodeService(IUnitOfWork unitOfWork, IParameterService parameterService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
         }
 

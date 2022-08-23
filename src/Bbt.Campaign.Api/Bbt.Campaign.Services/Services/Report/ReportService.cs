@@ -11,7 +11,6 @@ using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Shared.Static;
 using Bbt.Campaign.Services.Services.CampaignTarget;
 using Bbt.Campaign.Services.Services.Remote;
@@ -27,17 +26,14 @@ namespace Bbt.Campaign.Services.Services.Report
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly IRemoteService _remoteService;
 
-        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            IAuthorizationService authorizationService, ICampaignTargetService campaignTargetService, IRemoteService remoteService)
+        public ReportService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, ICampaignTargetService campaignTargetService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationService;
             _campaignTargetService = campaignTargetService;
             _remoteService = remoteService;
         }
@@ -646,7 +642,7 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             response.IdentitySubTypeList = (await _parameterService.GetIdentitySubTypeListAsync())?.Data;
             response.CampaignList = _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.UtcNow))
+                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.Now))
                 .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
             response.TargetList = _unitOfWork.GetRepository<TargetEntity>()
                 .GetAll(x => x.IsActive && !x.IsDeleted && x.StatusId == (int)StatusEnum.Approved)

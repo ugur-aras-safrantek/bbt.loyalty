@@ -4,15 +4,12 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignTopLimit;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignDocument;
 using Bbt.Campaign.Public.Models.CampaignTopLimit;
 using Bbt.Campaign.Public.Models.File;
 using Bbt.Campaign.Services.FileOperations;
-using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
@@ -44,7 +41,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
 
             await CheckValidationAsync(campaignTopLimit, 0);
 
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
 
             string userid = userId;
 
@@ -103,7 +100,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
                 throw new Exception("Kampanya Çatı Limiti bulunamadı.");
 
             string userid = userId;
-            DateTime now = DateTime.UtcNow;
+            DateTime now = DateTime.Now;
             bool isCreateDraft = false;
             string code = entity.Code;
             int processTypeId = await _draftService.GetTopLimitProcessType(request.Id);
@@ -264,7 +261,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTopLimit
             response.CurrencyList = (await _parameterService.GetCurrencyListAsync())?.Data;
             response.AchievementFrequencyList = (await _parameterService.GetAchievementFrequencyListAsync())?.Data;
             response.CampaignList = _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved &&  !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.UtcNow))
+                .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved &&  !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.Now))
                 .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
         public async Task<BaseResponse<List<TopLimitDto>>> GetListAsync()

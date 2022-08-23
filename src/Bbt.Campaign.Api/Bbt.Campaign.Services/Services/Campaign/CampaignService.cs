@@ -13,16 +13,8 @@ using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Bbt.Campaign.Services.Services.CampaignTopLimit;
-using Bbt.Campaign.Services.Services.Authorization;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Core.Helper;
-using System.Globalization;
-using Microsoft.AspNetCore.Http;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Services.Services.Remote;
 
 namespace Bbt.Campaign.Services.Services.Campaign
@@ -33,19 +25,16 @@ namespace Bbt.Campaign.Services.Services.Campaign
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
         private readonly IRemoteService _remoteService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
 
         public CampaignService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, 
-            IAuthorizationService authorizationService, IDraftService draftService, IRemoteService remoteService)
+            IDraftService draftService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _authorizationService = authorizationService;
             _draftService = draftService;
             _remoteService = remoteService;
         }
@@ -113,7 +102,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             if(entity == null)
                 return await BaseResponse<CampaignDto>.FailAsync("Kampanya bulunamadı.");
 
-            if (entity.IsActive && !campaign.IsActive && Helpers.ConvertUIDateTimeStringForBackEnd(campaign.EndDate) > DateTime.UtcNow.AddDays(-1))
+            if (entity.IsActive && !campaign.IsActive && Helpers.ConvertUIDateTimeStringForBackEnd(campaign.EndDate) > DateTime.Now.AddDays(-1))
             {
                 var approvedCampaign = _unitOfWork.GetRepository<CampaignEntity>().GetAll()
                     .Where(x => !x.IsDeleted && x.Code == entity.Code && x.StatusId == (int)StatusEnum.Approved)
@@ -175,7 +164,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.TitleEn = campaign.TitleEn;
             entity.MaxNumberOfUser = campaign.MaxNumberOfUser;
             entity.ParticipationTypeId = campaign.ParticipationTypeId;
-            entity.LastModifiedOn = DateTime.UtcNow;
+            entity.LastModifiedOn = DateTime.Now;
             entity.LastModifiedBy = userId;
 
             entity = await SetDefaults(entity);

@@ -4,19 +4,15 @@ using Bbt.Campaign.Core.Helper;
 using Bbt.Campaign.EntityFrameworkCore.UnitOfWork;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
-using Bbt.Campaign.Public.Dtos.Authorization;
 using Bbt.Campaign.Public.Dtos.CampaignRule;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignRule;
 using Bbt.Campaign.Public.Models.File;
-using Bbt.Campaign.Services.Services.Authorization;
-using Bbt.Campaign.Services.Services.Campaign;
 using Bbt.Campaign.Services.Services.Draft;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
-using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bbt.Campaign.Services.Services.CampaignRule
@@ -27,19 +23,13 @@ namespace Bbt.Campaign.Services.Services.CampaignRule
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IParameterService _parameterService;
-        private readonly ICampaignService _campaignService;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IDraftService _draftService;
-        private static int moduleTypeId = (int)ModuleTypeEnum.Campaign;
 
-        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService
-            , ICampaignService campaignService, IAuthorizationService authorizationservice, IDraftService draftService)
+        public CampaignRuleService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService, IDraftService draftService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _parameterService = parameterService;
-            _campaignService = campaignService;
-            _authorizationService = authorizationservice;
             _draftService = draftService;
         }
 

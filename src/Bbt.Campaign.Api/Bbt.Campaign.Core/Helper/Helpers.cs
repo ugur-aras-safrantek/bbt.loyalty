@@ -193,8 +193,9 @@ namespace Bbt.Campaign.Core.Helper
         public static string? ConvertNullablePriceString(decimal? data)
         {
             if (data == null)
-                return null;
-            return data?.ToString("N2");
+                data = 0;
+            NumberFormatInfo nfi = CultureInfo.CreateSpecificCulture("tr-TR").NumberFormat;
+            return data?.ToString("N2", nfi);
         }
 
         public static decimal ConvertDecimal(string data)
