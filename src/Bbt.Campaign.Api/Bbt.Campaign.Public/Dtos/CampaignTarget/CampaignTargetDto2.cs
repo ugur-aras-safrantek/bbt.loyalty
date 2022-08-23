@@ -18,5 +18,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
         public string? RemainAmountCurrencyCode { get; set; }
         public string? UsedAmountStr { get; set; }
         public string? UsedAmountCurrencyCode { get; set; }
+        public TotalUsed? TotalUsed { get; set; }
     }
 }

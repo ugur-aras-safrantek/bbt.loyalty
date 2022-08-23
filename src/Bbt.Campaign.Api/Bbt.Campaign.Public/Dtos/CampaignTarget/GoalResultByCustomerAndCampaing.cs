@@ -9,10 +9,15 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
     public class GoalResultByCustomerAndCampaing
     {
         public bool isAchived { get; set; }
-
+        public TotalUsed? TotalUsed { get; set; }
         public List<GoalTarget> TargetList { get; set; }
     }
 
+    public class TotalUsed
+    {       
+        public double? Amount { get; set; }
+        public string? Currency { get; set; }
+    }
 
     public class GoalTarget 
     {

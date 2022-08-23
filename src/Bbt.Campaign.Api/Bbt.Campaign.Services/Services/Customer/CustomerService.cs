@@ -541,7 +541,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.Campaign = campaignDto;
 
             decimal? totalAchievement = 0;
-            decimal? previousMonthAchievement = 0;
+            //decimal? previousMonthAchievement = 0;
             //decimal usedAmount = 0;
             //int usedNumberOfTransaction = 0;
 
@@ -551,12 +551,12 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             if (StaticValues.IsDevelopment) 
             {
-                totalAchievement = 190;
-                previousMonthAchievement = 120;
-                response.TotalAchievementStr = Helpers.ConvertNullablePriceString(totalAchievement);
-                response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
-                response.TotalAchievementCurrencyCode = "TRY";
-                response.PreviousMonthAchievementCurrencyCode = "TRY";
+                //totalAchievement = 190;
+                //previousMonthAchievement = 120;
+                //response.TotalAchievementStr = Helpers.ConvertNullablePriceString(totalAchievement);
+                //response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
+                //response.TotalAchievementCurrencyCode = "TRY";
+                //response.PreviousMonthAchievementCurrencyCode = "TRY";
             }
             else 
             {
@@ -574,36 +574,34 @@ namespace Bbt.Campaign.Services.Services.Customer
                     {
                         int month = DateTime.Now.Month;
                         int year = DateTime.Now.Year;
-                        
+
                         //this month
+                        decimal? currentMonthAchievement = 0;
+                        string currentMonthAchievementCurrencyCode = "TL";
                         var currentMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
                         if (currentMonthAchievent != null)
                         {
-                            response.CurrentMonthAchievementStr = Helpers.ConvertNullablePriceString(currentMonthAchievent.Amount);
-                            response.CurrentMonthAchievementCurrencyCode = currentMonthAchievent.Currency == null ? null :
+                            currentMonthAchievement = currentMonthAchievent.Amount;
+                            currentMonthAchievementCurrencyCode = currentMonthAchievent.Currency == null ? null :
                                 currentMonthAchievent.Currency == "TRY" ? "TL" :
                                 currentMonthAchievent.Currency;
                         }
+                        response.CurrentMonthAchievementStr = Helpers.ConvertNullablePriceString(currentMonthAchievement);
+                        response.CurrentMonthAchievementCurrencyCode = currentMonthAchievementCurrencyCode;
 
                         //previous month
-                        if (month == 1)
-                        {
-                            month = 12;
-                            year = year - 1;
-                        }
-                        else
-                        {
-                            month = month - 1;
-                        }
-
-                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        decimal? previousMonthAchievement = 0;
+                        string previousMonthAchievementCurrencyCode = "TL";
+                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year != year && x.Month != month).FirstOrDefault();
                         if (previousMonthAchievent != null)
                         {
-                            response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievent.Amount);
-                            response.PreviousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
+                            previousMonthAchievement = previousMonthAchievent.Amount;
+                            previousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
                                 previousMonthAchievent.Currency == "TRY" ? "TL" :
                                 previousMonthAchievent.Currency;
                         }
+                        response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
+                        response.PreviousMonthAchievementCurrencyCode = previousMonthAchievementCurrencyCode;
                     }
                 }
             }
@@ -611,6 +609,18 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignTarget =  await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
 
             response.IsAchieved = response.CampaignTarget.IsAchieved;
+
+            decimal usedAmount = 0;
+            string usedAmountCurrencyCode = "TL";
+            if(response.CampaignTarget.TotalUsed != null) 
+            {
+                usedAmount = response.CampaignTarget.TotalUsed.Amount == null ? 0 : (decimal)response.CampaignTarget.TotalUsed.Amount;
+                usedAmountCurrencyCode = response.CampaignTarget.TotalUsed.Currency == null ? "TL" :
+                                    response.CampaignTarget.TotalUsed.Currency == "TRY" ? "TL" :
+                                    response.CampaignTarget.TotalUsed.Currency;
+            }
+            response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount); 
+            response.UsedAmountCurrencyCode = usedAmountCurrencyCode;
 
             //targetResultDefinition
             string targetResultDefinition = string.Empty;
