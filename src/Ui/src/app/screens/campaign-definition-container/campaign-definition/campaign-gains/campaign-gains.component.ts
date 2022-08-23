@@ -380,8 +380,10 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     this.populateAchievementTypeList(achievement);
     this.populateForm(achievement);
     this.typeChanged();
-    this.rateChange();
-    this.xkampChange();
+    if (this.formGroup.get('type')?.value == 2) {
+      this.rateChange();
+      this.xkampChange();
+    }
     this.submitted = false;
     this.idEdited = true;
     this.addUpdateButtonText = "Güncelle";
