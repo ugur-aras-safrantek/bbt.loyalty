@@ -20,10 +20,10 @@ namespace Bbt.Campaign.Services.Services.Cache
 
         public async Task<bool> ClearCache()
         {
-            PropertyInfo prop = _memoryCache.GetType().GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Public);
-            object innerCache = prop.GetValue(_memoryCache);
-            MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
-            clearMethod.Invoke(innerCache, null);
+            //PropertyInfo prop = _memoryCache.GetType().GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Public);
+            //object innerCache = prop.GetValue(_memoryCache);
+            //MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
+            //clearMethod.Invoke(innerCache, null);
 
             await _redisDatabaseProvider.FlushDatabase();
 
