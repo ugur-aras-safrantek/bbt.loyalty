@@ -118,6 +118,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       rate: null,
       xkampCode: '',
       maxUtilization: '',
+      code:''
     });
   }
 
@@ -274,6 +275,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       rate: null,
       xkampCode: '',
       maxUtilization: '',
+      code:''
     })
   }
 
@@ -294,6 +296,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       rate: data.rate,
       xkampCode: data.xkampCode,
       maxUtilization: data.maxUtilization,
+      code: data.code,
     })
   }
 
@@ -318,6 +321,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
     achievement.descriptionTr = formGroup.descriptionTr;
     achievement.descriptionEn = formGroup.descriptionEn;
     achievement.maxAmount = formGroup.maxAmount;
+    achievement.code=formGroup.code;
     achievement.maxUtilization = formGroup.maxUtilization == "" || formGroup.maxUtilization == null
       ? null
       : parseInt(formGroup.maxUtilization);
