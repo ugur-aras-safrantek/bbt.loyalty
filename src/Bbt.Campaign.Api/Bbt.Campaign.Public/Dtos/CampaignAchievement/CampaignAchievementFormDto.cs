@@ -21,5 +21,6 @@ namespace Bbt.Campaign.Public.Dtos.CampaignAchievement
         public string? TitleTr { get; set; }
         public string? TitleEn { get; set; }
         public string? XKAMPCode { get; set; }
+        public string? Code { get; set; }
     }
 }

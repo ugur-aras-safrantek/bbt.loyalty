@@ -6,6 +6,7 @@ namespace Bbt.Campaign.Public.Dtos.CampaignAchievement
     {
         public int Id { get; set; }
         public int CampaignId { get; set; }
+        public string Code { get; set; }
         public ParameterDto? Campaign { get; set; }
         public int? CurrencyId { get; set; }
         public ParameterDto? Currency { get; set; }

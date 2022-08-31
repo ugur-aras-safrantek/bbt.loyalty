@@ -86,7 +86,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<List<CampaignAchievementDto>>.SuccessAsync(response);
         }
 
-        private async Task Update(CampaignAchievementInsertRequest request, string userid) 
+        private async Task Update(CampaignAchievementInsertRequest request, string userid)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(request.CampaignId);
             if (campaignEntity == null)
@@ -98,7 +98,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(deleteEntity);
             }
 
-            
+
             foreach (var x in request.CampaignAchievementList)
             {
                 CampaignAchievementEntity entity = new CampaignAchievementEntity();
@@ -118,6 +118,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 entity.Type = x.Type == (int)AchievementType.Amount ? AchievementType.Amount : AchievementType.Rate;
                 entity.CreatedBy = userid;
                 entity.XKAMPCode = x.XKAMPCode;
+                entity.Code = String.IsNullOrEmpty(x.Code) ? Helpers.CreateCampaignCode() : x.Code;
 
                 #region defaults
 
@@ -182,7 +183,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<CampaignAchievementDto>.FailAsync("Kampanya kazanımı bulunamadı.");
         }
 
-        public async Task<List<CampaignAchievementDto>> GetCampaignAchievementListDto(int campaignId) 
+        public async Task<List<CampaignAchievementDto>> GetCampaignAchievementListDto(int campaignId)
         {
             List<CampaignAchievementDto> response = new List<CampaignAchievementDto>();
 
@@ -194,20 +195,20 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                     .Include(x => x.ActionOption)
                     .ToListAsync();
 
-            if (!achievementList.Any()) 
+            if (!achievementList.Any())
             {
                 return response;
             }
 
-            foreach (var achievementEntity in achievementList) 
+            foreach (var achievementEntity in achievementList)
             {
-                response.Add(await GetCampaignAchievementDto(achievementEntity));           
+                response.Add(await GetCampaignAchievementDto(achievementEntity));
             }
 
             return response;
         }
 
-        private async Task<CampaignAchievementDto> GetCampaignAchievementDto(CampaignAchievementEntity entity) 
+        private async Task<CampaignAchievementDto> GetCampaignAchievementDto(CampaignAchievementEntity entity)
         {
             CampaignAchievementDto mappedCampaignAchievement = _mapper.Map<CampaignAchievementDto>(entity);
 
@@ -219,7 +220,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 Name = Helpers.GetEnumDescription<AchievementType>(mappedCampaignAchievement.Type)
             };
 
-            if (entity.Currency != null) 
+            if (entity.Currency != null)
             {
                 mappedCampaignAchievement.Currency = new ParameterDto{ Id = entity.Currency.Id, Code = "", Name = entity.Currency.Name };
             }
@@ -244,7 +245,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementInsertFormDto response = new CampaignAchievementInsertFormDto();
-            
+
             await FillForm(response, campaignId);
 
             return await BaseResponse<CampaignAchievementInsertFormDto>.SuccessAsync(response);
@@ -274,7 +275,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             //await _authorizationService.CheckAuthorizationAsync(userRole, moduleTypeId, authorizationTypeId);
 
             CampaignAchievementUpdateFormDto response = new CampaignAchievementUpdateFormDto();
-            await FillForm(response, campaignId);            
+            await FillForm(response, campaignId);
             response.CampaignId = campaignId;
             response.CampaignAchievementList = await GetCampaignAchievementListDto(campaignId);
             return await BaseResponse<CampaignAchievementUpdateFormDto>.SuccessAsync(response);
@@ -297,7 +298,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             if(groupedAchievementType != null)
                 throw new Exception("Kazanım Tipi çoklanamaz");
 
-            foreach (var input in request.CampaignAchievementList) 
+            foreach (var input in request.CampaignAchievementList)
             {
                 int viewOptionId = campaignEntity.ViewOptionId ?? 0;
                 if (viewOptionId != (int)ViewOptionsEnum.InvisibleCampaign)
@@ -342,12 +343,12 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 }
                 else if (input.Type == (int)AchievementType.Rate)
                 {
-                    if(!input.Rate.HasValue && string.IsNullOrEmpty(input.XKAMPCode)) 
+                    if(!input.Rate.HasValue && string.IsNullOrEmpty(input.XKAMPCode))
                     {
                         throw new Exception("Kazanım Oranı veya Xkamp kodu girilmelidir.");
                     }
 
-                    if (input.Rate.HasValue) 
+                    if (input.Rate.HasValue)
                     {
                         if (input.Rate > 100)
                             throw new Exception("“Kazanım Oranı % 100’ün üzerinde bir değer girilemez.");
@@ -360,13 +361,13 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             }
         }
 
-        private async Task CheckValidationForSentToApproval(int campaignId) 
+        private async Task CheckValidationForSentToApproval(int campaignId)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
             if (campaignEntity == null)
                 throw new Exception("Kampanya bulunamadı.");
-            if (!campaignEntity.IsBundle && campaignEntity.IsActive) 
-            { 
+            if (!campaignEntity.IsBundle && campaignEntity.IsActive)
+            {
                 if(campaignEntity.Order == null)
                     throw new Exception("Sıralama girilmelidir.");
             }
@@ -384,7 +385,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                 throw new Exception("Kampanya kanal kodu giriniz.");
         }
 
-        public async Task<BaseResponse<bool>> SendToAppropval(int campaignId, string userId) 
+        public async Task<BaseResponse<bool>> SendToAppropval(int campaignId, string userId)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetAll(x => x.Id == campaignId && !x.IsDeleted && x.StatusId == (int)StatusEnum.Draft).FirstOrDefaultAsync();
             if (campaignEntity == null)
@@ -396,16 +397,16 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
             return await BaseResponse<bool>.SuccessAsync(true);
         }
 
-        public async Task<List<CustomerAchievement>> GetCustomerAchievementsAsync(int campaignId, string customerCode, string lang) 
+        public async Task<List<CustomerAchievement>> GetCustomerAchievementsAsync(int campaignId, string customerCode, string lang)
         {
             List<CustomerAchievement> customerAchievementList = new List<CustomerAchievement>();
 
-            if (StaticValues.IsDevelopment) 
+            if (StaticValues.IsDevelopment)
             {
                 var campaignAchievementList = await GetCampaignAchievementListDto(campaignId);
                 if(campaignAchievementList.Any())
                 {
-                    foreach(var x in campaignAchievementList) 
+                    foreach(var x in campaignAchievementList)
                     {
                         CustomerAchievement customerAchievement= new CustomerAchievement();
                         customerAchievement.IsAchieved = false;
@@ -418,12 +419,12 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                     }
                 }
             }
-            else 
+            else
             {
                 var earningByCustomerAndCampaingList = await _remoteService.GetEarningByCustomerAndCampaingData(customerCode, campaignId, lang);
                 if (earningByCustomerAndCampaingList != null)
                 {
-                    if (earningByCustomerAndCampaingList.Any()) 
+                    if (earningByCustomerAndCampaingList.Any())
                     {
                         foreach (var earning in earningByCustomerAndCampaingList)
                         {
@@ -433,7 +434,7 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                             customerAchievement.Description = earning.AchivementDescription;
                             customerAchievement.Title = earning.AchivementTitle;
                             customerAchievement.AmountStr = Helpers.ConvertNullablePriceString((decimal)earning.Amount);
-                            customerAchievement.CurrencyCode = earning.Currency == null ? null : 
+                            customerAchievement.CurrencyCode = earning.Currency == null ? null :
                                 earning.Currency == "TRY" ? "TL":
                                 earning.Currency;
                             customerAchievementList.Add(customerAchievement);
