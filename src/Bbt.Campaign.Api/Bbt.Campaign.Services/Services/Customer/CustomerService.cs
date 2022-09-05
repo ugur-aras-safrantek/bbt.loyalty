@@ -73,10 +73,14 @@ namespace Bbt.Campaign.Services.Services.Customer
                     throw new Exception("Müşteri bu kampayaya henüz katılmamış.");
             }
 
-            foreach(var deleteEntity in _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            foreach (var deleteEntity in _unitOfWork.GetRepository<CustomerCampaignEntity>()
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
-               .ToList())
+               .ToList()) 
+            {
+                deleteEntity.LastModifiedOn = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
+            }
+                
             
             if(isFavorite || request.IsJoin) 
             {
