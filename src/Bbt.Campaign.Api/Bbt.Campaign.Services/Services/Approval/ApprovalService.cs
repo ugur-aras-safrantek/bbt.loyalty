@@ -223,7 +223,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             foreach (var campaignChannelCodeHistory in await _draftService.CopyCampaignChannelCodeInfo(id, historyEntity, userid, true, true))
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCodeHistory);
 
-            foreach (var campaignAchievementHistory in await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true, true))
+            foreach (var campaignAchievementHistory in await _draftService.CopyCampaignAchievementInfo(id, historyEntity, userid, true, true, true))
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievementHistory);
 
             #endregion
@@ -400,7 +400,7 @@ namespace Bbt.Campaign.Services.Services.Approval
             {
                 foreach (var campaignAchievementDelete in _unitOfWork.GetRepository<CampaignAchievementEntity>().GetAll(x => !x.IsDeleted && x.CampaignId == campaignId).ToList())
                     await _unitOfWork.GetRepository<CampaignAchievementEntity>().DeleteAsync(campaignAchievementDelete);
-                foreach (var campaignAchievement in await _draftService.CopyCampaignAchievementInfo(draftId, campaignEntity, userid, true, true))
+                foreach (var campaignAchievement in await _draftService.CopyCampaignAchievementInfo(draftId, campaignEntity, userid, true, true, true))
                     await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
             }
 

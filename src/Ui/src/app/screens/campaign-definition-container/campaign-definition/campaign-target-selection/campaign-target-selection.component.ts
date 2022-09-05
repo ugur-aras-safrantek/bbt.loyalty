@@ -233,7 +233,7 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
   addItem(targetList: any[]) {
     let targetGroup: CampaignTargetGroup = {
       targetList: new Array<CampaignTarget>(),
-      id: this.createGuid(),
+      id: this.utilityService.createGuid(),
     };
     targetList.map(x => {
       targetGroup.targetList.push({
@@ -264,13 +264,6 @@ export class CampaignTargetSelectionComponent implements OnInit, FormChange {
     }
     this.formChangeState = true;
     this.nextButtonVisible = true;
-  }
-
-  createGuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
   }
 
   copyCampaign(event) {

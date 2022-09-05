@@ -47,6 +47,13 @@
               </a>
             </app-auth-check>
           </li>
+          <li class="nav-item">
+            <app-auth-check [authorization]="currentUserAuthorizations.reportsModuleAuthorizations.view">
+              <a (click)="clearCache()" class="nav-link cursor-pointer">
+                Cache Temizle
+              </a>
+            </app-auth-check>
+          </li>
         </ul>
         <div class="sign-out">
           <a (click)="logout()"><img src="/assets/img/sign-out.png" alt="Çıkış Yap"></a>

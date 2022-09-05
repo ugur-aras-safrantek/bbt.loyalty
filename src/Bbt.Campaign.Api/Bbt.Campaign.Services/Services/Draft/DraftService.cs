@@ -76,7 +76,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             foreach (var campaignChannelCode in await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid, true, true))
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
 
-            foreach (var campaignAchievement in await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, true, true))
+            foreach (var campaignAchievement in await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, true, true, true))
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
             CampaignUpdatePageEntity campaignUpdatePageEntity = new CampaignUpdatePageEntity();
@@ -151,7 +151,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             foreach (var campaignChannelCode in await CopyCampaignChannelCodeInfo(campaignId, campaignEntity, userid, false, false))
                 await _unitOfWork.GetRepository<CampaignChannelCodeEntity>().AddAsync(campaignChannelCode);
             //campaign achievement
-            foreach (var campaignAchievement in await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, false, false))
+            foreach (var campaignAchievement in await CopyCampaignAchievementInfo(campaignId, campaignEntity, userid, false, false, false))
                 await _unitOfWork.GetRepository<CampaignAchievementEntity>().AddAsync(campaignAchievement);
 
             await _unitOfWork.SaveChangesAsync();
@@ -228,7 +228,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             return targetEntity;
 
         }
-        
+
         public async Task<List<CampaignDocumentEntity>> CopyCampaignDocumentInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeUpdateInfo)
         {
             List<CampaignDocumentEntity> campaignDocumentlist = new List<CampaignDocumentEntity>();
@@ -292,7 +292,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             }
             return campaignChannelCodeList;
         }
-        public async Task<List<CampaignAchievementEntity>> CopyCampaignAchievementInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo)
+        public async Task<List<CampaignAchievementEntity>> CopyCampaignAchievementInfo(int campaignId, CampaignEntity campaignEntity, string userid, bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeCode)
         {
             List<CampaignAchievementEntity> campaignAchievementList = new List<CampaignAchievementEntity>();
 
@@ -321,6 +321,7 @@ namespace Bbt.Campaign.Services.Services.Draft
                 targetEntity.XKAMPCode = sourceEntity.XKAMPCode;
                 targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
                 targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.Now;
+                targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
                 campaignAchievementList.Add(targetEntity);
             }
             return campaignAchievementList;
@@ -398,11 +399,11 @@ namespace Bbt.Campaign.Services.Services.Draft
             return campaignRuleIdentityList;
         }
 
-        
+
 
         public async Task<TopLimitEntity> CopyTopLimitInfo(int topLimitId, TopLimitEntity targetEntity, string userid,
-            bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo, 
-            bool isIncludeCode, bool isIncludeStatusId) 
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo, bool isIncludeApproveInfo,
+            bool isIncludeCode, bool isIncludeStatusId)
         {
             var sourceEntity = await _unitOfWork.GetRepository<TopLimitEntity>().GetAll(x => !x.IsDeleted && x.Id == topLimitId)
                 .Include(x => x.TopLimitCampaigns)
@@ -420,7 +421,7 @@ namespace Bbt.Campaign.Services.Services.Draft
             targetEntity.MaxTopLimitUtilization = sourceEntity.MaxTopLimitUtilization;
             targetEntity.Name = sourceEntity.Name;
             targetEntity.Type = sourceEntity.Type;
-            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.Draft; 
+            targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.Draft;
             targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
             targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
             targetEntity.CreatedOn = isIncludeCreateInfo ? sourceEntity.CreatedOn : DateTime.Now;
@@ -446,7 +447,7 @@ namespace Bbt.Campaign.Services.Services.Draft
 
             targetEntity.Name = sourceEntity.Name;
             targetEntity.Title = sourceEntity.Title;
-            targetEntity.IsActive = sourceEntity.IsActive; 
+            targetEntity.IsActive = sourceEntity.IsActive;
             targetEntity.Code = isIncludeCode ? sourceEntity.Code : Helpers.CreateCampaignCode();
             targetEntity.StatusId = isIncludeStatusId ? sourceEntity.StatusId : (int)StatusEnum.Draft;
             targetEntity.CreatedBy = isIncludeCreateInfo ? sourceEntity.CreatedBy : userid;
@@ -479,7 +480,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         }
 
         public async Task<List<CampaignTopLimitEntity>> CopyCampaignTopLimits(int topLimitId, TopLimitEntity targetEntity, string userid,
-            bool isIncludeCreateInfo, bool isIncludeUpdateInfo) 
+            bool isIncludeCreateInfo, bool isIncludeUpdateInfo)
         {
             List<CampaignTopLimitEntity> campaignTopLimitList = new List<CampaignTopLimitEntity>();
             foreach (var item in await _unitOfWork.GetRepository<CampaignTopLimitEntity>()
@@ -497,7 +498,7 @@ namespace Bbt.Campaign.Services.Services.Draft
         public async Task<bool> IsActiveCampaign(int campaignId)
         {
             var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>()
-                .GetAll(x => x.Id == campaignId && x.StatusId == (int)StatusEnum.Approved && 
+                .GetAll(x => x.Id == campaignId && x.StatusId == (int)StatusEnum.Approved &&
                             !x.IsDeleted && x.EndDate > DateTime.Now.AddDays(-1))
                 .FirstOrDefaultAsync();
             return campaignEntity != null;

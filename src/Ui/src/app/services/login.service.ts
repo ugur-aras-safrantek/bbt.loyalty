@@ -54,6 +54,11 @@ export class LoginService {
     return this.httpClient.post<ApiBaseResponseModel>(url, {}, {params: params});
   }
 
+  clearCache() {
+    const url = `${this.baseUrl}/${ApiPaths.ClearCache}`;
+    return this.httpClient.get<ApiBaseResponseModel>(url);
+  }
+
   setRoute() {
     let route = '/login';
 

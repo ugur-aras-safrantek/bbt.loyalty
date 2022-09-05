@@ -48,9 +48,8 @@ export class RepostComponent implements OnInit {
     if (this.previewItemEvent.observed) {
       this.previewItemEvent.emit({id: this.repostData.id});
     } else {
-      let baseUrl = window.location.href.replace(this.router.url, '');
       let previewUrl = `${this.repostData.previewLink}/${this.repostData.id}`;
-      window.open(baseUrl + previewUrl, '_blank');
+      window.open(previewUrl, '_blank');
     }
   }
 

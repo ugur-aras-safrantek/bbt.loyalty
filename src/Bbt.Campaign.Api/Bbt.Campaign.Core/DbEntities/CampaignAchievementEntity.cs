@@ -35,5 +35,8 @@ namespace Bbt.Campaign.Core.DbEntities
 
         [MaxLength(7)]
         public string? XKAMPCode { get; set; }
+
+        [MaxLength(100)]
+        public string? Code { get; set; }
     }
 }
