@@ -582,7 +582,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         //this month
                         decimal? currentMonthAchievement = 0;
                         string currentMonthAchievementCurrencyCode = "TL";
-                        var currentMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year == year && x.Month == month).FirstOrDefault();
+                        var currentMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Month == month).FirstOrDefault();
                         if (currentMonthAchievent != null)
                         {
                             currentMonthAchievement = currentMonthAchievent.Amount;
@@ -596,7 +596,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         //previous month
                         decimal? previousMonthAchievement = 0;
                         string previousMonthAchievementCurrencyCode = "TL";
-                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Year != year && x.Month != month).FirstOrDefault();
+                        var previousMonthAchievent = goalResultByCustomerIdAndMonthCount.Months.Where(x => x.Month != month).FirstOrDefault();
                         if (previousMonthAchievent != null)
                         {
                             previousMonthAchievement = previousMonthAchievent.Amount;
