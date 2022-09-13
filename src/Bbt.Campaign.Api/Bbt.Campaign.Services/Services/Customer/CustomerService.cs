@@ -157,17 +157,17 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
             #region sms gönderimi
-            var targetAmount = GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
-            if (targetAmount != null & targetAmount.Result.Data != null)
+            var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
+            if (targetAmount != null && !String.IsNullOrEmpty(targetAmount.Data.TargetAmount))
             {
                 Dictionary<string, string> param = new Dictionary<string, string>();
-                param.Add("targetamount", targetAmount.Result.Data.TargetAmount);
+                param.Add("targetamount", targetAmount.Data.TargetAmount);
                 TemplateInfo template = new TemplateInfo()
                 {
                     templateName = "",
                     templateParameter = JsonConvert.SerializeObject(param)
                 };
-                _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
+                await _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
             }
             #endregion
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
