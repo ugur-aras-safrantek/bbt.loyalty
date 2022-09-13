@@ -10,6 +10,7 @@ using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Public.Models.Customer;
+using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Bbt.Campaign.Public.Models.Parameter;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Parameter;
@@ -18,6 +19,7 @@ using Bbt.Campaign.Shared.ServiceDependencies;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace Bbt.Campaign.Services.Services.Remote
 {
@@ -495,6 +497,32 @@ namespace Bbt.Campaign.Services.Services.Remote
             return document;
         }
 
+        public async Task SendSmsMessageTeplate(string customerId, int campaignId,TemplateInfo templateData)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("SendSmsMessageTemplate");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                int messageTypeId = 1;
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                serviceUrl = serviceUrl.Replace("{messageTypeId}",messageTypeId.ToString());
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var template = JsonConvert.SerializeObject(templateData);
+                var requestContent = new StringContent(template, Encoding.UTF8, "application/json");
+
+                var restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl,requestContent);
+                }           
+            }       
+        }
         private async Task<string> GetAccessTokenFromCache()
         {
             string result = string.Empty;
