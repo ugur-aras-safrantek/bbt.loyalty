@@ -7,5 +7,6 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     public class CustomerJoinSuccessFormDto
     {
         public CampaignMinDto Campaign { get; set; }
+        public string smsMessage { get; set; }
     }
 }

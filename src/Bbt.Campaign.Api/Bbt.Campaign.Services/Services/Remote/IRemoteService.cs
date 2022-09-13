@@ -21,7 +21,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request);
         public Task<Document> GetDocument(int id);
         public Task<UserModelService> GetUserRoles(string code, string state);
-        public Task SendSmsMessageTeplate(string customerId, int campaignId, TemplateInfo templateData);
+        public Task<HttpResponseMessage> SendSmsMessageTeplate(string customerId, int campaignId, TemplateInfo templateData);
 
 
     }
