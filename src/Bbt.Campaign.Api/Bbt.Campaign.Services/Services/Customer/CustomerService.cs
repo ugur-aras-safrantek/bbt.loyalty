@@ -167,7 +167,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     templateName = "",
                     templateParameter = JsonConvert.SerializeObject(param)
                 };
-               await _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
+                _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
             }
             #endregion
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);

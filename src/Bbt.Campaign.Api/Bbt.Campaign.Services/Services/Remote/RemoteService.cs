@@ -497,7 +497,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             return document;
         }
 
-        public async Task<HttpResponseMessage> SendSmsMessageTeplate(string customerId, int campaignId,TemplateInfo templateData)
+        public async Task SendSmsMessageTeplate(string customerId, int campaignId,TemplateInfo templateData)
         {
             using (var httpClient = new HttpClient())
             {
@@ -520,8 +520,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     accessToken = await GetAccessTokenFromService();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     restResponse = await httpClient.PostAsync(serviceUrl,requestContent);
-                }
-                return restResponse;
+                }              
             }       
         }
         private async Task<string> GetAccessTokenFromCache()
