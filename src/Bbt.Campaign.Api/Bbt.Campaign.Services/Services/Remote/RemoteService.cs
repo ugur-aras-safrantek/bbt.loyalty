@@ -17,6 +17,7 @@ using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.CacheKey;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Newtonsoft.Json;
+using RestSharp;
 using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Text;
@@ -506,22 +507,36 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string apiAddress = await _parameterService.GetServiceConstantValue("SendSmsMessageTemplate");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
                 int messageTypeId = 1;
-                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
-                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
-                serviceUrl = serviceUrl.Replace("{messageTypeId}",messageTypeId.ToString());
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var template = JsonConvert.SerializeObject(templateData);
-                var requestContent = new StringContent(template, Encoding.UTF8, "application/json");
+                apiAddress = apiAddress.Replace("{customerId}", customerId);
+                apiAddress = apiAddress.Replace("{campaignId}", campaignId.ToString());
+                apiAddress = apiAddress.Replace("{messageTypeId}", messageTypeId.ToString());
+                //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                //var template = JsonConvert.SerializeObject(templateData);
+                //var requestContent = new StringContent(template, Encoding.UTF8, "application/json");
 
-                var restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
-                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                //var restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
+                //if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                //{
+                //    accessToken = await GetAccessTokenFromService();
+                //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                //    restResponse = await httpClient.PostAsync(serviceUrl,requestContent);
+                //}
+                //
+                var client = new RestClient(baseAddress);
+                var request = new RestRequest(apiAddress, Method.Post);
+                request.AddHeader("Authorization", "Bearer " + accessToken);
+                request.AddHeader("Content-Type", "application/json");
+                request.AddJsonBody(templateData);
+
+                var response = await client.ExecuteAsync(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     accessToken = await GetAccessTokenFromService();
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    restResponse = await httpClient.PostAsync(serviceUrl,requestContent);
-                }              
-            }       
+                    request.AddOrUpdateHeader("Authorization", "Bearer " + accessToken);
+                    response = await client.ExecuteAsync(request);
+                }
+            }
         }
         private async Task<string> GetAccessTokenFromCache()
         {
