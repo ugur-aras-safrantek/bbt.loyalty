@@ -60,7 +60,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .OrderByDescending(x => x.Id)
                .FirstOrDefaultAsync();
-            if(entity != null)
+            if (entity != null)
             {
                 if (request.IsJoin && entity.IsJoin)
                     throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
@@ -84,7 +84,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
 
-            if(isFavorite || request.IsJoin)
+            if (isFavorite || request.IsJoin)
             {
                 var newEntity = new CustomerCampaignEntity();
                 newEntity.CustomerCode = request.CustomerCode;
@@ -142,7 +142,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         .Include(x => x.Campaign)
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefaultAsync();
-                if(deletedEntity != null)
+                if (deletedEntity != null)
                 {
                     CampaignMinDto campaignMinDto = new CampaignMinDto()
                     {
@@ -157,18 +157,22 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
             #region sms gönderimi
-            var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
-            if (targetAmount != null && !String.IsNullOrEmpty(targetAmount.Data.TargetAmount))
+            if (request.IsJoin)
             {
-                Dictionary<string, string> param = new Dictionary<string, string>();
-                param.Add("targetamount", targetAmount.Data.TargetAmount);
-                TemplateInfo template = new TemplateInfo()
+                var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
+                if (targetAmount != null && !String.IsNullOrEmpty(targetAmount.Data.TargetAmount))
                 {
-                    templateName = "",
-                    templateParameter = JsonConvert.SerializeObject(param)
-                };
-                _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
+                    Dictionary<string, string> param = new Dictionary<string, string>();
+                    param.Add("targetamount", targetAmount.Data.TargetAmount);
+                    TemplateInfo template = new TemplateInfo()
+                    {
+                        templateName = "",
+                        templateParameter = JsonConvert.SerializeObject(param)
+                    };
+                    _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
+                }
             }
+
             #endregion
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
         }
@@ -182,7 +186,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .OrderByDescending(x => x.Id)
                .FirstOrDefaultAsync();
-            if(entity != null)
+            if (entity != null)
             {
                 isJoin = entity.IsJoin;
                 startDate = entity.StartDate;
@@ -234,10 +238,10 @@ namespace Bbt.Campaign.Services.Services.Customer
         }
         private async Task CheckValidationAsync(string customerCode, int campaignId)
         {
-            if(string.IsNullOrEmpty(customerCode))
+            if (string.IsNullOrEmpty(customerCode))
                 throw new Exception("Müşteri kodu giriniz.");
 
-            if(campaignId <= 0)
+            if (campaignId <= 0)
                 throw new Exception("Kampanya giriniz.");
 
             DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
@@ -272,7 +276,7 @@ namespace Bbt.Campaign.Services.Services.Customer
         }
         public async Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request)
         {
-            if(request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join || request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite)
+            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join || request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite)
             {
                 if (string.IsNullOrEmpty(request.CustomerCode))
                     throw new Exception("Müşteri kodu giriniz.");
@@ -334,10 +338,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                     customerCampaignListDto.IsFavorite = customerCampaign.IsFavorite;
                 }
 
-                if(!customerCampaignListDto.IsJoin && !customerCampaignListDto.IsFavorite)
+                if (!customerCampaignListDto.IsJoin && !customerCampaignListDto.IsFavorite)
                 {
                     int maxNumberOfUser = campaign.MaxNumberOfUser ?? 0;
-                    if(maxNumberOfUser > 0)
+                    if (maxNumberOfUser > 0)
                     {
                         var customerCampaignCountEntity = customerCampaignCountList
                             .Where(x => x.Item1 == customerCampaignListDto.CampaignId).FirstOrDefault();
@@ -625,13 +629,13 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
 
-            response.CampaignTarget =await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
+            response.CampaignTarget = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
 
             response.IsAchieved = response.CampaignTarget.IsAchieved;
 
             decimal usedAmount = 0;
             string usedAmountCurrencyCode = "TL";
-            if(response.CampaignTarget.TotalUsed != null)
+            if (response.CampaignTarget.TotalUsed != null)
             {
                 usedAmount = response.CampaignTarget.TotalUsed.Amount == null ? 0 : (decimal)response.CampaignTarget.TotalUsed.Amount;
                 usedAmountCurrencyCode = response.CampaignTarget.TotalUsed.Currency == null ? "TL" :
@@ -644,7 +648,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             //targetResultDefinition
             string targetResultDefinition = string.Empty;
             var campaignTarget = response.CampaignTarget.ProgressBarlist.FirstOrDefault();
-            if(campaignTarget != null)
+            if (campaignTarget != null)
             {
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
@@ -692,9 +696,9 @@ namespace Bbt.Campaign.Services.Services.Customer
             StringBuilder sb = new StringBuilder();
             sb.Append(campaignEntity.Name + " programından ayrılma talebin bulunuyor. ");
             sb.Append("İşlemini onaylaman doğrultusunda ");
-            for(int t = 0; t < campaignAchievementList.Count; t++)
+            for (int t = 0; t < campaignAchievementList.Count; t++)
             {
-                if(campaignAchievementList.Count == 1)
+                if (campaignAchievementList.Count == 1)
                 {
                     sb.Append(campaignAchievementList[t].Description + " ");
                 }
@@ -729,7 +733,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         .Include(x => x.CampaignDetail)
                         .FirstOrDefaultAsync();
 
-            if(campaignEntity == null)
+            if (campaignEntity == null)
                 throw new Exception("kampanya bulunamadı.");
 
             var campaignMinDto = new CampaignMinDto()
