@@ -506,9 +506,9 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string apiAddress = await _parameterService.GetServiceConstantValue("SendSmsMessageTemplate");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
                 int messageTypeId = 1;
-                apiAddress = apiAddress.Replace("{customerId}", customerId);
-                apiAddress = apiAddress.Replace("{campaignId}", campaignId.ToString());
-                apiAddress = apiAddress.Replace("{messageTypeId}", messageTypeId.ToString());
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                serviceUrl = serviceUrl.Replace("{messageTypeId}", messageTypeId.ToString());
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var template = JsonConvert.SerializeObject(templateData);
@@ -520,7 +520,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                     accessToken = await GetAccessTokenFromService();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
-                }    
+                }
             }
         }
         private async Task<string> GetAccessTokenFromCache()
