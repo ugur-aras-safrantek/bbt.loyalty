@@ -18,6 +18,7 @@ using Bbt.Campaign.Services.Services.Remote;
 using System.Text;
 using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Newtonsoft.Json;
+using Bbt.Campaign.Services.Services.Parameter;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -25,17 +26,19 @@ namespace Bbt.Campaign.Services.Services.Customer
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly IRemoteService _remoteService;
 
-        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper,
+        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
             ICampaignService campaignService, ICampaignTargetService campaignTargetService,
             ICampaignAchievementService campaignAchievementService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _parameterService = parameterService;
             _campaignService = campaignService;
             _campaignTargetService = campaignTargetService;
             _campaignAchievementService = campaignAchievementService;
@@ -482,7 +485,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (string.IsNullOrEmpty(customerCode))
                 throw new Exception("Müşteri kodu giriniz.");
 
-            CustomerJoinFormDto response = new CustomerJoinFormDto();
+            CustomerJoinFormDto response = new CustomerJoinFormDto() { ContractFiles = new List<Public.Models.File.GetFileResponse>() };
 
             //campaign
             response.CampaignId = campaignId;
@@ -521,6 +524,12 @@ namespace Bbt.Campaign.Services.Services.Customer
                 response.IsContract = false;
                 var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
                 response.ContractFiles.Add(campaignContract);
+                var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
+                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
+                response.ContractFiles.Add(informationContract);
+                var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
+                var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
+                response.ContractFiles.Add(gdprContract);
             }
 
             //target
