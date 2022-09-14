@@ -36,7 +36,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             _redisDatabaseProvider = redisDatabaseProvider;
         }
 
-        public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode, int campaignId) 
+        public async Task<GoalResultByCustomerIdAndMonthCount> GetGoalResultByCustomerIdAndMonthCountData(string customerCode, int campaignId)
         {
             var goalResultByCustomerIdAndMonthCount = new GoalResultByCustomerIdAndMonthCount();
             using (var httpClient = new HttpClient())
@@ -70,7 +70,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return goalResultByCustomerIdAndMonthCount;
         }
-        public async Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang) 
+        public async Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang)
         {
             GoalResultByCustomerAndCampaing goalResultByCustomerAndCampaing = null;
             using (var httpClient = new HttpClient())
@@ -84,9 +84,9 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                
+
                 var restResponse = await httpClient.GetAsync(serviceUrl);
-                if(restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized) 
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     accessToken = await GetAccessTokenFromService();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
@@ -103,7 +103,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return goalResultByCustomerAndCampaing;
         }
-        public async Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang) 
+        public async Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang)
         {
             var earningByCustomerAndCampaingList = new List<EarningByCustomerAndCampaing>();
             using (var httpClient = new HttpClient())
@@ -117,7 +117,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-               
+
                 var restResponse = await httpClient.GetAsync(serviceUrl);
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
@@ -131,12 +131,12 @@ namespace Bbt.Campaign.Services.Services.Remote
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
                     earningByCustomerAndCampaingList = JsonConvert.DeserializeObject<List<EarningByCustomerAndCampaing>>(apiResponse);
                 }
-                else 
+                else
                     throw new Exception("Müşteri kazanım servisinden hata alındı.");
             }
             return earningByCustomerAndCampaingList;
         }
-        public async Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request) 
+        public async Task<CustomerReportServiceDto> GetCustomerReportData(CustomerReportRequest request)
         {
             CustomerReportServiceDto customerReportServiceDto = null;
             using (var httpClient = new HttpClient())
@@ -218,7 +218,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 }
                 if (!string.IsNullOrEmpty(request.CustomerCode))
                     serviceUrl += "&CustomerId=" + request.CustomerCode;
-                    
+
                 if (!string.IsNullOrEmpty(request.CustomerIdentifier))
                     serviceUrl += "&CustomerNumber=" + request.CustomerIdentifier;
                 if (request.CustomerTypeId.HasValue)
@@ -269,10 +269,10 @@ namespace Bbt.Campaign.Services.Services.Remote
             return customerReportServiceDto;
         }
 
-        public async Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request) 
+        public async Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request)
         {
             TargetReportServiceDto targetReportServiceDto = null;
-            using (var httpClient = new HttpClient()) 
+            using (var httpClient = new HttpClient())
             {
                 string accessToken = await GetAccessTokenFromCache();
                 string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
@@ -283,7 +283,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl += "?PageNumber=" + pageNumber;
                 int pageSize = (request.PageSize) ?? 25;
                 serviceUrl += "&PageSize=" + pageSize;
-                if (!string.IsNullOrEmpty(request.SortBy)) 
+                if (!string.IsNullOrEmpty(request.SortBy))
                 {
                     if (request.SortBy.EndsWith("Str"))
                         request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
@@ -339,14 +339,14 @@ namespace Bbt.Campaign.Services.Services.Remote
                     serviceUrl += "&SortType=" + (int)SortTypeEnum.Descending;
                 }
 
-                if (request.CampaignId.HasValue) 
+                if (request.CampaignId.HasValue)
                 {
                     int campaignId = request.CampaignId ?? 0;
                     var campaignEntity = await _unitOfWork.GetRepository<CampaignEntity>().GetByIdAsync(campaignId);
                     serviceUrl += "&CampaignCode=" + campaignEntity.Code;
                 }
 
-                if (request.TargetId.HasValue) 
+                if (request.TargetId.HasValue)
                 {
                     int targetId = request.TargetId ?? 0;
                     var targetEntity = await _unitOfWork.GetRepository<TargetEntity>().GetByIdAsync(targetId);
@@ -355,7 +355,7 @@ namespace Bbt.Campaign.Services.Services.Remote
 
                 if (!string.IsNullOrEmpty(request.CustomerCode))
                     serviceUrl += "&CustomerNumber=" + request.CustomerCode;
-                if (request.IdentitySubTypeId.HasValue) 
+                if (request.IdentitySubTypeId.HasValue)
                 {
                     int identitySubTypeId = request.IdentitySubTypeId ?? 0;
                     serviceUrl += "&SubSegment=" + identitySubTypeId;
@@ -363,13 +363,13 @@ namespace Bbt.Campaign.Services.Services.Remote
                 if (request.IsJoin.HasValue)
                     serviceUrl += "&IsJoined=" + request.IsJoin;
 
-                if (!string.IsNullOrEmpty(request.TargetSuccessStartDate)) 
+                if (!string.IsNullOrEmpty(request.TargetSuccessStartDate))
                 {
                     string[] startDateArray = request.TargetSuccessStartDate.Split('-');
-                    if(startDateArray.Length == 3) 
+                    if (startDateArray.Length == 3)
                     {
                         serviceUrl += "&StartDate=" + startDateArray[2] + "-" + startDateArray[1] + "-" + startDateArray[0];
-                    } 
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(request.TargetSuccessEndDate))
@@ -459,7 +459,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             else { throw new Exception("Invalid state."); }
             return userModel;
         }
-        public async Task<Document> GetDocument(int id) 
+        public async Task<Document> GetDocument(int id)
         {
             var document = new Document();
             string accessToken = await GetAccessTokenFromCache();
@@ -497,7 +497,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             return document;
         }
 
-        public async Task<HttpResponseMessage> SendSmsMessageTeplate(string customerId, int campaignId,TemplateInfo templateData)
+        public async Task SendSmsMessageTeplate(string customerId, int campaignId, TemplateInfo templateData)
         {
             using (var httpClient = new HttpClient())
             {
@@ -508,7 +508,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 int messageTypeId = 1;
                 serviceUrl = serviceUrl.Replace("{customerId}", customerId);
                 serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
-                serviceUrl = serviceUrl.Replace("{messageTypeId}",messageTypeId.ToString());
+                serviceUrl = serviceUrl.Replace("{messageTypeId}", messageTypeId.ToString());
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var template = JsonConvert.SerializeObject(templateData);
@@ -519,22 +519,21 @@ namespace Bbt.Campaign.Services.Services.Remote
                 {
                     accessToken = await GetAccessTokenFromService();
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                    restResponse = await httpClient.PostAsync(serviceUrl,requestContent);
+                    restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
                 }
-                return restResponse;
-            }       
+            }
         }
         private async Task<string> GetAccessTokenFromCache()
         {
             string result = string.Empty;
             var cache = await _redisDatabaseProvider.GetAsync(CacheKeys.AccessToken);
-            if (!string.IsNullOrEmpty(cache)) 
-            { 
+            if (!string.IsNullOrEmpty(cache))
+            {
                 var accessTokenList = JsonConvert.DeserializeObject<List<ParameterDto>>(cache);
                 if (accessTokenList != null && accessTokenList.Count == 1)
                     result = accessTokenList[0].Name;
             }
-            else 
+            else
             {
                 result = await GetAccessTokenFromService();
             }
