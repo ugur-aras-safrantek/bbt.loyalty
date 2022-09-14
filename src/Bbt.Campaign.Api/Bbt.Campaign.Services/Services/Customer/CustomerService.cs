@@ -515,7 +515,8 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
             {
                 response.IsContract = false;
-                response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                response.ContractFiles.Add(campaignContract);
             }
 
             //target
