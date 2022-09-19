@@ -159,9 +159,20 @@ namespace Bbt.Campaign.Services.Services.Customer
                     response.Campaign = campaignMinDto;
                 }
             }
-            #region sms gönderimi
+
+
             if (request.IsJoin)
             {
+                #region koşulsuz dönem ve destek Harcama kontrolüne göre kazanım servisi çağırma
+
+                var term = DateTime.Now.Year + "-" + DateTime.Now.Month.ToString("D2");
+                var customerIdendity = _unitOfWork.GetRepository<CampaignIdentityEntity>()
+                    .GetAll(x => x.Identities == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted == false).ToList();
+                if (customerIdendity.Count > 0)
+                    _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
+
+                #endregion
+                #region sms gönderimi
                 var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
                 if (targetAmount != null && !String.IsNullOrEmpty(targetAmount.Data.TargetAmount))
                 {
@@ -174,9 +185,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                     };
                     _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, template);
                 }
+                #endregion
             }
 
-            #endregion
+
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
         }
         public async Task<BaseResponse<CustomerCampaignDto>> SetFavorite(SetFavoriteRequest request)

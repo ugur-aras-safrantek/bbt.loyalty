@@ -523,6 +523,30 @@ namespace Bbt.Campaign.Services.Services.Remote
                 }
             }
         }
+
+        public async Task CustomerAchievementsAdd(string customerId, int campaignId, string term)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("CustomerAchievementAdd");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                serviceUrl = serviceUrl.Replace("{term}", term.ToString());
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var restResponse = await httpClient.PostAsync(serviceUrl,null);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+            }
+        }
         private async Task<string> GetAccessTokenFromCache()
         {
             string result = string.Empty;
