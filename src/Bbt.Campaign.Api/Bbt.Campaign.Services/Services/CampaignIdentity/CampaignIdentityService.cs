@@ -323,10 +323,10 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
         private async Task EarningIfIncludedCampaign(CampaignIdentityEntity data)
         {
             //Kampanyaya dahilse kazanım verme servisi çağırılır..
-            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            var entity = _unitOfWork.GetRepository<CustomerCampaignEntity>()
             .GetAll(x => x.CustomerCode == data.Identities && x.CampaignId == data.CampaignId && !x.IsDeleted)
             .OrderByDescending(x => x.Id)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
             if (entity != null)
             {
                 if (entity.IsJoin)
