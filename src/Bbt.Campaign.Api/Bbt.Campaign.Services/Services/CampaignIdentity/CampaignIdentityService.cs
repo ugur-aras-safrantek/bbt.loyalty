@@ -332,20 +332,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
                 if (entity.IsJoin)
                 {
                     var term = DateTime.Now.Year + "-" + DateTime.Now.Month.ToString("D2");
-
-                    var result = await _remoteService.CustomerAchievementsAdd(data.Identities, data.CampaignId, term);
-                    if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        if (data.IdentitySubTypeId == 1)
-                        {
-                            TemplateInfo template = new TemplateInfo()
-                            {
-                                templateName = "",
-                                templateParameter = ""
-                            };
-                            _remoteService.SendSmsMessageTeplate(data.Identities, data.CampaignId, 5, template);
-                        }
-                    }
+                    _remoteService.CustomerAchievementsAdd(data.Identities, data.CampaignId, term);        
                 }
             }
         }
