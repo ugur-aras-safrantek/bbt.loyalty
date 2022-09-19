@@ -189,22 +189,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 if (customerIdendity.Count > 0)
                 {
-                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
-                    if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        if (customerIdendity.Any(x => x.IdentitySubTypeId == 1))
-                        {
-                            //Koşulsuz dönem bildirimi
-                            TemplateInfo template = new TemplateInfo()
-                            {
-                                templateName = "",
-                                templateParameter = ""
-                            };
-                            _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, 5, template);
-                            //_remoteService.SendNotificationMessageTeplate(request.CustomerCode, request.CampaignId, 5, template);
-                        }
-
-                    }
+                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);                  
                 }
                 #endregion
             }
