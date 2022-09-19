@@ -22,7 +22,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<Document> GetDocument(int id);
         public Task<UserModelService> GetUserRoles(string code, string state);
         public Task SendSmsMessageTeplate(string customerId, int campaignId, TemplateInfo templateData);
-        public Task CustomerAchievementsAdd(string customerId, int campaignId, string term)
+        public Task CustomerAchievementsAdd(string customerId, int campaignId, string term);
 
 
     }
