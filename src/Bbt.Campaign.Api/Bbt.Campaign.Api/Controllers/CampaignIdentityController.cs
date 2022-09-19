@@ -25,6 +25,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
+        [AllowAnonymous]
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
         //public async Task<IActionResult> Update([FromForm] UpdateCampaignIdentityRequest request)
         public async Task<IActionResult> Update(UpdateCampaignIdentityRequest request)

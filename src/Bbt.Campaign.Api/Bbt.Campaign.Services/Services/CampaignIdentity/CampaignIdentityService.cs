@@ -8,8 +8,10 @@ using Bbt.Campaign.Public.Dtos.CampaignIdentity;
 using Bbt.Campaign.Public.Enums;
 using Bbt.Campaign.Public.Models.CampaignIdentity;
 using Bbt.Campaign.Public.Models.File;
+using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Bbt.Campaign.Services.FileOperations;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.Extentions;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using ClosedXML.Excel;
@@ -22,17 +24,19 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
         private readonly IUnitOfWork _unitOfWork;
         private readonly IParameterService _parameterService;
         private readonly IMapper _mapper;
+        private readonly IRemoteService _remoteService;
 
-        public CampaignIdentityService(IUnitOfWork unitOfWork, IParameterService parameterService, IMapper mapper)
+        public CampaignIdentityService(IUnitOfWork unitOfWork, IParameterService parameterService, IMapper mapper, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _parameterService = parameterService;
             _mapper = mapper;
+            _remoteService = remoteService;
         }
 
-        public async Task<BaseResponse<List<CampaignIdentityDto>>> UpdateAsync(UpdateCampaignIdentityRequest request, string userId) 
+        public async Task<BaseResponse<List<CampaignIdentityDto>>> UpdateAsync(UpdateCampaignIdentityRequest request, string userId)
         {
-            List<string>  identityList = await CheckValidationsAsync(request);
+            List<string> identityList = await CheckValidationsAsync(request);
 
             //foreach (var x in await _unitOfWork.GetRepository<CampaignIdentityEntity>()
             //    .GetAll(x => x.CampaignId == request.CampaignId && x.IsDeleted != true).ToListAsync()) 
@@ -40,10 +44,10 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             //    await _unitOfWork.GetRepository<CampaignIdentityEntity>().DeleteAsync(x);
             //}
 
-            foreach(string identity in identityList) 
+            foreach (string identity in identityList)
             {
                 var campaignIdentityEntity = new CampaignIdentityEntity()
-                { 
+                {
                     CampaignId = request.CampaignId,
                     IdentitySubTypeId = request.IdentitySubTypeId,
                     Identities = identity,
@@ -54,18 +58,28 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             }
 
             await _unitOfWork.SaveChangesAsync();
-
+            foreach (string identity in identityList)
+            {
+                var campaignIdentityEntity = new CampaignIdentityEntity()
+                {
+                    CampaignId = request.CampaignId,
+                    IdentitySubTypeId = request.IdentitySubTypeId,
+                    Identities = identity,
+                    CreatedBy = userId,
+                };
+                EarningIfIncludedCampaign(campaignIdentityEntity);
+            }
             return await GetListAsync(request.CampaignId);
         }
 
-        public async Task<BaseResponse<List<CampaignIdentityDto>>> DeleteAsync(CampaignIdentityDeleteRequest request, string userId) 
+        public async Task<BaseResponse<List<CampaignIdentityDto>>> DeleteAsync(CampaignIdentityDeleteRequest request, string userId)
         {
             List<CampaignIdentityDto> campaignIdentityList = new List<CampaignIdentityDto>();
 
             if (request.IdList == null || !request.IdList.Any())
                 throw new Exception("silinecek kayıt bulunamadı");
 
-            foreach(int id in request.IdList) 
+            foreach (int id in request.IdList)
             {
                 var entity = await _unitOfWork.GetRepository<CampaignIdentityEntity>().GetByIdAsync(id);
                 if (entity == null)
@@ -77,10 +91,10 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
 
                 await _unitOfWork.GetRepository<CampaignIdentityEntity>().UpdateAsync(entity);
             }
-            
+
             await _unitOfWork.SaveChangesAsync();
 
-            foreach(int id in request.IdList) 
+            foreach (int id in request.IdList)
             {
                 var entity = await _unitOfWork.GetRepository<CampaignIdentityEntity>().GetByIdAsync(id);
                 var campaignIdentityDto = _mapper.Map<CampaignIdentityDto>(entity);
@@ -110,14 +124,14 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             return await BaseResponse<List<CampaignIdentityDto>>.SuccessAsync(campaignIdentityList);
         }
 
-        public async Task<BaseResponse<CampaignIdentityUpdateFormDto>> GetUpdateFormAsync() 
+        public async Task<BaseResponse<CampaignIdentityUpdateFormDto>> GetUpdateFormAsync()
         {
             CampaignIdentityUpdateFormDto response = new CampaignIdentityUpdateFormDto();
             await FillForm(response);
             return await BaseResponse<CampaignIdentityUpdateFormDto>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<CampaignIdentityListFilterResponse>> GetByFilterAsync(CampaignIdentityListFilterRequest request) 
+        public async Task<BaseResponse<CampaignIdentityListFilterResponse>> GetByFilterAsync(CampaignIdentityListFilterRequest request)
         {
             CampaignIdentityListFilterResponse response = new CampaignIdentityListFilterResponse();
 
@@ -140,13 +154,13 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             return await BaseResponse<CampaignIdentityListFilterResponse>.SuccessAsync(response);
         }
 
-        public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignIdentityListFilterRequest request) 
+        public async Task<BaseResponse<GetFileResponse>> GetByFilterExcelAsync(CampaignIdentityListFilterRequest request)
         {
             GetFileResponse response = new GetFileResponse();
             IQueryable<CampaignIdentityListEntity> query = await GetQueryAsync(request);
             if (query.Count() == 0)
                 return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Kayıt bulunamadı");
-            
+
             var campaignIdentityList = ConvertCampaignIdentityList(query);
             byte[] data = ListFileOperations.GetCampaignIdentityListExcel(campaignIdentityList);
 
@@ -217,7 +231,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
 
             return identityList;
         }
-        
+
         private async Task FillForm(CampaignIdentityUpdateFormDto response)
         {
             response.IdentitySubTypeList = (await _parameterService.GetIdentitySubTypeListAsync())?.Data;
@@ -225,8 +239,8 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
                 .GetAll(x => x.IsActive && x.StatusId == (int)StatusEnum.Approved && !x.IsDeleted && (x.EndDate.AddDays(1) > DateTime.Now))
                 .Select(x => _mapper.Map<ParameterDto>(x)).ToList();
         }
-        
-        private List<CampaignIdentityListDto> ConvertCampaignIdentityList(IQueryable<CampaignIdentityListEntity> query) 
+
+        private List<CampaignIdentityListDto> ConvertCampaignIdentityList(IQueryable<CampaignIdentityListEntity> query)
         {
             var list = query.Select(x => new CampaignIdentityListDto
             {
@@ -240,7 +254,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             return list;
         }
 
-        private async Task<IQueryable<CampaignIdentityListEntity>> GetQueryAsync(CampaignIdentityListFilterRequest request) 
+        private async Task<IQueryable<CampaignIdentityListEntity>> GetQueryAsync(CampaignIdentityListFilterRequest request)
         {
             var query = _unitOfWork.GetRepository<CampaignIdentityListEntity>().GetAll();
 
@@ -255,13 +269,13 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             {
                 query = query.OrderByDescending(x => x.Id);
             }
-            else 
+            else
             {
                 if (request.SortBy.EndsWith("Str"))
                     request.SortBy = request.SortBy.Substring(0, request.SortBy.Length - 3);
 
                 bool isDescending = request.SortDir?.ToLower() == "desc";
-                switch (request.SortBy) 
+                switch (request.SortBy)
                 {
                     case "CampaignName":
                         query = isDescending ? query.OrderByDescending(x => x.CampaignName) : query.OrderBy(x => x.CampaignName);
@@ -303,6 +317,36 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             {
                 if (!Core.Helper.Helpers.FirmaVergiKontrol(identity))
                 { throw new Exception("VKN bilgisi doğrulanamadı."); }
+            }
+        }
+
+        private async Task EarningIfIncludedCampaign(CampaignIdentityEntity data)
+        {
+            //Kampanyaya dahilse kazanım verme servisi çağırılır..
+            var entity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            .GetAll(x => x.CustomerCode == data.Identities && x.CampaignId == data.CampaignId && !x.IsDeleted)
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
+            if (entity != null)
+            {
+                if (entity.IsJoin)
+                {
+                    var term = DateTime.Now.Year + "-" + DateTime.Now.Month.ToString("D2");
+
+                    var result = await _remoteService.CustomerAchievementsAdd(data.Identities, data.CampaignId, term);
+                    if (result.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        if (data.IdentitySubTypeId == 1)
+                        {
+                            TemplateInfo template = new TemplateInfo()
+                            {
+                                templateName = "",
+                                templateParameter = ""
+                            };
+                            _remoteService.SendSmsMessageTeplate(data.Identities, data.CampaignId, 5, template);
+                        }
+                    }
+                }
             }
         }
     }
