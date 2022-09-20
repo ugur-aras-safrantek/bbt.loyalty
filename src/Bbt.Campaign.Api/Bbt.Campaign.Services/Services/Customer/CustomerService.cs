@@ -19,6 +19,7 @@ using System.Text;
 using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Newtonsoft.Json;
 using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Shared.Extentions;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -157,6 +158,9 @@ namespace Bbt.Campaign.Services.Services.Customer
                     };
 
                     response.Campaign = campaignMinDto;
+                    // Kampanyadan ayrıldıgında o dönem verilen kazanımları silinir. 
+                     var term = Utilities.GetTerm();
+                    _remoteService.LeaveProgramAchievementDelete(request.CustomerCode, request.CampaignId, term);
                 }
             }
 
@@ -176,20 +180,20 @@ namespace Bbt.Campaign.Services.Services.Customer
                         templateName = "",
                         templateParameter = JsonConvert.SerializeObject(param)
                     };
-                    _remoteService.SendSmsMessageTeplate(request.CustomerCode, request.CampaignId, 1, template);
-                    //_remoteService.SendNotificationMessageTeplate(request.CustomerCode, request.CampaignId, 1, template);
+                    _remoteService.SendSmsMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
+                    //_remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
                 }
                 #endregion
 
                 #region koşulsuz dönem ve destek Harcama kontrolüne göre kazanım servisi çağırma
 
-                var term = DateTime.Now.Year + "-" + DateTime.Now.Month.ToString("D2");
+                var term = Utilities.GetTerm();
                 var customerIdendity = _unitOfWork.GetRepository<CampaignIdentityEntity>()
                     .GetAll(x => x.Identities == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted == false).ToList();
 
                 if (customerIdendity.Count > 0)
                 {
-                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);                  
+                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
                 }
                 #endregion
             }

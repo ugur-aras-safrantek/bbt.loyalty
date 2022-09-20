@@ -67,7 +67,7 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
                     Identities = identity,
                     CreatedBy = userId,
                 };
-                EarningIfIncludedCampaign(campaignIdentityEntity);
+                await EarningIfIncludedCampaign(campaignIdentityEntity);
             }
             return await GetListAsync(request.CampaignId);
         }
@@ -93,12 +93,16 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             }
 
             await _unitOfWork.SaveChangesAsync();
-
+            var term = Utilities.GetTerm();
             foreach (int id in request.IdList)
             {
                 var entity = await _unitOfWork.GetRepository<CampaignIdentityEntity>().GetByIdAsync(id);
                 var campaignIdentityDto = _mapper.Map<CampaignIdentityDto>(entity);
                 campaignIdentityList.Add(campaignIdentityDto);
+
+                //Listeden silinen kayda ait kazanımın kontrolü yapılıp
+                //destek harcama yada koşulsuz dönem ile hak elde ettiyse geri alınır
+                _remoteService.CustomerAchievementsDelete(entity.Identities, entity.CampaignId, term);
             }
 
             return await BaseResponse<List<CampaignIdentityDto>>.SuccessAsync(campaignIdentityList);
@@ -331,8 +335,8 @@ namespace Bbt.Campaign.Services.Services.CampaignIdentity
             {
                 if (entity.IsJoin)
                 {
-                    var term = DateTime.Now.Year + "-" + DateTime.Now.Month.ToString("D2");
-                    _remoteService.CustomerAchievementsAdd(data.Identities, data.CampaignId, term);        
+                    var term = Utilities.GetTerm();
+                    _remoteService.CustomerAchievementsAdd(data.Identities, data.CampaignId, term);
                 }
             }
         }
