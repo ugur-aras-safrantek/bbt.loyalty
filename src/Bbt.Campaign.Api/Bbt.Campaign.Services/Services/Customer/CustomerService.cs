@@ -541,12 +541,30 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 response.IsContract = false;
                 var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
+                campaignContract.ButtonTextEn = "Okudum, onaylıyorum";
+                campaignContract.UnderlineTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni";
+                campaignContract.UnderlineTextEn= $"{campaignDto.TitleEn} Program Sözleşmesi'ni";
+                campaignContract.DocumentTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
                 response.ContractFiles.Add(campaignContract);
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
                 var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
+                informationContract.ButtonTextTr = "Okudum";
+                informationContract.ButtonTextEn = "Okudum";
+                informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                informationContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
                 response.ContractFiles.Add(informationContract);
                 var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
                 var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
+                gdprContract.ButtonTextTr = "Okudum, onaylıyorum";
+                gdprContract.ButtonTextEn = "Okudum, onaylıyorum";
+                gdprContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                gdprContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
                 response.ContractFiles.Add(gdprContract);
             }
 
