@@ -497,7 +497,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             return document;
         }
 
-        public async Task SendSmsMessageTeplate(string customerId, int campaignId,int messageTypeId, TemplateInfo templateData)
+        public async Task SendSmsMessageTemplate(string customerId, int campaignId,int messageTypeId, TemplateInfo templateData)
         {
             using (var httpClient = new HttpClient())
             {
@@ -523,7 +523,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
         }
 
-        public async Task SendNotificationMessageTeplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData)
+        public async Task SendNotificationMessageTemplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData)
         {
             using (var httpClient = new HttpClient())
             {
@@ -564,6 +564,56 @@ namespace Bbt.Campaign.Services.Services.Remote
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 var restResponse = await httpClient.PostAsync(serviceUrl,null);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+                return restResponse;
+            }
+        }
+
+        public async Task<HttpResponseMessage> CustomerAchievementsDelete(string customerId, int campaignId, string term)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("CustomerAchievementDelete");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                serviceUrl = serviceUrl.Replace("{term}", term.ToString());
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var restResponse = await httpClient.PostAsync(serviceUrl, null);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+                return restResponse;
+            }
+        }
+
+        public async Task<HttpResponseMessage> LeaveProgramAchievementDelete(string customerId, int campaignId, string term)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("LeaveProgramAchievementDelete");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
+                serviceUrl = serviceUrl.Replace("{term}", term.ToString());
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var restResponse = await httpClient.PostAsync(serviceUrl, null);
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     accessToken = await GetAccessTokenFromService();
