@@ -12,18 +12,24 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
         {
             _prefix = "CampaignApi:";
 
-            var cluster = false;
+            var cluster = true;
+            string[] redisConnectionArray = StaticValues.Campaign_Redis_ConStr.ToString().Split(";");
             if (cluster)
             {  
                 ConfigurationOptions config = new ConfigurationOptions();
                 config.ChannelPrefix = _prefix;
-                config.EndPoints.Add("RedisEndpoint", 6379);
-                config.Password = "RedisPassword";
+                foreach (var redisConnection in redisConnectionArray)
+                    config.EndPoints.Add(redisConnection);
+                config.AbortOnConnectFail = false;
+                //config.Password = "RedisPassword";
                 config.CommandMap = CommandMap.Create(new HashSet<string>
                {
                    "INFO", "CONFIG", "CLUSTER",
                    "PING", "ECHO", "CLIENT"
                }, available: false);
+
+              _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(config);
+
             }
             else
                 _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(connection);
