@@ -130,5 +130,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<CampaignIdentityEntity> CampaignIdentities { get; set; }
         public DbSet<IdentitySubTypeEntity> IdentitySubTypes { get; set; }
         public DbSet<CampaignIdentityListEntity> CampaignIdentityList { get; set; }
+        public DbSet<OnExtraDefinitionEntity> OnExtraDefinition { get; set; }
     }
 }

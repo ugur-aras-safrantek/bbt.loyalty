@@ -16,7 +16,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         //public CampaignTargetDto CampaignTarget { get; set; }
         public CampaignTargetDto CampaignTarget { get; set; }
         public List<CampaignAchievementDto> CampaignAchievementList { get; set; }
-        public GetFileResponse ContractFile { get; set; }
+        public List<GetFileResponse> ContractFiles { get; set; }
         public bool IsMaxNumberOfUserReach { get; set; }
     }
 }

@@ -433,10 +433,10 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                             customerAchievement.AchievementTypeName = earning.EarningType;
                             customerAchievement.Description = earning.AchivementDescription;
                             customerAchievement.Title = earning.AchivementTitle;
-                            customerAchievement.AmountStr = Helpers.ConvertNullablePriceString((decimal)earning.Amount);
-                            customerAchievement.CurrencyCode = earning.Currency == null ? null :
-                                earning.Currency == "TRY" ? "TL":
-                                earning.Currency;
+                            customerAchievement.AmountStr = earning.Currency.StartsWith('%') ? earning.Currency : Helpers.ConvertNullablePriceString((decimal)earning.Amount) +" "+ (earning.Currency == null || earning.Currency.StartsWith('%') ? null :
+                                earning.Currency == "TRY" ? "TL" :
+                                earning.Currency);
+                            customerAchievement.CurrencyCode = null;
                             customerAchievementList.Add(customerAchievement);
                         }
                     }

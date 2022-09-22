@@ -16,6 +16,10 @@ using Bbt.Campaign.Shared.Static;
 using Microsoft.EntityFrameworkCore;
 using Bbt.Campaign.Services.Services.Remote;
 using System.Text;
+using Bbt.Campaign.Public.Models.MessagingTemplate;
+using Newtonsoft.Json;
+using Bbt.Campaign.Services.Services.Parameter;
+using Bbt.Campaign.Shared.Extentions;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -23,17 +27,19 @@ namespace Bbt.Campaign.Services.Services.Customer
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IParameterService _parameterService;
         private readonly ICampaignService _campaignService;
         private readonly ICampaignTargetService _campaignTargetService;
         private readonly ICampaignAchievementService _campaignAchievementService;
         private readonly IRemoteService _remoteService;
 
-        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, 
+        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper, IParameterService parameterService,
             ICampaignService campaignService, ICampaignTargetService campaignTargetService,
             ICampaignAchievementService campaignAchievementService, IRemoteService remoteService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _parameterService = parameterService;
             _campaignService = campaignService;
             _campaignTargetService = campaignTargetService;
             _campaignAchievementService = campaignAchievementService;
@@ -58,16 +64,16 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .OrderByDescending(x => x.Id)
                .FirstOrDefaultAsync();
-            if(entity != null) 
+            if (entity != null)
             {
                 if (request.IsJoin && entity.IsJoin)
                     throw new Exception("Müşteri bu kampayaya daha önceki bir tarihte katılmış.");
                 if (!request.IsJoin && !entity.IsJoin)
                     throw new Exception("Müşteri bu kampayaya henüz katılmamış.");
-                
+
                 isFavorite = entity.IsFavorite;
             }
-            else 
+            else
             {
                 if (!request.IsJoin)
                     throw new Exception("Müşteri bu kampayaya henüz katılmamış.");
@@ -75,14 +81,14 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             foreach (var deleteEntity in _unitOfWork.GetRepository<CustomerCampaignEntity>()
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
-               .ToList()) 
+               .ToList())
             {
                 deleteEntity.LastModifiedOn = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
             }
-                
-            
-            if(isFavorite || request.IsJoin) 
+
+
+            if (isFavorite || request.IsJoin)
             {
                 var newEntity = new CustomerCampaignEntity();
                 newEntity.CustomerCode = request.CustomerCode;
@@ -94,12 +100,12 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 newEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(newEntity);
             }
-            
+
             await _unitOfWork.SaveChangesAsync();
 
             //response
 
-            if (request.IsJoin) 
+            if (request.IsJoin)
             {
                 var customerJoin = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                         .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && !x.IsDeleted)
@@ -133,14 +139,14 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 response.Campaign = campaignList[0];
             }
-            else 
+            else
             {
                 var deletedEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                         .GetAll(x => x.CampaignId == request.CampaignId && x.CustomerCode == request.CustomerCode && x.IsDeleted)
                         .Include(x => x.Campaign)
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefaultAsync();
-                if(deletedEntity != null) 
+                if (deletedEntity != null)
                 {
                     CampaignMinDto campaignMinDto = new CampaignMinDto()
                     {
@@ -150,10 +156,48 @@ namespace Bbt.Campaign.Services.Services.Customer
                         TitleEn = deletedEntity.Campaign.TitleEn,
                         EndDate = deletedEntity.Campaign.EndDate,
                     };
-                    
+
                     response.Campaign = campaignMinDto;
+                    // Kampanyadan ayrıldıgında o dönem verilen kazanımları silinir. 
+                     var term = Utilities.GetTerm();
+                    _remoteService.LeaveProgramAchievementDelete(request.CustomerCode, request.CampaignId, term);
                 }
             }
+
+
+            if (request.IsJoin)
+            {
+
+                #region sms gönderimi
+                //Hoşgeldin bildirimi
+                var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
+                if (targetAmount != null && !String.IsNullOrEmpty(targetAmount.Data.TargetAmount))
+                {
+                    Dictionary<string, string> param = new Dictionary<string, string>();
+                    param.Add("targetamount", targetAmount.Data.TargetAmount);
+                    TemplateInfo template = new TemplateInfo()
+                    {
+                        templateName = "",
+                        templateParameter = JsonConvert.SerializeObject(param)
+                    };
+                    _remoteService.SendSmsMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
+                    //_remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
+                }
+                #endregion
+
+                #region koşulsuz dönem ve destek Harcama kontrolüne göre kazanım servisi çağırma
+
+                var term = Utilities.GetTerm();
+                var customerIdendity = _unitOfWork.GetRepository<CampaignIdentityEntity>()
+                    .GetAll(x => x.Identities == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted == false).ToList();
+
+                if (customerIdendity.Count > 0)
+                {
+                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
+                }
+                #endregion
+            }
+
 
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
         }
@@ -167,8 +211,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .OrderByDescending(x => x.Id)
                .FirstOrDefaultAsync();
-            if(entity != null) 
-            { 
+            if (entity != null)
+            {
                 isJoin = entity.IsJoin;
                 startDate = entity.StartDate;
             }
@@ -177,7 +221,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted).ToList())
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
 
-            if (request.IsFavorite || isJoin) 
+            if (request.IsFavorite || isJoin)
             {
                 var newEntity = new CustomerCampaignEntity();
                 newEntity.CustomerCode = request.CustomerCode;
@@ -189,14 +233,14 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().AddAsync(newEntity);
             }
-           
+
             await _unitOfWork.SaveChangesAsync();
 
             var mappedCustomerCampaign = _mapper.Map<CustomerCampaignDto>(entity);
 
             return await BaseResponse<CustomerCampaignDto>.SuccessAsync(mappedCustomerCampaign);
-        }      
-        private async Task<bool> IsMaxNumberOfUserReach(int campaignId) 
+        }
+        private async Task<bool> IsMaxNumberOfUserReach(int campaignId)
         {
             bool isMaxNumberOfUserReach = false;
 
@@ -217,12 +261,12 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             return isMaxNumberOfUserReach;
         }
-        private async Task CheckValidationAsync(string customerCode, int campaignId) 
+        private async Task CheckValidationAsync(string customerCode, int campaignId)
         {
-            if(string.IsNullOrEmpty(customerCode))
+            if (string.IsNullOrEmpty(customerCode))
                 throw new Exception("Müşteri kodu giriniz.");
 
-            if(campaignId <= 0)
+            if (campaignId <= 0)
                 throw new Exception("Kampanya giriniz.");
 
             DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
@@ -257,7 +301,7 @@ namespace Bbt.Campaign.Services.Services.Customer
         }
         public async Task<BaseResponse<CustomerCampaignListFilterResponse>> GetByFilterAsync(CustomerCampaignListFilterRequest request)
         {
-            if(request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join || request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite) 
+            if (request.PageTypeId == (int)CustomerCampaignListTypeEnum.Join || request.PageTypeId == (int)CustomerCampaignListTypeEnum.Favorite)
             {
                 if (string.IsNullOrEmpty(request.CustomerCode))
                     throw new Exception("Müşteri kodu giriniz.");
@@ -299,7 +343,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var customerCampaignList = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
                 .GetAll(x => !x.IsDeleted && x.CustomerCode == (request.CustomerCode ?? string.Empty))
                 .ToListAsync();
-                
+
             List<CustomerCampaignMinListDto> returnList = new List<CustomerCampaignMinListDto>();
             foreach (var campaign in campaignList)
             {
@@ -319,10 +363,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                     customerCampaignListDto.IsFavorite = customerCampaign.IsFavorite;
                 }
 
-                if(!customerCampaignListDto.IsJoin && !customerCampaignListDto.IsFavorite) 
+                if (!customerCampaignListDto.IsJoin && !customerCampaignListDto.IsFavorite)
                 {
                     int maxNumberOfUser = campaign.MaxNumberOfUser ?? 0;
-                    if(maxNumberOfUser > 0) 
+                    if (maxNumberOfUser > 0)
                     {
                         var customerCampaignCountEntity = customerCampaignCountList
                             .Where(x => x.Item1 == customerCampaignListDto.CampaignId).FirstOrDefault();
@@ -365,14 +409,14 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             response.CustomerCampaignList = returnList;
             //response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
-            
+
             return await BaseResponse<CustomerCampaignListFilterResponse>.SuccessAsync(response);
         }
-        private async Task<IQueryable<CampaignDetailListEntity>> GetCampaignQueryAsync(CustomerCampaignListFilterRequest request) 
+        private async Task<IQueryable<CampaignDetailListEntity>> GetCampaignQueryAsync(CustomerCampaignListFilterRequest request)
         {
             DateTime today = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
             var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
-                .GetAll(x => !x.IsDeleted && x.IsActive 
+                .GetAll(x => !x.IsDeleted && x.IsActive
                         && (x.ViewOptionId != (int)ViewOptionsEnum.InvisibleCampaign || x.ViewOptionId == null)
                         && x.StatusId == (int)StatusEnum.Approved);
 
@@ -394,8 +438,8 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             bool isDescending = request.SortDir?.ToLower() == "desc";
 
-            if (request.SortBy.Equals("Id") || request.SortBy.Equals("Code")) 
-            { 
+            if (request.SortBy.Equals("Id") || request.SortBy.Equals("Code"))
+            {
                 campaignQuery = isDescending ? campaignQuery.OrderByDescending(x => x.Id) : campaignQuery = campaignQuery.OrderBy(x => x.Id);
             }
             else if (request.SortBy.Equals("Order"))
@@ -463,7 +507,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (string.IsNullOrEmpty(customerCode))
                 throw new Exception("Müşteri kodu giriniz.");
 
-            CustomerJoinFormDto response = new CustomerJoinFormDto();
+            CustomerJoinFormDto response = new CustomerJoinFormDto() { ContractFiles = new List<Public.Models.File.GetFileResponse>() };
 
             //campaign
             response.CampaignId = campaignId;
@@ -497,12 +541,37 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.Campaign = campaignDto;
 
             response.IsContract = false;
-            if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0) 
+            if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
             {
                 response.IsContract = false;
-                response.ContractFile = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
+                campaignContract.ButtonTextEn = "Okudum, onaylıyorum";
+                campaignContract.UnderlineTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni";
+                campaignContract.UnderlineTextEn= $"{campaignDto.TitleEn} Program Sözleşmesi'ni";
+                campaignContract.DocumentTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                response.ContractFiles.Add(campaignContract);
+                var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
+                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
+                informationContract.ButtonTextTr = "Okudum";
+                informationContract.ButtonTextEn = "Okudum";
+                informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                informationContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                response.ContractFiles.Add(informationContract);
+                var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
+                var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
+                gdprContract.ButtonTextTr = "Okudum, onaylıyorum";
+                gdprContract.ButtonTextEn = "Okudum, onaylıyorum";
+                gdprContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                gdprContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                response.ContractFiles.Add(gdprContract);
             }
-                
+
             //target
 
             var campaignTargetDto = await _campaignTargetService.GetCampaignTargetDtoCustomer(campaignId, 0, 0);
@@ -553,7 +622,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.IsAchieved = false;
             string serviceUrl = string.Empty;
 
-            if (StaticValues.IsDevelopment) 
+            if (StaticValues.IsDevelopment)
             {
                 //totalAchievement = 190;
                 //previousMonthAchievement = 120;
@@ -562,7 +631,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 //response.TotalAchievementCurrencyCode = "TRY";
                 //response.PreviousMonthAchievementCurrencyCode = "TRY";
             }
-            else 
+            else
             {
                 var goalResultByCustomerIdAndMonthCount = await _remoteService.GetGoalResultByCustomerIdAndMonthCountData(customerCode, campaignId);
                 if (goalResultByCustomerIdAndMonthCount != null)
@@ -610,26 +679,26 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
             }
 
-            response.CampaignTarget =  await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
+            response.CampaignTarget = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
 
             response.IsAchieved = response.CampaignTarget.IsAchieved;
 
             decimal usedAmount = 0;
             string usedAmountCurrencyCode = "TL";
-            if(response.CampaignTarget.TotalUsed != null) 
+            if (response.CampaignTarget.TotalUsed != null)
             {
                 usedAmount = response.CampaignTarget.TotalUsed.Amount == null ? 0 : (decimal)response.CampaignTarget.TotalUsed.Amount;
                 usedAmountCurrencyCode = response.CampaignTarget.TotalUsed.Currency == null ? "TL" :
                                     response.CampaignTarget.TotalUsed.Currency == "TRY" ? "TL" :
                                     response.CampaignTarget.TotalUsed.Currency;
             }
-            response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount); 
+            response.UsedAmountStr = Helpers.ConvertNullablePriceString(usedAmount);
             response.UsedAmountCurrencyCode = usedAmountCurrencyCode;
 
             //targetResultDefinition
             string targetResultDefinition = string.Empty;
             var campaignTarget = response.CampaignTarget.ProgressBarlist.FirstOrDefault();
-            if(campaignTarget != null) 
+            if (campaignTarget != null)
             {
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
@@ -661,7 +730,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                                         , campaignName);
                 }
             }
-            
+
             response.TargetResultDefinition = targetResultDefinition;
 
             //campaignLeftDefinition
@@ -677,13 +746,13 @@ namespace Bbt.Campaign.Services.Services.Customer
             StringBuilder sb = new StringBuilder();
             sb.Append(campaignEntity.Name + " programından ayrılma talebin bulunuyor. ");
             sb.Append("İşlemini onaylaman doğrultusunda ");
-            for(int t = 0; t < campaignAchievementList.Count; t++) 
-            { 
-                if(campaignAchievementList.Count == 1) 
+            for (int t = 0; t < campaignAchievementList.Count; t++)
+            {
+                if (campaignAchievementList.Count == 1)
                 {
                     sb.Append(campaignAchievementList[t].Description + " ");
                 }
-                else 
+                else
                 {
                     if (t == campaignAchievementList.Count - 1)
                         sb.Append(campaignAchievementList[t].Description + " ");
@@ -700,7 +769,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
         }
-        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode) 
+        public async Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode)
         {
             CustomerJoinSuccessFormDto response = new CustomerJoinSuccessFormDto();
 
@@ -714,7 +783,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         .Include(x => x.CampaignDetail)
                         .FirstOrDefaultAsync();
 
-            if(campaignEntity == null)
+            if (campaignEntity == null)
                 throw new Exception("kampanya bulunamadı.");
 
             var campaignMinDto = new CampaignMinDto()
@@ -772,6 +841,32 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             return await BaseResponse<CustomerJoinSuccessFormDto>.SuccessAsync(response);
 
+        }
+        public async Task<BaseResponse<CustomerCampaignTargetResultDto>> GetCustomerCampaignTargetAmountAsync(int campaignId, string customerCode)
+        {
+            CustomerCampaignTargetResultDto response = new CustomerCampaignTargetResultDto();
+            var onExtraDefinition = _unitOfWork.GetRepository<OnExtraDefinitionEntity>().GetAll(x => x.OnExtraCampaignId == campaignId).FirstOrDefault();
+            var campaignEntity = await _unitOfWork.GetRepository<CampaignTargetEntity>()
+                        .GetAll(x => x.CampaignId == campaignId && !x.IsDeleted)
+                        .Include(x => x.Target.TargetDetail)
+                        .FirstOrDefaultAsync();
+            var targetAmount = campaignEntity.Target.TargetDetail.TotalAmount != null ? campaignEntity.Target.TargetDetail.TotalAmount : campaignEntity.Target.TargetDetail.NumberOfTransaction;
+            response.TargetAmount = targetAmount.ToString();
+            bool checkFirstMounthTarget = false;
+            ///Kampanyaya katıldıgı ilk aya özel hedef kontrolü
+            if (onExtraDefinition != null && onExtraDefinition?.CampaignJoinFirstMounthTarget > 0)
+            {
+                DateTime dateNow = DateTime.Now;
+                var joinDate = _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                    .GetAll(x => x.CampaignId == campaignId && x.IsJoin == true && x.CustomerCode == customerCode)
+                    .OrderBy(x => x.Id).Select(x => x.StartDate).FirstOrDefault();
+                var checkFirstMounth = (joinDate?.Month == dateNow.Month && joinDate?.Year == dateNow.Year ? true : false);
+                if (checkFirstMounth)
+                {
+                    response.TargetAmount = onExtraDefinition.CampaignJoinFirstMounthTarget.ToString();
+                }
+            }
+            return await BaseResponse<CustomerCampaignTargetResultDto>.SuccessAsync(response);
         }
     }
 }

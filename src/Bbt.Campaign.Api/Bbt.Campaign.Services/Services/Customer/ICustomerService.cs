@@ -20,5 +20,6 @@ namespace Bbt.Campaign.Services.Services.Customer
         public Task<BaseResponse<CustomerViewFormMinDto>> GetCustomerViewFormAsync(int campaignId, string contentRootPath);
         public Task<BaseResponse<CustomerJoinFormDto>> GetCustomerJoinFormAsync(int campaignId, string customerCode, string contentRootPath);
         public Task<BaseResponse<CustomerJoinSuccessFormDto>> GetCustomerJoinSuccessFormAsync(int campaignId, string customerCode);
+        public Task<BaseResponse<CustomerCampaignTargetResultDto>> GetCustomerCampaignTargetAmountAsync(int campaignId, string customerCode);
     }
 }

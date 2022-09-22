@@ -4,6 +4,7 @@ using Bbt.Campaign.Public.Dtos.Report;
 using Bbt.Campaign.Public.Models.Campaign;
 using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Public.Models.Customer;
+using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Bbt.Campaign.Public.Models.Report;
 
 
@@ -20,6 +21,11 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request);
         public Task<Document> GetDocument(int id);
         public Task<UserModelService> GetUserRoles(string code, string state);
+        public Task SendSmsMessageTemplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData);
+        public Task SendNotificationMessageTemplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData);
+        public Task<HttpResponseMessage> CustomerAchievementsAdd(string customerId, int campaignId, string term);
+        public Task<HttpResponseMessage> CustomerAchievementsDelete(string customerId, int campaignId, string term);
+        public Task<HttpResponseMessage> LeaveProgramAchievementDelete(string customerId, int campaignId, string term);
 
 
     }
