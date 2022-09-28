@@ -545,12 +545,15 @@ namespace Bbt.Campaign.Services.Services.Customer
             {
                 response.IsContract = false;
                 var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
-                campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
-                campaignContract.ButtonTextEn = "Okudum, onaylıyorum";
-                campaignContract.UnderlineTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni";
-                campaignContract.UnderlineTextEn= $"{campaignDto.TitleEn} Program Sözleşmesi'ni";
-                campaignContract.DocumentTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni okudum ve onaylıyorum.";
-                campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                if (campaignContract != null)
+                {
+                    campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
+                    campaignContract.ButtonTextEn = "Okudum, onaylıyorum";
+                    campaignContract.UnderlineTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni";
+                    campaignContract.UnderlineTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni";
+                    campaignContract.DocumentTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                    campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                }
                 response.ContractFiles.Add(campaignContract);
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
                 var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
@@ -682,6 +685,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             response.CampaignTarget = await _campaignTargetService.GetCampaignTargetDtoCustomer2(campaignId, customerCode, language, false);
 
             response.IsAchieved = response.CampaignTarget.IsAchieved;
+            response.LastMonthIsAchieved = response.CampaignTarget.LastMonthIsAchieved;
 
             decimal usedAmount = 0;
             string usedAmountCurrencyCode = "TL";

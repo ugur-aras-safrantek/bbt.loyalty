@@ -10,6 +10,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
     {
         public int CampaignId { get; set; }
         public bool IsAchieved { get; set; }
+        public bool LastMonthIsAchieved { get; set; }
         public CampaignDto Campaign { get; set; }
         public string? UsedAmountStr { get; set; }
         public string? UsedAmountCurrencyCode { get; set; }

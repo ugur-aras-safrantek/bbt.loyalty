@@ -14,5 +14,6 @@ namespace Bbt.Campaign.Public.Models.CampaignAchievement
         public string? Title { get; set; }
         public string? AmountStr { get; set; }
         public string? CurrencyCode { get; set; }
+        public string? Rate { get; set; }
     }
 }
