@@ -159,7 +159,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                     response.Campaign = campaignMinDto;
                     // Kampanyadan ayrıldıgında o dönem verilen kazanımları silinir. 
-                     var term = Utilities.GetTerm();
+                    var term = Utilities.GetTerm();
                     _remoteService.LeaveProgramAchievementDelete(request.CustomerCode, request.CampaignId, term);
                 }
             }
@@ -544,7 +544,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
             {
                 response.IsContract = false;
-                
+
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
                 var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
                 informationContract.ButtonTextTr = "Okudum";
@@ -739,6 +739,8 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             response.TargetResultDefinition = targetResultDefinition;
+            DateTime currentDate = DateTime.Now;
+            response.CurrentMounthTitle = language.ToLower() == "tr" ? currentDate.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr")) : currentDate.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
 
             //campaignLeftDefinition
 
@@ -747,6 +749,21 @@ namespace Bbt.Campaign.Services.Services.Customer
             foreach (var campaignAchievement in campaignAchievementList)
                 campaignAchievement.IsAchieved = response.IsAchieved;
             response.CampaignAchievementList = campaignAchievementList;
+            var previousMonth = currentDate.AddMonths(-1);
+            var previousMonthName = language.ToLower() == "tr" ? previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
+                    : previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
+
+            if (response.CampaignAchievementList.Count > 0)
+            {
+
+                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Tebrikler, {previousMonthName} ayı harcama hedefini tutturduğunuz için ON Plus avantajlarından faydalanabilirsin."
+                    : $"Congratulations! You can enjoy ON Plus advantages for achieving your {previousMonthName} spending target.";
+            }
+            else
+            {
+                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Üzgünüz, {previousMonthName} ayında yaptığın harcamalar ON Plus avantajlarından faydalanman için yeterli değil." 
+                    : $"Sorry, your spendings in {previousMonthName} are not enough for you to benefit from ON Plus advantages.";
+            }
 
             string campaignLeftDefinition = string.Empty;
 
