@@ -643,7 +643,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     {
                         response.TotalAchievementStr = Helpers.ConvertNullablePriceString(goalResultByCustomerIdAndMonthCount.Total.Amount);
                         response.TotalAchievementCurrencyCode = goalResultByCustomerIdAndMonthCount.Total.Currency == null ? null :
-                                goalResultByCustomerIdAndMonthCount.Total.Currency == "TRY" ? "TL" :
+                                goalResultByCustomerIdAndMonthCount.Total.Currency == "TRY" ? "₺" :
                                 goalResultByCustomerIdAndMonthCount.Total.Currency;
                     }
                     if (goalResultByCustomerIdAndMonthCount.Months != null && goalResultByCustomerIdAndMonthCount.Months.Any())
@@ -673,7 +673,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         {
                             previousMonthAchievement = previousMonthAchievent.Amount;
                             previousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
-                                previousMonthAchievent.Currency == "TRY" ? "TL" :
+                                previousMonthAchievent.Currency == "TRY" ? "₺" :
                                 previousMonthAchievent.Currency;
                         }
                         response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
@@ -707,7 +707,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
                 string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode == null ? null :
-                                    campaignTarget.TargetAmountCurrencyCode == "TRY" ? "TL" :
+                                    campaignTarget.TargetAmountCurrencyCode == "TRY" ? "₺" :
                                     campaignTarget.TargetAmountCurrencyCode;
                 string campaignName = campaignEntity.Name;
                 string monthName = string.Empty;
