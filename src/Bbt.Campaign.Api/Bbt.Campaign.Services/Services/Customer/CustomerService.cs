@@ -710,7 +710,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
                 string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode == null ? null :
-                                    campaignTarget.TargetAmountCurrencyCode == "TRY" ? "₺" :
+                                    (campaignTarget.TargetAmountCurrencyCode == "TRY" || campaignTarget.TargetAmountCurrencyCode == "TL") ? "₺" :
                                     campaignTarget.TargetAmountCurrencyCode;
                 string campaignName = campaignEntity.Name;
                 string monthName = string.Empty;
