@@ -12,6 +12,7 @@ namespace Bbt.Campaign.Public.Dtos.Customer
         public string CurrentMounthTitle { get; set; }
         public string CurrentMounthAchievementMessage { get; set; }
         public bool IsAchieved { get; set; }
+        public string CampaignJoinMessage { get; set; }
         public bool LastMonthIsAchieved { get; set; }
         public CampaignDto Campaign { get; set; }
         public string? UsedAmountStr { get; set; }

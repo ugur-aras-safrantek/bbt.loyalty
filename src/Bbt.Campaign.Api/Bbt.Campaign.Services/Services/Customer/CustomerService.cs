@@ -20,6 +20,7 @@ using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Newtonsoft.Json;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
+using System.Globalization;
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -610,6 +611,17 @@ namespace Bbt.Campaign.Services.Services.Customer
                 throw new Exception("Kampanya bulunamadı.");
             }
 
+            //customerCampaign
+            var customerCampaignEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (customerCampaignEntity == null)
+            {
+                throw new Exception("Kampanya katılım bilgisi bulunamadı.");
+            }
+            var campaignJoinDate = customerCampaignEntity.StartDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            response.CampaignJoinMessage = language.ToLower()=="tr"?$"{campaignJoinDate} tarihinden beri {campaignEntity.TitleTr}lısın" 
+                :$"You are {campaignEntity.TitleEn} since {campaignJoinDate}";
             response.IsInvisibleCampaign = false;
             if (campaignEntity != null)
             {
