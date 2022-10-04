@@ -628,7 +628,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             //customerCampaign
             var customerCampaignEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                .GetAll(x => x.Id == campaignId && !x.IsDeleted)
+                .GetAll(x => x.CampaignId == campaignId && x.CustomerCode == customerCode && x.IsJoin && !x.IsDeleted)
                 .FirstOrDefaultAsync();
             if (customerCampaignEntity == null)
             {
