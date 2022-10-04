@@ -623,6 +623,31 @@ namespace Bbt.Campaign.Services.Services.Remote
                 return restResponse;
             }
         }
+
+        public async Task<HttpResponseMessage> SendDmsDocuments(string customerId, List<int> documentIds)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("SendDmsDocument");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var data = JsonConvert.SerializeObject(documentIds);
+                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                var restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+                return restResponse;
+            }
+        }
         private async Task<string> GetAccessTokenFromCache()
         {
             string result = string.Empty;

@@ -122,6 +122,21 @@ namespace Bbt.Campaign.Services.Services.Customer
                     .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
                 campaignQuery = campaignQuery.Take(1);
 
+                //DYS servisine döküman gönderilecek.
+                //#region DYS gönderimi
+                //List<int> docList = new List<int>();
+                //var campaign = campaignQuery.FirstOrDefault();
+                //if (campaign != null && campaign.IsContract)
+                //{
+                //    docList.Add(campaign.ContractId.Value);
+                //}
+                //var infotext = Convert.ToInt32(_parameterService.GetServiceConstantValue("InformationText"));
+                //var gdpr = Convert.ToInt32(_parameterService.GetServiceConstantValue("GDPR"));
+                //docList.Add(infotext);
+                //docList.Add(gdpr);
+                //await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
+                //#endregion
+
                 var campaignList = campaignQuery.Select(x => new CampaignMinDto
                 {
                     Id = x.Id,
@@ -620,8 +635,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                 throw new Exception("Kampanya katılım bilgisi bulunamadı.");
             }
             var campaignJoinDate = customerCampaignEntity.StartDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-            response.CampaignJoinMessage = language.ToLower()=="tr"?$"{campaignJoinDate} tarihinden beri {campaignEntity.TitleTr}lısın" 
-                :$"You are {campaignEntity.TitleEn} since {campaignJoinDate}";
+            response.CampaignJoinMessage = language.ToLower() == "tr" ? $"{campaignJoinDate} tarihinden beri {campaignEntity.TitleTr}lısın"
+                : $"You are {campaignEntity.TitleEn} since {campaignJoinDate}";
             response.IsInvisibleCampaign = false;
             if (campaignEntity != null)
             {
@@ -773,7 +788,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
             else
             {
-                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Üzgünüz, {previousMonthName} ayında yaptığın harcamalar ON Plus avantajlarından faydalanman için yeterli değil." 
+                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Üzgünüz, {previousMonthName} ayında yaptığın harcamalar ON Plus avantajlarından faydalanman için yeterli değil."
                     : $"Sorry, your spendings in {previousMonthName} are not enough for you to benefit from ON Plus advantages.";
             }
 
