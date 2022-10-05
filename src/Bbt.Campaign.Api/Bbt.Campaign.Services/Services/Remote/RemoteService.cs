@@ -679,10 +679,6 @@ namespace Bbt.Campaign.Services.Services.Remote
                     if (result != null)
                         response = true;
                 }
-                else
-                {
-                    throw new Exception("Hedef raporu servisinden veri çekilemedi.");
-                }
                 return response;
             }
         }
