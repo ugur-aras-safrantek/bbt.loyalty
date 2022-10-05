@@ -675,7 +675,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 {
                     var apiResponse = await restResponse.Content.ReadAsStringAsync();
                     var accountsList = JsonConvert.DeserializeObject<GetAccounts.Response>(apiResponse);
-                    var result = accountsList?.Checking.Where(x => x.Product.ProductCode == "VDLGLDR").FirstOrDefault();
+                    var result = accountsList?.Checking.Where(x => x.Product.SubProduct?.ProductCode == "VDLGLDR").FirstOrDefault();
                     if (result != null)
                         response = true;
                 }
