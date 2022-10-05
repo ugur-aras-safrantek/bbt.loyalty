@@ -20,10 +20,10 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
                 config.ChannelPrefix = _prefix;
                 //foreach (var redisConnection in redisConnectionArray)
                 //    config.EndPoints.Add(redisConnection);
-                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
-                config.Password = StaticValues.Campaign_Redis_Password;
+                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr);
+                //config.Password = StaticValues.Campaign_Redis_Password;
                 config.AbortOnConnectFail = false;
-                config.ConnectTimeout = 60000;
+                //config.ConnectTimeout = 60000;
                 config.CommandMap = CommandMap.Create(new HashSet<string>
                {
                    "INFO", "CONFIG", "CLUSTER",

@@ -612,9 +612,23 @@ namespace Bbt.Campaign.Services.Services.Customer
         public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string? language)
         {
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
-
+           
             if (language == null)
                 language = "tr";
+            response.IsOnAccount =await _remoteService.GetAccounts(customerCode);
+            if (response.IsOnAccount)
+            {
+                response.OnAccountTitle = language.ToLower() == "tr" ? "ON Hesap Ek Faiz Getirisi" : "ON Account Additional Interest Income";
+                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajından faydalanabilirsin." : "You can take advantage of 2% interest income in addition to ON Account interest.";
+            }
+            else
+            {
+                response.OnAccountTitle = language.ToLower() == "tr" ? "Ek Faiz Getirisi için ON Hesap Aç!" : "Open ON Account for Additional Interest Income!";
+                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajlarından faydalanmak için hemen ON Hesap aç." 
+                    : "Open an ON Account now to take advantage of additional 2% interest income in addition to ON Account interest.";
+            }
+          
+           
 
             //campaign
             response.CampaignId = campaignId;

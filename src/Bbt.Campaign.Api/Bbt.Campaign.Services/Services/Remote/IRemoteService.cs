@@ -27,6 +27,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<HttpResponseMessage> CustomerAchievementsDelete(string customerId, int campaignId, string term);
         public Task<HttpResponseMessage> LeaveProgramAchievementDelete(string customerId, int campaignId, string term);
         public Task<HttpResponseMessage> SendDmsDocuments(string customerId, List<int> documentIds);
+        public Task<bool> GetAccounts(string customerId);
 
     }
 }
