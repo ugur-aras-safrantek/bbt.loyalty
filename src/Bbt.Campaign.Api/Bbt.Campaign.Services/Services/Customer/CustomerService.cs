@@ -22,6 +22,8 @@ using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
 using System.Globalization;
 
+
+
 namespace Bbt.Campaign.Services.Services.Customer
 {
     public class CustomerService : ICustomerService, IScopedService
