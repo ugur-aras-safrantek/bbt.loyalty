@@ -193,13 +193,14 @@ namespace Bbt.Campaign.Services.Services.Customer
                 {
                     Dictionary<string, string> param = new Dictionary<string, string>();
                     param.Add("targetamount", targetAmount.Data.TargetAmount);
+                    param.Add("currentmonth", DateTime.Now.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr")));
                     TemplateInfo template = new TemplateInfo()
                     {
                         templateName = "",
                         templateParameter = JsonConvert.SerializeObject(param)
                     };
                     _remoteService.SendSmsMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
-                    //_remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
+                    _remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
                 }
                 #endregion
 
