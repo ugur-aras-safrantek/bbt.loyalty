@@ -920,20 +920,21 @@ namespace Bbt.Campaign.Services.Services.Customer
                         .FirstOrDefaultAsync();
             var targetAmount = campaignEntity.Target.TargetDetail.TotalAmount != null ? campaignEntity.Target.TargetDetail.TotalAmount : campaignEntity.Target.TargetDetail.NumberOfTransaction;
             response.TargetAmount = targetAmount.ToString();
-            bool checkFirstMounthTarget = false;
-            ///Kampanyaya katıldıgı ilk aya özel hedef kontrolü
-            if (onExtraDefinition != null && onExtraDefinition?.CampaignJoinFirstMounthTarget > 0)
-            {
-                DateTime dateNow = DateTime.Now;
-                var joinDate = _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                    .GetAll(x => x.CampaignId == campaignId && x.IsJoin == true && x.CustomerCode == customerCode)
-                    .OrderBy(x => x.Id).Select(x => x.StartDate).FirstOrDefault();
-                var checkFirstMounth = (joinDate?.Month == dateNow.Month && joinDate?.Year == dateNow.Year ? true : false);
-                if (checkFirstMounth)
-                {
-                    response.TargetAmount = onExtraDefinition.CampaignJoinFirstMounthTarget.ToString();
-                }
-            }
+            //İlk ay hedefi sms içeriğine uymadıgı için kaldırıldı.
+            //bool checkFirstMounthTarget = false;
+            /////Kampanyaya katıldıgı ilk aya özel hedef kontrolü
+            //if (onExtraDefinition != null && onExtraDefinition?.CampaignJoinFirstMounthTarget > 0)
+            //{
+            //    DateTime dateNow = DateTime.Now;
+            //    var joinDate = _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            //        .GetAll(x => x.CampaignId == campaignId && x.IsJoin == true && x.CustomerCode == customerCode)
+            //        .OrderBy(x => x.Id).Select(x => x.StartDate).FirstOrDefault();
+            //    var checkFirstMounth = (joinDate?.Month == dateNow.Month && joinDate?.Year == dateNow.Year ? true : false);
+            //    if (checkFirstMounth)
+            //    {
+            //        response.TargetAmount = onExtraDefinition.CampaignJoinFirstMounthTarget.ToString();
+            //    }
+            //}
             return await BaseResponse<CustomerCampaignTargetResultDto>.SuccessAsync(response);
         }
     }
