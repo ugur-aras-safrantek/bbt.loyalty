@@ -631,6 +631,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                     {
                         isAchieved = goalResultByCustomerAndCampaing.isAchived;
                         campaignTargetDto2.IsAchieved = isAchieved;
+                        campaignTargetDto2.LastMonthIsAchieved = goalResultByCustomerAndCampaing.lastMonthIsAchived;
                         campaignTargetDto2.TotalUsed = goalResultByCustomerAndCampaing.TotalUsed;
                         foreach (var goalResult in goalResultByCustomerAndCampaing.TargetList
                             .Where(x => x.CampaignId > 0 && x.Detail.IsDeleted == false && x.Detail.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible))
