@@ -3,6 +3,8 @@
     public static class StaticValues
     {
         public static string Campaign_Redis_ConStr { get; set; }
+        public static int Campaign_Redis_Port { get; set; }
+        public static string Campaign_Redis_Password { get; set; }
         public static string Campaign_Redis_Ttl { get; set; }
         public static string Campaign_MsSql_ConStr { get; set; }
         public static string CampaignListImageUrlDefault { get; set; }

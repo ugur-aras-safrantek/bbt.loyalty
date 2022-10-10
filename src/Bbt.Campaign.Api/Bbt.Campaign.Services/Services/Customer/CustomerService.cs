@@ -20,6 +20,9 @@ using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Newtonsoft.Json;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.Extentions;
+using System.Globalization;
+
+
 
 namespace Bbt.Campaign.Services.Services.Customer
 {
@@ -121,6 +124,21 @@ namespace Bbt.Campaign.Services.Services.Customer
                     .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
                 campaignQuery = campaignQuery.Take(1);
 
+                //DYS servisine döküman gönderilecek.
+                //#region DYS gönderimi
+                //List<int> docList = new List<int>();
+                //var campaign = campaignQuery.FirstOrDefault();
+                //if (campaign != null && campaign.IsContract)
+                //{
+                //    docList.Add(campaign.ContractId.Value);
+                //}
+                //var infotext = Convert.ToInt32(_parameterService.GetServiceConstantValue("InformationText"));
+                //var gdpr = Convert.ToInt32(_parameterService.GetServiceConstantValue("GDPR"));
+                //docList.Add(infotext);
+                //docList.Add(gdpr);
+                //await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
+                //#endregion
+
                 var campaignList = campaignQuery.Select(x => new CampaignMinDto
                 {
                     Id = x.Id,
@@ -159,7 +177,7 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                     response.Campaign = campaignMinDto;
                     // Kampanyadan ayrıldıgında o dönem verilen kazanımları silinir. 
-                     var term = Utilities.GetTerm();
+                    var term = Utilities.GetTerm();
                     _remoteService.LeaveProgramAchievementDelete(request.CustomerCode, request.CampaignId, term);
                 }
             }
@@ -175,13 +193,14 @@ namespace Bbt.Campaign.Services.Services.Customer
                 {
                     Dictionary<string, string> param = new Dictionary<string, string>();
                     param.Add("targetamount", targetAmount.Data.TargetAmount);
+                    param.Add("currentmonth", DateTime.Now.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr")));
                     TemplateInfo template = new TemplateInfo()
                     {
                         templateName = "",
                         templateParameter = JsonConvert.SerializeObject(param)
                     };
                     _remoteService.SendSmsMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
-                    //_remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
+                    _remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
                 }
                 #endregion
 
@@ -544,6 +563,27 @@ namespace Bbt.Campaign.Services.Services.Customer
             if (campaignEntity.IsContract && (campaignEntity.ContractId ?? 0) > 0)
             {
                 response.IsContract = false;
+
+                var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
+                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
+                informationContract.ButtonTextTr = "Okudum";
+                informationContract.ButtonTextEn = "Okudum";
+                informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                informationContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                response.ContractFiles.Add(informationContract);
+
+                var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
+                var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
+                gdprContract.ButtonTextTr = "Okudum, onaylıyorum";
+                gdprContract.ButtonTextEn = "Okudum, onaylıyorum";
+                gdprContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                gdprContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                response.ContractFiles.Add(gdprContract);
+
                 var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
                 if (campaignContract != null)
                 {
@@ -555,24 +595,6 @@ namespace Bbt.Campaign.Services.Services.Customer
                     campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
                 }
                 response.ContractFiles.Add(campaignContract);
-                var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
-                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
-                informationContract.ButtonTextTr = "Okudum";
-                informationContract.ButtonTextEn = "Okudum";
-                informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
-                informationContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
-                informationContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
-                informationContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
-                response.ContractFiles.Add(informationContract);
-                var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
-                var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
-                gdprContract.ButtonTextTr = "Okudum, onaylıyorum";
-                gdprContract.ButtonTextEn = "Okudum, onaylıyorum";
-                gdprContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
-                gdprContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
-                gdprContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
-                gdprContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
-                response.ContractFiles.Add(gdprContract);
             }
 
             //target
@@ -593,9 +615,23 @@ namespace Bbt.Campaign.Services.Services.Customer
         public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string? language)
         {
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
-
+           
             if (language == null)
                 language = "tr";
+            response.IsOnAccount =await _remoteService.GetAccounts(customerCode);
+            if (response.IsOnAccount)
+            {
+                response.OnAccountTitle = language.ToLower() == "tr" ? "ON Hesap Ek Faiz Getirisi" : "ON Account Additional Interest Income";
+                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajından faydalanabilirsin." : "You can take advantage of 2% interest income in addition to ON Account interest.";
+            }
+            else
+            {
+                response.OnAccountTitle = language.ToLower() == "tr" ? "Ek Faiz Getirisi için ON Hesap Aç!" : "Open ON Account for Additional Interest Income!";
+                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajlarından faydalanmak için hemen ON Hesap aç." 
+                    : "Open an ON Account now to take advantage of additional 2% interest income in addition to ON Account interest.";
+            }
+          
+           
 
             //campaign
             response.CampaignId = campaignId;
@@ -607,6 +643,17 @@ namespace Bbt.Campaign.Services.Services.Customer
                 throw new Exception("Kampanya bulunamadı.");
             }
 
+            //customerCampaign
+            var customerCampaignEntity = await _unitOfWork.GetRepository<CustomerCampaignEntity>()
+                .GetAll(x => x.CampaignId == campaignId && x.CustomerCode == customerCode && x.IsJoin && !x.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (customerCampaignEntity == null)
+            {
+                throw new Exception("Kampanya katılım bilgisi bulunamadı.");
+            }
+            var campaignJoinDate = customerCampaignEntity.StartDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            response.CampaignJoinMessage = language.ToLower() == "tr" ? $"{campaignJoinDate} tarihinden beri {campaignEntity.TitleTr}lısın"
+                : $"You are {campaignEntity.TitleEn} since {campaignJoinDate}";
             response.IsInvisibleCampaign = false;
             if (campaignEntity != null)
             {
@@ -643,7 +690,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     {
                         response.TotalAchievementStr = Helpers.ConvertNullablePriceString(goalResultByCustomerIdAndMonthCount.Total.Amount);
                         response.TotalAchievementCurrencyCode = goalResultByCustomerIdAndMonthCount.Total.Currency == null ? null :
-                                goalResultByCustomerIdAndMonthCount.Total.Currency == "TRY" ? "TL" :
+                                goalResultByCustomerIdAndMonthCount.Total.Currency == "TRY" ? "₺" :
                                 goalResultByCustomerIdAndMonthCount.Total.Currency;
                     }
                     if (goalResultByCustomerIdAndMonthCount.Months != null && goalResultByCustomerIdAndMonthCount.Months.Any())
@@ -673,7 +720,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                         {
                             previousMonthAchievement = previousMonthAchievent.Amount;
                             previousMonthAchievementCurrencyCode = previousMonthAchievent.Currency == null ? null :
-                                previousMonthAchievent.Currency == "TRY" ? "TL" :
+                                previousMonthAchievent.Currency == "TRY" ? "₺" :
                                 previousMonthAchievent.Currency;
                         }
                         response.PreviousMonthAchievementStr = Helpers.ConvertNullablePriceString(previousMonthAchievement);
@@ -707,7 +754,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 string targetAmountStr = campaignTarget.TargetAmountStr ?? "";
                 string remainAmountStr = campaignTarget.RemainAmountStr ?? "";
                 string targetCurrencyCode = campaignTarget.TargetAmountCurrencyCode == null ? null :
-                                    campaignTarget.TargetAmountCurrencyCode == "TRY" ? "TL" :
+                                    (campaignTarget.TargetAmountCurrencyCode == "TRY" || campaignTarget.TargetAmountCurrencyCode == "TL") ? "₺" :
                                     campaignTarget.TargetAmountCurrencyCode;
                 string campaignName = campaignEntity.Name;
                 string monthName = string.Empty;
@@ -736,6 +783,8 @@ namespace Bbt.Campaign.Services.Services.Customer
             }
 
             response.TargetResultDefinition = targetResultDefinition;
+            DateTime currentDate = DateTime.Now;
+            response.CurrentMounthTitle = language.ToLower() == "tr" ? currentDate.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr")) : currentDate.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
 
             //campaignLeftDefinition
 
@@ -744,6 +793,20 @@ namespace Bbt.Campaign.Services.Services.Customer
             foreach (var campaignAchievement in campaignAchievementList)
                 campaignAchievement.IsAchieved = response.IsAchieved;
             response.CampaignAchievementList = campaignAchievementList;
+            var previousMonth = currentDate.AddMonths(-1);
+            var previousMonthName = language.ToLower() == "tr" ? previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
+                    : previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
+
+            if (response.LastMonthIsAchieved)
+            {
+                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Tebrikler, {previousMonthName} ayı harcama hedefini tutturduğunuz için ON Plus avantajlarından faydalanabilirsin."
+                    : $"Congratulations! You can enjoy ON Plus advantages for achieving your {previousMonthName} spending target.";
+            }
+            else
+            {
+                response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Üzgünüz, {previousMonthName} ayında yaptığın harcamalar ON Plus avantajlarından faydalanman için yeterli değil."
+                    : $"Sorry, your spendings in {previousMonthName} are not enough for you to benefit from ON Plus advantages.";
+            }
 
             string campaignLeftDefinition = string.Empty;
 
@@ -856,20 +919,21 @@ namespace Bbt.Campaign.Services.Services.Customer
                         .FirstOrDefaultAsync();
             var targetAmount = campaignEntity.Target.TargetDetail.TotalAmount != null ? campaignEntity.Target.TargetDetail.TotalAmount : campaignEntity.Target.TargetDetail.NumberOfTransaction;
             response.TargetAmount = targetAmount.ToString();
-            bool checkFirstMounthTarget = false;
-            ///Kampanyaya katıldıgı ilk aya özel hedef kontrolü
-            if (onExtraDefinition != null && onExtraDefinition?.CampaignJoinFirstMounthTarget > 0)
-            {
-                DateTime dateNow = DateTime.Now;
-                var joinDate = _unitOfWork.GetRepository<CustomerCampaignEntity>()
-                    .GetAll(x => x.CampaignId == campaignId && x.IsJoin == true && x.CustomerCode == customerCode)
-                    .OrderBy(x => x.Id).Select(x => x.StartDate).FirstOrDefault();
-                var checkFirstMounth = (joinDate?.Month == dateNow.Month && joinDate?.Year == dateNow.Year ? true : false);
-                if (checkFirstMounth)
-                {
-                    response.TargetAmount = onExtraDefinition.CampaignJoinFirstMounthTarget.ToString();
-                }
-            }
+            //İlk ay hedefi sms içeriğine uymadıgı için kaldırıldı.
+            //bool checkFirstMounthTarget = false;
+            /////Kampanyaya katıldıgı ilk aya özel hedef kontrolü
+            //if (onExtraDefinition != null && onExtraDefinition?.CampaignJoinFirstMounthTarget > 0)
+            //{
+            //    DateTime dateNow = DateTime.Now;
+            //    var joinDate = _unitOfWork.GetRepository<CustomerCampaignEntity>()
+            //        .GetAll(x => x.CampaignId == campaignId && x.IsJoin == true && x.CustomerCode == customerCode)
+            //        .OrderBy(x => x.Id).Select(x => x.StartDate).FirstOrDefault();
+            //    var checkFirstMounth = (joinDate?.Month == dateNow.Month && joinDate?.Year == dateNow.Year ? true : false);
+            //    if (checkFirstMounth)
+            //    {
+            //        response.TargetAmount = onExtraDefinition.CampaignJoinFirstMounthTarget.ToString();
+            //    }
+            //}
             return await BaseResponse<CustomerCampaignTargetResultDto>.SuccessAsync(response);
         }
     }

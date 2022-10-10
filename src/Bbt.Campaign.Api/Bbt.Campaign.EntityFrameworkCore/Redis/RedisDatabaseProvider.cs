@@ -13,15 +13,17 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
             _prefix = "CampaignApi:";
 
             var cluster = true;
-            string[] redisConnectionArray = StaticValues.Campaign_Redis_ConStr.ToString().Split(";");
+            //string[] redisConnectionArray = StaticValues.Campaign_Redis_ConStr.ToString().Split(";");
             if (cluster)
             {  
                 ConfigurationOptions config = new ConfigurationOptions();
                 config.ChannelPrefix = _prefix;
-                foreach (var redisConnection in redisConnectionArray)
-                    config.EndPoints.Add(redisConnection);
+                //foreach (var redisConnection in redisConnectionArray)
+                //    config.EndPoints.Add(redisConnection);
+                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr);
+                //config.Password = StaticValues.Campaign_Redis_Password;
                 config.AbortOnConnectFail = false;
-                //config.Password = "RedisPassword";
+                //config.ConnectTimeout = 60000;
                 config.CommandMap = CommandMap.Create(new HashSet<string>
                {
                    "INFO", "CONFIG", "CLUSTER",

@@ -12,6 +12,7 @@ using Bbt.Campaign.Public.Models.CampaignAchievement;
 using Bbt.Campaign.Public.Models.Customer;
 using Bbt.Campaign.Public.Models.MessagingTemplate;
 using Bbt.Campaign.Public.Models.Parameter;
+using Bbt.Campaign.Public.Models.RemoteServicModel;
 using Bbt.Campaign.Public.Models.Report;
 using Bbt.Campaign.Services.Services.Parameter;
 using Bbt.Campaign.Shared.CacheKey;
@@ -621,6 +622,64 @@ namespace Bbt.Campaign.Services.Services.Remote
                     restResponse = await httpClient.PostAsync(serviceUrl, null);
                 }
                 return restResponse;
+            }
+        }
+
+        public async Task<HttpResponseMessage> SendDmsDocuments(string customerId, List<int> documentIds)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("SendDmsDocument");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var data = JsonConvert.SerializeObject(documentIds);
+                var requestContent = new StringContent(data, Encoding.UTF8, "application/json");
+                var restResponse = await httpClient.PostAsync(serviceUrl, requestContent);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+                return restResponse;
+            }
+        }
+
+        public async Task<bool> GetAccounts(string customerId)
+        {
+            bool response = false;
+            using (var httpClient = new HttpClient())
+            {
+                string accessToken = await GetAccessTokenFromCache();
+                string baseAddress = await _parameterService.GetServiceConstantValue("BaseAddress");
+                string apiAddress = await _parameterService.GetServiceConstantValue("GetAccounts");
+                string serviceUrl = string.Concat(baseAddress, apiAddress);
+                serviceUrl = serviceUrl.Replace("{customerId}", customerId);
+                serviceUrl = serviceUrl + "?status=active%2Cpassive";
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        
+                var restResponse = await httpClient.GetAsync(serviceUrl);
+                if (restResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    accessToken = await GetAccessTokenFromService();
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    restResponse = await httpClient.PostAsync(serviceUrl, null);
+                }
+                if (restResponse.IsSuccessStatusCode)
+                {
+                    var apiResponse = await restResponse.Content.ReadAsStringAsync();
+                    var accountsList = JsonConvert.DeserializeObject<GetAccounts.Response>(apiResponse);
+                    var result = accountsList?.Checking.Where(x => x.Product.SubProduct?.ProductCode == "VDLGLDR").FirstOrDefault();
+                    if (result != null)
+                        response = true;
+                }
+                return response;
             }
         }
         private async Task<string> GetAccessTokenFromCache()

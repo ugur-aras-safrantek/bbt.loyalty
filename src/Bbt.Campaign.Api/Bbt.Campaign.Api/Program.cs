@@ -20,6 +20,8 @@ ConfigurationManager configuration = builder.Configuration;
 IWebHostEnvironment environment = builder.Environment;
 
 StaticValues.Campaign_Redis_ConStr = configuration["ConnectionStrings:RedisConnection"];
+//StaticValues.Campaign_Redis_Port = configuration["Redis:Port"] == null ? 0 : Convert.ToInt32(configuration["Redis:Port"]);
+//StaticValues.Campaign_Redis_Password = configuration["Redis:Password"];
 StaticValues.Campaign_Redis_Ttl = configuration["ConnectionStrings:RedisTtl"];
 StaticValues.Campaign_MsSql_ConStr = configuration["ConnectionStrings:DefaultConnection"];
 StaticValues.CampaignListImageUrlDefault = configuration["CampaignDefaultImageUrl:List"];
