@@ -18,20 +18,13 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
             {  
                 ConfigurationOptions config = new ConfigurationOptions();
                 config.ChannelPrefix = _prefix;
-                //foreach (var redisConnection in redisConnectionArray)
-                //    config.EndPoints.Add(redisConnection);
-                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr);
-                //config.Password = StaticValues.Campaign_Redis_Password;
+                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+                config.Password = StaticValues.Campaign_Redis_Password;
                 config.AbortOnConnectFail = false;
-                //config.ConnectTimeout = 60000;
-                config.CommandMap = CommandMap.Create(new HashSet<string>
-               {
-                   "INFO", "CONFIG", "CLUSTER",
-                   "PING", "ECHO", "CLIENT"
-               }, available: false);
+                config.ConnectTimeout = 30000;
+                config.CommandMap = CommandMap.Default;
 
-              _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(config);
-
+                _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(config);
             }
             else
                 _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(connection);
@@ -70,7 +63,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
         
         private async Task<string> ReadRedis(string cacheKey)
         {
-            return await _connectionMultiplexerB2C.GetDatabase(2).StringGetAsync($"{_prefix}{cacheKey}");
+            return await _connectionMultiplexerB2C.GetDatabase().StringGetAsync($"{_prefix}{cacheKey}");
         }
         //Try 2 times to write into redis
         public async Task SetAsync(string cacheKey, string value)
@@ -132,37 +125,56 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
 
         public async Task FlushDatabase()
         {
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{StaticValues.Campaign_Redis_ConStr},allowAdmin=true");
-            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr);
-            await server.FlushDatabaseAsync(2);
+
+            ConfigurationOptions config = new ConfigurationOptions();
+            config.ChannelPrefix = _prefix;
+            config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            config.Password = StaticValues.Campaign_Redis_Password;
+            config.AbortOnConnectFail = false;
+            config.ConnectTimeout = 30000;
+            config.AllowAdmin = true;
+            config.CommandMap = CommandMap.Default;
+
+            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(config);            
+            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            await server.FlushDatabaseAsync();
         }
 
         private async Task WriteRedis(string cacheKey, string value)
         {
-            await _connectionMultiplexerB2C.GetDatabase(2).StringSetAsync($"{_prefix}{cacheKey}", value, TimeSpan.FromDays(int.Parse(StaticValues.Campaign_Redis_Ttl)), When.Always);
+            await _connectionMultiplexerB2C.GetDatabase().StringSetAsync($"{_prefix}{cacheKey}", value, TimeSpan.FromDays(int.Parse(StaticValues.Campaign_Redis_Ttl)), When.Always);
         }
         private async Task WriteRedisWithTime(string cacheKey, string value, int minutes)
         {
-            await _connectionMultiplexerB2C.GetDatabase(2).StringSetAsync($"{_prefix}{cacheKey}", value, TimeSpan.FromMinutes(minutes), When.Always);
+            await _connectionMultiplexerB2C.GetDatabase().StringSetAsync($"{_prefix}{cacheKey}", value, TimeSpan.FromMinutes(minutes), When.Always);
         }
 
         public async Task<bool> RemoveAsync(string cacheKey)
         {
 
-            await _connectionMultiplexerB2C.GetDatabase(2).KeyDeleteAsync($"{_prefix}{cacheKey}");
+            await _connectionMultiplexerB2C.GetDatabase().KeyDeleteAsync($"{_prefix}{cacheKey}");
             return true;
         }
         public async Task<bool> RemoveByPattern(string pattern)
         {
             pattern = $"{_prefix}{pattern}";
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{StaticValues.Campaign_Redis_ConStr},allowAdmin=true");
-            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr);
-            var keys = server.Keys(database: _connectionMultiplexerB2C.GetDatabase(2).Database, pattern: "*" + pattern + "*");
+            ConfigurationOptions config = new ConfigurationOptions();
+            config.ChannelPrefix = _prefix;
+            config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            config.Password = StaticValues.Campaign_Redis_Password;
+            config.AbortOnConnectFail = false;
+            config.ConnectTimeout = 30000;
+            config.AllowAdmin = true;
+            config.CommandMap = CommandMap.Default;
+
+            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(config);
+            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            var keys = server.Keys(database: _connectionMultiplexerB2C.GetDatabase().Database, pattern: "*" + pattern + "*");
             foreach (var key in keys)
             {
-                if (_connectionMultiplexerB2C.GetDatabase(2).KeyExists(key))
+                if (_connectionMultiplexerB2C.GetDatabase().KeyExists(key))
                 {
-                    await _connectionMultiplexerB2C.GetDatabase(2).KeyDeleteAsync(key);
+                    await _connectionMultiplexerB2C.GetDatabase().KeyDeleteAsync(key);
                 }
             }
             return true;
