@@ -18,20 +18,13 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
             {  
                 ConfigurationOptions config = new ConfigurationOptions();
                 config.ChannelPrefix = _prefix;
-                //foreach (var redisConnection in redisConnectionArray)
-                //    config.EndPoints.Add(redisConnection);
                 config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr);
-                //config.Password = StaticValues.Campaign_Redis_Password;
+                config.Password = StaticValues.Campaign_Redis_Password;
                 config.AbortOnConnectFail = false;
-                //config.ConnectTimeout = 60000;
-                config.CommandMap = CommandMap.Create(new HashSet<string>
-               {
-                   "INFO", "CONFIG", "CLUSTER",
-                   "PING", "ECHO", "CLIENT"
-               }, available: false);
+                config.ConnectTimeout = 30000;
+                config.CommandMap = CommandMap.Default;
 
-              _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(config);
-
+                _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(config);
             }
             else
                 _connectionMultiplexerB2C = ConnectionMultiplexer.Connect(connection);
