@@ -125,9 +125,19 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
 
         public async Task FlushDatabase()
         {
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{StaticValues.Campaign_Redis_ConStr},allowAdmin=true");
-            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr);
-            await server.FlushDatabaseAsync(2);
+
+            ConfigurationOptions config = new ConfigurationOptions();
+            config.ChannelPrefix = _prefix;
+            config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            config.Password = StaticValues.Campaign_Redis_Password;
+            config.AbortOnConnectFail = false;
+            config.ConnectTimeout = 30000;
+            config.AllowAdmin = true;
+            config.CommandMap = CommandMap.Default;
+
+            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(config);            
+            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            await server.FlushDatabaseAsync();
         }
 
         private async Task WriteRedis(string cacheKey, string value)
