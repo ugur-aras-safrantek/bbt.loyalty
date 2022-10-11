@@ -124,20 +124,19 @@ namespace Bbt.Campaign.Services.Services.Customer
                     .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
                 campaignQuery = campaignQuery.Take(1);
 
-                //DYS servisine döküman gönderilecek.
-                //#region DYS gönderimi
-                //List<int> docList = new List<int>();
-                //var campaign = campaignQuery.FirstOrDefault();
-                //if (campaign != null && campaign.IsContract)
-                //{
-                //    docList.Add(campaign.ContractId.Value);
-                //}
-                //var infotext = Convert.ToInt32(_parameterService.GetServiceConstantValue("InformationText"));
-                //var gdpr = Convert.ToInt32(_parameterService.GetServiceConstantValue("GDPR"));
-                //docList.Add(infotext);
-                //docList.Add(gdpr);
-                //await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
-                //#endregion
+                #region DYS gönderimi
+                List<int> docList = new List<int>();
+                var campaign = campaignQuery.FirstOrDefault();
+                if (campaign != null && campaign.IsContract)
+                {
+                    docList.Add(campaign.ContractId.Value);
+                }
+                var infotext = Convert.ToInt32(_parameterService.GetServiceConstantValue("InformationText"));
+                var gdpr = Convert.ToInt32(_parameterService.GetServiceConstantValue("GDPR"));
+                docList.Add(infotext);
+                docList.Add(gdpr);
+                await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
+                #endregion
 
                 var campaignList = campaignQuery.Select(x => new CampaignMinDto
                 {
@@ -766,7 +765,13 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 if (response.IsAchieved)
                 {
-                    targetResultDefinition = string.Format(@"{0} {1} ve üzeri harcama yaparak hedefinizi tutturduğunuz için {2} ayında {3} avantajlarından faydalanabilirsiniz."
+                    targetResultDefinition = language.ToLower() == "tr" ?
+                        string.Format(@"{0} {1} ve üzeri harcama yaparak hedefinizi tutturduğunuz için {2} ayında {3} avantajlarından faydalanabilirsiniz."
+                                                , targetAmountStr
+                                                , targetCurrencyCode
+                                                , monthName
+                                                , campaignName) :
+                        string.Format(@"{0} {1} ve üzeri harcama yaparak hedefinizi tutturduğunuz için {2} ayında {3} avantajlarından faydalanabilirsiniz."
                                                 , targetAmountStr
                                                 , targetCurrencyCode
                                                 , monthName
@@ -774,11 +779,18 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
                 else
                 {
-                    targetResultDefinition = string.Format(@"Sadece {0} {1} harcama yaparak {2} ayında {3} avantajlarından faydalanmaya başlayabilirsiniz."
+                    targetResultDefinition = language.ToLower() == "tr" ?
+                        string.Format(@"Sadece {0} {1} harcama yaparak {2} ayında {3} avantajlarından faydalanmaya başlayabilirsiniz."
                                         , remainAmountStr
                                         , targetCurrencyCode
                                         , monthName
-                                        , campaignName);
+                                        , campaignName) :
+                        string.Format(@"You can start benefiting from {3} advantages in {2} by only spending {0} {1}."
+                                        , remainAmountStr
+                                        , targetCurrencyCode
+                                        , monthName
+                                        , campaignName)
+                                        ;
                 }
             }
 
