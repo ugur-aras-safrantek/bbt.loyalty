@@ -158,8 +158,17 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
         public async Task<bool> RemoveByPattern(string pattern)
         {
             pattern = $"{_prefix}{pattern}";
-            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{StaticValues.Campaign_Redis_ConStr},allowAdmin=true");
-            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr);
+            ConfigurationOptions config = new ConfigurationOptions();
+            config.ChannelPrefix = _prefix;
+            config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
+            config.Password = StaticValues.Campaign_Redis_Password;
+            config.AbortOnConnectFail = false;
+            config.ConnectTimeout = 30000;
+            config.AllowAdmin = true;
+            config.CommandMap = CommandMap.Default;
+
+            ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(config);
+            var server = redis.GetServer(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
             var keys = server.Keys(database: _connectionMultiplexerB2C.GetDatabase().Database, pattern: "*" + pattern + "*");
             foreach (var key in keys)
             {
