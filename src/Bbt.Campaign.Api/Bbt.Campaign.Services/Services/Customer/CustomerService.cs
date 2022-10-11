@@ -755,7 +755,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                 if (month == 13)
                     month = 1;
 
-                monthName = Helpers.GetEnumDescription<MonthsEnum>(month);
+                monthName = language.ToLower() == "tr" ? month.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
+                    : month.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
 
                 if (response.IsAchieved)
                 {
