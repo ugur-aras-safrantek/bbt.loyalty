@@ -204,16 +204,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                 }
                 #endregion
 
-                #region koşulsuz dönem ve destek Harcama kontrolüne göre kazanım servisi çağırma
+                #region koşulsuz dönem ve destek Harcama kontrolüne ve dönem harcamalarına göre kazanım servisi çağırma
 
                 var term = Utilities.GetTerm();
-                var customerIdendity = _unitOfWork.GetRepository<CampaignIdentityEntity>()
-                    .GetAll(x => x.Identities == request.CustomerCode && x.CampaignId == request.CampaignId && x.IsDeleted == false).ToList();
-
-                if (customerIdendity.Count > 0)
-                {
-                    var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
-                }
+                var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
                 #endregion
             }
 
@@ -615,10 +609,10 @@ namespace Bbt.Campaign.Services.Services.Customer
         public async Task<BaseResponse<CustomerAchievementFormDto>> GetCustomerAchievementFormAsync(int campaignId, string customerCode, string? language)
         {
             CustomerAchievementFormDto response = new CustomerAchievementFormDto();
-           
+
             if (language == null)
                 language = "tr";
-            response.IsOnAccount =await _remoteService.GetAccounts(customerCode);
+            response.IsOnAccount = await _remoteService.GetAccounts(customerCode);
             if (response.IsOnAccount)
             {
                 response.OnAccountTitle = language.ToLower() == "tr" ? "ON Hesap Ek Faiz Getirisi" : "ON Account Additional Interest Income";
@@ -627,11 +621,11 @@ namespace Bbt.Campaign.Services.Services.Customer
             else
             {
                 response.OnAccountTitle = language.ToLower() == "tr" ? "Ek Faiz Getirisi için ON Hesap Aç!" : "Open ON Account for Additional Interest Income!";
-                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajlarından faydalanmak için hemen ON Hesap aç." 
+                response.OnAccountDescription = language.ToLower() == "tr" ? "ON Hesap faizine ek %2 faiz getirisi avantajlarından faydalanmak için hemen ON Hesap aç."
                     : "Open an ON Account now to take advantage of additional 2% interest income in addition to ON Account interest.";
             }
-          
-           
+
+
 
             //campaign
             response.CampaignId = campaignId;
