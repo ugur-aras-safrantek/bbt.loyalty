@@ -814,31 +814,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                     : $"Sorry, your spendings in {previousMonthName} are not enough for you to benefit from ON Plus advantages.";
             }
 
-            string campaignLeftDefinition = string.Empty;
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(campaignEntity.Name + " programından ayrılma talebin bulunuyor. ");
-            sb.Append("İşlemini onaylaman doğrultusunda ");
-            for (int t = 0; t < campaignAchievementList.Count; t++)
-            {
-                if (campaignAchievementList.Count == 1)
-                {
-                    sb.Append(campaignAchievementList[t].Description + " ");
-                }
-                else
-                {
-                    if (t == campaignAchievementList.Count - 1)
-                        sb.Append(campaignAchievementList[t].Description + " ");
-                    else if (t == campaignAchievementList.Count - 2)
-                        sb.Append(campaignAchievementList[t].Description + " ve ");
-                    else
-                        sb.Append(campaignAchievementList[t].Description + ", ");
-                }
-            }
-            sb.Append("kazanamayacaksın. ");
-            sb.Append(campaignEntity.Name + " programından ayrılma talebini onaylıyor musun?");
-            campaignLeftDefinition = sb.ToString();
-            response.CampaignLeftDefinition = campaignLeftDefinition;
+            response.CampaignLeftDefinition = language.ToLower() == "tr" ? campaignEntity.LeftDefinitionTr : campaignEntity.LeftDefinitionEn;
 
             return await BaseResponse<CustomerAchievementFormDto>.SuccessAsync(response);
         }

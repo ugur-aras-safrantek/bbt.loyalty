@@ -23,6 +23,11 @@ namespace Bbt.Campaign.Core.DbEntities
 
         [MaxLength(1000)]
         public string? TitleEn { get; set; }
+        [MaxLength(1000)]
+        public string? LeftDefinitionTr { get; set; } //başlık
+
+        [MaxLength(1000)]
+        public string? LeftDefinitionEn { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? Order { get; set; }
