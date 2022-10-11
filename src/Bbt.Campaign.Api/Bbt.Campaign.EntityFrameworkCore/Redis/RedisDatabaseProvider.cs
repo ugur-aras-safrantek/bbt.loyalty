@@ -18,7 +18,7 @@ namespace Bbt.Campaign.EntityFrameworkCore.Redis
             {  
                 ConfigurationOptions config = new ConfigurationOptions();
                 config.ChannelPrefix = _prefix;
-                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr);
+                config.EndPoints.Add(StaticValues.Campaign_Redis_ConStr, StaticValues.Campaign_Redis_Port);
                 config.Password = StaticValues.Campaign_Redis_Password;
                 config.AbortOnConnectFail = false;
                 config.ConnectTimeout = 30000;
