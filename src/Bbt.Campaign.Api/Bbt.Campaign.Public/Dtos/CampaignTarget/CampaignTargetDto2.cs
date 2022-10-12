@@ -10,7 +10,7 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
     public class CampaignTargetDto2
     {
         public bool IsAchieved { get; set; }
-        public bool LastMonthIsAchieved { get; set; }
+        public bool? LastMonthIsAchieved { get; set; }
         public List<TargetParameterDto2> ProgressBarlist { get; set; }
         public List<TargetParameterDto2> Informationlist { get; set; }
         public string? TargetAmountStr { get; set; }

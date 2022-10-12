@@ -804,7 +804,7 @@ namespace Bbt.Campaign.Services.Services.Customer
             var previousMonthName = language.ToLower() == "tr" ? previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
                     : previousMonth.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
 
-            if (response.LastMonthIsAchieved)
+            if (response.LastMonthIsAchieved == true)
             {
                 response.CurrentMounthAchievementMessage = language.ToLower() == "tr" ? $"Tebrikler, {previousMonthName} ayı harcama hedefini tutturduğunuz için ON Plus avantajlarından faydalanabilirsin."
                     : $"Congratulations! You can enjoy ON Plus advantages for achieving your {previousMonthName} spending target.";
