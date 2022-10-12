@@ -131,8 +131,8 @@ namespace Bbt.Campaign.Services.Services.Customer
                 {
                     docList.Add(campaign.ContractId.Value);
                 }
-                var infotext = Convert.ToInt32(_parameterService.GetServiceConstantValue("InformationText"));
-                var gdpr = Convert.ToInt32(_parameterService.GetServiceConstantValue("GDPR"));
+                var infotext = Convert.ToInt32( await _parameterService.GetServiceConstantValue("InformationText"));
+                var gdpr = Convert.ToInt32( await _parameterService.GetServiceConstantValue("GDPR"));
                 docList.Add(infotext);
                 docList.Add(gdpr);
                 await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
