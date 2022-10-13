@@ -274,19 +274,19 @@ namespace Bbt.Campaign.Services.Services.Report
         public async Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request)
         {
             CustomerReportResponse response = new CustomerReportResponse();
-            List<CustomerReportListDto> customerReportList = await GetCustomerReportData(request);
-            if (!customerReportList.Any())
+            ReportListAndTotalCount customerReportList = await GetCustomerReportData(request);
+            if (!customerReportList.CustomerReportList.Any())
                 return await BaseResponse<CustomerReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
-            response.CustomerCampaignList = customerReportList;
+            response.CustomerCampaignList = customerReportList.CustomerReportList;
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = customerReportList.Count();
+            var totalItems = customerReportList.TotalCount;
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<CustomerReportResponse>.SuccessAsync(response);
         }
-        private async Task<List<CustomerReportListDto>> GetCustomerReportData(CustomerReportRequest request) 
+        private async Task<ReportListAndTotalCount> GetCustomerReportData(CustomerReportRequest request) 
         {
-            List<CustomerReportListDto> customerReportList = new List<CustomerReportListDto>();
+            ReportListAndTotalCount reportAndCount = new ReportListAndTotalCount() { CustomerReportList = new List<CustomerReportListDto>(), TotalCount = 0 };
 
             if (StaticValues.IsDevelopment)
             {
@@ -295,19 +295,21 @@ namespace Bbt.Campaign.Services.Services.Report
                 IQueryable<CustomerReportEntity> query = await GetCustomerQueryAsync(request);
 
                 if (query.Count() == 0)
-                    return customerReportList;
+                    return reportAndCount;
 
                 var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
                 var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
                 var totalItems = query.Count();
                 query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-                customerReportList = await this.ConvertCustomerReportList(query);
+                reportAndCount.CustomerReportList = await this.ConvertCustomerReportList(query);
+                reportAndCount.TotalCount = reportAndCount.CustomerReportList.Count;
             }
             else
             {
                 var getCampaignReport = await _remoteService.GetCustomerReportData(request);
                 if (getCampaignReport != null && getCampaignReport.ReportData != null && getCampaignReport.ReportData.Any())
                 {
+                    reportAndCount.TotalCount = getCampaignReport.TotalCount;
                     foreach (var x in getCampaignReport.ReportData)
                     {
                         CustomerReportListDto customerReportListDto = new CustomerReportListDto();
@@ -373,12 +375,12 @@ namespace Bbt.Campaign.Services.Services.Report
                                 }
                             }
                         }
-                        customerReportList.Add(customerReportListDto);
+                        reportAndCount.CustomerReportList.Add(customerReportListDto);
                     }
                 }
             }
 
-            return customerReportList;
+            return reportAndCount;
         }
         public async Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request) 
         {
@@ -386,11 +388,11 @@ namespace Bbt.Campaign.Services.Services.Report
 
             Helpers.ListByFilterCheckValidation(request);
 
-            List<CustomerReportListDto> customerReportList = await GetCustomerReportData(request);
-            if (!customerReportList.Any())
+            ReportListAndTotalCount customerReportList = await GetCustomerReportData(request);
+            if (!customerReportList.CustomerReportList.Any())
                 return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
-            byte[] data = ReportFileOperations.GetCustomerReportListExcel(customerReportList);
+            byte[] data = ReportFileOperations.GetCustomerReportListExcel(customerReportList.CustomerReportList);
 
             response = new GetFileResponse()
             {

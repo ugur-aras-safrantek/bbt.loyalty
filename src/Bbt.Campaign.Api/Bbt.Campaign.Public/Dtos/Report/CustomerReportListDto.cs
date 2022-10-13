@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Dtos.Report
 {
+    public class ReportListAndTotalCount
+    {
+        public List<CustomerReportListDto> CustomerReportList{ get; set; }
+        public int TotalCount { get; set; }
+    }
     public class CustomerReportListDto
     {
         public int Id { get; set; }
