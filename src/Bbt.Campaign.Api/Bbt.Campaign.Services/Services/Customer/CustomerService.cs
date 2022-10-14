@@ -560,32 +560,32 @@ namespace Bbt.Campaign.Services.Services.Customer
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
                 var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
                 informationContract.ButtonTextTr = "Okudum";
-                informationContract.ButtonTextEn = "Okudum";
+                informationContract.ButtonTextEn = "I have read";
                 informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
-                informationContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
+                informationContract.UnderlineTextEn = $"Clarification Text Regarding the Processing of My Personal Data within the Scope of {campaignDto.TitleEn} Program.";
                 informationContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
-                informationContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni okudum.";
+                informationContract.DocumentTextEn = $"I have read Clarification Text Regarding the Processing of My Personal Data within the Scope of {campaignDto.TitleEn} Program.";
                 response.ContractFiles.Add(informationContract);
 
                 var gdprTextId = await _parameterService.GetServiceConstantValue("GDPR");
                 var gdprContract = await _campaignService.GetContractFile(Convert.ToInt32(gdprTextId), contentRootPath);
                 gdprContract.ButtonTextTr = "Okudum, onaylıyorum";
-                gdprContract.ButtonTextEn = "Okudum, onaylıyorum";
+                gdprContract.ButtonTextEn = "I have read and approve";
                 gdprContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
-                gdprContract.UnderlineTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı";
+                gdprContract.UnderlineTextEn = $"Express Consent Statement Regarding the Processing of My Personal Data within the Scope of {campaignDto.TitleEn} Program";
                 gdprContract.DocumentTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
-                gdprContract.DocumentTextEn = $"{campaignDto.TitleEn} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Açık Rıza Beyanı'nı okudum, onaylıyorum.";
+                gdprContract.DocumentTextEn = $" I have read and confirm Express Consent Statement Regarding the Processing of My Personal Data within the Scope of {campaignDto.TitleEn} Program.";
                 response.ContractFiles.Add(gdprContract);
 
                 var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
                 if (campaignContract != null)
                 {
                     campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
-                    campaignContract.ButtonTextEn = "Okudum, onaylıyorum";
+                    campaignContract.ButtonTextEn = "I have read and approve";
                     campaignContract.UnderlineTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni";
-                    campaignContract.UnderlineTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni";
+                    campaignContract.UnderlineTextEn = $"{campaignDto.TitleEn} Program Agreement.";
                     campaignContract.DocumentTextTr = $"{campaignDto.TitleTr} Program Sözleşmesi'ni okudum ve onaylıyorum.";
-                    campaignContract.DocumentTextEn = $"{campaignDto.TitleEn} Program Sözleşmesi'ni okudum ve onaylıyorum.";
+                    campaignContract.DocumentTextEn = $" I have read and approve the {campaignDto.TitleEn} Program Agreement.";
                 }
                 response.ContractFiles.Add(campaignContract);
             }
@@ -751,12 +751,9 @@ namespace Bbt.Campaign.Services.Services.Customer
                                     campaignTarget.TargetAmountCurrencyCode;
                 string campaignName = campaignEntity.Name;
                 string monthName = string.Empty;
-                int month = DateTime.Now.Month + 1;
-                if (month == 13)
-                    month = 1;
 
-                monthName = language.ToLower() == "tr" ? month.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
-                    : month.ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
+                monthName = language.ToLower() == "tr" ? DateTime.Now.AddMonths(1).ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("tr"))
+                    : DateTime.Now.AddMonths(1).ToString("MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en"));
 
                 if (response.IsAchieved)
                 {
@@ -766,7 +763,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                                                 , targetCurrencyCode
                                                 , monthName
                                                 , campaignName) :
-                        string.Format(@"{0} {1} ve üzeri harcama yaparak hedefinizi tutturduğunuz için {2} ayında {3} avantajlarından faydalanabilirsiniz."
+                        string.Format(@"You can take advantage of {3} in {2} as you met your target by spending {0} {1} or more."
                                                 , targetAmountStr
                                                 , targetCurrencyCode
                                                 , monthName
