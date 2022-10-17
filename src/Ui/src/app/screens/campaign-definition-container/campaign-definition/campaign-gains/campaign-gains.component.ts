@@ -287,7 +287,7 @@ export class CampaignGainsComponent implements OnInit, FormChange {
       achievementTypeId: data.achievementTypeId,
       actionOptionId: data.actionOptionId,
       titleTr: data.titleTr,
-      titleEn: data.titleTr,
+      titleEn: data.titleEn,
       descriptionTr: data.descriptionTr,
       descriptionEn: data.descriptionEn,
       currencyId: data.currencyId,
