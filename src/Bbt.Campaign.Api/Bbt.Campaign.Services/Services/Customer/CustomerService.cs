@@ -86,7 +86,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                .GetAll(x => x.CustomerCode == request.CustomerCode && x.CampaignId == request.CampaignId && !x.IsDeleted)
                .ToList())
             {
-                deleteEntity.LastModifiedOn = Helpers.ConvertDateTimeToShortDate(DateTime.Now);
+                deleteEntity.LastModifiedOn = DateTime.Now;
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
             }
 
