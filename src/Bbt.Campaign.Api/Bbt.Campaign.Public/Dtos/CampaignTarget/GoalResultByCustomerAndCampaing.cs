@@ -8,8 +8,8 @@ namespace Bbt.Campaign.Public.Dtos.CampaignTarget
 {
     public class GoalResultByCustomerAndCampaing
     {
-        public bool? lastMonthIsAchived { get; set; }
-        public bool isAchived { get; set; }
+        public bool? lastMonthIsAchieved { get; set; }
+        public bool isAchieved { get; set; }
         public TotalUsed? TotalUsed { get; set; }
         public List<GoalTarget> TargetList { get; set; }
     }

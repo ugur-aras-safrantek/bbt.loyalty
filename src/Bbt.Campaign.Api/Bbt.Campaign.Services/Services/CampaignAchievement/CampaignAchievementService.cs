@@ -431,8 +431,8 @@ namespace Bbt.Campaign.Services.Services.CampaignAchievement
                             CustomerAchievement customerAchievement = new CustomerAchievement();
                             customerAchievement.IsAchieved = false;
                             customerAchievement.AchievementTypeName = earning.EarningType;
-                            customerAchievement.Description = earning.AchivementDescription;
-                            customerAchievement.Title = earning.AchivementTitle;
+                            customerAchievement.Description = earning.AchievementDescription;
+                            customerAchievement.Title = earning.AchievementTitle;
                             customerAchievement.AmountStr = Helpers.ConvertNullablePriceString((decimal)earning.Amount);
                             customerAchievement.CurrencyCode = earning.Currency == null ? null :
                                 earning.Currency == "TRY" ? "TL" :

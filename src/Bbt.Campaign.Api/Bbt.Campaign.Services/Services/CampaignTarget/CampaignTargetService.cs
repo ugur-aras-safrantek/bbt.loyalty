@@ -629,9 +629,9 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                 {
                     if (goalResultByCustomerAndCampaing.TargetList != null && goalResultByCustomerAndCampaing.TargetList.Any())
                     {
-                        isAchieved = goalResultByCustomerAndCampaing.isAchived;
+                        isAchieved = goalResultByCustomerAndCampaing.isAchieved;
                         campaignTargetDto2.IsAchieved = isAchieved;
-                        campaignTargetDto2.LastMonthIsAchieved = goalResultByCustomerAndCampaing.lastMonthIsAchived;
+                        campaignTargetDto2.LastMonthIsAchieved = goalResultByCustomerAndCampaing.lastMonthIsAchieved;
                         campaignTargetDto2.TotalUsed = goalResultByCustomerAndCampaing.TotalUsed;
                         foreach (var goalResult in goalResultByCustomerAndCampaing.TargetList
                             .Where(x => x.CampaignId > 0 && x.Detail.IsDeleted == false && x.Detail.TargetViewTypeId != (int)TargetViewTypeEnum.Invisible))
