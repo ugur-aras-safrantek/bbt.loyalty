@@ -1,6 +1,7 @@
 ﻿using Bbt.Campaign.EntityFrameworkCore.Redis;
 using Bbt.Campaign.Public.BaseResultModels;
 using Bbt.Campaign.Public.Dtos;
+using Bbt.Campaign.Services.Services.Remote;
 using Bbt.Campaign.Shared.ServiceDependencies;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
@@ -11,11 +12,13 @@ namespace Bbt.Campaign.Services.Services.Cache
     {
         private readonly IMemoryCache _memoryCache;
         private readonly IRedisDatabaseProvider _redisDatabaseProvider;
+        private readonly IRemoteService _remoteService;
 
-        public CacheServis( IRedisDatabaseProvider redisDatabaseProvider, IMemoryCache memoryCache)
+        public CacheServis( IRedisDatabaseProvider redisDatabaseProvider, IMemoryCache memoryCache, IRemoteService remoteService)
         {
             _redisDatabaseProvider = redisDatabaseProvider;
             _memoryCache = memoryCache;
+            _remoteService = remoteService;
         }
 
         public async Task<bool> ClearCache()
@@ -24,7 +27,7 @@ namespace Bbt.Campaign.Services.Services.Cache
             //object innerCache = prop.GetValue(_memoryCache);
             //MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
             //clearMethod.Invoke(innerCache, null);
-
+            await _remoteService.CleanCache();
             await _redisDatabaseProvider.FlushDatabase();
 
             return true;
