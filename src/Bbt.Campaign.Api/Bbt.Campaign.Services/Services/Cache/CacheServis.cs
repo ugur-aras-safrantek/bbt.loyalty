@@ -27,10 +27,10 @@ namespace Bbt.Campaign.Services.Services.Cache
             //object innerCache = prop.GetValue(_memoryCache);
             //MethodInfo clearMethod = innerCache.GetType().GetMethod("Clear", BindingFlags.Instance | BindingFlags.Public);
             //clearMethod.Invoke(innerCache, null);
-            await _remoteService.CleanCache();
+            var resp = await _remoteService.CleanCache();
             await _redisDatabaseProvider.FlushDatabase();
 
-            return true;
+            return resp && true;
         }
 
         public Task<bool> RemoveAsync(string cacheKey) 
