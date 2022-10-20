@@ -146,6 +146,11 @@ namespace Bbt.Campaign.Services.Services.Campaign
             entity.CampaignDetail.CampaignListImageUrl = campaign.CampaignDetail.CampaignListImageUrl;
             entity.CampaignDetail.ContentTr = campaign.CampaignDetail.ContentTr;
             entity.CampaignDetail.ContentEn = campaign.CampaignDetail.ContentEn;
+            //Bu alanlar önyüzden alındıgında requestten set edilecek.
+            //Update işleminde db deki kayıt ezilmesin diye bu şekilde set edildi.
+            entity.CampaignDetail.SummaryPopupTr = entity.CampaignDetail.SummaryPopupTr;
+            entity.CampaignDetail.SummaryPopupEn = entity.CampaignDetail.SummaryPopupEn;
+
 
             entity.ContractId = campaign.ContractId;
             entity.ProgramTypeId = campaign.ProgramTypeId;

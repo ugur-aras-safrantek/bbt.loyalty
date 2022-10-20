@@ -28,5 +28,9 @@ namespace Bbt.Campaign.Core.DbEntities
         public string? DetailTr { get; set; }
         [Column(TypeName = "ntext")]
         public string? DetailEn { get; set; }
+        [Column(TypeName = "ntext")]
+        public string? SummaryPopupTr { get; set; }
+        [Column(TypeName = "ntext")]
+        public string? SummaryPopupEn { get; set; }
     }
 }

@@ -17,6 +17,10 @@
         public string? DetailTr { get; set; }
 
         public string? DetailEn { get; set; }
+        public string? SummaryPopupTr { get; set; }
+
+        public string? SummaryPopupEn { get; set; }
+
 
     }
 }
