@@ -654,20 +654,20 @@ namespace Bbt.Campaign.Services.Services.Report
         {
             TargetReportResponse response = new TargetReportResponse();
 
-            List<TargetReportListDto> targetReportList = await GetTargetReportData(request);
-            if (!targetReportList.Any())
+            TargetReportResp targetReportList = await GetTargetReportData(request);
+            if (!targetReportList.TargetReportList.Any())
                 return await BaseResponse<TargetReportResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
-            response.TargetReportList = targetReportList;
+            response.TargetReportList = targetReportList.TargetReportList;
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var totalItems = targetReportList.Count();
+            var totalItems = targetReportList.TotalCount;
             response.Paging = Helpers.Paging(totalItems, pageNumber, pageSize);
             return await BaseResponse<TargetReportResponse>.SuccessAsync(response);
         }
-        private async Task<List<TargetReportListDto>> GetTargetReportData(TargetReportRequest request) 
+        private async Task<TargetReportResp> GetTargetReportData(TargetReportRequest request) 
         {
-            List<TargetReportListDto> targetReportList = new List<TargetReportListDto>();
+            TargetReportResp targetReportResponse = new TargetReportResp() { TargetReportList = new List<TargetReportListDto>(), TotalCount = 0 };
             if (StaticValues.IsDevelopment)
             {
                 Helpers.ListByFilterCheckValidation(request);
@@ -684,7 +684,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 targetReportListDto.RemainAmount = 0;
                 targetReportListDto.RemainAmountStr = "0";
                 targetReportListDto.TargetSuccessDateStr = "25-07-2022";
-                targetReportList.Add(targetReportListDto);
+                targetReportResponse.TargetReportList.Add(targetReportListDto);
 
                 targetReportListDto = new TargetReportListDto();
                 targetReportListDto.TargetName = "23";
@@ -698,7 +698,9 @@ namespace Bbt.Campaign.Services.Services.Report
                 targetReportListDto.RemainAmount = 20;
                 targetReportListDto.RemainAmountStr = "20";
                 targetReportListDto.TargetSuccessDateStr = null;
-                targetReportList.Add(targetReportListDto);
+                targetReportResponse.TargetReportList.Add(targetReportListDto);
+
+                targetReportResponse.TotalCount = 2;
             }
             else 
             {
@@ -744,22 +746,23 @@ namespace Bbt.Campaign.Services.Services.Report
                         }
                         targetReportListDto.TargetSuccessDateStr = targetSuccessDateStr;
 
-                        targetReportList.Add(targetReportListDto);
+                        targetReportResponse.TargetReportList.Add(targetReportListDto);
                     }
                 }
+                targetReportResponse.TotalCount = getTargetReport.TotalCount;
             }
 
-            return targetReportList; 
+            return targetReportResponse; 
         }
         public async Task<BaseResponse<GetFileResponse>> GetTargetReportExcelAsync(TargetReportRequest request)
         {
             GetFileResponse response = new GetFileResponse();
 
-            List<TargetReportListDto> targetReportList = await GetTargetReportData(request);
-            if (!targetReportList.Any())
+            TargetReportResp targetReportList = await GetTargetReportData(request);
+            if (!targetReportList.TargetReportList.Any())
                 return await BaseResponse<GetFileResponse>.SuccessAsync(response, "Uygun kayıt bulunamadı");
 
-            byte[] data = ReportFileOperations.GetTargetReportListExcel(targetReportList);
+            byte[] data = ReportFileOperations.GetTargetReportListExcel(targetReportList.TargetReportList);
 
             response = new GetFileResponse()
             {

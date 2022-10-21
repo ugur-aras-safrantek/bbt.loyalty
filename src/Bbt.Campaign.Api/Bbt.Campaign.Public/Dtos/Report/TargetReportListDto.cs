@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Bbt.Campaign.Public.Dtos.Report
 {
+    public class TargetReportResp {
+        public List<TargetReportListDto> TargetReportList { get; set; }
+        public int TotalCount { get; set; }
+    }
     public class TargetReportListDto
     {
         public string TargetName { get; set; }
