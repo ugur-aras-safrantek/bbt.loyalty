@@ -147,7 +147,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string apiAddress = await _parameterService.GetServiceConstantValue("CampaignReport");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
 
-                int pageNumber = (request.PageNumber - 1) ?? 0;
+                int pageNumber = request.PageNumber ?? 1;
                 serviceUrl += "?PageNumber=" + pageNumber;
                 int pageSize = (request.PageSize) ?? 25;
                 serviceUrl += "&PageSize=" + pageSize;
@@ -280,7 +280,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string apiAddress = await _parameterService.GetServiceConstantValue("TargetReport");
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
 
-                int pageNumber = (request.PageNumber - 1) ?? 0;
+                int pageNumber = request.PageNumber ?? 1;
                 serviceUrl += "?PageNumber=" + pageNumber;
                 int pageSize = (request.PageSize) ?? 25;
                 serviceUrl += "&PageSize=" + pageSize;
