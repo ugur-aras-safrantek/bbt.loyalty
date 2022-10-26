@@ -719,6 +719,13 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
                             else if (targetParameterDto2.TargetViewTypeId == (int)TargetViewTypeEnum.Information)
                                 informationlist.Add(targetParameterDto2);
                         }
+                        if (progressBarlist.Any())
+                        {
+                            campaignTargetDto2.UsedAmountStr = progressBarlist[0].UsedAmountStr;
+                            campaignTargetDto2.UsedAmountCurrencyCode = progressBarlist[0].UsedAmountCurrencyCode;
+                            campaignTargetDto2.RemainAmountStr = progressBarlist[0].RemainAmountStr;
+                            campaignTargetDto2.RemainAmountCurrencyCode = progressBarlist[0].RemainAmountCurrencyCode;
+                        }
                     }
                 }
             }
