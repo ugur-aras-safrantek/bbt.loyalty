@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ReportsByCampaignComponent} from './reports-by-campaign/reports-by-campaign.component';
-import {ReportsByEarningComponent} from './reports-by-customer/reports-by-earning.component';
+import {ReportsByEarningComponent} from './reports-by-earning/reports-by-earning.component';
 import {RouterModule, Routes} from "@angular/router";
 import {SharedModule} from "../../modules/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
