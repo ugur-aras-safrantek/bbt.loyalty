@@ -20,7 +20,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     ReportsByCampaignComponent,
-    ReportsByCustomerComponent,
+    ReportsByEarningComponent,
     ReportsByTargetComponent,
   ],
   imports: [
