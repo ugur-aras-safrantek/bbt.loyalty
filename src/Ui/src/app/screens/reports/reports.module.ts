@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ReportsByCampaignComponent} from './reports-by-campaign/reports-by-campaign.component';
-import {ReportsByCustomerComponent} from './reports-by-customer/reports-by-customer.component';
+import {ReportsByEarningComponent} from './reports-by-customer/reports-by-earning.component';
 import {RouterModule, Routes} from "@angular/router";
 import {SharedModule} from "../../modules/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -13,7 +13,7 @@ import {ReportsByTargetComponent} from './reports-by-target/reports-by-target.co
 const routes: Routes = [
   {path: '', redirectTo: 'reports-by-campaign', pathMatch: 'full'},
   {path: 'reports-by-campaign', component: ReportsByCampaignComponent},
-  {path: 'reports-by-customer', component: ReportsByCustomerComponent},
+  {path: 'reports-by-earning', component: ReportsByEarningComponent},
   {path: 'reports-by-target', component: ReportsByTargetComponent},
 ]
 
