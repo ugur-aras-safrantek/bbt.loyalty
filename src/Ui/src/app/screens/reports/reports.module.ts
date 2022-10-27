@@ -9,10 +9,12 @@ import {HttpClientModule} from "@angular/common/http";
 import {NgxSmartModalModule} from "ngx-smart-modal";
 import {AngularMyDatePickerModule} from "angular-mydatepicker";
 import {ReportsByTargetComponent} from './reports-by-target/reports-by-target.component';
+import { ReportsByCustomerComponent } from './reports-by-customer/reports-by-customer.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'reports-by-campaign', pathMatch: 'full'},
   {path: 'reports-by-campaign', component: ReportsByCampaignComponent},
+  {path: 'reports-by-customer', component: ReportsByCustomerComponent},
   {path: 'reports-by-earning', component: ReportsByEarningComponent},
   {path: 'reports-by-target', component: ReportsByTargetComponent},
 ]
@@ -20,6 +22,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     ReportsByCampaignComponent,
+    ReportsByCustomerComponent,
     ReportsByEarningComponent,
     ReportsByTargetComponent,
   ],

@@ -90,7 +90,7 @@ export class ReportsByTargetComponent implements OnInit {
     if(this.filterForm.campaignId == null && this.filterForm.campaignId == null){
       this.toastrHandleService.error("Kampanya veya hedef dolu olmalıdır!")
     }else{
-    this.listService.clearList();
+    this.listService.clearTable();
     let requestModel: TargetReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,

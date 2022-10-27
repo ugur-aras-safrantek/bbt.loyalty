@@ -25,9 +25,13 @@ export class ListService {
   constructor() {
   }
 
-  clearList() {
+  clearTable(){
     this.columns = [];
     this.rows = [];
+  }
+
+  clearList() {
+    this.clearTable();
     this.paging = {
       currentPage: 1,
       totalPages: 1,

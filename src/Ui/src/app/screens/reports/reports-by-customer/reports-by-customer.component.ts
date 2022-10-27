@@ -10,12 +10,12 @@ import {CustomerReportRequestModel} from "../../../models/reports";
 import {NgxSmartModalService} from "ngx-smart-modal";
 
 @Component({
-  selector: 'app-reports-by-earning',
-  templateUrl: './reports-by-earning.component.html',
-  styleUrls: ['./reports-by-earning.component.scss']
+  selector: 'app-reports-by-customer',
+  templateUrl: './reports-by-customer.component.html',
+  styleUrls: ['./reports-by-customer.component.scss']
 })
 
-export class ReportsByEarningComponent implements OnInit {
+export class ReportsByCustomerComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   columns = [
