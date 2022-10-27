@@ -29,6 +29,7 @@ export class ReportsByCustomerComponent implements OnInit {
     {columnName: 'Müşteri Tipi', propertyName: 'customerTypeName', isBoolean: false, sortDir: null},
     {columnName: 'Şube', propertyName: 'branchName', isBoolean: false, sortDir: null},
     {columnName: 'İş Kolu', propertyName: 'businessLineName', isBoolean: false, sortDir: null},
+    {columnName: 'Hedef Dönemi', propertyName: 'term', isBoolean: false, sortDir: null},
     {columnName: 'Kazanıma Hak Kazandığı Tarih', propertyName: 'earningReachDateStr', isBoolean: false, sortDir: null},
     {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmountStr', isBoolean: false, sortDir: null},
     {columnName: 'Kazanım Oranı', propertyName: 'achievementRateStr', isBoolean: false, sortDir: null},
@@ -53,6 +54,7 @@ export class ReportsByCustomerComponent implements OnInit {
     achievementTypeId: null,
     businessLineId: null,
     isActive: null,
+    campaignCode : ''
   };
 
   constructor(private reportsService: ReportsService,
@@ -82,6 +84,7 @@ export class ReportsByCustomerComponent implements OnInit {
       achievementTypeId: null,
       businessLineId: null,
       isActive: null,
+      campaignCode : ''
     };
 
     this.listService.clearList();
@@ -90,6 +93,7 @@ export class ReportsByCustomerComponent implements OnInit {
   }
 
   customerReportGetByFilter() {
+    this.listService.clearList();
     let requestModel: CustomerReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
@@ -103,6 +107,7 @@ export class ReportsByCustomerComponent implements OnInit {
       achievementTypeId: this.filterForm.achievementTypeId,
       businessLineId: this.filterForm.businessLineId,
       isActive: this.filterForm.isActive,
+      campaignCode: this.filterForm.campaignCode
     };
     this.reportsService.customerReportGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
@@ -136,6 +141,7 @@ export class ReportsByCustomerComponent implements OnInit {
       achievementTypeId: this.filterForm.achievementTypeId,
       businessLineId: this.filterForm.businessLineId,
       isActive: this.filterForm.isActive,
+      campaignCode: this.filterForm.campaignCode
     };
     this.reportsService.customerReportGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))

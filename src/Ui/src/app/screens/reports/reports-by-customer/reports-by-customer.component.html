@@ -51,7 +51,8 @@
                    maxlength="11" onlyNumber>
           </div>
         </div>
-        <div class="col">
+        <!-- YAZILIMDA FİLTRELENEMEDİĞİ İÇİN KALDIRILMIŞTIR
+          <div class="col">
           <div class="form-group">
             <label for="customerTypeId">Müşteri Tipi</label>
             <select name="customerTypeId" id="customerTypeId" class="form-select form-select-sm"
@@ -72,11 +73,11 @@
                       [value]="i.id">{{i.name}}</option>
             </select>
           </div>
-        </div>
+        </div>YAZILIMDA FİLTRELENEMEDİĞİ İÇİN KALDIRILMIŞTIR -->
         <div class="col">
           <div class="form-group">
-            <label>Şube</label>
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.branchCode" onlyNumber>
+            <label>Kampanya Kodu</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.campaignCode" onlyNumber>
           </div>
         </div>
       </div>
@@ -92,6 +93,7 @@
             </select>
           </div>
         </div>
+        <!-- YAZILIMDA FİLTRELENEMEDİĞİ İÇİN KALDIRILMIŞTIR
         <div class="col">
           <div class="form-group">
             <label for="businessLineId">İş Kolu</label>
@@ -103,6 +105,7 @@
             </select>
           </div>
         </div>
+        YAZILIMDA FİLTRELENEMEDİĞİ İÇİN KALDIRILMIŞTIR -->
         <div class="col">
           <div class="row">
             <div class="col">

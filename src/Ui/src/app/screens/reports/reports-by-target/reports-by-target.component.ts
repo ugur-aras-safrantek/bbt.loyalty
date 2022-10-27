@@ -29,6 +29,7 @@ export class ReportsByTargetComponent implements OnInit {
     {columnName: 'Kampanya / Program', propertyName: 'campaignName', isBoolean: false, sortDir: null},
     {columnName: 'Programa Dahil Mi?', propertyName: 'isJoin', isBoolean: true, sortDir: null},
     {columnName: 'Müşteri No', propertyName: 'customerCode', isBoolean: false, sortDir: null},
+    {columnName: 'Hedef Dönemi', propertyName: 'term', isBoolean: false, sortDir: null},
     {columnName: 'Alt Kırılım', propertyName: 'identitySubTypeName', isBoolean: false, sortDir: null},
     {columnName: 'Harcama Hedefi', propertyName: 'targetAmountStr', isBoolean: false, sortDir: null},
     {columnName: 'Hedef Tuttu Mu?', propertyName: 'isTargetSuccess', isBoolean: true, sortDir: null},
@@ -83,11 +84,13 @@ export class ReportsByTargetComponent implements OnInit {
     this.targetSuccessEndDate = '';
 
     this.listService.clearList();
-
-    this.targetReportGetByFilter();
   }
 
   targetReportGetByFilter() {
+    if(this.filterForm.campaignId == null && this.filterForm.campaignId == null){
+      this.toastrHandleService.error("Kampanya veya hedef dolu olmalıdır!")
+    }else{
+    this.listService.clearList();
     let requestModel: TargetReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
@@ -117,6 +120,7 @@ export class ReportsByTargetComponent implements OnInit {
           }
         }
       });
+    }
   }
 
   targetReportGetByFilterExcelFile() {

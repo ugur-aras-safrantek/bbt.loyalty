@@ -58,6 +58,7 @@ export class CustomerReportRequestModel implements ICustomerReportRequestModel, 
   achievementTypeId?: any;
   businessLineId?: any;
   isActive?: any;
+  campaignCode? : any;
 }
 
 interface ITargetReportRequestModel {
