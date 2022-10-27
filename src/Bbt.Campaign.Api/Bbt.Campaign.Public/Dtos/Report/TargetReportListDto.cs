@@ -25,5 +25,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? RemainAmountStr { get; set; }
         public string? RemainAmountCurrency { get; set; }
         public string? TargetSuccessDateStr { get; set; }
+        public string Term { get; set; }
     }
 }

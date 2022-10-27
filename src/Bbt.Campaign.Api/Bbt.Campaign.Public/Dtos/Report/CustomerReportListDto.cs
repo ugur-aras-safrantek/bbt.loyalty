@@ -44,5 +44,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? AchievementRateStr { get; set; }
         public DateTime? EarningReachDate { get; set; }
         public string? EarningReachDateStr { get; set; }
+        public string Term { get; set; }
     }
 }

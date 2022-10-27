@@ -317,7 +317,7 @@ namespace Bbt.Campaign.Services.Services.Report
                         customerReportListDto.CampaignName = x.CampaignName;
                         customerReportListDto.IsActive = x.IsActive;
                         customerReportListDto.IsBundle = x.IsBundle;
-
+                        customerReportListDto.Term = x.Term;
                         string joinDateStr = x.CustomerJoinDate ?? string.Empty;
                         if (!string.IsNullOrEmpty(joinDateStr))
                         {
@@ -715,6 +715,7 @@ namespace Bbt.Campaign.Services.Services.Report
                         targetReportListDto.CampaignName = x.CampaignName;
                         targetReportListDto.IsJoin = x.IsJoined;
                         targetReportListDto.CustomerCode = x.CustomerNumber;
+                        targetReportListDto.Term = x.Term;
 
                         int identitySubTypeId = x.SubSegment ?? 0;
                         if(identitySubTypeId > 0)

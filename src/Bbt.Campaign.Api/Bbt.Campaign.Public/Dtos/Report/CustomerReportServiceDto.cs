@@ -31,5 +31,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? EarningUsedDate { get; set; } 
         public string? EarningReachDate { get; set; }
         public string? CampaignStartDate { get; set; }
+        public string Term { get; set; }
     }
 }

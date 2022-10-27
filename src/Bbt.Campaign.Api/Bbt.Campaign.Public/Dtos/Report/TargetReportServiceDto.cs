@@ -27,5 +27,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string? RemainingAmountCurrency { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime? CompletedAt { get; set; }
+        public string Term { get; set; }
     }
 }
