@@ -259,6 +259,91 @@ namespace Bbt.Campaign.Services.FileOperations
             return result;
         }
 
+        public static byte[] GetCustomerCampaignReportListExcel(List<CustomerCamapignReportListDto> customerCampaignList)
+        {
+            byte[] result = null;
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add($"Müşteri Listesi");
+
+
+                FileOperations.HeaderSetsListe(worksheet, "A", "Kampanya Kodu", 20);
+                FileOperations.HeaderSetsListe(worksheet, "B", "Kampanya Adı", 30);
+                FileOperations.HeaderSetsListe(worksheet, "C", "Aktif", 20);
+                FileOperations.HeaderSetsListe(worksheet, "D", "Birleştirilebilir", 20);
+                FileOperations.HeaderSetsListe(worksheet, "E", "TCKN", 20);
+                FileOperations.HeaderSetsListe(worksheet, "F", "Ayrıldı", 20);
+                FileOperations.HeaderSetsListe(worksheet, "G", "Kampanya Başlangıç Tarihi", 20);
+                FileOperations.HeaderSetsListe(worksheet, "H", "Kampanyaya Katıldığı Tarih", 20);
+                FileOperations.HeaderSetsListe(worksheet, "I", "Kampanyadan Ayrıldığı Tarih", 20);
+
+                int currentRow = 1;
+                int column = 1;
+                foreach (var customerCampaign in customerCampaignList)
+                {
+                    currentRow++;
+                    column = 1;
+
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CampaignCode;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CampaignName;
+                    worksheet.Column($"{column}").Width = 30;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.IsActive ? "Evet" : "Hayır";
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.IsBundle ? "Evet" : "Hayır";
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerId;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.IsExited ? "Evet" : "Hayır";
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CampaignStartDate;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerJoinDate;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                    worksheet.Cell(currentRow, column).Value = customerCampaign.CustomerExitDate;
+                    worksheet.Column($"{column}").Width = 20;
+                    worksheet.Cell(currentRow, column).Style.Alignment.WrapText = true;
+
+                    column++;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+
+                    result = stream.ToArray();
+
+                    //File.WriteAllBytes(@"C:\Files2\xxx.xlsx", result);
+                }
+            }
+            return result;
+        }
+
         public static byte[] GetTargetReportListExcel(List<TargetReportListDto> targetReportList) 
         {
             byte[] result = null;

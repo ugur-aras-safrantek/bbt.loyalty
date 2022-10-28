@@ -48,7 +48,11 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
                 .HasOne(a => a.CampaignRule).WithOne(b => b.Campaign)
                 .HasForeignKey<CampaignRuleEntity>(e => e.CampaignId);
 
-            new CampaignDbInitializer(modelBuilder).Seed();
+            modelBuilder.Entity<CustomerCampaignReportEntity>()
+                .HasNoKey()
+                .ToTable("CustomerJoinReportView");
+
+                new CampaignDbInitializer(modelBuilder).Seed();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
@@ -131,5 +135,6 @@ namespace Bbt.Campaign.EntityFrameworkCore.Context
         public DbSet<IdentitySubTypeEntity> IdentitySubTypes { get; set; }
         public DbSet<CampaignIdentityListEntity> CampaignIdentityList { get; set; }
         public DbSet<OnExtraDefinitionEntity> OnExtraDefinition { get; set; }
+        public DbSet<CustomerCampaignReportEntity> CustomerCampaignReport { get; set; }
     }
 }

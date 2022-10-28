@@ -70,28 +70,61 @@ namespace Bbt.Campaign.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the form data for customer report form
+        /// Returns the form data for earning report form
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-customer-report-form")]
-        public async Task<IActionResult> FillCustomerFormAsync()
+        [Route("get-earning-report-form")]
+        public async Task<IActionResult> FillEarningFormAsync()
         {
             if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
 
-            var result = await _reportService.FillCustomerFormAsync();
+            var result = await _reportService.FillEarningFormAsync();
             return Ok(result);
         }
 
         /// <summary>
-        /// Returns the campaign report data by selected filter options
+        /// Returns the earning report data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-earning-report-by-filter")]
+        public async Task<IActionResult> GetEarningReportByFilterAsync(CustomerReportRequest request)
+        {
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _reportService.GetEarningReportByFilterAsync(request);
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Returns the earning report excel file data by selected filter options
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("get-earning-report-by-filter-excel")]
+        public async Task<IActionResult> GetEarningReportExcelAsync(CustomerReportRequest request)
+        {
+            if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
+                throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
+
+            var result = await _reportService.GetEarningReportExcelAsync(request);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns the customer report data by selected filter options
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("get-customer-report-by-filter")]
-        public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerReportRequest request)
+        public async Task<IActionResult> GetCustomerReportByFilterAsync(CustomerCampaignReportRequest request)
         {
             if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);
@@ -108,7 +141,7 @@ namespace Bbt.Campaign.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("get-customer-report-by-filter-excel")]
-        public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerReportRequest request)
+        public async Task<IActionResult> GetCustomerReportExcelAsync(CustomerCampaignReportRequest request)
         {
             if (!(User.IsInRole("IsLoyaltyReader") || User.IsInRole("IsLoyaltyCreator")))
                 throw new Exception(ControllerStatics.UnAuthorizedUserAlert);

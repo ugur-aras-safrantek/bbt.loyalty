@@ -6,7 +6,7 @@ import {ReportsService} from "../../../services/reports.service";
 import {ToastrHandleService} from "../../../services/toastr-handle.service";
 import {UtilityService} from "../../../services/utility.service";
 import {ListService} from "../../../services/list.service";
-import {CustomerReportRequestModel} from "../../../models/reports";
+import {EarningReportRequestModel} from "../../../models/reports";
 import {NgxSmartModalService} from "ngx-smart-modal";
 
 @Component({
@@ -65,7 +65,7 @@ export class ReportsByEarningComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getCustomerReportFilterForm();
+    this.getEarningReportFilterForm();
     this.clear();
   }
 
@@ -89,12 +89,12 @@ export class ReportsByEarningComponent implements OnInit {
 
     this.listService.clearList();
 
-    this.customerReportGetByFilter();
+    this.earningReportGetByFilter();
   }
 
-  customerReportGetByFilter() {
+  earningReportGetByFilter() {
     this.listService.clearTable();
-    let requestModel: CustomerReportRequestModel = {
+    let requestModel: EarningReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
@@ -109,7 +109,7 @@ export class ReportsByEarningComponent implements OnInit {
       isActive: this.filterForm.isActive,
       campaignCode: this.filterForm.campaignCode
     };
-    this.reportsService.customerReportGetByFilter(requestModel)
+    this.reportsService.earningReportGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
@@ -127,8 +127,8 @@ export class ReportsByEarningComponent implements OnInit {
       });
   }
 
-  customerReportGetByFilterExcelFile() {
-    let requestModel: CustomerReportRequestModel = {
+  earningReportGetByFilterExcelFile() {
+    let requestModel: EarningReportRequestModel = {
       pageNumber: this.listService.paging.currentPage,
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
@@ -143,7 +143,7 @@ export class ReportsByEarningComponent implements OnInit {
       isActive: this.filterForm.isActive,
       campaignCode: this.filterForm.campaignCode
     };
-    this.reportsService.customerReportGetByFilterExcelFile(requestModel)
+    this.reportsService.earningReportGetByFilterExcelFile(requestModel)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
@@ -164,8 +164,8 @@ export class ReportsByEarningComponent implements OnInit {
       });
   }
 
-  getCustomerReportFilterForm() {
-    this.reportsService.getCustomerReportFilterForm()
+  getEarningReportFilterForm() {
+    this.reportsService.getEarningReportFilterForm()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {

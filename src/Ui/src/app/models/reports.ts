@@ -1,4 +1,4 @@
-import {IPagingRequestModel} from "./paging.model";
+import { IPagingRequestModel, PagingResponseModel } from "./paging.model";
 
 interface ICampaignReportRequestModel {
   code?: any;
@@ -34,7 +34,7 @@ export class CampaignReportRequestModel implements ICampaignReportRequestModel, 
   statusId?: any;
 }
 
-interface ICustomerReportRequestModel {
+interface IEarningReportRequestModel {
   customerCode?: any;
   customerIdentifier?: any;
   customerTypeId?: any;
@@ -45,7 +45,7 @@ interface ICustomerReportRequestModel {
   isActive?: any;
 }
 
-export class CustomerReportRequestModel implements ICustomerReportRequestModel, IPagingRequestModel {
+export class EarningReportRequestModel implements IEarningReportRequestModel, IPagingRequestModel {
   pageNumber: number;
   pageSize: number;
   sortBy?: any;
@@ -58,7 +58,7 @@ export class CustomerReportRequestModel implements ICustomerReportRequestModel, 
   achievementTypeId?: any;
   businessLineId?: any;
   isActive?: any;
-  campaignCode? : any;
+  campaignCode?: any;
 }
 
 interface ITargetReportRequestModel {
@@ -83,4 +83,23 @@ export class TargetReportRequestModel implements ITargetReportRequestModel, IPag
   customerCode?: any;
   targetSuccessStartDate?: any;
   targetSuccessEndDate?: any;
+}
+
+interface ICustomerReportRequestModel {
+  customerCode?: any,
+  customerIdentifier?: any,
+  isActive?: any,
+  isExited?: any,
+  campaignCode?: any,
+}
+
+export class CustomerReportRequestModel implements ICustomerReportRequestModel, IPagingRequestModel{
+  pageNumber: number;
+  pageSize: number;
+  sortBy?: any;
+  sortDir?: any;
+  customerIdentifier?: any;
+  isActive?: any;
+  isExited?: any;
+  campaignCode?: any;  
 }

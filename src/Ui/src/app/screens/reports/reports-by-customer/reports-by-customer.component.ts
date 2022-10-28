@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {Subject, takeUntil} from "rxjs";
-import {saveAs} from 'file-saver';
-import {DropdownListModel} from "../../../models/dropdown-list.model";
-import {ReportsService} from "../../../services/reports.service";
-import {ToastrHandleService} from "../../../services/toastr-handle.service";
-import {UtilityService} from "../../../services/utility.service";
-import {ListService} from "../../../services/list.service";
-import {CustomerReportRequestModel} from "../../../models/reports";
-import {NgxSmartModalService} from "ngx-smart-modal";
+import { Component, OnInit } from '@angular/core';
+import { Subject, takeUntil } from "rxjs";
+import { saveAs } from 'file-saver';
+import { DropdownListModel } from "../../../models/dropdown-list.model";
+import { ReportsService } from "../../../services/reports.service";
+import { ToastrHandleService } from "../../../services/toastr-handle.service";
+import { UtilityService } from "../../../services/utility.service";
+import { ListService } from "../../../services/list.service";
+import { CustomerReportRequestModel } from "../../../models/reports";
+import { NgxSmartModalService } from "ngx-smart-modal";
 
 @Component({
   selector: 'app-reports-by-customer',
@@ -19,22 +19,15 @@ export class ReportsByCustomerComponent implements OnInit {
   private destroy$: Subject<boolean> = new Subject<boolean>();
 
   columns = [
-    {columnName: 'Kampanya Kodu', propertyName: 'campaignCode', isBoolean: false, sortDir: null},
-    {columnName: 'Kampanya Adı', propertyName: 'campaignName', isBoolean: false, sortDir: null},
-    {columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null},
-    {columnName: 'Birleştirilebilir', propertyName: 'isBundle', isBoolean: true, sortDir: null},
-    {columnName: 'Kampanyaya Katıldığı Tarih', propertyName: 'joinDateStr', isBoolean: false, sortDir: null},
-    {columnName: 'Müşteri No', propertyName: 'customerIdentifier', isBoolean: false, sortDir: null},
-    {columnName: 'TCKN', propertyName: 'customerCode', isBoolean: false, sortDir: null},
-    {columnName: 'Müşteri Tipi', propertyName: 'customerTypeName', isBoolean: false, sortDir: null},
-    {columnName: 'Şube', propertyName: 'branchName', isBoolean: false, sortDir: null},
-    {columnName: 'İş Kolu', propertyName: 'businessLineName', isBoolean: false, sortDir: null},
-    {columnName: 'Hedef Dönemi', propertyName: 'term', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanıma Hak Kazandığı Tarih', propertyName: 'earningReachDateStr', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Tutarı', propertyName: 'achievementAmountStr', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Oranı', propertyName: 'achievementRateStr', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanım Tipi', propertyName: 'achievementTypeName', isBoolean: false, sortDir: null},
-    {columnName: 'Kazanımdan Yararlanılan Tarih', propertyName: 'achievementDateStr', isBoolean: false, sortDir: null},
+    { columnName: 'Kampanya Kodu', propertyName: 'campaignCode', isBoolean: false, sortDir: null },
+    { columnName: 'Kampanya Adı', propertyName: 'campaignName', isBoolean: false, sortDir: null },
+    { columnName: 'Aktif', propertyName: 'isActive', isBoolean: true, sortDir: null },
+    { columnName: 'Birleştirilebilir', propertyName: 'isBundle', isBoolean: true, sortDir: null },
+    { columnName: 'TCKN', propertyName: 'customerCode', isBoolean: false, sortDir: null },
+    { columnName: 'Ayrıldı mı?', propertyName: 'IsExited', isBoolean: true, sortDir: null },
+    { columnName: 'Kampanyaya Başlangıç Tarihi', propertyName: 'startDateStr', isBoolean: false, sortDir: null },
+    { columnName: 'Kampanyaya Katıldığı Tarih', propertyName: 'joinDateStr', isBoolean: false, sortDir: null },
+    { columnName: 'Kampanyadan Ayrıldığı Tarih', propertyName: 'exitDateStr', isBoolean: false, sortDir: null },
   ];
 
   customerTypeList: DropdownListModel[];
@@ -46,26 +39,21 @@ export class ReportsByCustomerComponent implements OnInit {
   customerDetailTargetGroupList: any[] = [];
 
   filterForm = {
-    customerCode: '',
     customerIdentifier: '',
-    customerTypeId: null,
-    campaignStartTermId: null,
-    branchCode: '',
-    achievementTypeId: null,
-    businessLineId: null,
     isActive: null,
-    campaignCode : ''
+    isExited: null,
+    campaignCode: ''
   };
 
   constructor(private reportsService: ReportsService,
-              private modalService: NgxSmartModalService,
-              private toastrHandleService: ToastrHandleService,
-              private utilityService: UtilityService,
-              private listService: ListService) {
+    private modalService: NgxSmartModalService,
+    private toastrHandleService: ToastrHandleService,
+    private utilityService: UtilityService,
+    private listService: ListService) {
   }
 
   ngOnInit(): void {
-    this.getCustomerReportFilterForm();
+    //this.getCustomerReportFilterForm();
     this.clear();
   }
 
@@ -76,15 +64,10 @@ export class ReportsByCustomerComponent implements OnInit {
 
   clear() {
     this.filterForm = {
-      customerCode: '',
       customerIdentifier: '',
-      customerTypeId: null,
-      campaignStartTermId: null,
-      branchCode: '',
-      achievementTypeId: null,
-      businessLineId: null,
       isActive: null,
-      campaignCode : ''
+      isExited: null,
+      campaignCode: ''
     };
 
     this.listService.clearList();
@@ -99,13 +82,7 @@ export class ReportsByCustomerComponent implements OnInit {
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
       sortDir: this.listService.currentSortDir,
-      customerCode: this.filterForm.customerCode,
       customerIdentifier: this.filterForm.customerIdentifier,
-      customerTypeId: this.filterForm.customerTypeId,
-      campaignStartTermId: this.filterForm.campaignStartTermId,
-      branchCode: this.filterForm.branchCode,
-      achievementTypeId: this.filterForm.achievementTypeId,
-      businessLineId: this.filterForm.businessLineId,
       isActive: this.filterForm.isActive,
       campaignCode: this.filterForm.campaignCode
     };
@@ -133,13 +110,7 @@ export class ReportsByCustomerComponent implements OnInit {
       pageSize: 10,
       sortBy: this.listService.currentSortBy,
       sortDir: this.listService.currentSortDir,
-      customerCode: this.filterForm.customerCode,
       customerIdentifier: this.filterForm.customerIdentifier,
-      customerTypeId: this.filterForm.customerTypeId,
-      campaignStartTermId: this.filterForm.campaignStartTermId,
-      branchCode: this.filterForm.branchCode,
-      achievementTypeId: this.filterForm.achievementTypeId,
-      businessLineId: this.filterForm.businessLineId,
       isActive: this.filterForm.isActive,
       campaignCode: this.filterForm.campaignCode
     };
@@ -174,25 +145,6 @@ export class ReportsByCustomerComponent implements OnInit {
             this.campaignStartTermList = res.data.campaignStartTermList;
             this.achievementTypes = res.data.achievementTypes;
             this.businessLineList = res.data.businessLineList;
-          } else
-            this.toastrHandleService.error(res.errorMessage);
-        },
-        error: err => {
-          if (err.error)
-            this.toastrHandleService.error(err.error);
-        }
-      });
-  }
-
-  showDetail(event) {
-    this.reportsService.getCustomerDetail({customerCode: event.customerCode, campaignId: event.campaignCode})
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: res => {
-          if (!res.hasError && res.data?.campaignTarget) {
-            this.customerDetailCampaignTarget = res.data.campaignTarget;
-            this.customerDetailTargetGroupList = res.data.campaignTarget.targetGroupList;
-            this.modalService.getModal('customerReportModal').open();
           } else
             this.toastrHandleService.error(res.errorMessage);
         },

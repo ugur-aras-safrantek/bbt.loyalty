@@ -16,11 +16,13 @@ namespace Bbt.Campaign.Services.Services.Report
     public interface IReportService
     {
         public Task<BaseResponse<CampaignReportFormDto>> FillCampaignFormAsync();
-        public Task<BaseResponse<CustomerReportFormDto>> FillCustomerFormAsync();
+        public Task<BaseResponse<CustomerReportFormDto>> FillEarningFormAsync();
         public Task<BaseResponse<CampaignReportResponse>> GetCampaignReportByFilterAsync(CampaignReportRequest request);
         public Task<BaseResponse<GetFileResponse>> GetCampaignReportExcelAsync(CampaignReportRequest request);
-        public Task<BaseResponse<CustomerReportResponse>> GetCustomerReportByFilterAsync(CustomerReportRequest request);
-        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerReportRequest request);
+        public Task<BaseResponse<CustomerCampaignReportResponse>> GetCustomerReportByFilterAsync(CustomerCampaignReportRequest request);
+        public Task<BaseResponse<GetFileResponse>> GetCustomerReportExcelAsync(CustomerCampaignReportRequest request);
+        public Task<BaseResponse<CustomerReportResponse>> GetEarningReportByFilterAsync(CustomerReportRequest request);
+        public Task<BaseResponse<GetFileResponse>> GetEarningReportExcelAsync(CustomerReportRequest request);
         public Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, string campaignCode);
         public List<CampaignReportListDto> ConvertCampaignReportList(IQueryable<CampaignReportEntity> query);
         public Task<BaseResponse<TargetReportFormDto>> FillTargetFormAsync();
