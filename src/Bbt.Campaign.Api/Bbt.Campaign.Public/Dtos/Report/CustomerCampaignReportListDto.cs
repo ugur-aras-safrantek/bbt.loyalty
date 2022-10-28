@@ -18,7 +18,6 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public string CustomerId { get; set; }
         public bool IsActive { get; set; }
         public bool IsBundle { get; set; }
-        public bool IsContract { get; set; }
         public DateTime CustomerJoinDate { get; set; }
         public DateTime CustomerExitDate { get; set; }
         public bool IsExited { get; set; }
