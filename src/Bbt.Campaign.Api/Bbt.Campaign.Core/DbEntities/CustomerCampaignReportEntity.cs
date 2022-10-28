@@ -13,7 +13,7 @@ namespace Bbt.Campaign.Core.DbEntities
         public bool IsActive { get; set; }
         public bool IsBundle { get; set; }
         public DateTime CustomerJoinDate { get; set; }
-        public DateTime CustomerExitDate { get; set; }
+        public DateTime? CustomerExitDate { get; set; }
         public bool IsExited { get; set; }
         public DateTime CampaignStartDate { get; set; }
 

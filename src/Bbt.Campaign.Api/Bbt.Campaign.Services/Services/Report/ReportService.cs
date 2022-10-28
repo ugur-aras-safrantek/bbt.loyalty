@@ -676,7 +676,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
         public CustomerReportListAndTotalCount GetCustomerReportData(CustomerCampaignReportRequest request)
         {
-            var response = new CustomerReportListAndTotalCount() { TotalCount = 0, CustomerReportList = new List<CustomerCamapignReportListDto>() };
+            var response = new CustomerReportListAndTotalCount() { TotalCount = 0, CustomerReportList = new List<CustomerCampaignReportListDto>() };
             var query = _unitOfWork.GetRepository<CustomerCampaignReportEntity>().GetAll();
             if (request.IsActive != null)
             {
@@ -735,22 +735,19 @@ namespace Bbt.Campaign.Services.Services.Report
             response.TotalCount = query.Count();
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
-            var resp = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            foreach (var item in resp)
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            response.CustomerReportList = query.Select(x => new CustomerCampaignReportListDto
             {
-                response.CustomerReportList.Add(new CustomerCamapignReportListDto()
-                {
-                    CampaignCode = item.CampaignCode,
-                    CampaignName = item.CampaignName,
-                    CampaignStartDate = item.CampaignStartDate,
-                    CustomerId = item.CustomerId,
-                    CustomerExitDate = item.CustomerExitDate,
-                    CustomerJoinDate = item.CustomerJoinDate,
-                    IsActive = item.IsActive,
-                    IsBundle = item.IsBundle,
-                    IsExited = item.IsExited
-                });
-            }
+                CampaignCode = x.CampaignCode,
+                CampaignName = x.CampaignName,
+                CampaignStartDate = x.CampaignStartDate,
+                CustomerId = x.CustomerId,
+                CustomerExitDate = x.CustomerExitDate,
+                CustomerJoinDate = x.CustomerJoinDate,
+                IsActive = x.IsActive,
+                IsBundle = x.IsBundle,
+                IsExited = x.IsExited
+            }).ToList();
             return response;
         }
         #endregion

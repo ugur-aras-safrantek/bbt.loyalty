@@ -7,8 +7,8 @@ namespace Bbt.Campaign.Public.Models.Report
     {
         public CustomerCampaignReportResponse()
         {
-            CustomerCampaignList = new List<CustomerCamapignReportListDto>();
+            CustomerCampaignList = new List<CustomerCampaignReportListDto>();
         }
-        public List<CustomerCamapignReportListDto> CustomerCampaignList { get; set; }
+        public List<CustomerCampaignReportListDto> CustomerCampaignList { get; set; }
     }
 }

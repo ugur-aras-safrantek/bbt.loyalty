@@ -259,7 +259,7 @@ namespace Bbt.Campaign.Services.FileOperations
             return result;
         }
 
-        public static byte[] GetCustomerCampaignReportListExcel(List<CustomerCamapignReportListDto> customerCampaignList)
+        public static byte[] GetCustomerCampaignReportListExcel(List<CustomerCampaignReportListDto> customerCampaignList)
         {
             byte[] result = null;
 
