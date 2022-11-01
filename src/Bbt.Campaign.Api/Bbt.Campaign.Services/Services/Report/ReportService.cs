@@ -682,11 +682,11 @@ namespace Bbt.Campaign.Services.Services.Report
             {
                 query = query.Where(x => x.IsActive == request.IsActive);
             }
-            if (request.CustomerIdentifier != null)
+            if (!String.IsNullOrWhiteSpace(request.CustomerIdentifier))
             {
                 query = query.Where(x => x.CustomerId == request.CustomerIdentifier);
             }
-            if (request.CampaignCode != null)
+            if (!String.IsNullOrWhiteSpace(request.CampaignCode))
             {
                 query = query.Where(x => x.CampaignCode == request.CampaignCode);
             }
