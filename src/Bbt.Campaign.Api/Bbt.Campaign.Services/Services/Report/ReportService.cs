@@ -690,48 +690,78 @@ namespace Bbt.Campaign.Services.Services.Report
             {
                 query = query.Where(x => x.CampaignCode == request.CampaignCode);
             }
-            /*if (sortType == 1)
+            if (request.SortDir == "desc")
             {
-                switch (sortBy)
+                switch (request.SortBy)
                 {
                     case "CampaignCode":
-                        repositoryData = repositoryData.OrderByDescending(x => x.CampaignCode);
+                        query = query.OrderByDescending(x => x.CampaignCode);
                         break;
                     case "CampaignName":
-                        repositoryData = repositoryData.OrderByDescending(x => x.CampaignName);
+                        query = query.OrderByDescending(x => x.CampaignName);
                         break;
                     case "IsActive":
-                        repositoryData = repositoryData.OrderByDescending(x => x.IsActive);
+                        query = query.OrderByDescending(x => x.IsActive);
                         break;
                     case "IsBundle":
-                        repositoryData = repositoryData.OrderByDescending(x => x.IsBundle);
-                        break;
-                    case "CustomerJoinDate":
-                        repositoryData = repositoryData.OrderByDescending(x => x.CustomerJoinDate);
-                        break;
-                    case "CustomerNumber":
-                        repositoryData = repositoryData.OrderByDescending(x => x.CustomerNumber);
+                        query = query.OrderByDescending(x => x.IsBundle);
                         break;
                     case "CustomerId":
-                        repositoryData = repositoryData.OrderByDescending(x => x.CustomerId);
+                        query = query.OrderByDescending(x => x.CustomerId);
                         break;
-                    case "EarningAmount":
-                        repositoryData = repositoryData.OrderByDescending(x => x.EarningAmount);
+                    case "IsExited":
+                        query = query.OrderByDescending(x => x.IsExited);
                         break;
-                    case "EarningRate":
-                        repositoryData = repositoryData.OrderByDescending(x => x.EarningRate);
+                    case "StartDateStr":
+                        query = query.OrderByDescending(x => x.CampaignStartDate);
                         break;
-                    case "EarningType":
-                        repositoryData = repositoryData.OrderByDescending(x => x.EarningType);
+                    case "JoinDateStr":
+                        query = query.OrderByDescending(x => x.CustomerJoinDate);
                         break;
-                    case "EarningUsedDate":
-                        repositoryData = repositoryData.OrderByDescending(x => x.EarningUsedDate);
+                    case "ExitDateStr":
+                        query = query.OrderByDescending(x => x.CustomerExitDate);
                         break;
                     default:
-                        repositoryData = repositoryData.OrderByDescending(x => x.EarningReachDate);
+                        query = query.OrderByDescending(x => x.CampaignCode);
                         break;
                 }
-            }*/
+            }
+            else
+            {
+                switch (request.SortBy)
+                {
+                    case "CampaignCode":
+                        query = query.OrderBy(x => x.CampaignCode);
+                        break;
+                    case "CampaignName":
+                        query = query.OrderBy(x => x.CampaignName);
+                        break;
+                    case "IsActive":
+                        query = query.OrderBy(x => x.IsActive);
+                        break;
+                    case "IsBundle":
+                        query = query.OrderBy(x => x.IsBundle);
+                        break;
+                    case "CustomerId":
+                        query = query.OrderBy(x => x.CustomerId);
+                        break;
+                    case "IsExited":
+                        query = query.OrderBy(x => x.IsExited);
+                        break;
+                    case "StartDateStr":
+                        query = query.OrderBy(x => x.CampaignStartDate);
+                        break;
+                    case "JoinDateStr":
+                        query = query.OrderBy(x => x.CustomerJoinDate);
+                        break;
+                    case "ExitDateStr":
+                        query = query.OrderBy(x => x.CustomerExitDate);
+                        break;
+                    default:
+                        query = query.OrderBy(x => x.CampaignCode);
+                        break;
+                }
+            }
             response.TotalCount = query.Count();
             var pageNumber = request.PageNumber.GetValueOrDefault(1) < 1 ? 1 : request.PageNumber.GetValueOrDefault(1);
             var pageSize = request.PageSize.GetValueOrDefault(0) == 0 ? 25 : request.PageSize.Value;
@@ -744,6 +774,9 @@ namespace Bbt.Campaign.Services.Services.Report
                 CustomerId = x.CustomerId,
                 CustomerExitDate = x.CustomerExitDate,
                 CustomerJoinDate = x.CustomerJoinDate,
+                StartDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.CampaignStartDate),
+                JoinDateStr = Helpers.ConvertBackEndDateTimeToStringForUI(x.CustomerJoinDate),
+                ExitDateStr = x.CustomerExitDate != null ? Helpers.ConvertBackEndDateTimeToStringForUI(x.CustomerExitDate.Value) : null,
                 IsActive = x.IsActive,
                 IsBundle = x.IsBundle,
                 IsExited = x.IsExited

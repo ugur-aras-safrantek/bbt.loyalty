@@ -8,7 +8,7 @@ namespace Bbt.Campaign.Public.Dtos.Report
 {
     public class CustomerReportListAndTotalCount
     {
-        public List<CustomerCampaignReportListDto> CustomerReportList{ get; set; }
+        public List<CustomerCampaignReportListDto> CustomerReportList { get; set; }
         public int TotalCount { get; set; }
     }
     public class CustomerCampaignReportListDto
@@ -22,5 +22,8 @@ namespace Bbt.Campaign.Public.Dtos.Report
         public DateTime? CustomerExitDate { get; set; }
         public bool IsExited { get; set; }
         public DateTime CampaignStartDate { get; set; }
+        public string StartDateStr { get; set; }
+        public string JoinDateStr { get; set; }
+        public string ExitDateStr { get; set; }
     }
 }
