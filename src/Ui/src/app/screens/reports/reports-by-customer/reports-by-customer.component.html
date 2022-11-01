@@ -7,13 +7,13 @@
           <div class="form-group">
             <label>TCKN</label>
             <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.customerIdentifier"
-                   onlyNumber>
+                   onlyNumber maxlength="11" >
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label>Kampanya Kodu</label>
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.campaignCode" onlyNumber>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="filterForm.campaignCode">
           </div>
         </div>
       </div>
