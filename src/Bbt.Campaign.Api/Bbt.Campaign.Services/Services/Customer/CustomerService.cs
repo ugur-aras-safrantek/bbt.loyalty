@@ -645,7 +645,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 throw new Exception("Kampanya katılım bilgisi bulunamadı.");
             }
             var campaignJoinDate = customerCampaignEntity.StartDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-            response.CampaignJoinMessage = language.ToLower() == "tr" ? $"{campaignJoinDate} tarihinden itibaren {campaignEntity.TitleTr}lısın"
+            response.CampaignJoinMessage = language.ToLower() == "tr" ? $"{campaignJoinDate} tarihinden itibaren {campaignEntity.TitleTr}'lısın"
                 : $"You are {campaignEntity.TitleEn} since {campaignJoinDate}";
             response.IsInvisibleCampaign = false;
             if (campaignEntity != null)
