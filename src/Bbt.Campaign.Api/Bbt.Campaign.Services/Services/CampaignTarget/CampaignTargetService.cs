@@ -521,7 +521,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             return campaignTargetDto;
         }
 
-        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang, bool isTest) 
+        public async Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang, bool isTest, string term = null) 
         {
             CampaignTargetDto2 campaignTargetDto2 = new CampaignTargetDto2();
             List<TargetParameterDto2> progressBarlist = new List<TargetParameterDto2>();
@@ -624,7 +624,7 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
             }
             else 
             {
-                var goalResultByCustomerAndCampaing = await _remoteService.GetGoalResultByCustomerAndCampaingData(customerCode, campaignId, lang);
+                var goalResultByCustomerAndCampaing = await _remoteService.GetGoalResultByCustomerAndCampaingData(customerCode, campaignId, lang, term);
                 if (goalResultByCustomerAndCampaing != null)
                 {
                     if (goalResultByCustomerAndCampaing.TargetList != null && goalResultByCustomerAndCampaing.TargetList.Any())

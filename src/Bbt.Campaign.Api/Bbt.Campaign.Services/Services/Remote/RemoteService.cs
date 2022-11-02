@@ -71,7 +71,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             }
             return goalResultByCustomerIdAndMonthCount;
         }
-        public async Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang)
+        public async Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang, string term = null)
         {
             GoalResultByCustomerAndCampaing goalResultByCustomerAndCampaing = null;
             using (var httpClient = new HttpClient())
@@ -83,6 +83,10 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{customerId}", customerId);
                 serviceUrl = serviceUrl.Replace("{campaignId}", campaignId.ToString());
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
+                if (!String.IsNullOrWhiteSpace(term))
+                {
+                    serviceUrl = serviceUrl + $"?term={term}";
+                }
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 

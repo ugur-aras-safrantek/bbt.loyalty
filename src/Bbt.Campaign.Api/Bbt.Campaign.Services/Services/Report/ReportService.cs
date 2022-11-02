@@ -550,7 +550,7 @@ namespace Bbt.Campaign.Services.Services.Report
 
             return customerCampaignList;
         }
-        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, string campaignCode)
+        public async Task<BaseResponse<CustomerReportDetailDto>> GetCustomerReportDetailAsync(string customerCode, string campaignCode, string term = null)
         {
             //int authorizationTypeId = (int)AuthorizationTypeEnum.View;
 
@@ -578,7 +578,7 @@ namespace Bbt.Campaign.Services.Services.Report
                 campaignTargetDto.CampaignId = approvedCampaign.Id;
                 campaignTargetDto.GroupCount = 0;
                 List<TargetParameterDto2> targetList2 = new List<TargetParameterDto2>();
-                CampaignTargetDto2 campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(approvedCampaign.Id, customerCode, "tr", false);
+                CampaignTargetDto2 campaignTargetDto2 = await _campaignTargetService.GetCampaignTargetDtoCustomer2(approvedCampaign.Id, customerCode, "tr", false, term);
                 if (campaignTargetDto2.Informationlist.Any() || campaignTargetDto2.ProgressBarlist.Any())
                 {
                     foreach (var target in campaignTargetDto2.Informationlist)

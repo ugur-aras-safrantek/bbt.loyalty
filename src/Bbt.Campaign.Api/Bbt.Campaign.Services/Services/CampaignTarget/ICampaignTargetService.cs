@@ -18,6 +18,6 @@ namespace Bbt.Campaign.Services.Services.CampaignTarget
         public Task<BaseResponse<CampaignTargetUpdateFormDto>> GetUpdateForm(int campaignId, string userId);
         public Task<CampaignTargetDto> GetCampaignTargetDto(int campaignId, bool isRemoveInvisible);
         public Task<CampaignTargetDto> GetCampaignTargetDtoCustomer(int campaignId, decimal usedAmount, int usedNumberOfTransaction);
-        public Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang, bool isTest);
+        public Task<CampaignTargetDto2> GetCampaignTargetDtoCustomer2(int campaignId, string customerCode, string lang, bool isTest, string term = null);
     }
 }

@@ -87,7 +87,7 @@ export class ReportsByTargetComponent implements OnInit {
   }
 
   targetReportGetByFilter() {
-    if(this.filterForm.campaignId == null && this.filterForm.campaignId == null){
+    if(this.filterForm.campaignId == null && this.filterForm.targetId == null){
       this.toastrHandleService.error("Kampanya veya hedef dolu olmalıdır!")
     }else{
     this.listService.clearTable();
@@ -113,7 +113,7 @@ export class ReportsByTargetComponent implements OnInit {
           } else {
             this.listService.setError("Listeleme için uygun kayıt bulunamadı");
           }
-        },
+        },  
         error: err => {
           if (err.error) {
             this.toastrHandleService.error(err.error);
