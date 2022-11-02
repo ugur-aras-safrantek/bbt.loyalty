@@ -34,12 +34,6 @@ export class ReportsByTargetComponent implements OnInit {
     {columnName: 'Harcama Hedefi', propertyName: 'targetAmountStr', isBoolean: false, sortDir: null},
     {columnName: 'Hedef Tuttu Mu?', propertyName: 'isTargetSuccess', isBoolean: true, sortDir: null},
     {columnName: 'Kalan Harcama', propertyName: 'remainAmountStr', isBoolean: false, sortDir: null},
-    {
-      columnName: 'Hedefin Gerçekleştiği Tarih',
-      propertyName: 'targetSuccessDateStr',
-      isBoolean: false,
-      sortDir: null
-    },
   ];
 
   campaignList: DropdownListModel[];
@@ -52,6 +46,7 @@ export class ReportsByTargetComponent implements OnInit {
     identitySubTypeId: null,
     isJoin: null,
     customerCode: '',
+    term : ''
   };
   targetSuccessStartDate: any;
   targetSuccessEndDate: any;
@@ -79,6 +74,7 @@ export class ReportsByTargetComponent implements OnInit {
       identitySubTypeId: null,
       isJoin: null,
       customerCode: '',
+      term: ''
     };
     this.targetSuccessStartDate = '';
     this.targetSuccessEndDate = '';
@@ -103,6 +99,7 @@ export class ReportsByTargetComponent implements OnInit {
       customerCode: this.filterForm.customerCode,
       targetSuccessStartDate: this.targetSuccessStartDate?.singleDate?.formatted,
       targetSuccessEndDate: this.targetSuccessEndDate?.singleDate?.formatted,
+      term: this.filterForm.term
     };
     this.reportsService.targetReportGetByFilter(requestModel)
       .pipe(takeUntil(this.destroy$))

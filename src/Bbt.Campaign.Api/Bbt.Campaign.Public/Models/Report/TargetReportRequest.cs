@@ -11,5 +11,6 @@ namespace Bbt.Campaign.Public.Models.Report
         public string? CustomerCode { get; set; }
         public string? TargetSuccessStartDate { get; set; }
         public string? TargetSuccessEndDate { get; set; }
+        public string? Term { get; set; }
     }
 }

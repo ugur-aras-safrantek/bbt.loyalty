@@ -368,6 +368,11 @@ namespace Bbt.Campaign.Services.Services.Remote
                 if (request.IsJoin.HasValue)
                     serviceUrl += "&IsJoined=" + request.IsJoin;
 
+                if (!String.IsNullOrWhiteSpace(request.Term))
+                {
+                    serviceUrl += "&Term=" + request.Term;
+                }
+
                 if (!string.IsNullOrEmpty(request.TargetSuccessStartDate))
                 {
                     string[] startDateArray = request.TargetSuccessStartDate.Split('-');

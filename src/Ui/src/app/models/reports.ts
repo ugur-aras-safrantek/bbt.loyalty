@@ -83,6 +83,7 @@ export class TargetReportRequestModel implements ITargetReportRequestModel, IPag
   customerCode?: any;
   targetSuccessStartDate?: any;
   targetSuccessEndDate?: any;
+  term?: any;
 }
 
 interface ICustomerReportRequestModel {

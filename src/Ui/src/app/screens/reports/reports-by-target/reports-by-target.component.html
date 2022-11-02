@@ -58,6 +58,14 @@
       </div>
       <div class="row mt-3">
         <div class="col">
+          <div class="form-group">
+            <label>Kampanya Dönemi (eg:2022-01)</label>
+            <input type="text" class="form-control form-control-sm"
+                   [(ngModel)]="filterForm.term" maxlength="7" >
+          </div>
+        </div>
+        <!-- YAZILIMDA DEĞER KONTROL EDİLEMEDİĞİ İÇİN KAPATILDI
+        <div class="col">
           <div class="form-group calendar">
             <label>Başlama Tarihi</label>
             <input class="form-control form-control-sm pl-32px" name="startDate" id="startDate"
@@ -79,6 +87,7 @@
                    (click)="endDateDp.toggleCalendar()"/>
           </div>
         </div>
+        -->
         <div class="col"></div>
         <div class="col pt-3">
           <button class="btn btn-sm btn-outline-primary w-100" (click)="clear()">Temizle</button>
