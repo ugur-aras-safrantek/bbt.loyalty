@@ -19,7 +19,7 @@ namespace Bbt.Campaign.Services.Services.Remote
         public Task<List<EarningByCustomerAndCampaing>> GetEarningByCustomerAndCampaingData(string customerId, int campaignId, string lang);
         public Task<GoalResultByCustomerAndCampaing> GetGoalResultByCustomerAndCampaingData(string customerId, int campaignId, string lang, string term = null);
         public Task<TargetReportServiceDto> GetTargetReportData(TargetReportRequest request);
-        public Task<Document> GetDocument(int id);
+        public Task<Document> GetDocument(int id, string customerCode);
         public Task<UserModelService> GetUserRoles(string code, string state);
         public Task SendSmsMessageTemplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData);
         public Task SendNotificationMessageTemplate(string customerId, int campaignId, int messageTypeId, TemplateInfo templateData);

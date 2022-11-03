@@ -558,7 +558,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 response.IsContract = false;
 
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
-                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
+                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath, customerCode);
                 informationContract.ButtonTextTr = "Okudum";
                 informationContract.ButtonTextEn = "I have read";
                 informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";

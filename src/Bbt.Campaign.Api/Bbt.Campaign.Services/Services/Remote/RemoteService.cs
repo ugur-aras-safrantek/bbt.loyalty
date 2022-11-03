@@ -469,7 +469,7 @@ namespace Bbt.Campaign.Services.Services.Remote
             else { throw new Exception("Invalid state."); }
             return userModel;
         }
-        public async Task<Document> GetDocument(int id)
+        public async Task<Document> GetDocument(int id, string customerCode)
         {
             var document = new Document();
             string accessToken = await GetAccessTokenFromCache();
@@ -480,6 +480,10 @@ namespace Bbt.Campaign.Services.Services.Remote
                 string apiAddress = await _parameterService.GetServiceConstantValue("Document");
                 apiAddress = apiAddress.Replace("{key}", id.ToString());
                 string serviceUrl = string.Concat(baseAddress, apiAddress);
+                if (!String.IsNullOrWhiteSpace(customerCode))
+                {
+                    serviceUrl += $"?customerId={customerCode}";
+                }
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var restResponse = await httpClient.GetAsync(serviceUrl);
 

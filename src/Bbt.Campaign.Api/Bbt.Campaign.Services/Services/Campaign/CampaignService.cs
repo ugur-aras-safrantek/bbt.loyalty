@@ -689,7 +689,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             return await BaseResponse<GetFileResponse>.SuccessAsync(await GetContractFile(id, contentRootPath));
         }
 
-        public async Task<GetFileResponse> GetContractFile(int id, string contentRootPath) 
+        public async Task<GetFileResponse> GetContractFile(int id, string contentRootPath, string customerCode = null) 
         {
             var getFileResponse = new GetFileResponse();
 
@@ -715,7 +715,7 @@ namespace Bbt.Campaign.Services.Services.Campaign
             }
             else
             {
-                var document = await _remoteService.GetDocument(id);
+                var document = await _remoteService.GetDocument(id,customerCode);
                 if (document != null)
                 {
                     if (document.Content != null)
