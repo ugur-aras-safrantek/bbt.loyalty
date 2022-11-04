@@ -558,7 +558,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 response.IsContract = false;
 
                 var informationTextId = await _parameterService.GetServiceConstantValue("InformationText");
-                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath, customerCode);
+                var informationContract = await _campaignService.GetContractFile(Convert.ToInt32(informationTextId), contentRootPath);
                 informationContract.ButtonTextTr = "Okudum";
                 informationContract.ButtonTextEn = "I have read";
                 informationContract.UnderlineTextTr = $"{campaignDto.TitleTr} Programı Kapsamında Kişisel Verilerimin İşlenmesine İlişkin Aydınlatma Metni'ni";
@@ -577,7 +577,7 @@ namespace Bbt.Campaign.Services.Services.Customer
                 gdprContract.DocumentTextEn = $" I have read and confirm Express Consent Statement Regarding the Processing of My Personal Data within the Scope of {campaignDto.TitleEn} Program.";
                 response.ContractFiles.Add(gdprContract);
 
-                var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath);
+                var campaignContract = await _campaignService.GetContractFile(campaignEntity.ContractId ?? 0, contentRootPath, customerCode);
                 if (campaignContract != null)
                 {
                     campaignContract.ButtonTextTr = "Okudum, onaylıyorum";
