@@ -32,5 +32,9 @@ namespace Bbt.Campaign.Core.DbEntities
         public string? SummaryPopupTr { get; set; }
         [Column(TypeName = "ntext")]
         public string? SummaryPopupEn { get; set; }
+        [Column(TypeName = "ntext")]
+        public string? JoinTextTr { get; set; }
+        [Column(TypeName = "ntext")]
+        public string? JoinTextEn { get; set; }
     }
 }

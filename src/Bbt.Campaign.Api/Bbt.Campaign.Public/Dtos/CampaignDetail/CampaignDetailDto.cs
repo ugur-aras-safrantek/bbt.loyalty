@@ -21,6 +21,7 @@
 
         public string? SummaryPopupEn { get; set; }
 
-
+        public string? JoinTextTr { get; set; }
+        public string? JoinTextEn { get; set; }
     }
 }
