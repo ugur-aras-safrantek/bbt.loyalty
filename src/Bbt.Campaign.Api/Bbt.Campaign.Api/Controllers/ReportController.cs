@@ -157,9 +157,9 @@ namespace Bbt.Campaign.Api.Controllers
         /// /// <param name="campaignCode">Campaign Code</param>
         [HttpGet]
         [Route("get-customer-report-detail/{customerCode}/{campaignCode}")]
-        public async Task<IActionResult> GetCustomerReportDetailAsync(string customerCode, string campaignCode)
+        public async Task<IActionResult> GetCustomerReportDetailAsync(string customerCode, string campaignCode, [FromQuery] string term = null)
         {
-            var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignCode);
+            var result = await _reportService.GetCustomerReportDetailAsync(customerCode, campaignCode, term);
             return Ok(result);
         }
 

@@ -61,7 +61,7 @@ export class ReportsService {
   }
 
   getCustomerDetail(data: any) {
-    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${data.customerCode}/${data.campaignId}`;
+    const url = `${this.baseUrl}/${ApiPaths.CustomerDetail}/${data.customerCode}/${data.campaignId}?term=${data.term}`;
     return this.httpClient.get<ApiBaseResponseModel>(url);
   }
 
