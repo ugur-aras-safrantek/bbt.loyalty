@@ -85,7 +85,7 @@ namespace Bbt.Campaign.Services.Services.Remote
                 serviceUrl = serviceUrl.Replace("{lang}", lang);
                 if (!String.IsNullOrWhiteSpace(term))
                 {
-                    serviceUrl = serviceUrl + $"?term={term}";
+                    serviceUrl = serviceUrl + $"&term={term}";
                 }
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
