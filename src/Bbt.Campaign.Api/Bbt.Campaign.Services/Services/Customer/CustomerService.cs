@@ -90,6 +90,27 @@ namespace Bbt.Campaign.Services.Services.Customer
                 await _unitOfWork.GetRepository<CustomerCampaignEntity>().DeleteAsync(deleteEntity);
             }
 
+            var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
+                 .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
+            campaignQuery = campaignQuery.Take(1);
+
+            if (request.IsJoin)
+            {
+                #region DYS gönderimi ve kazanım verme 
+
+                List<int> docList = new List<int>();
+                var campaign = campaignQuery.FirstOrDefault();
+                if (campaign != null && campaign.IsContract)
+                {
+                    docList.Add(campaign.ContractId.Value);
+                }
+                var infotext = Convert.ToInt32(await _parameterService.GetServiceConstantValue("InformationText"));
+                var gdpr = Convert.ToInt32(await _parameterService.GetServiceConstantValue("GDPR"));
+                docList.Add(infotext);
+                docList.Add(gdpr);
+                await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
+                #endregion
+            }
 
             if (isFavorite || request.IsJoin)
             {
@@ -119,24 +140,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
                 if (!customerJoin.IsJoin)
                     throw new Exception("Müşteri kampanyaya katılmamış.");
-
-                var campaignQuery = _unitOfWork.GetRepository<CampaignDetailListEntity>()
-                    .GetAll(x => x.Id == request.CampaignId && !x.IsDeleted);
-                campaignQuery = campaignQuery.Take(1);
-
-                #region DYS gönderimi
-                List<int> docList = new List<int>();
-                var campaign = campaignQuery.FirstOrDefault();
-                if (campaign != null && campaign.IsContract)
-                {
-                    docList.Add(campaign.ContractId.Value);
-                }
-                var infotext = Convert.ToInt32( await _parameterService.GetServiceConstantValue("InformationText"));
-                var gdpr = Convert.ToInt32( await _parameterService.GetServiceConstantValue("GDPR"));
-                docList.Add(infotext);
-                docList.Add(gdpr);
-                await _remoteService.SendDmsDocuments(request.CustomerCode, docList);
-                #endregion
 
                 var campaignList = campaignQuery.Select(x => new CampaignMinDto
                 {
@@ -184,7 +187,6 @@ namespace Bbt.Campaign.Services.Services.Customer
 
             if (request.IsJoin)
             {
-
                 #region sms gönderimi
                 //Hoşgeldin bildirimi
                 var targetAmount = await GetCustomerCampaignTargetAmountAsync(request.CampaignId, request.CustomerCode);
@@ -202,12 +204,10 @@ namespace Bbt.Campaign.Services.Services.Customer
                     _remoteService.SendNotificationMessageTemplate(request.CustomerCode, request.CampaignId, 1, template);
                 }
                 #endregion
-
                 #region koşulsuz dönem ve destek Harcama kontrolüne ve dönem harcamalarına göre kazanım servisi çağırma
-
                 var term = Utilities.GetTerm();
                 var result = await _remoteService.CustomerAchievementsAdd(request.CustomerCode, request.CampaignId, term);
-                #endregion
+                #endregion             
             }
 
 
